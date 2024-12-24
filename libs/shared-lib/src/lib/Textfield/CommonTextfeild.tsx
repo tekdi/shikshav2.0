@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { TextField } from '@mui/material';
+import { TextField, InputAdornment } from '@mui/material';
 import { CustomTypography } from '../Typography/CustomTypography';
 interface CommonTextFieldProps {
   label: string;
@@ -16,6 +16,8 @@ interface CommonTextFieldProps {
   fontSize?: string | number;
   fontWeight?: string | number;
   color?: string;
+  startIcon?: React.ReactNode;
+  endIcon?: React.ReactNode;
 }
 export const CommonTextField: React.FC<CommonTextFieldProps> = ({
   label = 'Enter Text',
@@ -31,6 +33,8 @@ export const CommonTextField: React.FC<CommonTextFieldProps> = ({
   fontSize = '14px',
   fontWeight = 400,
   color = '#000000',
+  startIcon,
+  endIcon,
   ...props
 }) => {
   return (
@@ -50,6 +54,14 @@ export const CommonTextField: React.FC<CommonTextFieldProps> = ({
         fullWidth
         helperText={helperText}
         error={error}
+        InputProps={{
+          startAdornment: startIcon && (
+            <InputAdornment position="start">{startIcon}</InputAdornment>
+          ),
+          endAdornment: endIcon && (
+            <InputAdornment position="end">{endIcon}</InputAdornment>
+          ),
+        }}
         sx={{ width: width }}
         {...props}
       />

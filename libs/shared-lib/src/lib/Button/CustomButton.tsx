@@ -36,6 +36,9 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         paddingTop: 2,
         width: '100%',
         display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        alignItems: 'center',
         justifyContent: 'center',
       }}
     >

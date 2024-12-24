@@ -23,6 +23,8 @@ export const Layout: React.FC<LayoutProps> = ({
   const handleButtonClick = () => {
     alert('Footer button clicked!');
   };
+  const handleNotificationsClick = () =>
+    console.log('Notifications icon clicked');
 
   return (
     <Box
@@ -59,10 +61,12 @@ export const Layout: React.FC<LayoutProps> = ({
                 {
                   icon: <NotificationsIcon />,
                   ariaLabel: 'Notifications',
+                  onClick: handleNotificationsClick,
                 },
                 {
                   icon: <AccountCircleIcon />,
                   ariaLabel: 'Account',
+                  onClick: handleNotificationsClick,
                 },
               ]}
             />
