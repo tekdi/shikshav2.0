@@ -38,7 +38,7 @@ export const CommonCheckbox: React.FC<CheckboxGroupProps> = ({
     <FormGroup row={direction === 'row'} sx={{ gap: 2 }}>
       {checkboxes.map(({ label, required, disabled, ...props }, index) => (
         <FormControlLabel
-          key={index}
+          key={label}
           control={
             <Checkbox
               {...props}

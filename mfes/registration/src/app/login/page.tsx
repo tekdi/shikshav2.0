@@ -62,79 +62,109 @@ export default function Login() {
     setSelectedValue(event.target.value);
   };
   return (
-    <Layout
-      showTopAppBar={true}
-      isFooter={false}
-      showLogo={true}
-      showBack={true}
-    >
+    <Layout isFooter={false} showLogo={true} showBack={true}>
       <Box
         sx={{
+          width: '100%',
           display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
-          gap: 2,
+          // flexDirection: 'column',
+          flexDirection: {
+            xs: 'column',
+            // sm: 'row',
+          },
         }}
       >
-        <CommonSelect
-          label=""
-          value={selectedValue}
-          onChange={handleSelectChange}
-          options={[
-            { label: 'English', value: 'english' },
-            { label: 'Marathi', value: 'marathi' },
-            { label: 'Hindi', value: 'hindi' },
-          ]}
-          width="100px"
-          height="32px"
-          borderRadius="8px"
-        />
-        <CommonTextField
-          label="Username"
-          value={formData.userName}
-          onChange={handleChange('firstName')}
-          type="text"
-          variant="outlined"
-          helperText={error.userName ? `Required username ` : ''}
-          error={error.userName}
-        />
-        <CommonTextField
-          label="Password"
-          value={formData.userName}
-          onChange={handleChange('password')}
-          type="password"
-          variant="outlined"
-          helperText={error.password ? `Required password ` : ''}
-          error={error.password}
-          endIcon={<VisibilityIcon />}
-        />
-        <CustomTypography
-          variant="h1"
-          fontSize="14px"
-          color="#1D1B20"
-          fontWeight="500px"
+        <Box
+          sx={{
+            height: '-webkit-fill-available',
+            backgroundColor: '#444444',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
         >
-          Forgot Password?
-        </CustomTypography>
+          <CustomTypography
+            variant="h1"
+            fontSize="18px"
+            color="#1D1B20"
+            fontWeight={500}
+          >
+            Placeholder Content
+          </CustomTypography>
+        </Box>
 
-        <CommonCheckbox
-          checkboxes={checkboxData}
-          onChange={handleCheckboxChange}
-          direction="row"
-        />
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            gap: 2,
+            borderRadius: '20px 20px 0 0',
+            padding: '15px',
+            backgroundColor: '#FFFFFF',
+            marginTop: '-40px',
+          }}
+        >
+          <CommonSelect
+            label=""
+            value={selectedValue}
+            onChange={handleSelectChange}
+            options={[
+              { label: 'English', value: 'english' },
+              { label: 'Marathi', value: 'marathi' },
+              { label: 'Hindi', value: 'hindi' },
+            ]}
+            width="100px"
+            height="32px"
+            borderRadius="8px"
+          />
+          <CommonTextField
+            label="Username"
+            value={formData.userName}
+            onChange={handleChange('userName')}
+            type="text"
+            variant="outlined"
+            helperText={error.userName ? `Required username ` : ''}
+            error={error.userName}
+          />
+          <CommonTextField
+            label="Password"
+            value={formData.password}
+            onChange={handleChange('password')}
+            type="password"
+            variant="outlined"
+            helperText={error.password ? `Required password ` : ''}
+            error={error.password}
+            endIcon={<VisibilityIcon />}
+          />
+          <CustomTypography
+            variant="h1"
+            fontSize="14px"
+            color="#1D1B20"
+            fontWeight={500}
+          >
+            Forgot Password?
+          </CustomTypography>
 
-        <CustomButton
-          label="Label"
-          width="353px"
-          height="40px"
-          backgroundColor="#6750A4"
-          borderRadius="50px"
-          color="#FFFFFF"
-          fontSize="14px"
-          fontWeight="500px"
-          supportingText="Don’t Have An Account? Register"
-          onClick={handleButtonClick}
-        />
+          <CommonCheckbox
+            checkboxes={checkboxData}
+            onChange={handleCheckboxChange}
+            direction="row"
+          />
+
+          <CustomButton
+            label="Label"
+            width="100%"
+            height="40px"
+            backgroundColor="#6750A4"
+            borderRadius="50px"
+            color="#FFFFFF"
+            fontSize="14px"
+            fontWeight={500}
+            supportingText="Don’t Have An Account? Register"
+            onClick={handleButtonClick}
+          />
+        </Box>
       </Box>
     </Layout>
   );
