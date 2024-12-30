@@ -1,0 +1,9 @@
+{
+  "name": "mfe-next-page-1",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "mfes/mfe-next-page-1",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project mfe-next-page-1 --web",
+  "targets": {}
+}
