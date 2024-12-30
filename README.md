@@ -109,6 +109,12 @@ And join the Nx community:
 nx dev registration --verbose
 ```
 
+## run content-consumption mfes
+
+```sh
+nx serve content-consumption --verbose
+```
+
 ## use shared library in any project
 
 ```sh
