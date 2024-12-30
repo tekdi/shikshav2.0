@@ -49,7 +49,6 @@ const NewUser = () => {
         </div>
 
         <CommonTextField
-          width="328px"
           label="First name"
           value={formData.firstName}
           onChange={handleChange('firstName')}
@@ -59,7 +58,6 @@ const NewUser = () => {
           error={error.firstName}
         />
         <CommonTextField
-          width="328px"
           label="Last name"
           value={formData.lastName}
           onChange={handleChange('lastName')}
@@ -69,7 +67,6 @@ const NewUser = () => {
           error={error.lastName}
         />
         <CommonTextField
-          width="328px"
           label="Phone number"
           value={formData.phoneNumber}
           onChange={handleChange('phoneNumber')}

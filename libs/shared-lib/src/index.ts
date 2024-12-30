@@ -9,3 +9,7 @@ export * from './lib/Typography/CustomTypography';
 export * from './lib/Header/TopAppBar';
 export * from './lib/Checkbox/CommonCheckbox';
 export * from './lib/Select/CommonSelect';
+export * from './lib/Search/CommomSearch';
+export * from './lib/Tabs/CommonTabs';
+export * from './lib/Card/CommonCard';
+export * from './lib/Collapse/CommonCollapse';

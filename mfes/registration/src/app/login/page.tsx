@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { Box } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import Grid from '@mui/material/Grid2';
+
 import {
   CommonCheckbox,
   CommonSelect,
@@ -62,27 +64,48 @@ export default function Login() {
     setSelectedValue(event.target.value);
   };
   return (
-    <Layout isFooter={false} showLogo={true} showBack={true}>
-      <Box
+    <Layout
+      isFooter={false}
+      showLogo={true}
+      showBack={true}
+      sx={{ height: '100vh' }}
+    >
+      <Grid
+        container
+        spacing={2}
         sx={{
           width: '100%',
+          borderRadius: 1,
+          bgcolor: '#FFFFFF',
           display: 'flex',
-          // flexDirection: 'column',
-          flexDirection: {
-            xs: 'column',
-            // sm: 'row',
-          },
+          justifyContent: 'center',
+          padding: 2,
+          mx: 'auto',
         }}
       >
-        <Box
+        <Grid
+          size={{ xs: 6, sm: 4, md: 4, lg: 4 }}
           sx={{
-            height: '-webkit-fill-available',
             backgroundColor: '#444444',
+            height: '100%',
             display: 'flex',
+            // flexDirection: 'column',
             justifyContent: 'center',
-            alignItems: 'center',
+            flexDirection: {
+              xs: 'column',
+              sm: 'row',
+            },
           }}
         >
+          {/* <Box
+            sx={{
+              height: '-webkit-fill-available',
+              backgroundColor: '#444444',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          > */}
           <CustomTypography
             variant="h1"
             fontSize="18px"
@@ -91,81 +114,82 @@ export default function Login() {
           >
             Placeholder Content
           </CustomTypography>
-        </Box>
+          {/* </Box> */}
 
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-start',
-            gap: 2,
-            borderRadius: '20px 20px 0 0',
-            padding: '15px',
-            backgroundColor: '#FFFFFF',
-            marginTop: '-40px',
-          }}
-        >
-          <CommonSelect
-            label=""
-            value={selectedValue}
-            onChange={handleSelectChange}
-            options={[
-              { label: 'English', value: 'english' },
-              { label: 'Marathi', value: 'marathi' },
-              { label: 'Hindi', value: 'hindi' },
-            ]}
-            width="100px"
-            height="32px"
-            borderRadius="8px"
-          />
-          <CommonTextField
-            label="Username"
-            value={formData.userName}
-            onChange={handleChange('userName')}
-            type="text"
-            variant="outlined"
-            helperText={error.userName ? `Required username ` : ''}
-            error={error.userName}
-          />
-          <CommonTextField
-            label="Password"
-            value={formData.password}
-            onChange={handleChange('password')}
-            type="password"
-            variant="outlined"
-            helperText={error.password ? `Required password ` : ''}
-            error={error.password}
-            endIcon={<VisibilityIcon />}
-          />
-          <CustomTypography
-            variant="h1"
-            fontSize="14px"
-            color="#1D1B20"
-            fontWeight={500}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              gap: 2,
+              borderRadius: '20px 20px 0 0',
+              padding: '15px',
+              backgroundColor: '#FFFFFF',
+              marginTop: '-40px',
+            }}
           >
-            Forgot Password?
-          </CustomTypography>
+            <CommonSelect
+              label=""
+              value={selectedValue}
+              onChange={handleSelectChange}
+              options={[
+                { label: 'English', value: 'english' },
+                { label: 'Marathi', value: 'marathi' },
+                { label: 'Hindi', value: 'hindi' },
+              ]}
+              width="100px"
+              height="32px"
+              borderRadius="8px"
+            />
+            <CommonTextField
+              label="Username"
+              value={formData.userName}
+              onChange={handleChange('userName')}
+              type="text"
+              variant="outlined"
+              helperText={error.userName ? `Required username ` : ''}
+              error={error.userName}
+            />
+            <CommonTextField
+              label="Password"
+              value={formData.password}
+              onChange={handleChange('password')}
+              type="password"
+              variant="outlined"
+              helperText={error.password ? `Required password ` : ''}
+              error={error.password}
+              endIcon={<VisibilityIcon />}
+            />
+            <CustomTypography
+              variant="h1"
+              fontSize="14px"
+              color="#1D1B20"
+              fontWeight={500}
+            >
+              Forgot Password?
+            </CustomTypography>
 
-          <CommonCheckbox
-            checkboxes={checkboxData}
-            onChange={handleCheckboxChange}
-            direction="row"
-          />
+            <CommonCheckbox
+              checkboxes={checkboxData}
+              onChange={handleCheckboxChange}
+              direction="row"
+            />
 
-          <CustomButton
-            label="Label"
-            width="100%"
-            height="40px"
-            backgroundColor="#6750A4"
-            borderRadius="50px"
-            color="#FFFFFF"
-            fontSize="14px"
-            fontWeight={500}
-            supportingText="Don’t Have An Account? Register"
-            onClick={handleButtonClick}
-          />
-        </Box>
-      </Box>
+            <CustomButton
+              label="Label"
+              width="100%"
+              height="40px"
+              backgroundColor="#6750A4"
+              borderRadius="50px"
+              color="#FFFFFF"
+              fontSize="14px"
+              fontWeight={500}
+              supportingText="Don’t Have An Account? Register"
+              onClick={handleButtonClick}
+            />
+          </Box>
+        </Grid>
+      </Grid>
     </Layout>
   );
 }

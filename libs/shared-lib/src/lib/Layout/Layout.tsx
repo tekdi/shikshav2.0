@@ -3,14 +3,46 @@ import Box from '@mui/material/Box';
 import { Header } from '../Header/Header';
 import { Footer } from '../Footer/Footer';
 import { TopAppBar } from '../Header/TopAppBar';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { CommonSearch } from '../Search/CommomSearch';
+
 interface LayoutProps {
   children: React.ReactNode;
   isFooter?: boolean;
   showBack?: boolean;
   showLogo?: boolean;
-  showTopAppBar?: boolean;
+  sx?: object;
+  showSearch?: {
+    placeholder: string;
+    leftIcon?: React.ReactNode;
+    rightIcon?: React.ReactNode;
+    onLeftIconClick?: () => void;
+    onRightIconClick?: () => void;
+    inputValue?: string;
+    onInputChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    sx?: object;
+  };
+  showTopAppBar?: {
+    title?: string;
+    showMenuIcon?: boolean;
+    showBackIcon?: boolean;
+    menuIconClick?: () => void;
+    backIconClick?: () => void;
+    actionButtonLabel?: string;
+    actionButtonClick?: () => void;
+    actionButtonColor?: 'inherit' | 'primary' | 'secondary' | 'default';
+    position?: 'fixed' | 'absolute' | 'sticky' | 'static' | 'relative';
+    color?: 'primary' | 'secondary' | 'default' | 'transparent' | 'inherit';
+    actionIcons?: {
+      icon: React.ReactNode;
+      ariaLabel: string;
+      onClick: () => void;
+    }[];
+  };
+  topAppBarIcons?: {
+    icon: React.ReactNode;
+    ariaLabel: string;
+    onClick: () => void;
+  }[];
 }
 
 export const Layout: React.FC<LayoutProps> = ({
@@ -18,7 +50,10 @@ export const Layout: React.FC<LayoutProps> = ({
   isFooter,
   showBack,
   showLogo,
+  showSearch,
   showTopAppBar,
+  topAppBarIcons = [],
+  sx = {},
 }) => {
   const handleButtonClick = () => {
     alert('Footer button clicked!');
@@ -33,62 +68,63 @@ export const Layout: React.FC<LayoutProps> = ({
         flexDirection: 'column',
         justifyContent: 'space-between',
         alignItems: 'center',
-        height: '100vh',
-        bgcolor: 'grey',
+        // bgcolor: 'grey',
+        ...sx,
       }}
     >
-      <Box
-        sx={{
-          width: '100%',
-          bgcolor: 'white',
-          display: 'center',
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: 2,
-        }}
-      >
-        {/* <Header showLogo={showLogo} showBack={showBack} /> */}
-        {showTopAppBar && (
+      {/* <Header showLogo={showLogo} showBack={showBack} /> */}
+      {showTopAppBar && (
+        <Box
+          sx={{
+            // width: '100%',
+            display: 'center',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'column',
+            // padding: 2,
+          }}
+        >
           <Box
             sx={{
               width: '100%',
-              bgcolor: 'white',
+              bgcolor: '#FFFFFF',
             }}
           >
             <TopAppBar
               title="Dashboard"
-              actionIcons={[
-                {
-                  icon: <NotificationsIcon />,
-                  ariaLabel: 'Notifications',
-                  onClick: handleNotificationsClick,
-                },
-                {
-                  icon: <AccountCircleIcon />,
-                  ariaLabel: 'Account',
-                  onClick: handleNotificationsClick,
-                },
-              ]}
+              bgcolor="#FDF7FF"
+              actionIcons={topAppBarIcons}
+              {...showTopAppBar}
             />
           </Box>
-        )}
-      </Box>
-
-      <Box
-        sx={{
-          flex: 1,
-          width: '100%',
-          // width: { xs: '90%', sm: '80%' },
-          borderRadius: 1,
-          bgcolor: '#FFFFFF',
-          display: 'flex',
-          justifyContent: 'center',
-          padding: 2,
-          mx: 'auto',
-        }}
-      >
-        {children}
-      </Box>
+        </Box>
+      )}
+      {showSearch && (
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: '70px',
+          }}
+        >
+          <CommonSearch
+            placeholder={showSearch.placeholder || ''}
+            leftIcon={showSearch.leftIcon ? showSearch.leftIcon : undefined}
+            rightIcon={showSearch.rightIcon ? showSearch.rightIcon : undefined}
+            onLeftIconClick={
+              showSearch.leftIcon ? showSearch.onLeftIconClick : undefined
+            }
+            onRightIconClick={
+              showSearch.rightIcon ? showSearch.onRightIconClick : undefined
+            }
+            inputValue={showSearch.inputValue || ''}
+            onInputChange={showSearch.onInputChange}
+            sx={showSearch.sx || { width: 400, marginTop: '8px' }}
+          />
+        </Box>
+      )}
+      {children}
 
       {isFooter && (
         <Box
