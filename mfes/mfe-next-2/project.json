@@ -1,0 +1,9 @@
+{
+  "name": "mfe-next-2",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "mfes/mfe-next-2",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project mfe-next-2 --web",
+  "targets": {}
+}
