@@ -7,9 +7,12 @@ import {
   getQumlData,
 } from '../services/PlayerService';
 import { Box, Typography } from '@mui/material';
-import { PlayerConfig } from '../utils/url.config';
 import { MIME_TYPE } from '../utils/url.config';
-import { V1PlayerConfig, V2PlayerConfig } from '../utils/url.config';
+import {
+  PlayerConfig,
+  V1PlayerConfig,
+  V2PlayerConfig,
+} from '../utils/url.config';
 import Loader from '../components/Loader';
 
 const SunbirdPlayers = dynamic(() => import('../components/players/Players'), {

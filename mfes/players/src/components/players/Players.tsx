@@ -22,7 +22,6 @@ const SunbirdV1Player = dynamic(() => import('../V1-Player/V1Player'), {
 
 interface PlayerProps {
   'player-config': any;
-  identifier?: string;
 }
 
 const SunbirdPlayers = ({ 'player-config': playerConfig }: PlayerProps) => {

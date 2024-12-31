@@ -1,5 +1,4 @@
 import { getTelemetryEvents, handleExitEvent } from '../utils/Helper';
-import { Height } from '@mui/icons-material';
 import React, { useEffect, useRef } from 'react';
 
 interface PlayerConfigProps {
