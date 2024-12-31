@@ -7,3 +7,4 @@ export * from './lib/Layout/Layout';
 export * from './lib/Stack/CustomStack';
 export * from './lib/Typography/CustomTypography';
 export * from './lib/Header/TopAppBar';
+export * from './lib/SunbirdPlayer/SunbirdPlayer';

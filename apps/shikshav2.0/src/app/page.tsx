@@ -11,6 +11,7 @@ import { useRouter } from 'next/router';
 const MfeNextPage1 = dynamic(() => import('@mfe-next-page-1'), {
   ssr: false,
 });
+
 const MfeNextPage2 = dynamic(() => import('@mfe-next-page-2'), {
   ssr: false,
 });
