@@ -2,7 +2,8 @@
 // import styles from './app.module.css';
 
 import { Route, Routes, Link } from 'react-router-dom';
-
+import Content from '../Pages/Content/Content';
+import Details from '../Pages/Details/Details';
 export function App() {
   return (
     <div>
@@ -20,6 +21,9 @@ export function App() {
           <li>
             <Link to="/page-2">Page 2</Link>
           </li>
+          <li>
+            <Link to="/content">content</Link>
+          </li>
         </ul>
       </div>
       <Routes>
@@ -32,6 +36,9 @@ export function App() {
             </div>
           }
         />
+        <Route path="/content" element={<Content />} />
+        <Route path="/details" element={<Details />} />
+
         <Route
           path="/page-2"
           element={

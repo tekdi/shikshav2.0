@@ -13,3 +13,4 @@ export * from './lib/Search/CommomSearch';
 export * from './lib/Tabs/CommonTabs';
 export * from './lib/Card/CommonCard';
 export * from './lib/Collapse/CommonCollapse';
+export * from './lib/Drawer/CommonDrawer';

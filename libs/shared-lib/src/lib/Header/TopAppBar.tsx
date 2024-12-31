@@ -6,7 +6,6 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { CustomTypography } from '../Typography/CustomTypography';
 interface ActionIcon {
   icon: React.ReactNode;
   ariaLabel: string;
@@ -63,13 +62,13 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
               >
                 <MenuIcon />
               </IconButton>
-              <CustomTypography
+              <Typography
                 variant="h6"
                 component="div"
                 sx={{ flexGrow: 1, textAlign: 'center' }}
               >
                 {title}
-              </CustomTypography>
+              </Typography>
             </>
           )}
           {showBackIcon && (
@@ -83,13 +82,13 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
               >
                 <ArrowBackIcon />
               </IconButton>
-              <CustomTypography
+              <Typography
                 variant="h6"
                 component="div"
                 sx={{ flexGrow: 1, textAlign: 'left' }}
               >
                 {title}
-              </CustomTypography>
+              </Typography>
             </>
           )}
           {actionIcons.map((action, index) => (

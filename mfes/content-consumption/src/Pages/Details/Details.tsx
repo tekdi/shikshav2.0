@@ -1,11 +1,11 @@
 'use client';
 import React, { useState } from 'react';
-import { Box } from '@mui/material';
-import { CustomTypography, Layout } from '@shared-lib';
+import { Box, Typography } from '@mui/material';
+import { Layout, CommonCollapse } from '@shared-lib';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SearchIcon from '@mui/icons-material/Search';
-import CommonCollapse from 'libs/shared-lib/src/lib/Collapse/CommonCollapse';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import Grid from '@mui/material/Grid2';
 
 export default function Content() {
   const [searchValue, setSearchValue] = useState('');
@@ -119,27 +119,30 @@ export default function Content() {
     >
       <Box
         sx={{
+          //   flexGrow: 1,
           width: '100%',
-          marginTop: '50px',
+          //   marginTop: '50px',
         }}
       >
-        <Box sx={{ margin: '15px' }}>
-          <img
-            src={'/static/images/cards/salad.jpg'}
-            style={{ width: '100%', borderRadius: '8px' }}
-          />
-          <CustomTypography
-            variant="h6"
-            sx={{ marginTop: '10px', fontWeight: 'bold' }}
-          >
-            Title
-          </CustomTypography>
-          {syllabusList.map((item) => (
-            <ul>
-              <li key={item}>{item}</li>
-            </ul>
-          ))}
-        </Box>
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12 }}>
+            <img
+              src={'/static/images/cards/salad.jpg'}
+              style={{ width: '100%', borderRadius: '8px' }}
+            />
+            <Typography
+              variant="h6"
+              sx={{ marginTop: '10px', fontWeight: 'bold' }}
+            >
+              Title
+            </Typography>
+            {syllabusList.map((item) => (
+              <ul>
+                <li key={item}>{item}</li>
+              </ul>
+            ))}
+          </Grid>
+        </Grid>
 
         {accordionData.map((item) => (
           <CommonCollapse

@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
-import { TextField, InputAdornment } from '@mui/material';
-import { CustomTypography } from '../Typography/CustomTypography';
+import { TextField, InputAdornment, Typography } from '@mui/material';
 interface CommonTextFieldProps {
   label: string;
   value: string | number;
@@ -66,14 +65,14 @@ export const CommonTextField: React.FC<CommonTextFieldProps> = ({
         {...props}
       />
       {supportingText && (
-        <CustomTypography
+        <Typography
           variant="h1"
-          fontSize={fontSize}
-          color={color}
-          fontWeight={fontWeight}
+          fontSize="14px"
+          color="#1D1B20"
+          fontWeight={400}
         >
           {supportingText}
-        </CustomTypography>
+        </Typography>
       )}
     </div>
   );

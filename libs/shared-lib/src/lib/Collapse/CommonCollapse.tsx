@@ -19,7 +19,7 @@ interface CommonAccordionProps {
   status?: string;
 }
 
-const CommonCollapse: React.FC<CommonAccordionProps> = ({
+export const CommonCollapse: React.FC<CommonAccordionProps> = ({
   id,
   title,
   content,

@@ -11,7 +11,8 @@ import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
-
+import { ThemeProvider } from '@mui/material/styles';
+import { theme } from '@shikshav2.0/ui-theme';
 interface CommonCardProps {
   title: string;
   avatarLetter?: string;
@@ -23,6 +24,8 @@ interface CommonCardProps {
   actions?: React.ReactNode;
   children?: React.ReactNode;
   orientation?: 'vertical' | 'horizontal';
+  minheight?: string;
+  onClick?: () => void;
 }
 
 export const CommonCard: React.FC<CommonCardProps> = ({
@@ -36,42 +39,49 @@ export const CommonCard: React.FC<CommonCardProps> = ({
   actions,
   children,
   orientation,
+  minheight,
+  onClick,
 }) => {
   return (
-    <Card>
-      {image && orientation === 'horizontal' && (
-        <CardMedia
-          component="img"
-          height="194"
-          image={image}
-          alt={imageAlt || ''}
+    <ThemeProvider theme={theme}>
+      <Card
+        sx={{ height: minheight, cursor: onClick ? 'pointer' : 'default' }}
+        onClick={onClick}
+      >
+        {image && orientation === 'horizontal' && (
+          <CardMedia
+            component="img"
+            height="194"
+            image={image}
+            alt={imageAlt || ''}
+          />
+        )}
+        <CardHeader
+          avatar={
+            avatarLetter && (
+              <Avatar sx={{ bgcolor: avatarColor }} aria-label="avatar">
+                {avatarLetter}
+              </Avatar>
+            )
+          }
+          action={
+            orientation === 'vertical' ? (
+              <CardMedia component="img" image={image} />
+            ) : undefined
+          }
+          title={title}
+          subheader={subheader || ''}
         />
-      )}
-      <CardHeader
-        avatar={
-          avatarLetter && (
-            <Avatar sx={{ bgcolor: avatarColor }} aria-label="avatar">
-              {avatarLetter}
-            </Avatar>
-          )
-        }
-        action={
-          orientation === 'vertical' ? (
-            <CardMedia component="img" image={image} />
-          ) : undefined
-        }
-        title={title}
-        subheader={subheader || ''}
-      />
-      {content && (
-        <CardContent>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            {content}
-          </Typography>
-        </CardContent>
-      )}
-      {children && <CardContent>{children}</CardContent>}
-      {actions && <CardActions disableSpacing>{actions}</CardActions>}
-    </Card>
+        {content && (
+          <CardContent>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              {content}
+            </Typography>
+          </CardContent>
+        )}
+        {children && <CardContent>{children}</CardContent>}
+        {actions && <CardActions disableSpacing>{actions}</CardActions>}
+      </Card>
+    </ThemeProvider>
   );
 };

@@ -5,15 +5,18 @@ import { CommonCard, CommonTabs, Layout } from '@shared-lib';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SearchIcon from '@mui/icons-material/Search';
 import Grid from '@mui/material/Grid2';
-
+import { useNavigate } from 'react-router-dom';
+import MailIcon from '@mui/icons-material/Mail';
 export default function Content() {
+  const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState('');
   const [tabValue, setTabValue] = React.useState(0);
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
   const handleAccountClick = () => {
     console.log('Account clicked');
   };
   const handleMenuClick = () => {
-    console.log('Menu icon clicked');
+    setDrawerOpen(!drawerOpen);
   };
 
   const handleSearchClick = () => {
@@ -30,7 +33,7 @@ export default function Content() {
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
         {cards.map((card) => (
-          <Grid key={card.title} size={{ xs: 6, sm: 4, md: 4, lg: 4 }}>
+          <Grid key={card.title} size={{ xs: 6, sm: 6, md: 4, lg: 4 }}>
             <CommonCard
               key={card.title}
               title={card.title}
@@ -38,6 +41,7 @@ export default function Content() {
               image="/static/images/example.jpg"
               subheader="Subtitle Example"
               orientation="horizontal"
+              onClick={() => navigate('/details')}
             />
           </Grid>
         ))}
@@ -92,6 +96,12 @@ export default function Content() {
         'Fresh lettuce, croutons, and Parmesan cheese with Caesar dressing.',
     },
   ];
+  const drawerItems = [
+    { text: 'Inbox', icon: <MailIcon />, to: '/inbox' },
+    { text: 'Starred', icon: <MailIcon />, to: '/starred' },
+    { text: 'Send email', to: '/send-email' },
+    { text: 'Drafts', to: '/drafts' },
+  ];
   return (
     <Layout
       showTopAppBar={{
@@ -131,10 +141,6 @@ export default function Content() {
           alignItems: 'center',
           bgcolor: '#FEF7FF',
           flexDirection: 'column',
-          // flexDirection: {
-          //   xs: 'column',
-          //   sm: 'row',
-          // },
         }}
       >
         <CommonTabs
@@ -144,26 +150,24 @@ export default function Content() {
           ariaLabel="Custom icon label tabs"
         />
       </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          width: '100%',
-          flexDirection: 'column',
-          gap: 2,
-        }}
-      >
-        {cardsData.map((card) => (
-          <CommonCard
-            key={card.title}
-            title={card.title}
-            subheader={card.subheader}
-            avatarLetter={card.avatarLetter}
-            avatarColor={card.avatarColor}
-            image={card.image}
-            orientation="vertical"
-          />
-        ))}
+      <Box sx={{ width: '100%' }}>
+        <Grid container spacing={2}>
+          {cardsData.map((card) => (
+            <Grid key={card.title} size={{ xs: 6, sm: 6, md: 3, lg: 6 }}>
+              <CommonCard
+                key={card.title}
+                title={card.title}
+                subheader={card.subheader}
+                avatarLetter={card.avatarLetter}
+                avatarColor={card.avatarColor}
+                image={card.image}
+                orientation="vertical"
+                minheight="80px"
+                onClick={() => navigate('/details')}
+              />
+            </Grid>
+          ))}
+        </Grid>
       </Box>
     </Layout>
   );

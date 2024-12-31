@@ -74,7 +74,9 @@ export default function Login() {
         container
         spacing={2}
         sx={{
+          flex: 1,
           width: '100%',
+          // width: { xs: '90%', sm: '80%' },
           borderRadius: 1,
           bgcolor: '#FFFFFF',
           display: 'flex',
@@ -83,21 +85,18 @@ export default function Login() {
           mx: 'auto',
         }}
       >
-        <Grid
-          size={{ xs: 6, sm: 4, md: 4, lg: 4 }}
+        <Box
           sx={{
-            backgroundColor: '#444444',
-            height: '100%',
+            width: '100%',
             display: 'flex',
             // flexDirection: 'column',
-            justifyContent: 'center',
             flexDirection: {
               xs: 'column',
-              sm: 'row',
+              // sm: 'row',
             },
           }}
         >
-          {/* <Box
+          <Box
             sx={{
               height: '-webkit-fill-available',
               backgroundColor: '#444444',
@@ -105,16 +104,16 @@ export default function Login() {
               justifyContent: 'center',
               alignItems: 'center',
             }}
-          > */}
-          <CustomTypography
-            variant="h1"
-            fontSize="18px"
-            color="#1D1B20"
-            fontWeight={500}
           >
-            Placeholder Content
-          </CustomTypography>
-          {/* </Box> */}
+            <CustomTypography
+              variant="h1"
+              fontSize="18px"
+              color="#1D1B20"
+              fontWeight={500}
+            >
+              Placeholder Content
+            </CustomTypography>
+          </Box>
 
           <Box
             sx={{
@@ -188,7 +187,7 @@ export default function Login() {
               onClick={handleButtonClick}
             />
           </Box>
-        </Grid>
+        </Box>
       </Grid>
     </Layout>
   );

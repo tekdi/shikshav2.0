@@ -1,8 +1,8 @@
 'use client';
 import React from 'react';
-import { Box, Button } from '@mui/material';
-import { CustomTypography } from '../Typography/CustomTypography';
-
+import { Box, Button, Typography } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
+import { theme } from '@shikshav2.0/ui-theme';
 interface CustomButtonProps {
   label?: string;
   width?: string;
@@ -30,47 +30,49 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   ...props
 }) => {
   return (
-    <Box
-      sx={{
-        borderTop: '1px solid #0000004D',
-        paddingTop: 2,
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <Button
-        {...props}
+    <ThemeProvider theme={theme}>
+      <Box
         sx={{
-          backgroundColor,
-          borderRadius,
-          width,
-          height,
-          textTransform: 'none',
-          '&:hover': {
-            backgroundColor,
-          },
-          color,
-          fontSize,
-          fontWeight,
+          borderTop: '1px solid #0000004D',
+          paddingTop: 2,
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
-        onClick={onClick}
       >
-        {label}
-      </Button>
-      {supportingText && (
-        <CustomTypography
-          variant="h1"
-          fontSize={'16px'}
-          color="#3B383E"
-          fontWeight={500}
+        <Button
+          {...props}
+          sx={{
+            backgroundColor,
+            borderRadius,
+            width,
+            height,
+            textTransform: 'none',
+            '&:hover': {
+              backgroundColor,
+            },
+            color,
+            fontSize,
+            fontWeight,
+          }}
+          onClick={onClick}
         >
-          {supportingText}
-        </CustomTypography>
-      )}
-    </Box>
+          {label}
+        </Button>
+        {supportingText && (
+          <Typography
+            variant="h1"
+            fontSize={'16px'}
+            color="#3B383E"
+            fontWeight={500}
+          >
+            {supportingText}
+          </Typography>
+        )}
+      </Box>
+    </ThemeProvider>
   );
 };
