@@ -5,12 +5,10 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import { Box, Typography } from '@mui/material';
 import CustomTypography from '../components/Typography/Typography';
 import CustomCheckbox from '../components/Checkboxes/CustomCheckbox';
-import CustomDateTimePicker from '../components/DateTimePicker/CustomDateTimePicker';
 import CustomRadioGroup from '../components/Radio/CustomRadioGroup';
 import CustomSelect from '../components/Select/CustomSelect';
 import CustomSwitch from '../components/Switches/CustomSwitch';
 import CustomTextField from '../components/Textfields/CustomTextField';
-import dynamic from 'next/dynamic';
 import { SunbirdPlayer } from '@shared-lib';
 
 const demo: React.FC = () => {
@@ -20,8 +18,6 @@ const demo: React.FC = () => {
   const [gender, setGender] = useState<string>('');
   const [notificationsEnabled, setNotificationsEnabled] =
     useState<boolean>(false);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedTime, setSelectedTime] = useState<Date | null>(null);
 
   return (
     <Box>

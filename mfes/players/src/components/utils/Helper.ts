@@ -65,7 +65,7 @@ export const getOptionsByCategory = (frameworks: any, categoryCode: string) => {
 export const getTelemetryEvents = (eventData: any, contentType: string) => {
   console.log('getTelemetryEvents hit');
 
-  if (!eventData || !eventData.object || !eventData.object.id) {
+  if (!eventData?.object?.id) {
     console.error('Invalid event data');
     return;
   }

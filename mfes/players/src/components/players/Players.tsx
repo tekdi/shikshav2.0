@@ -42,7 +42,6 @@ const SunbirdPlayers = ({ 'player-config': playerConfig }: PlayerProps) => {
     case 'application/vnd.ekstep.html-archive':
     case 'video/youtube':
     case 'video/x-youtube':
-      // return <SunbirdV1Player playerConfig={playerConfig} />;
       return <SunbirdV1Player playerConfig={playerConfig} />;
     default:
       return <div>Unsupported media type</div>;
