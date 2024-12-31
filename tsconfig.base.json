@@ -20,7 +20,8 @@
       "@mfe-next-page-1": ["mfes/mfe-next-page-1/src/pages/_app.tsx"],
       "@mfe-next-page-2": ["mfes/mfe-next-page-2/src/pages/_app.tsx"],
       "@registration": ["mfes/registration/src/app/page.tsx"],
-      "@shared-lib": ["libs/shared-lib/src/index.ts"]
+      "@shared-lib": ["libs/shared-lib/src/index.ts"],
+      "@shikshav2.0/ui-theme": ["ui-theme/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

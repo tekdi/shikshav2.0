@@ -72,7 +72,7 @@ const NewUser = () => {
           onChange={handleChange('phoneNumber')}
           type="text"
           variant="outlined"
-          helperText={error.phoneNumber ? 'Required phoen number' : ''}
+          helperText={error.phoneNumber ? 'Required Phone number' : ''}
           error={error.phoneNumber}
           supportingText="It will help us stay connected and share important updates"
         />

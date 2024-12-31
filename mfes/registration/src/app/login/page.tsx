@@ -1,7 +1,18 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { Box } from '@mui/material';
-import { CustomStack, CustomTypography, Layout } from '@shared-lib';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import Grid from '@mui/material/Grid2';
+
+import {
+  CommonCheckbox,
+  CommonSelect,
+  CommonTextField,
+  CustomButton,
+  CustomTypography,
+  Layout,
+} from '@shared-lib';
+import { SelectChangeEvent } from '@mui/material/Select';
 const languageData = [
   { id: 1, name: 'English' },
   { id: 2, name: 'Marathi' },
@@ -10,56 +21,174 @@ const languageData = [
   { id: 5, name: 'Bengali' },
   { id: 6, name: 'Tamil' },
 ];
-const LanguageBox = ({ name }: { name: string }) => (
-  <Box
-    sx={{
-      width: '150px',
-      borderRadius: '16px',
-      border: '1px solid #D0C5B4',
-      padding: 2,
-      height: '56px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}
-  >
-    {name}
-  </Box>
-);
+
+const checkboxData = [{ label: 'Remember Me' }];
+
 export default function Login() {
+  const [formData, setFormData] = useState({
+    userName: '',
+    password: '',
+    phoneNumber: '',
+  });
+  const [error, setError] = useState({
+    userName: false,
+    password: false,
+  });
+  const [selectedValue, setSelectedValue] = useState('english');
+  const handleChange =
+    (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      setFormData({
+        ...formData,
+        [field]: value,
+      });
+      setError({
+        ...error,
+        [field]: value.trim() === '',
+      });
+    };
+
+  const handleCheckboxChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    checked: boolean,
+    label: string
+  ) => {
+    console.log(
+      `Checkbox '${label}' is now ${checked ? 'checked' : 'unchecked'}`
+    );
+  };
+  const handleButtonClick = () => {
+    alert('button clicked!');
+  };
+  const handleSelectChange = (event: SelectChangeEvent) => {
+    setSelectedValue(event.target.value);
+  };
   return (
     <Layout
-      showTopAppBar={true}
-      isFooter={true}
+      isFooter={false}
       showLogo={true}
       showBack={true}
+      sx={{ height: '100vh' }}
     >
-      <Box
+      <Grid
+        container
+        spacing={2}
         sx={{
+          flex: 1,
+          width: '100%',
+          // width: { xs: '90%', sm: '80%' },
+          borderRadius: 1,
+          bgcolor: '#FFFFFF',
           display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
-          gap: 2,
+          justifyContent: 'center',
+          padding: 2,
+          mx: 'auto',
         }}
       >
-        <CustomTypography variant="h1" fontSize={'22px'} color="#3B383E">
-          Welcome!
-        </CustomTypography>
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            // flexDirection: 'column',
+            flexDirection: {
+              xs: 'column',
+              // sm: 'row',
+            },
+          }}
+        >
+          <Box
+            sx={{
+              height: '-webkit-fill-available',
+              backgroundColor: '#444444',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <CustomTypography
+              variant="h1"
+              fontSize="18px"
+              color="#1D1B20"
+              fontWeight={500}
+            >
+              Placeholder Content
+            </CustomTypography>
+          </Box>
 
-        <CustomTypography variant="h2" fontSize={'16px'} color="#3B383E">
-          Start by selecting a language of App
-        </CustomTypography>
-        <CustomTypography variant="h3" fontSize={'14px'} color="#3B383E">
-          Choose the language for menus and navigation
-        </CustomTypography>
-        <CustomStack
-          data={languageData}
-          itemsPerRow={2}
-          renderItem={(item: any) => (
-            <LanguageBox key={item.id} name={item.name} />
-          )}
-        />
-      </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              gap: 2,
+              borderRadius: '20px 20px 0 0',
+              padding: '15px',
+              backgroundColor: '#FFFFFF',
+              marginTop: '-40px',
+            }}
+          >
+            <CommonSelect
+              label=""
+              value={selectedValue}
+              onChange={handleSelectChange}
+              options={[
+                { label: 'English', value: 'english' },
+                { label: 'Marathi', value: 'marathi' },
+                { label: 'Hindi', value: 'hindi' },
+              ]}
+              width="100px"
+              height="32px"
+              borderRadius="8px"
+            />
+            <CommonTextField
+              label="Username"
+              value={formData.userName}
+              onChange={handleChange('userName')}
+              type="text"
+              variant="outlined"
+              helperText={error.userName ? `Required username ` : ''}
+              error={error.userName}
+            />
+            <CommonTextField
+              label="Password"
+              value={formData.password}
+              onChange={handleChange('password')}
+              type="password"
+              variant="outlined"
+              helperText={error.password ? `Required password ` : ''}
+              error={error.password}
+              endIcon={<VisibilityIcon />}
+            />
+            <CustomTypography
+              variant="h1"
+              fontSize="14px"
+              color="#1D1B20"
+              fontWeight={500}
+            >
+              Forgot Password?
+            </CustomTypography>
+
+            <CommonCheckbox
+              checkboxes={checkboxData}
+              onChange={handleCheckboxChange}
+              direction="row"
+            />
+
+            <CustomButton
+              label="Label"
+              width="100%"
+              height="40px"
+              backgroundColor="#6750A4"
+              borderRadius="50px"
+              color="#FFFFFF"
+              fontSize="14px"
+              fontWeight={500}
+              supportingText="Don’t Have An Account? Register"
+              onClick={handleButtonClick}
+            />
+          </Box>
+        </Box>
+      </Grid>
     </Layout>
   );
 }
