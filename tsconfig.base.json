@@ -20,7 +20,9 @@
       "@mfe-next-page-1": ["mfes/mfe-next-page-1/src/pages/_app.tsx"],
       "@mfe-next-page-2": ["mfes/mfe-next-page-2/src/pages/_app.tsx"],
       "@registration": ["mfes/registration/src/app/page.tsx"],
+      "@players": ["mfes/players/src/pages/play.tsx"],
       "@shared-lib": ["libs/shared-lib/src/index.ts"]
+      
     }
   },
   "exclude": ["node_modules", "tmp"]
