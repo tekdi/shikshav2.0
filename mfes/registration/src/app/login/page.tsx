@@ -1,18 +1,17 @@
 'use client';
 import React, { useState } from 'react';
-import { Box } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import Grid from '@mui/material/Grid2';
-
 import {
   CommonCheckbox,
   CommonSelect,
   CommonTextField,
-  CustomButton,
-  CustomTypography,
   Layout,
+  login,
 } from '@shared-lib';
 import { SelectChangeEvent } from '@mui/material/Select';
+
 const languageData = [
   { id: 1, name: 'English' },
   { id: 2, name: 'Marathi' },
@@ -28,13 +27,14 @@ export default function Login() {
   const [formData, setFormData] = useState({
     userName: '',
     password: '',
-    phoneNumber: '',
   });
   const [error, setError] = useState({
     userName: false,
     password: false,
   });
   const [selectedValue, setSelectedValue] = useState('english');
+  const [checked, setChecked] = useState(false);
+
   const handleChange =
     (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value;
@@ -53,16 +53,39 @@ export default function Login() {
     checked: boolean,
     label: string
   ) => {
+    setChecked(checked);
     console.log(
       `Checkbox '${label}' is now ${checked ? 'checked' : 'unchecked'}`
     );
   };
-  const handleButtonClick = () => {
-    alert('button clicked!');
+
+  const handleButtonClick = async () => {
+    if (formData.userName && formData.password) {
+      try {
+        const response = await login({
+          username: formData.userName,
+          password: formData.password,
+        });
+        if (response) {
+          if (typeof window !== 'undefined' && window.localStorage) {
+            const token = response?.result?.access_token;
+            const refreshToken = response?.result?.refresh_token;
+            localStorage.setItem('token', token);
+            checked
+              ? localStorage.setItem('refreshToken', refreshToken)
+              : localStorage.removeItem('refreshToken');
+          }
+        }
+      } catch (error: any) {
+        console.log(error);
+      }
+    }
   };
+
   const handleSelectChange = (event: SelectChangeEvent) => {
     setSelectedValue(event.target.value);
   };
+
   return (
     <Layout
       isFooter={false}
@@ -76,118 +99,115 @@ export default function Login() {
         sx={{
           flex: 1,
           width: '100%',
-          // width: { xs: '90%', sm: '80%' },
           borderRadius: 1,
           bgcolor: '#FFFFFF',
-          display: 'flex',
           justifyContent: 'center',
+
           padding: 2,
           mx: 'auto',
         }}
       >
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            // flexDirection: 'column',
-            flexDirection: {
-              xs: 'column',
-              // sm: 'row',
-            },
-          }}
-        >
-          <Box
+        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 3 }}>
+          <Grid
+            container
             sx={{
-              height: '-webkit-fill-available',
+              height: '100%',
               backgroundColor: '#444444',
-              display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
             }}
           >
-            <CustomTypography
+            <Typography
               variant="h1"
               fontSize="18px"
               color="#1D1B20"
               fontWeight={500}
             >
               Placeholder Content
-            </CustomTypography>
-          </Box>
+            </Typography>
+          </Grid>
+        </Grid>
 
-          <Box
+        <Grid
+          size={{ xs: 12, sm: 6, md: 6, lg: 6 }}
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            borderRadius: '20px 20px 0 0',
+            padding: '15px',
+            backgroundColor: '#FFFFFF',
+          }}
+        >
+          <CommonSelect
+            label=""
+            value={selectedValue}
+            onChange={handleSelectChange}
+            options={languageData.map(({ name }) => ({
+              label: name,
+              value: name.toLowerCase(),
+            }))}
+            width="100px"
+            height="32px"
+            borderRadius="8px"
+          />
+          <CommonTextField
+            label="Username"
+            value={formData.userName}
+            onChange={handleChange('userName')}
+            type="text"
+            variant="outlined"
+            helperText={error.userName ? `Required username ` : ''}
+            error={error.userName}
+          />
+          <CommonTextField
+            label="Password"
+            value={formData.password}
+            onChange={handleChange('password')}
+            type="password"
+            variant="outlined"
+            helperText={error.password ? `Required password ` : ''}
+            error={error.password}
+            endIcon={<VisibilityIcon />}
+          />
+          <Typography
+            variant="h1"
+            fontSize="14px"
+            color="#1D1B20"
+            fontWeight={500}
+          >
+            Forgot Password?
+          </Typography>
+
+          <CommonCheckbox
+            checkboxes={checkboxData}
+            onChange={handleCheckboxChange}
+            direction="row"
+          />
+
+          <Button
+            onClick={handleButtonClick}
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'flex-start',
-              gap: 2,
-              borderRadius: '20px 20px 0 0',
-              padding: '15px',
-              backgroundColor: '#FFFFFF',
-              marginTop: '-40px',
+              color: '#FFFFFF',
+              width: '100%',
+              height: '40px',
+              bgcolor: '#6750A4',
+              borderRadius: '50px',
+              fontSize: '14px',
+              fontWeight: 500,
             }}
           >
-            <CommonSelect
-              label=""
-              value={selectedValue}
-              onChange={handleSelectChange}
-              options={[
-                { label: 'English', value: 'english' },
-                { label: 'Marathi', value: 'marathi' },
-                { label: 'Hindi', value: 'hindi' },
-              ]}
-              width="100px"
-              height="32px"
-              borderRadius="8px"
-            />
-            <CommonTextField
-              label="Username"
-              value={formData.userName}
-              onChange={handleChange('userName')}
-              type="text"
-              variant="outlined"
-              helperText={error.userName ? `Required username ` : ''}
-              error={error.userName}
-            />
-            <CommonTextField
-              label="Password"
-              value={formData.password}
-              onChange={handleChange('password')}
-              type="password"
-              variant="outlined"
-              helperText={error.password ? `Required password ` : ''}
-              error={error.password}
-              endIcon={<VisibilityIcon />}
-            />
-            <CustomTypography
-              variant="h1"
-              fontSize="14px"
-              color="#1D1B20"
-              fontWeight={500}
-            >
-              Forgot Password?
-            </CustomTypography>
-
-            <CommonCheckbox
-              checkboxes={checkboxData}
-              onChange={handleCheckboxChange}
-              direction="row"
-            />
-
-            <CustomButton
-              label="Label"
-              width="100%"
-              height="40px"
-              backgroundColor="#6750A4"
-              borderRadius="50px"
-              color="#FFFFFF"
-              fontSize="14px"
-              fontWeight={500}
-              supportingText="Don’t Have An Account? Register"
-              onClick={handleButtonClick}
-            />
-          </Box>
-        </Box>
+            Label
+          </Button>
+          <Typography
+            variant="h1"
+            fontSize={'16px'}
+            color="#3B383E"
+            fontWeight={500}
+          >
+            Don’t Have An Account? Register
+          </Typography>
+        </Grid>
       </Grid>
     </Layout>
   );

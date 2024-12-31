@@ -1,7 +1,8 @@
 'use client';
-import { CustomTypography, Layout, CommonTextField } from '@shared-lib';
+import { Layout, CommonTextField } from '@shared-lib';
 import React, { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
+import { Typography } from '@mui/material';
 const NewUser = () => {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -38,14 +39,14 @@ const NewUser = () => {
           }}
         >
           <Avatar alt="Remy Sharp" src="" />
-          <CustomTypography
+          <Typography
             variant="h1"
             fontSize={'16px'}
             color="#3B383E"
             fontWeight={500}
           >
             What’s your name and phone number?
-          </CustomTypography>
+          </Typography>
         </div>
 
         <CommonTextField
