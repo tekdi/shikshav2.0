@@ -11,7 +11,7 @@ import CustomSwitch from '../components/Switches/CustomSwitch';
 import CustomTextField from '../components/Textfields/CustomTextField';
 import { SunbirdPlayer } from '@shared-lib';
 
-const demo: React.FC = () => {
+const Demo: React.FC = () => {
   const [name, setName] = useState<string>('');
   const [country, setCountry] = useState<string>('');
   const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
@@ -142,4 +142,4 @@ const demo: React.FC = () => {
   );
 };
 
-export default demo;
+export default Demo;
