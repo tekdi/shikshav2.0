@@ -8,3 +8,5 @@ export * from './lib/Stack/CustomStack';
 export * from './lib/Typography/CustomTypography';
 export * from './lib/Header/TopAppBar';
 export * from './lib/SunbirdPlayer/SunbirdPlayer';
+export * from './lib/QuestionSetEditor/QuestionSet';
+export * from './lib/CollectionEditor/Collection';
