@@ -5,7 +5,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Sunbird Players</title>
+        <title>Welcome to editors!</title>
       </Head>
       <main className="app">
         <Component {...pageProps} />
