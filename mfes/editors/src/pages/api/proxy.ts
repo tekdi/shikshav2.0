@@ -15,8 +15,6 @@ export default async function handler(
 
   const cookies = cookie.parse(req.headers.cookie || '');
 
-  console.log(cookies?.authToken);
-
   const token = cookies?.authToken || API_KEY;
 
   if (!token) {

@@ -156,75 +156,78 @@ const CollectionEditor: React.FC = () => {
 
   useEffect(() => {
     const loadAssets = () => {
-      if (!document.getElementById('collection-editor-js')) {
-        const script = document.createElement('script');
-        console.log('Hello');
+      const assets = [
+        {
+          id: 'collection-editor-js',
+          src: 'https://cdn.jsdelivr.net/npm/@project-sunbird/sunbird-collection-editor-web-component@latest/sunbird-collection-editor.js',
+          type: 'script',
+        },
+        {
+          id: 'collection-editor-css',
+          src: 'https://cdn.jsdelivr.net/npm/@project-sunbird/sunbird-collection-editor-web-component@latest/styles.css',
+          type: 'link',
+        },
+        {
+          id: 'sunbird-pdf-player-js',
+          src: 'https://cdn.jsdelivr.net/npm/@project-sunbird/sunbird-pdf-player-web-component@1.4.0/sunbird-pdf-player.js',
+          type: 'script',
+        },
+        {
+          id: 'sunbird-pdf-player-css',
+          src: 'https://cdn.jsdelivr.net/npm/@project-sunbird/sunbird-pdf-player-web-component@1.4.0/styles.css',
+          type: 'link',
+        },
+        {
+          id: 'sunbird-video-player.js',
+          src: 'https://cdn.jsdelivr.net/npm/@project-sunbird/sunbird-video-player-web-component@1.2.5/sunbird-video-player.js',
+          type: 'script',
+        },
+        {
+          id: 'sunbird-video-player-css',
+          src: 'https://cdn.jsdelivr.net/npm/@project-sunbird/sunbird-video-player-web-component@1.2.5/styles.css',
+          type: 'link',
+        },
+      ];
 
-        script.id = 'collection-editor-js';
-        script.src =
-          'https://cdn.jsdelivr.net/npm/@project-sunbird/sunbird-collection-editor-web-component@latest/sunbird-collection-editor.js';
-        script.async = true;
-        script.onload = () => setAssetsLoaded(true);
-        document.body.appendChild(script);
-      } else {
-        setAssetsLoaded(true);
+      assets.forEach((asset) => {
+        if (!document.getElementById(asset.id)) {
+          if (asset.type === 'script') {
+            const script = document.createElement('script');
+            script.id = asset.id;
+            script.src = asset.src;
+            script.async = true;
+            script.onload = () => setAssetsLoaded(true);
+            document.body.appendChild(script);
+          } else if (asset.type === 'link') {
+            const link = document.createElement('link');
+            link.id = asset.id;
+            link.rel = 'stylesheet';
+            link.href = asset.src;
+            document.head.appendChild(link);
+          }
+        }
+      });
+    };
+
+    const removeAsset = (id: string) => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.parentNode?.removeChild(element);
       }
-
-      // Load Collection Editor CSS if not already loaded
-      if (!document.getElementById('collection-editor-css')) {
-        const link = document.createElement('link');
-        console.log('PDF Player loaded');
-        link.id = 'collection-editor-css';
-        link.rel = 'stylesheet';
-        link.href =
-          'https://cdn.jsdelivr.net/npm/@project-sunbird/sunbird-collection-editor-web-component@latest/styles.css';
-        document.head.appendChild(link);
-      }
-
-      if (!document.getElementById('sunbird-pdf-player-js')) {
-        const pdfScript = document.createElement('script');
-        pdfScript.id = 'sunbird-pdf-player-js';
-        pdfScript.src =
-          'https://cdn.jsdelivr.net/npm/@project-sunbird/sunbird-pdf-player-web-component@1.4.0/sunbird-pdf-player.js';
-        pdfScript.async = true;
-        document.body.appendChild(pdfScript);
-      }
-
-      if (!document.getElementById('sunbird-pdf-player-css')) {
-        const pdfLink = document.createElement('link');
-        pdfLink.id = 'sunbird-pdf-player-css';
-        pdfLink.rel = 'stylesheet';
-        pdfLink.href =
-          'https://cdn.jsdelivr.net/npm/@project-sunbird/sunbird-pdf-player-web-component@1.4.0/styles.css';
-        document.head.appendChild(pdfLink);
-      }
-
-      const videoScript = document.createElement('script');
-      console.log('Video Player loaded');
-      videoScript.id = 'sunbird-video-player.js';
-      videoScript.src =
-        'https://cdn.jsdelivr.net/npm/@project-sunbird/sunbird-video-player-web-component@1.2.5/sunbird-video-player.js';
-      videoScript.async = true;
-      document.body.appendChild(videoScript);
-
-      const videoLink = document.createElement('link');
-      videoLink.id = 'sunbird-video-player-css';
-      videoLink.rel = 'stylesheet';
-      videoLink.href =
-        'https://cdn.jsdelivr.net/npm/@project-sunbird/sunbird-video-player-web-component@1.2.5/styles.css';
-      document.head.appendChild(videoLink);
     };
 
     loadAssets();
 
     return () => {
-      const reflectScript = document.getElementById('reflect-metadata');
-      const editorScript = document.getElementById('collection-editor-js');
-      const editorCSS = document.getElementById('collection-editor-css');
-
-      if (reflectScript) document.head.removeChild(reflectScript);
-      if (editorScript) document.body.removeChild(editorScript);
-      if (editorCSS) document.head.removeChild(editorCSS);
+      const assetIds = [
+        'collection-editor-js',
+        'collection-editor-css',
+        'sunbird-pdf-player-js',
+        'sunbird-pdf-player-css',
+        'sunbird-video-player.js',
+        'sunbird-video-player-css',
+      ];
+      assetIds.forEach(removeAsset);
     };
   }, []);
 
