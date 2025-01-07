@@ -1,6 +1,4 @@
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-const navigate = useNavigate();
 const baseURL = 'http://localhost:3000';
 console.log('Base URL-services:', baseURL);
 const instance = axios.create({
@@ -30,7 +28,7 @@ instance.interceptors.response.use(
       if (error.response?.status === 401) {
         console.error('Unauthorized, logging out...');
         localStorage.removeItem('authToken');
-        navigate('/login');
+        window.location.href = '/login';
       } else if (!error.response) {
         console.error('Network error occurred');
       }
