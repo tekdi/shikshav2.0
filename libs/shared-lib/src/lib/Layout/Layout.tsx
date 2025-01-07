@@ -60,7 +60,7 @@ export const Layout: React.FC<LayoutProps> = ({
   drawerItems = [],
   sx = {},
 }) => {
-  const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const handleButtonClick = () => {
     console.log('Footer button clicked!');
   };
@@ -98,7 +98,7 @@ export const Layout: React.FC<LayoutProps> = ({
               title="Dashboard"
               bgcolor="#FDF7FF"
               actionIcons={topAppBarIcons}
-              menuIconClick={() => setDrawerOpen(true)}
+              menuIconClick={() => setIsDrawerOpen(true)}
               {...showTopAppBar}
             />
           </Box>
@@ -106,7 +106,7 @@ export const Layout: React.FC<LayoutProps> = ({
       )}
       <CommonDrawer
         open={isDrawerOpen}
-        onDrawerClose={() => setDrawerOpen(false)}
+        onDrawerClose={() => setIsDrawerOpen(false)}
         items={drawerItems}
       />
       {showSearch && (
