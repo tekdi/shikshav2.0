@@ -13,16 +13,24 @@ const NewUser = () => {
     lastName: false,
     phoneNumber: false,
   });
+  const isValidPhoneNumber = (phone: string): boolean => {
+    const phoneRegex = /^[0-9]{10}$/;
+    return phoneRegex.test(phone);
+  };
   const handleChange =
     (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value;
+      const sanitizedValue = value.trim();
       setFormData({
         ...formData,
-        [field]: value,
+        [field]: sanitizedValue,
       });
       setError({
         ...error,
-        [field]: value.trim() === '',
+        [field]:
+          field === 'phoneNumber'
+            ? !isValidPhoneNumber(sanitizedValue)
+            : sanitizedValue === '',
       });
     };
 
