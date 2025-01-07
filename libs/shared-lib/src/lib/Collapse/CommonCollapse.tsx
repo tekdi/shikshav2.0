@@ -37,11 +37,15 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
           expandIcon={<ExpandMoreIcon />}
           aria-controls={`${id}-content`}
           id={`${id}-header`}
+          aria-expanded={defaultExpanded}
+          role="button"
           sx={{
             backgroundColor: '#E9DDFF',
           }}
         >
-          <Typography component="span">{title}</Typography>
+          <Typography component="h3" variant="subtitle1">
+            {title}
+          </Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Box

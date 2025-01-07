@@ -37,7 +37,7 @@ export const CommonSelect: React.FC<DropdownProps> = ({
         <InputLabel id={`${label}-label`}>{label}</InputLabel>
         <Select
           labelId={`${label}-label`}
-          value={value.toString()}
+          value={value === null || value === undefined ? '' : String(value)}
           label={label}
           onChange={onChange}
           sx={{

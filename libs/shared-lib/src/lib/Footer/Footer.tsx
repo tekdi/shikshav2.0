@@ -68,7 +68,7 @@ export const Footer: React.FC<FooterProps> = ({
         </Button>
         {buttonSupportingText && (
           <Typography
-            variant="h1"
+            variant="body1"
             fontSize={'16px'}
             color="#3B383E"
             fontWeight={500}

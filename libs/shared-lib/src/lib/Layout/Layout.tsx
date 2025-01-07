@@ -62,7 +62,7 @@ export const Layout: React.FC<LayoutProps> = ({
 }) => {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const handleButtonClick = () => {
-    alert('Footer button clicked!');
+    console.log('Footer button clicked!');
   };
 
   return (

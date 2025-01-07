@@ -45,9 +45,9 @@ export const CommonCard: React.FC<CommonCardProps> = ({
       {image && orientation === 'horizontal' && (
         <CardMedia
           component="img"
-          height="194"
           image={image}
           alt={imageAlt || ''}
+          sx={{ height: { xs: '144px', sm: '194px' } }}
         />
       )}
       <CardHeader
