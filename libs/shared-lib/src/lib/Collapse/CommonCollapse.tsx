@@ -38,7 +38,6 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
           aria-controls={`${id}-content`}
           id={`${id}-header`}
           aria-expanded={defaultExpanded}
-          role="button"
           sx={{
             backgroundColor: '#E9DDFF',
           }}

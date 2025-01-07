@@ -18,7 +18,7 @@ instance.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(new Error(error?.message || 'Request error'))
 );
 
 instance.interceptors.response.use(
@@ -34,9 +34,8 @@ instance.interceptors.response.use(
       }
     }
     if (!(error instanceof Error)) {
-      return Promise.reject(
-        new Error(error?.message || 'An unknown error occurred')
-      );
+      const message = error?.message || 'An unknown error occurred';
+      return Promise.reject(new Error(message));
     }
     return Promise.reject(error);
   }

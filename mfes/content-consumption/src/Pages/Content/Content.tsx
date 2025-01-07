@@ -18,7 +18,6 @@ export default function Content() {
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState('');
   const [tabValue, setTabValue] = React.useState(0);
-  const [drawerOpen, setDrawerOpen] = React.useState(false);
   const [contentData, setContentData] = useState<ContentItem[]>([]);
   const fetchContent = async () => {
     try {
