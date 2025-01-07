@@ -35,7 +35,10 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
     <Drawer anchor="left" open={open} onClose={onDrawerClose}>
       <List>
         {items.map((item, index) => (
-          <ListItemButton key={index} onClick={() => handleItemClick(item.to)}>
+          <ListItemButton
+            key={item.text}
+            onClick={() => handleItemClick(item.to)}
+          >
             {item.icon && <ListItemIcon>{item.icon}</ListItemIcon>}
             <ListItemText primary={item.text} />
           </ListItemButton>

@@ -9,12 +9,6 @@ interface RefreshParams {
 
 let baseUrl = 'https://default-api-url.com';
 
-// if (typeof window !== 'undefined') {
-//   baseUrl =
-//     process.env.NEXT_PUBLIC_API_BASE_URL || 'https://default-api-url.com';
-//   console.log('Login API URL:', baseUrl);
-// }
-// console.log('Login API URL:', process.env.VITE_API_BASE_URL);
 export const login = async ({
   username,
   password,

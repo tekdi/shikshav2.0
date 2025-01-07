@@ -1,13 +1,12 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
-import { CommonCard, CommonTabs, Layout, CommonDrawer } from '@shared-lib';
+import { CommonCard, CommonTabs, Layout, ContentSearch } from '@shared-lib';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SearchIcon from '@mui/icons-material/Search';
 import Grid from '@mui/material/Grid2';
 import { useNavigate } from 'react-router-dom';
 import MailIcon from '@mui/icons-material/Mail';
-import { ContentSearch } from '@shared-lib';
 interface ContentItem {
   name: string;
   gradeLevel: string[];
@@ -21,30 +20,26 @@ export default function Content() {
   const [tabValue, setTabValue] = React.useState(0);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const [contentData, setContentData] = useState<ContentItem[]>([]);
-
+  const fetchContent = async () => {
+    try {
+      const result = await ContentSearch();
+      setContentData(result || []);
+    } catch (error) {
+      console.error('Failed to fetch content:', error);
+    }
+  };
   useEffect(() => {
-    // Call the ContentSearch API and set the response data
-    const fetchContent = async () => {
-      try {
-        const result = await ContentSearch();
-        console.log('result---', result);
-        setContentData(result || []);
-      } catch (error) {
-        console.error('Failed to fetch content:', error);
-      }
-    };
-
     fetchContent();
   }, []);
+
   const handleAccountClick = () => {
     console.log('Account clicked');
   };
-  const handleMenuClick = () => {
-    setDrawerOpen(!drawerOpen);
-  };
 
   const handleSearchClick = () => {
-    console.log('Search button clicked');
+    if (searchValue.trim()) {
+      fetchContent();
+    }
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -14,7 +14,7 @@ const NewUser = () => {
     phoneNumber: false,
   });
   const isValidPhoneNumber = (phone: string): boolean => {
-    const phoneRegex = /^[0-9]{10}$/;
+    const phoneRegex = /^\d{10}$/;
     return phoneRegex.test(phone);
   };
   const handleChange =

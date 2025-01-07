@@ -1,5 +1,6 @@
 import axios from 'axios';
-
+import { useNavigate } from 'react-router-dom';
+const navigate = useNavigate();
 const baseURL = 'http://localhost:3000';
 console.log('Base URL-services:', baseURL);
 const instance = axios.create({
@@ -12,9 +13,9 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
-      const refresh_token = localStorage.getItem('refreshToken');
-      if (refresh_token) {
-        config.headers.Authorization = `Bearer ${refresh_token}`;
+      const authToken = localStorage.getItem('authToken');
+      if (authToken) {
+        config.headers.Authorization = `Bearer ${authToken}`;
       }
     }
     return config;
@@ -25,10 +26,19 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (typeof window !== 'undefined' && error.response?.status === 401) {
-      console.error('Unauthorized, logging out...');
-      localStorage.removeItem('authToken');
-      window.location.href = '/login'; // Redirect to login page
+    if (typeof window !== 'undefined') {
+      if (error.response?.status === 401) {
+        console.error('Unauthorized, logging out...');
+        localStorage.removeItem('authToken');
+        navigate('/login');
+      } else if (!error.response) {
+        console.error('Network error occurred');
+      }
+    }
+    if (!(error instanceof Error)) {
+      return Promise.reject(
+        new Error(error?.message || 'An unknown error occurred')
+      );
     }
     return Promise.reject(error);
   }

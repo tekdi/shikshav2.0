@@ -77,8 +77,8 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
         </AccordionDetails>
         {actions.length > 0 && (
           <AccordionActions>
-            {actions.map((action, index) => (
-              <Button key={index} onClick={action.onClick}>
+            {actions.map((action) => (
+              <Button key={action.label} onClick={action.onClick}>
                 {action.label}
               </Button>
             ))}

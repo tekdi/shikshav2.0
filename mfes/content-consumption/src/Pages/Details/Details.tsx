@@ -129,6 +129,7 @@ export default function Content() {
             <img
               src={'/static/images/cards/salad.jpg'}
               style={{ width: '100%', borderRadius: '8px' }}
+              alt="title"
             />
             <Typography
               variant="h6"

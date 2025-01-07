@@ -4,7 +4,6 @@ export * from './lib/Button/CustomButton';
 export * from './lib/Textfield/CommonTextfeild';
 export * from './lib/Typography/CustomTypography';
 export * from './lib/Layout/Layout';
-export * from './lib/Typography/CustomTypography';
 export * from './lib/Header/TopAppBar';
 export * from './lib/Checkbox/CommonCheckbox';
 export * from './lib/Select/CommonSelect';

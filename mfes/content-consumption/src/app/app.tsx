@@ -38,7 +38,7 @@ export function App() {
           }
         />
         <Route path="/content" element={<Content />} />
-        {/* <Route path="/details" element={<Details />} /> */}
+        <Route path="/details" element={<Details />} />
         <Route path="/player" element={<Player />} />
 
         <Route

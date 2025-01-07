@@ -7,9 +7,9 @@ import DialogTitle from '@mui/material/DialogTitle';
 interface CommonDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  header?: React.ReactNode; // Custom header component
-  content?: React.ReactNode; // Custom content
-  actions?: React.ReactNode; // Custom actions
+  header?: React.ReactNode;
+  content?: React.ReactNode;
+  actions?: React.ReactNode;
   disableCloseOnBackdropClick?: boolean;
 }
 
@@ -34,46 +34,3 @@ export const CommonDialog: React.FC<CommonDialogProps> = ({
     </Dialog>
   );
 };
-
-/* ================ use of commonDialog =================*/
-
-// import React, { useState } from 'react';
-// import Button from '@mui/material/Button';
-// import { CommonDialog } from './CommonDialog';
-
-// export const ExampleUsage = () => {
-//   const [dialogOpen, setDialogOpen] = useState(false);
-
-//   const handleOpenDialog = () => setDialogOpen(true);
-//   const handleCloseDialog = () => setDialogOpen(false);
-
-//   const customHeader = <span>Custom Dialog Title</span>;
-//   const customContent = (
-//     <p>
-//       This is a custom dialog content where you can use any JSX elements.
-//     </p>
-//   );
-//   const customActions = (
-//     <>
-//       <Button onClick={handleCloseDialog}>Cancel</Button>
-//       <Button onClick={() => console.log('Confirmed')} autoFocus>
-//         Confirm
-//       </Button>
-//     </>
-//   );
-
-//   return (
-//     <>
-//       <Button variant="outlined" onClick={handleOpenDialog}>
-//         Open Custom Dialog
-//       </Button>
-//       <CommonDialog
-//         isOpen={dialogOpen}
-//         onClose={handleCloseDialog}
-//         header={customHeader}
-//         content={customContent}
-//         actions={customActions}
-//       />
-//     </>
-//   );
-// };

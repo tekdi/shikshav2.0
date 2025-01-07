@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import Box from '@mui/material/Box';
-import { Header } from '../Header/Header';
 import { Footer } from '../Footer/Footer';
 import { TopAppBar } from '../Header/TopAppBar';
 import { CommonSearch } from '../Search/CommonSearch';
 import { CommonDrawer } from '../Drawer/CommonDrawer';
-import { BrowserRouter as Router } from 'react-router-dom';
 interface LayoutProps {
   children: React.ReactNode;
   isFooter?: boolean;
@@ -66,8 +64,6 @@ export const Layout: React.FC<LayoutProps> = ({
   const handleButtonClick = () => {
     alert('Footer button clicked!');
   };
-  const handleNotificationsClick = () =>
-    console.log('Notifications icon clicked');
 
   return (
     <Box

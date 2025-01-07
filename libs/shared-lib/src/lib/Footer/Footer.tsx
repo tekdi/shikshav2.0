@@ -1,6 +1,5 @@
 import React from 'react';
 import { Box, Button, Typography } from '@mui/material';
-import { CustomButton } from '../Button/CustomButton';
 
 interface FooterProps {
   buttonLabel: string;

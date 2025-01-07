@@ -1,18 +1,13 @@
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Avatar from '@mui/material/Avatar';
-import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ShareIcon from '@mui/icons-material/Share';
-import { ThemeProvider } from '@mui/material/styles';
-import { theme } from '@shikshav2.0/ui-theme';
+
 interface CommonCardProps {
   title: string;
   avatarLetter?: string;
@@ -43,7 +38,6 @@ export const CommonCard: React.FC<CommonCardProps> = ({
   onClick,
 }) => {
   return (
-    // <ThemeProvider theme={theme}>
     <Card
       sx={{ height: minheight, cursor: onClick ? 'pointer' : 'default' }}
       onClick={onClick}
@@ -82,6 +76,5 @@ export const CommonCard: React.FC<CommonCardProps> = ({
       {children && <CardContent>{children}</CardContent>}
       {actions && <CardActions disableSpacing>{actions}</CardActions>}
     </Card>
-    // </ThemeProvider>
   );
 };

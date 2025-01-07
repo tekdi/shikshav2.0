@@ -6,25 +6,11 @@ const data = {
     filters: {},
   },
 };
-// let searchApiUrl: string;
 
-// if (typeof window !== 'undefined') {
-//   searchApiUrl =
-//     import.meta.env.VITE_SSUNBIRD_BASE_URL || 'https://default-search-api.com';
-// } else {
-//   searchApiUrl =
-//     process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL ||
-//     'https://default-search-api.com';
-// }
-
-// console.log('Search API URL:', import.meta.env.VITE_PUBLIC_SSUNBIRD_BASE_URL);
-// Configure Axios request
 export const ContentSearch = async (): Promise<any> => {
   try {
     // Ensure the environment variable is defined
-    const searchApiUrl =
-      // import.meta.env.VITE_PUBLIC_SSUNBIRD_BASE_URL ||
-      'https://default-search-api.com';
+    const searchApiUrl = 'https://default-search-api.com';
 
     console.log('Search API URL:', searchApiUrl);
 

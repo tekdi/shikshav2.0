@@ -2,7 +2,6 @@ import * as React from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid2';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -10,7 +9,7 @@ interface TabPanelProps {
   value: number;
 }
 
-function CustomTabPanel(props: TabPanelProps) {
+function CustomTabPanel(props: Readonly<TabPanelProps>) {
   const { children, value, index, ...other } = props;
 
   return (
@@ -58,7 +57,7 @@ export const CommonTabs: React.FC<CommonTabsProps> = ({
         <Tabs value={value} onChange={onChange} aria-label={ariaLabel}>
           {tabs.map((tab, index) => (
             <Tab
-              key={index}
+              key={tab.label}
               icon={tab.icon ?? undefined}
               label={tab.label}
               {...a11yProps(index)}
@@ -68,7 +67,7 @@ export const CommonTabs: React.FC<CommonTabsProps> = ({
       </Box>
 
       {tabs.map((tab, index) => (
-        <CustomTabPanel key={index} value={value} index={index}>
+        <CustomTabPanel key={tab.label} value={value} index={index}>
           {tab.content}
         </CustomTabPanel>
       ))}
