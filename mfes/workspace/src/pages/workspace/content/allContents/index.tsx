@@ -1,30 +1,13 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import Layout from '../../../../components/Layout';
-import {
-  Typography,
-  Box,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  TablePagination,
-  IconButton,
-  useTheme,
-} from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import UpReviewTinyImage from '@mui/icons-material/LibraryBooks';
+import { Typography, Box, useTheme } from '@mui/material';
 import SearchBox from '../../../../components/SearchBox';
-import { deleteContent, getContent } from '../../../../services/ContentService';
+import { getContent } from '../../../../services/ContentService';
 import { timeAgo } from '../../../../utils/Helper';
 import Loader from '../../../../components/Loader';
-import NoDataFound from '../../../../components/NoDataFound';
-import { MIME_TYPE } from '../../../../utils/app.config';
-import router from 'next/router';
 import PaginationComponent from '../../../../components/PaginationComponent';
 import { LIMIT } from '../../../../utils/app.constant';
 import WorkspaceText from '../../../../components/WorkspaceText';
-import { Table as KaTable } from 'ka-table';
 import { DataType } from 'ka-table/enums';
 import 'ka-table/style.css';
 import KaTableComponent from '../../../../components/KaTableComponent';

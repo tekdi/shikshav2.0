@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Layout from '../../../../components/Layout';
 import { Typography, Box, useTheme, Paper, Grid } from '@mui/material';
-import ContentCard from '../../../../components/ContentCard';
-import DescriptionIcon from '@mui/icons-material/Description';
-import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
-import UploadIcon from '@mui/icons-material/Upload';
 import { useRouter } from 'next/router';
 import {
   createCourse,
@@ -13,8 +9,6 @@ import {
 import QuizOutlinedIcon from '@mui/icons-material/QuizOutlined';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import VideoLibraryOutlinedIcon from '@mui/icons-material/VideoLibraryOutlined';
-import largeVideoIcon from '/public/150+.png';
-import Image from 'next/image';
 import WorkspaceText from '../../../../components/WorkspaceText';
 import { getLocalStoredUserId } from '../../../../services/LocalStorageService';
 

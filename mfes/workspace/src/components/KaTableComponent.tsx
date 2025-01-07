@@ -2,14 +2,10 @@ import React, { useState } from 'react';
 import { Table as KaTable } from 'ka-table';
 import { DataType, EditingMode, SortingMode } from 'ka-table/enums';
 import { Typography, useTheme, IconButton, Box, Grid } from '@mui/material';
-import UpReviewTinyImage from '@mui/icons-material/LibraryBooks';
 import 'ka-table/style.css';
-import DeleteIcon from '@mui/icons-material/Delete';
 import router from 'next/router';
 import { MIME_TYPE } from '../utils/app.config';
-import Image from 'next/image';
 import ActionIcon from './ActionIcon';
-import { Padding } from '@mui/icons-material';
 interface CustomTableProps {
   data: any[]; // Define a more specific type for your data if needed
   columns: Array<{

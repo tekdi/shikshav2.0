@@ -1,10 +1,6 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import {
-  Experimental_CssVarsProvider as CssVarsProvider,
-  useColorScheme,
-  useTheme,
-} from '@mui/material/styles';
+import { Experimental_CssVarsProvider as CssVarsProvider } from '@mui/material/styles';
 import '../styles/global.css';
 import customTheme from '../styles/CustomTheme';
 

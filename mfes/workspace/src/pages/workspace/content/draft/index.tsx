@@ -1,29 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Layout from '../../../../components/Layout';
-import {
-  Typography,
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  IconButton,
-  CircularProgress,
-} from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Typography, Box, CircularProgress } from '@mui/material';
 import { getContent } from '../../../../services/ContentService';
 import SearchBox from '../../../../components/SearchBox';
 import PaginationComponent from '../../../../components/PaginationComponent';
-import NoDataFound from '../../../../components/NoDataFound';
 import { LIMIT } from '../../../../utils/app.constant';
 import { useRouter } from 'next/router';
-import { MIME_TYPE } from '../../../../utils/app.config';
 import WorkspaceText from '../../../../components/WorkspaceText';
 import { DataType } from 'ka-table/enums';
 import KaTableComponent from '../../../../components/KaTableComponent';
-import Paper from '@mui/material/Paper';
 import { timeAgo } from '../../../../utils/Helper';
 import useSharedStore from '../../../../utils/useSharedState';
 

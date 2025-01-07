@@ -2,11 +2,8 @@ import React from 'react';
 import {
   Dialog,
   DialogActions,
-  DialogContent,
-  DialogContentText,
   DialogTitle,
   Button,
-  IconButton,
   Typography,
   Box,
   Divider,

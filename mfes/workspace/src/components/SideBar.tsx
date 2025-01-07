@@ -18,11 +18,9 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
-import logo from '/public/logo.png';
 import { Role } from '../utils/app.constant';
 import { getLocalStoredUserRole } from '../services/LocalStorageService';
 const userRole = getLocalStoredUserRole();

@@ -26,19 +26,6 @@ export const getPrimaryCategory = async () => {
   }
 };
 
-// const PrimaryCategoryData = async () => {
-//   const response = await getPrimaryCategory();
-//   const collectionPrimaryCategories =
-//     response?.channel?.collectionPrimaryCategories;
-//   const contentPrimaryCategories = response?.channel?.contentPrimaryCategories;
-
-//   const PrimaryCategory = [
-//     ...collectionPrimaryCategories,
-//     ...contentPrimaryCategories,
-//   ];
-//   return PrimaryCategory;
-// };
-
 const defaultReqBody = {
   request: {
     filters: {
