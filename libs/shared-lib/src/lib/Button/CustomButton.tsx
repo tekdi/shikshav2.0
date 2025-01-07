@@ -1,8 +1,6 @@
 'use client';
 import React from 'react';
-import { Box, Button } from '@mui/material';
-import { CustomTypography } from '../Typography/CustomTypography';
-
+import { Box, Button, Typography } from '@mui/material';
 interface CustomButtonProps {
   label?: string;
   width?: string;
@@ -36,6 +34,9 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         paddingTop: 2,
         width: '100%',
         display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        alignItems: 'center',
         justifyContent: 'center',
       }}
     >
@@ -59,14 +60,14 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         {label}
       </Button>
       {supportingText && (
-        <CustomTypography
+        <Typography
           variant="h1"
           fontSize={'16px'}
           color="#3B383E"
           fontWeight={500}
         >
           {supportingText}
-        </CustomTypography>
+        </Typography>
       )}
     </Box>
   );
