@@ -26,7 +26,6 @@ export default function Content() {
   const [searchValue, setSearchValue] = useState('');
   const [tabValue, setTabValue] = React.useState(0);
   const [contentData, setContentData] = useState<ContentItem[]>([]);
-
   const fetchContent = async () => {
     try {
       const result = await ContentSearch();
