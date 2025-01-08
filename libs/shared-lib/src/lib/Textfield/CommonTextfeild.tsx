@@ -1,9 +1,8 @@
 'use client';
 import React from 'react';
-import { TextField } from '@mui/material';
-import { CustomTypography } from '../Typography/CustomTypography';
+import { TextField, InputAdornment, Typography } from '@mui/material';
 interface CommonTextFieldProps {
-  label: string;
+  label?: string;
   value: string | number;
   onChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   helperText?: string;
@@ -16,21 +15,25 @@ interface CommonTextFieldProps {
   fontSize?: string | number;
   fontWeight?: string | number;
   color?: string;
+  startIcon?: React.ReactNode;
+  endIcon?: React.ReactNode;
 }
 export const CommonTextField: React.FC<CommonTextFieldProps> = ({
-  label = 'Enter Text',
+  label,
   value = 'Placeholder',
   onChange,
   type = 'text',
   variant = 'outlined',
   helperText = '',
-  width = '328px',
+  width = '100%',
   error = false,
   supportingText = '',
   fullWidth = true,
   fontSize = '14px',
   fontWeight = 400,
   color = '#000000',
+  startIcon,
+  endIcon,
   ...props
 }) => {
   return (
@@ -50,18 +53,26 @@ export const CommonTextField: React.FC<CommonTextFieldProps> = ({
         fullWidth
         helperText={helperText}
         error={error}
+        InputProps={{
+          startAdornment: startIcon && (
+            <InputAdornment position="start">{startIcon}</InputAdornment>
+          ),
+          endAdornment: endIcon && (
+            <InputAdornment position="end">{endIcon}</InputAdornment>
+          ),
+        }}
         sx={{ width: width }}
         {...props}
       />
       {supportingText && (
-        <CustomTypography
+        <Typography
           variant="h1"
-          fontSize={fontSize}
-          color={color}
-          fontWeight={fontWeight}
+          fontSize="14px"
+          color="#1D1B20"
+          fontWeight={400}
         >
           {supportingText}
-        </CustomTypography>
+        </Typography>
       )}
     </div>
   );

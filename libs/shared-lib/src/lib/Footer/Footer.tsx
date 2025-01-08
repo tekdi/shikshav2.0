@@ -1,6 +1,5 @@
 import React from 'react';
-import { Box } from '@mui/material';
-import { CustomButton } from '../Button/CustomButton';
+import { Box, Button, Typography } from '@mui/material';
 
 interface FooterProps {
   buttonLabel: string;
@@ -42,18 +41,42 @@ export const Footer: React.FC<FooterProps> = ({
         backgroundColor: '#F9F9F9',
       }}
     >
-      <CustomButton
-        label={buttonLabel}
-        width={buttonWidth}
-        height={buttonHeight}
-        backgroundColor={buttonBackgroundColor}
-        borderRadius={buttonBorderRadius}
-        color={buttonColor}
-        fontSize={buttonFontSize}
-        fontWeight={buttonFontWeight}
-        supportingText={buttonSupportingText}
-        onClick={onButtonClick}
-      />
+      <Box
+        sx={{
+          borderTop: '1px solid #0000004D',
+          paddingTop: 2,
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Button
+          sx={{
+            width: buttonWidth,
+            height: buttonHeight,
+            bgcolor: buttonBackgroundColor,
+            borderRadius: buttonBorderRadius,
+            color: buttonColor,
+            fontSize: buttonFontSize,
+            fontWeight: buttonFontWeight,
+          }}
+        >
+          {buttonLabel}
+        </Button>
+        {buttonSupportingText && (
+          <Typography
+            variant="body1"
+            fontSize={'16px'}
+            color="#3B383E"
+            fontWeight={500}
+          >
+            {buttonSupportingText}
+          </Typography>
+        )}
+      </Box>
     </Box>
   );
 };
