@@ -11,6 +11,8 @@ export default function Index() {
    *
    * Note: The corresponding styles are in the ./index.css file.
    */
+  const Mfe_React = process.env.NEXT_PUBLIC_REACT_PROJECT;
+
   return (
     <div id="welcome">
       <Link href="/">
@@ -20,7 +22,7 @@ export default function Index() {
       </Link>
       <h1>React Microfrontend Iframe</h1>
       <iframe
-        src="http://localhost:4200"
+        src={Mfe_React}
         style={{
           width: '100vw',
           height: '100vh',
