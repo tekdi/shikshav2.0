@@ -34,18 +34,7 @@ const data = {
     },
   },
 };
-// let searchApiUrl: string;
 
-// if (typeof window !== 'undefined') {
-//   searchApiUrl =
-//     import.meta.env.VITE_SSUNBIRD_BASE_URL || 'https://default-search-api.com';
-// } else {
-//   searchApiUrl =
-//     process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL ||
-//     'https://default-search-api.com';
-// }
-
-// Configure Axios request
 export const ContentSearch = async (): Promise<any> => {
   try {
     // Ensure the environment variable is defined

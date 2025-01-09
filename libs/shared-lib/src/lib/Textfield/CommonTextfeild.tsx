@@ -20,7 +20,7 @@ interface CommonTextFieldProps {
 }
 export const CommonTextField: React.FC<CommonTextFieldProps> = ({
   label,
-  value = 'Placeholder',
+  value = '',
   onChange,
   type = 'text',
   variant = 'outlined',

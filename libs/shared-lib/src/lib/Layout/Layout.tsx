@@ -4,7 +4,6 @@ import { Footer } from '../Footer/Footer';
 import { TopAppBar } from '../Header/TopAppBar';
 import { CommonSearch } from '../Search/CommonSearch';
 import { CommonDrawer } from '../Drawer/CommonDrawer';
-import { BrowserRouter } from 'react-router-dom';
 interface LayoutProps {
   children: React.ReactNode;
   isFooter?: boolean;

@@ -5,6 +5,7 @@ import React, {
   useState,
   useContext,
   useEffect,
+  useMemo,
 } from 'react';
 import { ThemeProvider as MuiThemeProvider, CssBaseline } from '@mui/material';
 import { lightTheme, darkTheme } from './theme';
@@ -33,11 +34,11 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({
     setMode(newMode);
     localStorage.setItem('theme', newMode);
   };
-
+  const value = useMemo(() => ({ mode, toggleTheme }), [mode, toggleTheme]);
   const currentTheme = mode === 'light' ? lightTheme : darkTheme;
 
   return (
-    <ThemeContext.Provider value={{ mode, toggleTheme }}>
+    <ThemeContext.Provider value={value}>
       <MuiThemeProvider theme={currentTheme}>
         <CssBaseline />
         {children}

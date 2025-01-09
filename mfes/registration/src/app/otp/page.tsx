@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { Input, TextField, Box } from '@mui/material';
+import { TextField, Box } from '@mui/material';
 
 export default function OTP({
   separator,
   length,
   value,
   onChange,
-}: {
+}: Readonly<{
   separator: React.ReactNode;
   length: number;
   value: string;
   onChange: React.Dispatch<React.SetStateAction<string>>;
-}) {
+}>) {
   const inputRefs = React.useRef<HTMLInputElement[]>(
     new Array(length).fill(null)
   );
@@ -83,6 +83,9 @@ export default function OTP({
     currentIndex: number
   ) => {
     const currentValue = event.target.value;
+    if (!/^\d*$/.test(currentValue)) {
+      return;
+    }
     let newOtp = value.split('');
     newOtp[currentIndex] = currentValue;
     let indexToEnter = 0;
@@ -120,6 +123,7 @@ export default function OTP({
     // Check if there is text data in the clipboard
     if (clipboardData.types.includes('text/plain')) {
       let pastedText = clipboardData.getData('text/plain');
+      pastedText = pastedText.substring(0, length).trim().replace(/[^\d]/g, ''); // Only allow digits
       pastedText = pastedText.substring(0, length).trim();
       let indexToEnter = 0;
 
@@ -147,34 +151,38 @@ export default function OTP({
 
   return (
     <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-      {new Array(length).fill(null).map((_, index) => (
-        <React.Fragment key={index}>
-          <TextField
-            inputRef={(el) => (inputRefs.current[index] = el!)}
-            aria-label={`Digit ${index + 1} of OTP`}
-            onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) =>
-              handleKeyDown(
-                event as React.KeyboardEvent<HTMLInputElement>,
-                index
-              )
-            }
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              handleChange(event, index)
-            }
-            onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
-              handleClick(
-                event as React.MouseEvent<HTMLInputElement, MouseEvent>,
-                index
-              )
-            }
-            onPaste={(event: React.ClipboardEvent<HTMLInputElement>) =>
-              handlePaste(event, index)
-            }
-            value={value[index] ?? ''}
-          />
-          {index === length - 1 ? null : separator}
-        </React.Fragment>
-      ))}
+      {new Array(length).fill(null).map((_, index) => {
+        const uniqueKey = `otp-input-${index}-${length}`;
+        return (
+          <React.Fragment key={uniqueKey}>
+            <TextField
+              inputRef={(el) => {
+                if (el) {
+                  inputRefs.current[index] = el;
+                }
+              }}
+              aria-label={`Digit ${index + 1} of OTP`}
+              onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) =>
+                handleKeyDown(event, index)
+              }
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                handleChange(event, index)
+              }
+              onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
+                handleClick(
+                  event as React.MouseEvent<HTMLInputElement, MouseEvent>,
+                  index
+                )
+              }
+              onPaste={(event: React.ClipboardEvent<HTMLInputElement>) =>
+                handlePaste(event, index)
+              }
+              value={value[index] ?? ''}
+            />
+            {index === length - 1 ? null : separator}
+          </React.Fragment>
+        );
+      })}
     </Box>
   );
 }
