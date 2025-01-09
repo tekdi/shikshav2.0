@@ -13,7 +13,7 @@ const nextConfig = {
     svgr: false,
   },
 
-  basePath: '/iframenext/', // This should match the path set in Nginx
+  basePath: '/iframenext', // This should match the path set in Nginx
 };
 
 const plugins = [
