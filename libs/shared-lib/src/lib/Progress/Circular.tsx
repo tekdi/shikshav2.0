@@ -13,21 +13,27 @@ export const Circular: React.FC<LoaderProps> = ({
   color = 'primary',
   overlayColor = 'rgba(255, 255, 255, 0.9)',
 }) => {
+  const loadingId = React.useId();
   return (
     <Box
       sx={{
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100vh',
-        width: '100vw',
+        height: '100%',
+        width: '100%',
+        minHeight: '100vh',
         position: 'fixed',
         top: 0,
         left: 0,
+        zIndex: 1300,
+        overflow: 'hidden',
         backgroundColor: overlayColor,
       }}
+      role="progressbar"
+      aria-labelledby={loadingId}
     >
-      <CircularProgress size={size} color={color} />
+      <CircularProgress size={size} color={color} aria-label="Loading..." />
     </Box>
   );
 };

@@ -18,6 +18,8 @@ const NewUser = () => {
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [otp, setOtp] = React.useState('');
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [otpError, setOtpError] = useState('');
   const isValidPhoneNumber = (phone: string): boolean => {
     const phoneRegex = /^\d{10}$/;
     return phoneRegex.test(phone);
@@ -39,14 +41,35 @@ const NewUser = () => {
       });
     };
   const handleButtonClick = () => {
-    if (isValidPhoneNumber(formData.phoneNumber)) {
+    const isFormValid =
+      formData.firstName.trim() !== '' &&
+      formData.lastName.trim() !== '' &&
+      isValidPhoneNumber(formData.phoneNumber);
+
+    if (isFormValid) {
       setIsDialogOpen(true);
     }
   };
   const handleDialogClose = () => {
     setIsDialogOpen(false);
   };
+  const handleOtpSubmit = async () => {
+    if (otp.length !== 6) {
+      setOtpError('Please enter a valid 6-digit OTP');
+      return;
+    }
 
+    setIsVerifying(true);
+    try {
+      // Add API call for OTP verification
+      // await verifyOtp(formData.phoneNumber, otp);
+      handleDialogClose();
+    } catch (error) {
+      setOtpError('Invalid OTP. Please try again.');
+    } finally {
+      setIsVerifying(false);
+    }
+  };
   return (
     <Layout isFooter={false} showBack={true} sx={{ height: '100vh' }}>
       <Grid
@@ -165,11 +188,21 @@ const NewUser = () => {
               onChange={setOtp}
               length={6}
             />
+            {otpError && (
+              <Typography
+                variant="body2"
+                color="error"
+                sx={{ marginTop: '8px', textAlign: 'center' }}
+              >
+                {otpError}
+              </Typography>
+            )}
           </Grid>
         }
         actions={
           <Button
-            onClick={handleDialogClose}
+            onClick={handleOtpSubmit}
+            disabled={isVerifying || otp.length !== 6}
             sx={{
               color: '#FFFFFF',
               width: '100%',
@@ -180,7 +213,7 @@ const NewUser = () => {
               fontWeight: 500,
             }}
           >
-            Submit OTP
+            {isVerifying ? 'Verifying...' : 'Submit OTP'}
           </Button>
         }
       />

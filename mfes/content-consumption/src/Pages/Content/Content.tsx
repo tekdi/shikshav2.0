@@ -28,16 +28,13 @@ export default function Content() {
   const [tabValue, setTabValue] = React.useState(0);
   const [contentData, setContentData] = useState<ContentItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const fetchContent = async () => {
     setIsLoading(true);
-    setError(null);
     try {
       const result = await ContentSearch();
       setContentData(result || []);
     } catch (error) {
       console.error('Failed to fetch content:', error);
-      setError('Failed to fetch content. Please try again.');
     } finally {
       setIsLoading(false);
     }
