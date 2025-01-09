@@ -7,6 +7,7 @@ import {
   Layout,
   ContentSearch,
   IMAGES,
+  Circular,
 } from '@shared-lib';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SearchIcon from '@mui/icons-material/Search';
@@ -26,12 +27,19 @@ export default function Content() {
   const [searchValue, setSearchValue] = useState('');
   const [tabValue, setTabValue] = React.useState(0);
   const [contentData, setContentData] = useState<ContentItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const fetchContent = async () => {
+    setIsLoading(true);
+    setError(null);
     try {
       const result = await ContentSearch();
       setContentData(result || []);
     } catch (error) {
       console.error('Failed to fetch content:', error);
+      setError('Failed to fetch content. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
   useEffect(() => {
@@ -57,24 +65,29 @@ export default function Content() {
   const handleCardClick = (identifier: string) => {
     navigate('/player', { state: { identifier } });
   };
+
   const renderTabContent = () => (
     <Box sx={{ flexGrow: 1 }}>
-      <Grid container spacing={2}>
-        {contentData?.map((item) => (
-          <Grid key={item?.name} size={{ xs: 6, sm: 6, md: 4, lg: 4 }}>
-            <CommonCard
-              title={item?.name.trim()}
-              content={`Grade: ${
-                item?.gradeLevel?.join(', ') || 'N/A'
-              }, Language: ${item?.language?.join(', ') || 'N/A'}`}
-              image={item?.appIcon || IMAGES.DEFAULT_PLACEHOLDER}
-              // subheader="Subtitle Example"
-              orientation="horizontal"
-              onClick={() => handleCardClick(item?.identifier)}
-            />
-          </Grid>
-        ))}
-      </Grid>
+      {isLoading ? (
+        <Circular />
+      ) : (
+        <Grid container spacing={2}>
+          {contentData?.map((item) => (
+            <Grid key={item?.name} size={{ xs: 6, sm: 6, md: 4, lg: 4 }}>
+              <CommonCard
+                title={item?.name.trim()}
+                content={`Grade: ${
+                  item?.gradeLevel?.join(', ') || 'N/A'
+                }, Language: ${item?.language?.join(', ') || 'N/A'}`}
+                image={item?.appIcon || IMAGES.DEFAULT_PLACEHOLDER}
+                // subheader="Subtitle Example"
+                orientation="horizontal"
+                onClick={() => handleCardClick(item?.identifier)}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      )}
     </Box>
   );
 
@@ -117,6 +130,9 @@ export default function Content() {
         'Fresh lettuce, croutons, and Parmesan cheese with Caesar dressing.',
     },
   ];
+  const handleItemClick = (to: string) => {
+    navigate(to);
+  };
   const drawerItems = [
     { text: 'Home', icon: <MailIcon />, to: '/' },
     { text: 'Page2', icon: <MailIcon />, to: '/page-2' },
@@ -150,6 +166,7 @@ export default function Content() {
         },
       }}
       drawerItems={drawerItems}
+      onItemClick={handleItemClick}
       isFooter={false}
       showLogo={true}
       showBack={true}

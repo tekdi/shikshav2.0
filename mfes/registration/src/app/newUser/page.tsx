@@ -3,7 +3,7 @@ import { Layout, CommonTextField, CommonDialog } from '@shared-lib';
 import React, { useState } from 'react';
 import { Button, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import OTP from '../otp/page';
+import Otp from '../otp/page';
 
 const NewUser = () => {
   const [formData, setFormData] = useState({
@@ -16,7 +16,7 @@ const NewUser = () => {
     lastName: false,
     phoneNumber: false,
   });
-  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [otp, setOtp] = React.useState('');
   const isValidPhoneNumber = (phone: string): boolean => {
     const phoneRegex = /^\d{10}$/;
@@ -40,11 +40,11 @@ const NewUser = () => {
     };
   const handleButtonClick = () => {
     if (isValidPhoneNumber(formData.phoneNumber)) {
-      setDialogOpen(true);
+      setIsDialogOpen(true);
     }
   };
   const handleDialogClose = () => {
-    setDialogOpen(false);
+    setIsDialogOpen(false);
   };
 
   return (
@@ -159,7 +159,7 @@ const NewUser = () => {
               We’ve sent an OTP to verify your number {formData.phoneNumber}
             </Typography>
 
-            <OTP
+            <Otp
               separator={<span></span>}
               value={otp}
               onChange={setOtp}
