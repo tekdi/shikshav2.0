@@ -20,6 +20,9 @@ export default defineConfig({
 
   plugins: [react(), nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
 
+  //add nginix base here
+  base: '/iframereact/', // Prepend this base path to all assets
+
   // Uncomment this if you are using workers.
   // worker: {
   //  plugins: [ nxViteTsPaths() ],

@@ -12,6 +12,8 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
+
+  basePath: '/iframenext/', // This should match the path set in Nginx
 };
 
 const plugins = [
