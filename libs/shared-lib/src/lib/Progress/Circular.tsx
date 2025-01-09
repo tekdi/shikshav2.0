@@ -13,7 +13,7 @@ export const Circular: React.FC<LoaderProps> = ({
   color = 'primary',
   overlayColor = 'rgba(255, 255, 255, 0.9)',
 }) => {
-  const loadingId = React.useId();
+  const loadingId = 'loading-indicator';
   return (
     <Box
       sx={{
@@ -30,10 +30,13 @@ export const Circular: React.FC<LoaderProps> = ({
         overflow: 'hidden',
         backgroundColor: overlayColor,
       }}
-      role="progressbar"
       aria-labelledby={loadingId}
     >
-      <CircularProgress size={size} color={color} aria-label="Loading..." />
+      <CircularProgress
+        size={size}
+        color={color}
+        aria-label="Loading content"
+      />
     </Box>
   );
 };
