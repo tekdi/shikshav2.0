@@ -1,0 +1,9 @@
+{
+  "name": "test-next-route",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "mfes/test-next-route",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project test-next-route --web",
+  "targets": {}
+}
