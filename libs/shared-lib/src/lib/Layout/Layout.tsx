@@ -15,6 +15,7 @@ interface LayoutProps {
     to: string;
     icon?: React.ReactNode;
   }[];
+  onItemClick?: (to: string) => void;
   showSearch?: {
     placeholder: string;
     leftIcon?: React.ReactNode;
@@ -58,6 +59,7 @@ export const Layout: React.FC<LayoutProps> = ({
   showTopAppBar,
   topAppBarIcons = [],
   drawerItems = [],
+  onItemClick,
   sx = {},
 }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -104,13 +106,17 @@ export const Layout: React.FC<LayoutProps> = ({
           </Box>
         </Box>
       )}
-      {/* <BrowserRouter> */}
+
       <CommonDrawer
         open={isDrawerOpen}
         onDrawerClose={() => setIsDrawerOpen(false)}
         items={drawerItems}
+        onItemClick={(to) => {
+          onItemClick?.(to);
+          setIsDrawerOpen(false);
+        }}
       />
-      {/* </BrowserRouter> */}
+
       {showSearch && (
         <Box
           sx={{

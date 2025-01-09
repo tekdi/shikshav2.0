@@ -31,15 +31,15 @@ const commonComponents = {
         variants: [],
       },
       containedPrimary: {
-        backgroundColor: '#1976d2', // Primary background
+        backgroundColor: (theme: any) => theme.palette.primary.main, // Primary background
         '&:hover': {
-          backgroundColor: '#115293', // Darker shade on hover
+          backgroundColor: (theme: any) => theme.palette.primary.dark, // Darker shade on hover
         },
       },
       containedSecondary: {
-        backgroundColor: '#dc004e', // Secondary background
+        backgroundColor: (theme: any) => theme.palette.secondary.main, // Secondary background
         '&:hover': {
-          backgroundColor: '#9a0036', // Darker shade on hover
+          backgroundColor: (theme: any) => theme.palette.secondary.dark, // Darker shade on hover
         },
       },
     },

@@ -61,7 +61,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       </Button>
       {supportingText && (
         <Typography
-          variant="h1"
+          variant="body1"
           fontSize={'16px'}
           color="#3B383E"
           fontWeight={500}

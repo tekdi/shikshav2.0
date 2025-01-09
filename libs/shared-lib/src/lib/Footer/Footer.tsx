@@ -43,7 +43,7 @@ export const Footer: React.FC<FooterProps> = ({
     >
       <Box
         sx={{
-          borderTop: '1px solid #0000004D',
+          borderTop: (theme) => `1px solid ${theme.palette.divider}`,
           paddingTop: 2,
           width: '100%',
           display: 'flex',
@@ -62,7 +62,13 @@ export const Footer: React.FC<FooterProps> = ({
             color: buttonColor,
             fontSize: buttonFontSize,
             fontWeight: buttonFontWeight,
+            '&:hover': {
+              bgcolor: buttonBackgroundColor,
+              opacity: 0.9,
+            },
           }}
+          onClick={onButtonClick}
+          aria-label={buttonLabel}
         >
           {buttonLabel}
         </Button>
