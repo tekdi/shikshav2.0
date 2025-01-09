@@ -1,0 +1,12 @@
+version: '3'
+services:
+  test-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    ports:
+      - '3000:3000'
+      - '4100:4100'
+      - '4200:4200'
+    environment:
+      - NODE_ENV=production

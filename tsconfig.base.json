@@ -15,12 +15,12 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@mfe-next": ["mfes/mfe-next/src/app/page.tsx"],
-      "@mfe-next-2": ["mfes/mfe-next-2/src/app/page.tsx"],
-      "@mfe-next-page-1": ["mfes/mfe-next-page-1/src/pages/_app.tsx"],
-      "@mfe-next-page-2": ["mfes/mfe-next-page-2/src/pages/_app.tsx"],
       "@registration": ["mfes/registration/src/app/page.tsx"],
-      "@shared-lib": ["libs/shared-lib/src/index.ts"]
+      "@shared-lib": ["libs/shared-lib/src/index.ts"],
+
+      //for testing
+      "@test-next-route": ["mfes/test-next-route/src/pages/index.tsx"],
+      "@test-react-vite": ["mfes/mfes/test-react-vite"]
     }
   },
   "exclude": ["node_modules", "tmp"]
