@@ -19,3 +19,11 @@ export * from './lib/Services/Content/Search';
 export * from './lib/SunbirdPlayer/SunbirdPlayer';
 export * from './lib/QuestionSetEditor/QuestionSet';
 export * from './lib/CollectionEditor/Collection';
+export * from './lib/Dialog/CommonDialog';
+export * from './lib/theme';
+export * from './lib/ThemeProvider';
+export * from './lib/Progress/Circular';
+import Image from '../images/default.png';
+export const IMAGES = {
+  DEFAULT_PLACEHOLDER: Image,
+};

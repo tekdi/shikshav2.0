@@ -6,7 +6,6 @@ import {
   ListItemIcon,
   ListItemText,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 interface DrawerItem {
   text: string;
   icon?: React.ReactNode;
@@ -17,28 +16,20 @@ interface CommonDrawerProps {
   open: boolean;
   onDrawerClose: () => void;
   items: DrawerItem[];
+  onItemClick: (to: string) => void;
 }
 
 export const CommonDrawer: React.FC<CommonDrawerProps> = ({
   open,
   onDrawerClose,
   items,
+  onItemClick,
 }) => {
-  const navigate = useNavigate();
-
-  const handleItemClick = (to: string) => {
-    navigate(to);
-    onDrawerClose();
-  };
-
   return (
     <Drawer anchor="left" open={open} onClose={onDrawerClose}>
       <List>
         {items.map((item, index) => (
-          <ListItemButton
-            key={item.text}
-            onClick={() => handleItemClick(item.to)}
-          >
+          <ListItemButton key={item.text} onClick={() => onItemClick(item.to)}>
             {item.icon && <ListItemIcon>{item.icon}</ListItemIcon>}
             <ListItemText primary={item.text} />
           </ListItemButton>

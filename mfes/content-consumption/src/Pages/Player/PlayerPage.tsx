@@ -6,7 +6,7 @@ export default function PlayerPage() {
   const location = useLocation();
   const { identifier } = location.state || {};
   return identifier ? (
-    <SunbirdPlayer identifier="do_214210695162388480112" />
+    <SunbirdPlayer identifier={identifier} />
   ) : (
     <div>No identifier provided</div>
   );

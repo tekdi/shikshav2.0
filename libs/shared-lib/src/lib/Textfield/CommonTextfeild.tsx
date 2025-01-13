@@ -2,7 +2,7 @@
 import React from 'react';
 import { TextField, InputAdornment, Typography } from '@mui/material';
 interface CommonTextFieldProps {
-  label: string;
+  label?: string;
   value: string | number;
   onChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   helperText?: string;
@@ -19,13 +19,13 @@ interface CommonTextFieldProps {
   endIcon?: React.ReactNode;
 }
 export const CommonTextField: React.FC<CommonTextFieldProps> = ({
-  label = 'Enter Text',
-  value = 'Placeholder',
+  label,
+  value = '',
   onChange,
   type = 'text',
   variant = 'outlined',
   helperText = '',
-  width = '328px',
+  width = '100%',
   error = false,
   supportingText = '',
   fullWidth = true,

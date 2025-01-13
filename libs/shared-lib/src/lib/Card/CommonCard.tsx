@@ -47,7 +47,11 @@ export const CommonCard: React.FC<CommonCardProps> = ({
           component="img"
           image={image}
           alt={imageAlt || ''}
-          sx={{ height: { xs: '144px', sm: '194px' } }}
+          sx={{
+            height: { xs: '144px', sm: '144px' },
+            width: { xs: '40%', sm: '30%' },
+            objectFit: 'contain',
+          }}
         />
       )}
       <CardHeader
