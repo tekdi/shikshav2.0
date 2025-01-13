@@ -16,6 +16,11 @@
     "baseUrl": ".",
     "paths": {
       "@collection": ["mfes/editors/src/components/QuestionSetEditor.tsx"],
+      "@login": ["mfes/authentication/src/pages/login.tsx"],
+      "@mfe-next": ["mfes/mfe-next/src/app/page.tsx"],
+      "@mfe-next-2": ["mfes/mfe-next-2/src/app/page.tsx"],
+      "@mfe-next-page-1": ["mfes/mfe-next-page-1/src/pages/_app.tsx"],
+      "@mfe-next-page-2": ["mfes/mfe-next-page-2/src/pages/_app.tsx"],
       "@players": ["mfes/players/src/pages/play.tsx"],
       "@questionSet": ["mfes/editors/src/components/CollectionEditor.tsx"],
       "@registration": ["mfes/registration/src/app/page.tsx"],
@@ -23,7 +28,9 @@
 
       //for testing
       "@test-next-route": ["mfes/test-next-route/src/pages/index.tsx"],
-      "@test-react-vite": ["mfes/mfes/test-react-vite"]
+      "@test-react-vite": ["mfes/mfes/test-react-vite"],
+      "@scp-teacher": ["mfes/scp-teacher/src/pages/index.tsx"],
+      "@youthNet": ["mfes/youthNet/src/pages/index.tsx"],
     }
   },
   "exclude": ["node_modules", "tmp"]
