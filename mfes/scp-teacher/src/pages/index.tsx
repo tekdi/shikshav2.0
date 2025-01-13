@@ -9,7 +9,7 @@ export function Index() {
   return (
     <h1>
       <span> Hello there, </span>
-      Welcome scp-teacher 👋
+      Welcome scp-teacher app 👋
     </h1>
   );
 }
