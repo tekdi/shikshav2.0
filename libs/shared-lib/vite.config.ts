@@ -11,7 +11,12 @@ export default defineConfig({
   cacheDir: '../../node_modules/.vite/libs/shared-lib',
 
   plugins: [
-    react(),
+    react({
+      // Disable type checking in React files
+      babel: {
+        plugins: ['@babel/plugin-syntax-typescript', '@emotion'],
+      },
+    }),
     nxViteTsPaths(),
     nxCopyAssetsPlugin(['*.md']),
     dts({

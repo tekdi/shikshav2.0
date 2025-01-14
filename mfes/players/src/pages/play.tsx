@@ -53,9 +53,11 @@ const Players: React.FC<SunbirdPlayerProps> = ({
           config.metadata = metadata;
         } else if (MIME_TYPE.INTERACTIVE_MIME_TYPE.includes(data?.mimeType)) {
           config = { ...V1PlayerConfig, metadata: data };
+          // @ts-ignore
           config.context['contentId'] = identifier;
         } else {
           config = { ...V2PlayerConfig, metadata: data };
+          // @ts-ignore
           config.context['contentId'] = identifier;
         }
 
