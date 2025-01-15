@@ -45,7 +45,18 @@ export default defineConfig({
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
-      external: ['react', 'react-dom', 'react/jsx-runtime'],
+      external: [
+        'react',
+        'react-dom',
+        'react/jsx-runtime',
+        //error solution
+        // error during build:
+        // [commonjs--resolver] Failed to resolve entry for package "fs". The package may have incorrect main/module/exports specified in its package.json.
+        'fs',
+        'stream',
+        'zlib',
+        //end error solution
+      ],
     },
   },
 });

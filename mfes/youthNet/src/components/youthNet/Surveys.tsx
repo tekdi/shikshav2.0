@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import React from 'react';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import { SurveysProps } from '@/utils/Interfaces';
+import { SurveysProps } from '../../utils/Interfaces';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'next-i18next';
 

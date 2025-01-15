@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import React from 'react';
 import { useTheme } from '@mui/material/styles';
-import { VillageNewRegistrationProps } from '@/utils/Interfaces';
+import { VillageNewRegistrationProps } from '../../utils/Interfaces';
 
 
 

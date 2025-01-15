@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { VillageDetailProps } from '@/utils/Interfaces';
+import { VillageDetailProps } from '../../utils/Interfaces';
 import { useTheme } from '@mui/material/styles';
 
 
