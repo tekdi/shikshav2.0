@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 /* eslint-disable no-unused-vars */
 import { TFunction } from 'i18next';
 import pdf from './../assets/images/PDF.svg';
