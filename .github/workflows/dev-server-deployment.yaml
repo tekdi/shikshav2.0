@@ -7,7 +7,7 @@ on:
 jobs:
   deploy_DEV:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 120
     steps:
       - name: Deploy Stack
         uses: appleboy/ssh-action@master
