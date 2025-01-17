@@ -1,0 +1,31 @@
+name: Deploy to PRAHTAM-DEV 
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy_DEV:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Deploy Stack
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEV_HOST_NAME }}
+          username: ${{ secrets.DEV_USERNAME }}
+          key: ${{ secrets.DEV_EC2_SSH_KEY }}
+          port: ${{ secrets.DEV_PORT }}
+          script: |
+            cd ${{ secrets.DEV_TARGET_DIR }}
+            git stash
+            git pull --all
+            if [ -f .env ]; then
+            rm .env
+            fi
+            echo "${{ secrets.DEV_ENV }}" > .env
+            ls -ltra
+            docker-compose -f docker-compose.teachers.yml down
+            docker system prune -af
+            docker-compose -f docker-compose.teachers.yml up -d
+            sudo systemctl restart nginx
