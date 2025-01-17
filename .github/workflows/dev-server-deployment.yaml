@@ -25,6 +25,9 @@ jobs:
             fi
             echo "${{ secrets.DEV_ENV }}" > .env
             ls -ltra
-            timeout 90000 docker-compose -f docker-compose.teachers.yml up -d
+            docker-compose -f docker-compose.teachers.yml
             docker system prune -af
+            sleep 10
+            timeout 90000 docker-compose -f docker-compose.teachers.yml up -d
+            
             sudo systemctl restart nginx
