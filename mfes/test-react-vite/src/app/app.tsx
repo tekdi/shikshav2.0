@@ -5,7 +5,22 @@ import { Route, Routes, Link } from 'react-router-dom';
 
 import DisplayIdComponent from '../components/DisplayIdComponent';
 
+//shared DataClient
+import { setData, getData, removeData } from '@shared-lib';
+import { useState } from 'react';
+
 export function App() {
+  const [storeData, setStoreData] = useState('');
+
+  const handleGetData = async () => {
+    const value = await getData('myKey');
+    console.log('Retrieved value:', value);
+    setStoreData(value);
+  };
+
+  const handleRemoveData = async () => {
+    await removeData('myKey');
+  };
 
   return (
     <div>
@@ -28,6 +43,13 @@ export function App() {
             ))}
           </ul>
         </ul>
+      </div>
+      <h5>{JSON.stringify(storeData)}</h5>
+      <div>
+        <button onClick={handleGetData}>Get Data</button>
+        <br />
+        <button onClick={handleRemoveData}>Remove Data</button>
+        <br />
       </div>
       <Routes>
         <Route path="/user/:id" element={<DisplayIdComponent />} />

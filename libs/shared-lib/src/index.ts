@@ -27,3 +27,6 @@ import Image from '../images/default.png';
 export const IMAGES = {
   DEFAULT_PLACEHOLDER: Image,
 };
+
+//utils
+export * from './utils/DataClient';
