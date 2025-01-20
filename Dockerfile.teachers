@@ -1,27 +1,40 @@
 # Use an official Node.js image as the base
 FROM node:20
 
+# Install pnpm globally
+RUN npm install -g pnpm
+
+# Set the SHELL environment variable explicitly
+ENV SHELL=/bin/bash
+
+# Explicitly configure PNPM_HOME and add it to the PATH
+ENV PNPM_HOME=/root/.local/share/pnpm
+ENV PATH=$PNPM_HOME:$PNPM_HOME/bin:$PATH
+
+# Ensure PNPM_HOME exists and is properly configured
+RUN mkdir -p $PNPM_HOME && pnpm setup
+
+# Re-export PATH in a shell-compatible way
+RUN echo "export PATH=$PATH" >> /root/.bashrc
+
 # Set the working directory
 WORKDIR /workspace
 
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install --legacy-peer-deps
+# Install dependencies using pnpm
+RUN pnpm install
+RUN pnpm install @emotion/cache --save
 
 # Copy the entire NX workspace
 COPY . .
 
-# Build all applications
-# RUN npx nx run-many --target=build --all
+# Build specific applications
+RUN npx nx run-many --target=build --projects=teachers,authentication,scp-teacher,youthNet --parallel=4
 
-# Build Specific Application
-# Build only specific applications
-RUN npx nx run-many --target=build --projects=teachers,authentication,scp-teacher,youthNet --parallel
-
-# Install PM2 to manage multiple apps
-RUN npm install -g pm2
+# Install PM2 globally after validating PNPM setup
+RUN pnpm install -g pm2
 
 # Expose the ports for all apps
 EXPOSE 3001 4101 4102 4103
