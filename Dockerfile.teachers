@@ -31,7 +31,7 @@ RUN pnpm install @emotion/cache --save
 COPY . .
 
 # Build specific applications
-RUN npx nx run-many --target=build --projects=teachers,authentication,scp-teacher,youthNet --parallel=4
+RUN npx nx run-many --target=build --projects=teachers,authentication,scp-teacher,youthNet --parallel=10
 
 # Install PM2 globally after validating PNPM setup
 RUN pnpm install -g pm2
