@@ -28,5 +28,5 @@ jobs:
             ls -ltra
             docker-compose -f docker-compose.teachers.yml down
             docker system prune -af
-            timeout 90000 docker-compose -f docker-compose.teachers.yml up -d | tee docker-compose.log
+            docker-compose -f docker-compose.teachers.yml up -d --timeout 90000 | tee docker-compose.log
             sudo systemctl restart nginx
