@@ -9,7 +9,30 @@ jobs:
   deploy_DEV:
     runs-on: ubuntu-latest
     timeout-minutes: 120
+
     steps:
+      # Step to cache pnpm store for faster builds
+      - name: Cache pnpm store
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js and Install dependencies
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies using pnpm
+        run: |
+          npm install -g pnpm
+          pnpm install
+
       - name: Deploy Stack
         uses: appleboy/ssh-action@master
         with:
@@ -26,6 +49,8 @@ jobs:
             fi
             echo "${{ secrets.DEV_ENV }}" > .env
             ls -ltra
+
+            # Stop running containers, clean up, and restart
             docker-compose -f docker-compose.teachers.yml down
             docker system prune -af
             docker-compose -f docker-compose.teachers.yml up -d --timeout 600 | tee docker-compose.log
