@@ -63,9 +63,13 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
                 <MenuIcon />
               </IconButton>
               <Typography
-                variant="h6"
                 component="div"
-                sx={{ flexGrow: 1, textAlign: 'center' }}
+                sx={{
+                  flexGrow: 1,
+                  textAlign: 'center',
+                  fontSize: '22px',
+                  fontWeight: 400,
+                }}
               >
                 {title}
               </Typography>

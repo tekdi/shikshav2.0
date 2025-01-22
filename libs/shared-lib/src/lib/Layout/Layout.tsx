@@ -1,14 +1,37 @@
 import React, { useState } from 'react';
 import Box from '@mui/material/Box';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import { Footer } from '../Footer/Footer';
 import { TopAppBar } from '../Header/TopAppBar';
 import { CommonSearch } from '../Search/CommonSearch';
 import { CommonDrawer } from '../Drawer/CommonDrawer';
+import {
+  Button,
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  ListItemText,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  Select,
+  Typography,
+} from '@mui/material';
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 interface LayoutProps {
   children: React.ReactNode;
   isFooter?: boolean;
   showBack?: boolean;
+  backTitle?: string;
   showLogo?: boolean;
+  showFilter?: boolean;
   sx?: object;
   drawerItems?: {
     text: string;
@@ -16,6 +39,7 @@ interface LayoutProps {
     icon?: React.ReactNode;
   }[];
   onItemClick?: (to: string) => void;
+  backIconClick?: () => void;
   showSearch?: {
     placeholder: string;
     leftIcon?: React.ReactNode;
@@ -26,12 +50,13 @@ interface LayoutProps {
     onInputChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     sx?: object;
   };
+
   showTopAppBar?: {
     title?: string;
     showMenuIcon?: boolean;
     showBackIcon?: boolean;
     menuIconClick?: () => void;
-    backIconClick?: () => void;
+
     actionButtonLabel?: string;
     actionButtonClick?: () => void;
     actionButtonColor?: 'inherit' | 'primary' | 'secondary' | 'default';
@@ -48,21 +73,229 @@ interface LayoutProps {
     ariaLabel: string;
     onClick: () => void;
   }[];
+  filter?: {
+    sort?: boolean;
+    language?: string[];
+    subject?: string[];
+    contentType?: string[];
+  };
+  language?: string;
+  selectedSubjects?: string[];
+  selectedContentTypes?: string[];
+  sort?: any;
+  onSubjectsChange?: (subjects: string) => void;
+  onLanguageChange?: (language: string) => void;
+  onContentTypeChange?: (contentType: string) => void;
+  onSortChange?: (sort: any) => void;
+  onApply?: () => void;
 }
+const FilterDialog = ({
+  open,
+  onClose,
+  filter,
+  language,
+  selectedSubjects,
+  selectedContentTypes,
+  sort,
+  onLanguageChange,
+  onSubjectsChange,
+  onContentTypeChange,
+  onSortChange,
+  onApply,
+}: {
+  open: boolean;
+  onClose: () => void;
+  filter?: LayoutProps['filter'];
+  language: string;
+  selectedSubjects?: string[];
+  selectedContentTypes?: string[];
+  sort?: any;
+  onLanguageChange?: (language: string) => void;
+  onSubjectsChange?: (subjects: string) => void;
+  onContentTypeChange?: (contentType: string) => void;
+  onSortChange?: (sort: any) => void;
+  onApply?: () => void;
+}) => {
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      sx={{ borderRadius: '12px' }}
+    >
+      <DialogTitle>Filters</DialogTitle>
+      <IconButton
+        aria-label="close"
+        onClick={onClose}
+        sx={(theme) => ({
+          position: 'absolute',
+          right: 8,
+          top: 8,
+          color: theme.palette.grey[500],
+        })}
+      >
+        <CloseIcon />
+      </IconButton>
+      <DialogContent dividers>
+        {/* Sort By */}
+        {filter?.sort && (
+          <>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+              Sort By
+            </Typography>
+            <FormControl>
+              <RadioGroup
+                value={sort?.sortBy || 'asc'}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  onSortChange?.(value);
+                }}
+              >
+                <FormControlLabel
+                  value="asc"
+                  control={<Radio />}
+                  label="A to Z"
+                />
+                <FormControlLabel
+                  value="desc"
+                  control={<Radio />}
+                  label="Z to A"
+                />
+              </RadioGroup>
+            </FormControl>
+          </>
+        )}
 
+        {/* Language */}
+        {filter?.language && filter.language.length > 0 && (
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Language</InputLabel>
+            <Select
+              value={language}
+              onChange={(e) => onLanguageChange?.(e.target.value)}
+              label="Language"
+            >
+              {filter.language.map((lang) => (
+                <MenuItem key={lang} value={lang}>
+                  {lang}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+
+        {/* Subject */}
+        {filter?.subject && filter.subject.length > 0 && (
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Subject</InputLabel>
+            <Select
+              multiple
+              value={selectedSubjects || []}
+              onChange={(e) => {
+                const value = e.target.value as string[];
+                onSubjectsChange?.(value);
+              }}
+              renderValue={(selected) => (selected as string[]).join(', ')} // Join array values for display
+              label="Subject"
+            >
+              {filter.subject.map((subject) => (
+                <MenuItem key={subject} value={subject}>
+                  <Checkbox
+                    checked={(selectedSubjects || []).indexOf(subject) > -1}
+                  />
+                  <ListItemText primary={subject} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+
+        {/* Content Type */}
+        {filter?.contentType && filter.contentType.length > 0 && (
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Content Type</InputLabel>
+            <Select
+              multiple
+              value={selectedContentTypes || []}
+              onChange={(e) => {
+                const value = e.target.value as string[];
+                onContentTypeChange?.(value);
+              }}
+              renderValue={(selected) => (selected as string[]).join(', ')}
+              label="Content Type"
+            >
+              {filter.contentType.map((type) => (
+                <MenuItem key={type} value={type}>
+                  <Checkbox
+                    checked={(selectedContentTypes || []).indexOf(type) > -1}
+                  />
+                  <ListItemText primary={type} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+
+        {/* Buttons */}
+        <DialogActions sx={{ justifyContent: 'center' }}>
+          <Box sx={{ display: 'flex', mt: 2 }}>
+            <Button
+              variant="outlined"
+              onClick={onClose}
+              sx={{
+                borderRadius: '100px',
+                color: '#6750A4',
+                textTransform: 'none',
+              }}
+            >
+              Clear All
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => onApply?.()}
+              sx={{
+                borderRadius: '100px',
+                bgcolor: '#6750A4',
+                color: '#FFFFFF',
+                marginLeft: 2,
+                textTransform: 'none',
+              }}
+            >
+              Apply
+            </Button>
+          </Box>
+        </DialogActions>
+      </DialogContent>
+    </Dialog>
+  );
+};
 export const Layout: React.FC<LayoutProps> = ({
   children,
   isFooter,
   showBack,
+  backTitle,
   showLogo,
   showSearch,
   showTopAppBar,
+  showFilter,
   topAppBarIcons = [],
   drawerItems = [],
   onItemClick,
+  backIconClick,
+  filter,
+  language,
+  selectedSubjects,
+  selectedContentTypes,
+  sort,
+  onLanguageChange,
+  onSubjectsChange,
+  onContentTypeChange,
+  onSortChange,
+  onApply,
   sx = {},
 }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [filterShow, setFilterShow] = useState(false);
   const handleButtonClick = () => {
     console.log('Footer button clicked!');
   };
@@ -122,7 +355,7 @@ export const Layout: React.FC<LayoutProps> = ({
           sx={{
             width: '100%',
             display: 'flex',
-            justifyContent: 'center',
+            justifyContent: 'space-between',
             marginTop: '70px',
           }}
         >
@@ -140,8 +373,62 @@ export const Layout: React.FC<LayoutProps> = ({
             onInputChange={showSearch.onInputChange}
             sx={showSearch.sx || { width: 400, marginTop: '8px' }}
           />
+          {showFilter && (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                backgroundColor: '#ECE6F0',
+                borderRadius: '12px',
+                padding: '10px',
+                '&:hover': {
+                  backgroundColor: '#E0E0E0',
+                  boxShadow: '0px 4px 8px 3px #00000026',
+                },
+                marginLeft: '10px',
+                boxShadow: '0px 1px 3px 0px #0000004D',
+              }}
+              onClick={() => setFilterShow(true)}
+            >
+              <FilterAltOutlinedIcon
+                sx={{ color: '#6750A4', fontSize: '40px' }}
+              />
+            </Box>
+          )}
         </Box>
       )}
+      {/* Render Back Button Below the TopAppBar */}
+      {showBack && backIconClick && (
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            padding: '8px 16px',
+            bgcolor: '#FFFFFF',
+            position: 'fixed', // Ensures it stays in view
+            top: '55px', // Adjust based on TopAppBar's height
+            zIndex: 1100, // Ensure it stays above other elements
+          }}
+        >
+          <Button
+            startIcon={<ArrowBackIcon />}
+            onClick={backIconClick}
+            sx={{
+              textTransform: 'none',
+              color: '#1E1B16',
+              fontSize: '16px',
+            }}
+          >
+            <Typography fontSize={'22px'} fontWeight={400}>
+              {backTitle}
+            </Typography>
+          </Button>
+        </Box>
+      )}
+
       {children}
 
       {isFooter && (
@@ -165,6 +452,22 @@ export const Layout: React.FC<LayoutProps> = ({
             onButtonClick={handleButtonClick}
           />
         </Box>
+      )}
+      {filterShow && (
+        <FilterDialog
+          open={filterShow}
+          onClose={() => setFilterShow(false)}
+          filter={filter}
+          language={language ?? ''}
+          selectedSubjects={selectedSubjects}
+          selectedContentTypes={selectedContentTypes}
+          sort={sort}
+          onLanguageChange={onLanguageChange}
+          onSubjectsChange={onSubjectsChange}
+          onContentTypeChange={onContentTypeChange}
+          onSortChange={onSortChange}
+          onApply={onApply}
+        />
       )}
     </Box>
   );

@@ -106,25 +106,21 @@ interface ContentSearchResponse {
   node_id?: number;
 }
 // Define the payload
-const data = {
-  request: {
-    filters: {},
-  },
-};
 
-export const hierarchyAPI = async (): Promise<ContentSearchResponse[]> => {
+export const hierarchyAPI = async (
+  doId: string
+): Promise<ContentSearchResponse[]> => {
   try {
     // Ensure the environment variable is defined
-    const searchApiUrl = import.meta.env.VITE_PUBLIC_SSUNBIRD_BASE_URL;
+    const searchApiUrl = process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL;
     if (!searchApiUrl) {
       throw new Error('Search API URL environment variable is not configured');
     }
     // Axios request configuration
     const config: AxiosRequestConfig = {
-      method: 'post',
+      method: 'get',
       maxBodyLength: Infinity,
-      url: `${searchApiUrl}/api/content/v1/search`,
-      data: data,
+      url: `${searchApiUrl}/api/course/v1/hierarchy/${doId}`,
     };
 
     // Execute the request

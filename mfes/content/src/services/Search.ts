@@ -106,20 +106,45 @@ interface ContentSearchResponse {
   node_id?: number;
 }
 // Define the payload
-const data = {
-  request: {
-    filters: {},
-  },
-};
 
-export const hierarchyAPI = async (): Promise<ContentSearchResponse[]> => {
+export const ContentSearch = async (
+  type: string,
+  searchText?: string
+): Promise<ContentSearchResponse[]> => {
   try {
     // Ensure the environment variable is defined
-    const searchApiUrl = import.meta.env.VITE_PUBLIC_SSUNBIRD_BASE_URL;
+    const searchApiUrl = process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL;
     if (!searchApiUrl) {
       throw new Error('Search API URL environment variable is not configured');
     }
     // Axios request configuration
+
+    const data = {
+      request: {
+        filters: {
+          // identifier: 'do_114228944942358528173',
+          // identifier: 'do_1141652605790289921389',
+          channel: '01369885294383923244',
+          primaryCategory: [type, 'posterImage'],
+        },
+
+        fields: [
+          'name',
+          'appIcon',
+          'description',
+          'posterImage',
+          'mimeType',
+          'identifier',
+          'resourceType',
+          'primaryCategory',
+          'contentType',
+          'trackable',
+          'children',
+          'leafNodes',
+        ],
+        query: searchText,
+      },
+    };
     const config: AxiosRequestConfig = {
       method: 'post',
       maxBodyLength: Infinity,
