@@ -54,7 +54,30 @@ export const CommonTabs: React.FC<CommonTabsProps> = ({
   return (
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={value} onChange={onChange} aria-label={ariaLabel}>
+        <Tabs
+          value={value}
+          onChange={onChange}
+          aria-label={ariaLabel}
+          TabIndicatorProps={{
+            style: {
+              backgroundColor: '#6750A4',
+              height: '3px',
+              maxWidth: 49,
+              width: '100%',
+              marginLeft: '1.2rem',
+            },
+          }}
+          sx={{
+            '.MuiTab-root': {
+              color: '#49454F', // Default tab text color
+              fontWeight: 500,
+              textTransform: 'none', // Ensures text remains camel case
+            },
+            '.Mui-selected': {
+              color: '#6750A4 !important', // Selected tab text color
+            },
+          }}
+        >
           {tabs.map((tab, index) => (
             <Tab
               key={tab.label}

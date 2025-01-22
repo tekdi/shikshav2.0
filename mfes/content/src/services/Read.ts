@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
+import { URL_CONFIG } from '../utils/url.config';
 interface ContentSearchResponse {
   ownershipType?: string[];
   publish_type?: string;
@@ -106,27 +107,26 @@ interface ContentSearchResponse {
   node_id?: number;
 }
 // Define the payload
-const data = {
-  request: {
-    filters: {},
-  },
-};
 
-export const hierarchyAPI = async (): Promise<ContentSearchResponse[]> => {
+export const contentReadAPI = async (doId: string) => {
   try {
     // Ensure the environment variable is defined
-    const searchApiUrl = import.meta.env.VITE_PUBLIC_SSUNBIRD_BASE_URL;
+    const searchApiUrl = process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL;
     if (!searchApiUrl) {
       throw new Error('Search API URL environment variable is not configured');
     }
+    console.log('doId', doId);
+
     // Axios request configuration
     const config: AxiosRequestConfig = {
-      method: 'post',
+      method: 'get',
       maxBodyLength: Infinity,
-      url: `${searchApiUrl}/api/content/v1/search`,
-      data: data,
+      url: `${searchApiUrl}/api/content/v1/read/` + doId,
+      headers: {
+        Authorization: `'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0WEZYTWFVOWFBanpUbk5aSXNySEpyV0hwVW94bzY3NyJ9.WSWVtVh5MCH_yymFEM_qpVzXGdDO5mukrqmIii1C5Ww'`,
+      },
     };
-
+    console.log('config', config);
     // Execute the request
     const response = await axios.request(config);
     const res = response?.data?.result?.content;
@@ -134,6 +134,23 @@ export const hierarchyAPI = async (): Promise<ContentSearchResponse[]> => {
     return res;
   } catch (error) {
     console.error('Error in ContentSearch:', error);
+    throw error;
+  }
+};
+
+export const fetchContent = async (identifier: any) => {
+  try {
+    const API_URL = `${URL_CONFIG.API.CONTENT_READ}${identifier}`;
+    const FIELDS = URL_CONFIG.PARAMS.CONTENT_GET;
+    const LICENSE_DETAILS = URL_CONFIG.PARAMS.LICENSE_DETAILS;
+    const MODE = 'edit';
+    const response = await axios.get(
+      `${API_URL}?fields=${FIELDS}&mode=${MODE}&licenseDetails=${LICENSE_DETAILS}`
+    );
+    console.log('response =====>', response);
+    return response?.data?.result?.content;
+  } catch (error) {
+    console.error('Error fetching content:', error);
     throw error;
   }
 };

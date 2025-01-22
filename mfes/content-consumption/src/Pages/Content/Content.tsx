@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import {
   CommonCard,
   CommonTabs,
@@ -21,6 +21,8 @@ interface ContentItem {
   artifactUrl: string;
   identifier: string;
   appIcon: string;
+  contentType: string;
+  mimeType: string;
 }
 export default function Content() {
   const navigate = useNavigate();
@@ -59,10 +61,22 @@ export default function Content() {
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
-  const handleCardClick = (identifier: string) => {
-    navigate('/player', { state: { identifier } });
+  const handleCardClick = (identifier: string, contentType: string) => {
+    // const path =
+    //   contentType === 'application/vnd.ekstep.content-collection'
+    //     ? '/details'
+    //     : '/player';
+    // navigate(path, { state: { identifier } });
+    setIsLoading(true);
+    try {
+      const result = await ContentSearch();
+      setContentData(result || []);
+    } catch (error) {
+      console.error('Failed to fetch content:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
-
   const renderTabContent = () => (
     <Box sx={{ flexGrow: 1 }}>
       {isLoading ? (
@@ -70,16 +84,18 @@ export default function Content() {
       ) : (
         <Grid container spacing={2}>
           {contentData?.map((item) => (
-            <Grid key={item?.name} size={{ xs: 6, sm: 6, md: 4, lg: 4 }}>
+            <Grid key={item?.name} size={{ xs: 6, sm: 6, md: 3, lg: 3 }}>
               <CommonCard
                 title={item?.name.trim()}
                 content={`Grade: ${
                   item?.gradeLevel?.join(', ') || 'N/A'
                 }, Language: ${item?.language?.join(', ') || 'N/A'}`}
                 image={item?.appIcon || IMAGES.DEFAULT_PLACEHOLDER}
-                // subheader="Subtitle Example"
+                subheader={item?.contentType}
                 orientation="horizontal"
-                onClick={() => handleCardClick(item?.identifier)}
+                onClick={() =>
+                  handleCardClick(item?.identifier, item?.mimeType)
+                }
               />
             </Grid>
           ))}
@@ -134,6 +150,11 @@ export default function Content() {
     { text: 'Home', icon: <MailIcon />, to: '/' },
     { text: 'Page2', icon: <MailIcon />, to: '/page-2' },
     { text: 'Content', icon: <MailIcon />, to: '/content' },
+  ];
+  const carouselItems = [
+    <Typography variant="h6">Slide 1</Typography>,
+    <Typography variant="h6">Slide 2</Typography>,
+    <Typography variant="h6">Slide 3</Typography>,
   ];
   return (
     <Layout
@@ -201,6 +222,21 @@ export default function Content() {
               />
             </Grid>
           ))}
+          {/* {contentData.map((item) => (
+            <Grid key={item?.name} size={{ xs: 6, sm: 6, md: 3, lg: 6 }}>
+              <CommonCard
+                key={item.name}
+                title={item?.name.trim()}
+                subheader={'subheader'}
+                avatarLetter={item?.name?.trim() ? item.name.trim()[0].toUpperCase() : '?'}
+                avatarColor={'#EFEFE'}
+                image={item?.appIcon || IMAGES.DEFAULT_PLACEHOLDER}
+                orientation="vertical"
+                minheight="80px"
+                onClick={() => handleCardClick('do_21421049808039936017')}
+              />
+            </Grid>
+          ))} */}
         </Grid>
       </Box>
     </Layout>

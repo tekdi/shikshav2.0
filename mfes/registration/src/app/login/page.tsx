@@ -8,17 +8,15 @@ import {
   CommonSelect,
   CommonTextField,
   Layout,
-  login,
+  // login,
 } from '@shared-lib';
 import { SelectChangeEvent } from '@mui/material/Select';
+import Link from 'next/link';
 
 const languageData = [
   { id: 1, name: 'English' },
   { id: 2, name: 'Marathi' },
   { id: 3, name: 'Hindi' },
-  { id: 4, name: 'Gujarati' },
-  { id: 5, name: 'Bengali' },
-  { id: 6, name: 'Tamil' },
 ];
 
 const checkboxData = [{ label: 'Remember Me' }];
@@ -60,26 +58,26 @@ export default function Login() {
   };
 
   const handleButtonClick = async () => {
-    if (formData.userName && formData.password) {
-      try {
-        const response = await login({
-          username: formData.userName,
-          password: formData.password,
-        });
-        if (response) {
-          if (typeof window !== 'undefined' && window.localStorage) {
-            const token = response?.result?.access_token;
-            const refreshToken = response?.result?.refresh_token;
-            localStorage.setItem('token', token);
-            checked
-              ? localStorage.setItem('refreshToken', refreshToken)
-              : localStorage.removeItem('refreshToken');
-          }
-        }
-      } catch (error: any) {
-        console.log(error);
-      }
-    }
+    // if (formData.userName && formData.password) {
+    //   try {
+    //     const response = await login({
+    //       username: formData.userName,
+    //       password: formData.password,
+    //     });
+    //     if (response) {
+    //       if (typeof window !== 'undefined' && window.localStorage) {
+    //         const token = response?.result?.access_token;
+    //         const refreshToken = response?.result?.refresh_token;
+    //         localStorage.setItem('token', token);
+    //         checked
+    //           ? localStorage.setItem('refreshToken', refreshToken)
+    //           : localStorage.removeItem('refreshToken');
+    //       }
+    //     }
+    //   } catch (error: any) {
+    //     console.log(error);
+    //   }
+    // }
   };
 
   const handleSelectChange = (event: SelectChangeEvent) => {
@@ -107,7 +105,7 @@ export default function Login() {
           mx: 'auto',
         }}
       >
-        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 3 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
           <Grid
             container
             sx={{
@@ -210,7 +208,7 @@ export default function Login() {
             color="#3B383E"
             fontWeight={500}
           >
-            Don’t Have An Account? Register
+            Don’t Have An Account? <Link href="/newUser">Register </Link>
           </Typography>
         </Grid>
       </Grid>
