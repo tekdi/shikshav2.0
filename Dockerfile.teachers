@@ -1,43 +1,42 @@
-# Use an official Node.js image as the base
-FROM node:20
+# Stage 1: Build Stage
+FROM node:20 AS builder
 
-# Install pnpm globally
-RUN npm install -g pnpm
-
-# Set the SHELL environment variable explicitly
-ENV SHELL=/bin/bash
+# Set the working directory
+WORKDIR /workspace
 
 # Explicitly configure PNPM_HOME and add it to the PATH
 ENV PNPM_HOME=/root/.local/share/pnpm
 ENV PATH=$PNPM_HOME:$PNPM_HOME/bin:$PATH
 
-# Ensure PNPM_HOME exists and is properly configured
-RUN mkdir -p $PNPM_HOME && pnpm setup
+# Install pnpm globally and ensure PNPM_HOME exists
+RUN npm install -g pnpm && mkdir -p $PNPM_HOME && pnpm setup
 
-# Re-export PATH in a shell-compatible way
-RUN echo "export PATH=$PATH" >> /root/.bashrc
-
-# Set the working directory
-WORKDIR /workspace
-
-# Copy package.json and package-lock.json to the working directory
+# Copy package.json and package-lock.json to the working directory for caching dependencies
 COPY package*.json ./
 
-# Install dependencies using pnpm
+# Install dependencies using pnpm (this will be cached unless package.json changes)
 RUN pnpm install
-RUN pnpm install @emotion/cache --save
 
 # Copy the entire NX workspace
 COPY . .
 
-# Build specific applications
+# Build specific applications (this is the point where most of the build time is spent)
 RUN npx nx run-many --target=build --projects=teachers,authentication,scp-teacher,youthNet --parallel=10
 
-# Install PM2 globally after validating PNPM setup
-RUN pnpm install -g pm2
+# Stage 2: Production Stage
+FROM node:20
 
-# Expose the ports for all apps
+# Set the working directory in the production stage
+WORKDIR /workspace
+
+# Copy only the built assets from the builder stage
+COPY --from=builder /workspace/dist /workspace/dist
+
+# Install PM2 globally and ensure it's available in the PATH
+RUN npm install -g pnpm && pnpm install -g pm2
+
+# Expose necessary ports
 EXPOSE 3001 4101 4102 4103
 
-# Command to run all apps using PM2
+# Use PM2 to run the application
 CMD ["pm2-runtime", "ecosystem.teachers.config.js"]
