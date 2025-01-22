@@ -102,6 +102,8 @@ const FilterDialog = ({
   onContentTypeChange,
   onSortChange,
   onApply,
+  frameworkFilter,
+  filterValues,
 }: {
   open: boolean;
   onClose: () => void;
@@ -115,7 +117,23 @@ const FilterDialog = ({
   onContentTypeChange?: (contentType: string) => void;
   onSortChange?: (sort: any) => void;
   onApply?: () => void;
+  frameworkFilter: any;
+  filterValues: any;
 }) => {
+  // Manage the selected values for each category
+  const [selectedValues, setSelectedValues] = useState(
+    filterValues ? filterValues : {}
+  ); // Initialize as an empty object
+
+  const handleChange = (event, filterCode) => {
+    const { value } = event.target;
+
+    setSelectedValues((prev) => ({
+      ...prev,
+      [filterCode]: typeof value === 'string' ? value.split(',') : value,
+    }));
+  };
+
   return (
     <Dialog
       open={open}
@@ -137,6 +155,69 @@ const FilterDialog = ({
         <CloseIcon />
       </IconButton>
       <DialogContent dividers>
+        {/* new filter frameworkFilter */}
+        {frameworkFilter?.categories &&
+          frameworkFilter.categories.map((categories) => {
+            const filterCode = categories?.code; // A unique identifier for the category
+            const componentKey = `multi-checkbox-label_${categories?.identifier}`;
+
+            // Transform terms into options
+            const options = categories?.terms.map((term) => ({
+              label: term.name,
+              value: term.identifier,
+            }));
+
+            // Get the selected values for the current category
+            const currentSelectedValues = selectedValues[filterCode] || [];
+
+            return (
+              <FormControl fullWidth key={filterCode}>
+                <InputLabel id={componentKey}>{categories?.name}</InputLabel>
+                <Select
+                  labelId={componentKey}
+                  multiple
+                  value={currentSelectedValues}
+                  onChange={(event) => handleChange(event, filterCode)}
+                  renderValue={(selected) =>
+                    selected
+                      .map((selectedValue) => {
+                        const selectedOption = options.find(
+                          (option) => option.value === selectedValue
+                        );
+                        return selectedOption ? selectedOption.label : '';
+                      })
+                      .join(', ')
+                  }
+                >
+                  {options.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      <Checkbox
+                        checked={currentSelectedValues.includes(option.value)}
+                      />
+                      <ListItemText primary={option.label} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            );
+          })}
+        {/* <FormControl fullWidth>
+          <InputLabel id="multi-checkbox-label">Select Options</InputLabel>
+          <Select
+            labelId="multi-checkbox-label"
+            multiple
+            value={selectedOptions}
+            onChange={handleChange}
+            renderValue={(selected) => selected.join(', ')} // Display selected options
+          >
+            {options.map((option) => (
+              <MenuItem key={option} value={option}>
+                <Checkbox checked={selectedOptions.indexOf(option) > -1} />
+                <ListItemText primary={option} />
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl> */}
         {/* Sort By */}
         {filter?.sort && (
           <>
@@ -165,7 +246,6 @@ const FilterDialog = ({
             </FormControl>
           </>
         )}
-
         {/* Language */}
         {filter?.language && filter.language.length > 0 && (
           <FormControl fullWidth margin="normal">
@@ -183,7 +263,6 @@ const FilterDialog = ({
             </Select>
           </FormControl>
         )}
-
         {/* Subject */}
         {filter?.subject && filter.subject.length > 0 && (
           <FormControl fullWidth margin="normal">
@@ -209,7 +288,6 @@ const FilterDialog = ({
             </Select>
           </FormControl>
         )}
-
         {/* Content Type */}
         {filter?.contentType && filter.contentType.length > 0 && (
           <FormControl fullWidth margin="normal">
@@ -235,13 +313,16 @@ const FilterDialog = ({
             </Select>
           </FormControl>
         )}
-
         {/* Buttons */}
         <DialogActions sx={{ justifyContent: 'center' }}>
           <Box sx={{ display: 'flex', mt: 2 }}>
             <Button
               variant="outlined"
-              onClick={onClose}
+              onClick={() => {
+                onApply?.({});
+                setSelectedValues({});
+                onClose();
+              }}
               sx={{
                 borderRadius: '100px',
                 color: '#6750A4',
@@ -252,7 +333,10 @@ const FilterDialog = ({
             </Button>
             <Button
               variant="contained"
-              onClick={() => onApply?.()}
+              onClick={() => {
+                onApply?.(selectedValues);
+                onClose();
+              }}
               sx={{
                 borderRadius: '100px',
                 bgcolor: '#6750A4',
@@ -278,6 +362,7 @@ export const Layout: React.FC<LayoutProps> = ({
   showSearch,
   showTopAppBar,
   showFilter,
+  frameworkFilter,
   topAppBarIcons = [],
   drawerItems = [],
   onItemClick,
@@ -292,6 +377,7 @@ export const Layout: React.FC<LayoutProps> = ({
   onContentTypeChange,
   onSortChange,
   onApply,
+  filterValues,
   sx = {},
 }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -467,6 +553,8 @@ export const Layout: React.FC<LayoutProps> = ({
           onContentTypeChange={onContentTypeChange}
           onSortChange={onSortChange}
           onApply={onApply}
+          frameworkFilter={frameworkFilter}
+          filterValues={filterValues}
         />
       )}
     </Box>
