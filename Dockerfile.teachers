@@ -12,10 +12,8 @@ ENV PATH=$PNPM_HOME:$PNPM_HOME/bin:$PATH
 # Install pnpm globally and ensure PNPM_HOME exists
 RUN npm install -g pnpm && mkdir -p $PNPM_HOME
 
-# Explicitly set shell type (bash) for pnpm setup
-RUN echo "export SHELL=/bin/bash" >> ~/.bashrc && \
-    source ~/.bashrc && \
-    pnpm setup
+# Use bash to run the setup commands
+RUN /bin/bash -c "echo 'export SHELL=/bin/bash' >> ~/.bashrc && . ~/.bashrc && pnpm setup"
 
 # Copy package.json and package-lock.json to the working directory for caching dependencies
 COPY package*.json ./
