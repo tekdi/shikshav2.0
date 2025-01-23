@@ -7,6 +7,7 @@ import CardActions from '@mui/material/CardActions';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
+import { Box } from '@mui/material';
 
 interface CommonCardProps {
   title: string;
@@ -39,7 +40,12 @@ export const CommonCard: React.FC<CommonCardProps> = ({
 }) => {
   return (
     <Card
-      sx={{ height: minheight, cursor: onClick ? 'pointer' : 'default' }}
+      sx={{
+        height: minheight || 'auto',
+        cursor: onClick ? 'pointer' : 'default',
+        borderRadius: '12px',
+        bgcolor: '#FEF7FF',
+      }}
       onClick={onClick}
     >
       {image && orientation === 'horizontal' && (
@@ -48,9 +54,9 @@ export const CommonCard: React.FC<CommonCardProps> = ({
           image={image}
           alt={imageAlt || ''}
           sx={{
-            height: { xs: '144px', sm: '144px' },
-            width: { xs: '40%', sm: '30%' },
-            objectFit: 'contain',
+            width: '100%',
+            height: '197px',
+            objectFit: 'cover',
           }}
         />
       )}
@@ -67,14 +73,55 @@ export const CommonCard: React.FC<CommonCardProps> = ({
             <CardMedia component="img" image={image} />
           ) : undefined
         }
-        title={title}
-        subheader={subheader || ''}
+        title={
+          <Typography
+            sx={{
+              fontSize: '16px',
+              whiteSpace: 'wrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              WebkitBoxOrient: 'vertical',
+              WebkitLineClamp: 1,
+              paddingLeft: '5px',
+              // height: '70px',
+            }}
+          >
+            {title}
+          </Typography>
+        }
+        subheader={
+          <Typography variant="h6" sx={{ fontSize: '14px' }}>
+            {subheader}
+          </Typography>
+        }
       />
       {content && (
-        <CardContent>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            {content}
-          </Typography>
+        <CardContent
+          sx={{
+            display: 'flex',
+            paddingBottom: 0,
+            overflow: 'hidden',
+            maxWidth: '100%',
+            height: '50px',
+          }}
+        >
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Typography
+              sx={{
+                display: '-webkit-box',
+                WebkitLineClamp: 2, // Limit text to 2 lines
+                WebkitBoxOrient: 'vertical', // Set the box orientation
+                overflow: 'hidden', // Hide overflow
+                textOverflow: 'ellipsis',
+              }}
+            >
+              <span style={{ fontSize: '14px', fontWeight: 700 }}>
+                Description:
+              </span>{' '}
+              {content}
+            </Typography>
+          </Box>
         </CardContent>
       )}
       {children && <CardContent>{children}</CardContent>}

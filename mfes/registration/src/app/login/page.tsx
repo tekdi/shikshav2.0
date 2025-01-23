@@ -2,6 +2,9 @@
 import React, { useState } from 'react';
 import { Button, Typography } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import Alert from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid2';
 import {
   CommonCheckbox,
@@ -11,7 +14,9 @@ import {
   login,
 } from '@shared-lib';
 import { SelectChangeEvent } from '@mui/material/Select';
-
+import Link from 'next/link';
+import { getToken } from '../../services/LoginService';
+import { useRouter } from 'next/navigation';
 const languageData = [
   { id: 1, name: 'English' },
   { id: 2, name: 'Marathi' },
@@ -35,6 +40,10 @@ export default function Login() {
   const [selectedValue, setSelectedValue] = useState('english');
   const [checked, setChecked] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const handleChange =
     (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value;
@@ -168,12 +177,19 @@ export default function Login() {
             variant="outlined"
             helperText={error.password ? `Required password ` : ''}
             error={error.password}
-            endIcon={
-              <VisibilityIcon
-                onClick={() => setShowPassword(!showPassword)}
-                style={{ cursor: 'pointer' }}
-              />
-            }
+            InputProps={{
+              endAdornment: !showPassword ? (
+                <VisibilityOffIcon
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ cursor: 'pointer' }}
+                />
+              ) : (
+                <VisibilityIcon
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ cursor: 'pointer' }}
+                />
+              ),
+            }}
           />
           <Typography
             variant="h1"
@@ -202,7 +218,7 @@ export default function Login() {
               fontWeight: 500,
             }}
           >
-            Label
+            Login
           </Button>
           <Typography
             variant="h1"
@@ -214,6 +230,11 @@ export default function Login() {
           </Typography>
         </Grid>
       </Grid>
+      {showError && (
+        <Alert variant="filled" severity="error">
+          {errorMessage}
+        </Alert>
+      )}
     </Layout>
   );
 }
