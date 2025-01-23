@@ -39,7 +39,6 @@ export default function Content() {
     []
   );
   const [sort, setSort] = useState<string>('asc');
-
   const fetchContent = useCallback(
     async (type?: string, searchValue?: string) => {
       setIsLoading(true);

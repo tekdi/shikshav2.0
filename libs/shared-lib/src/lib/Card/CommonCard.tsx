@@ -125,7 +125,29 @@ export const CommonCard: React.FC<CommonCardProps> = ({
         </CardContent>
       )}
       {children && <CardContent>{children}</CardContent>}
-      {actions && <CardActions disableSpacing>{actions}</CardActions>}
+      {actions && (
+        <CardActions
+          disableSpacing
+          sx={{
+            border: '1px solid #79747E',
+            borderRadius: '8px',
+            width: '80px',
+            display: 'flex',
+            justifyContent: 'center',
+            margin: '12px',
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: '14px',
+              fontWeight: 500,
+              color: '#6750A4',
+            }}
+          >
+            {actions}
+          </Typography>
+        </CardActions>
+      )}
     </Card>
   );
 };
