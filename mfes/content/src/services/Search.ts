@@ -126,8 +126,9 @@ export const ContentSearch = async (
           // identifier: 'do_114228944942358528173',
           // identifier: 'do_1141652605790289921389',
           ...filterValues,
-          channel: '01369885294383923244',
-          primaryCategory: [type, 'posterImage'],
+          //need below after login user channel for dynamic load content
+          //channel: '01369885294383923244',
+          primaryCategory: [type],
         },
 
         fields: [
