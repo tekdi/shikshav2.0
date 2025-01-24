@@ -1,10 +1,5 @@
 name: Deploy to PRAHTAM-DEV
 
-on:
-  push:
-    branches:
-      - main
-
 jobs:
   deploy_DEV:
     runs-on: ubuntu-latest
