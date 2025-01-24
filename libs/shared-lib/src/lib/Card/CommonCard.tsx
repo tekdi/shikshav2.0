@@ -61,7 +61,7 @@ export const CommonCard: React.FC<CommonCardProps> = ({
       {image && orientation === 'horizontal' && (
         <CardMedia
           component="img"
-          image={image}
+          image={image || '/assets/images/default.png'}
           alt={imageAlt || ''}
           sx={{
             width: orientation === 'horizontal' ? '100%' : '40%',
@@ -69,7 +69,7 @@ export const CommonCard: React.FC<CommonCardProps> = ({
             objectFit: 'cover',
             '@media (max-width: 600px)': {
               width: '100%',
-              height: '150px',
+              height: '200px',
             },
           }}
         />

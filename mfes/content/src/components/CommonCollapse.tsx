@@ -129,7 +129,6 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
 }) => {
   const router = useRouter();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
-
   const toggleExpanded = (identifier: string) => {
     setExpandedItems((prev) => {
       const newExpandedItems = new Set(prev);
@@ -141,61 +140,56 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
       return newExpandedItems;
     });
   };
-  const handleCollapseAll = () => {
-    setExpandedItems(
-      expandedItems.size === data.length
-        ? new Set()
-        : new Set(data.map((item) => item.identifier))
-    );
-  };
-  const handleTitleClick = () => {
-    router.push(`/content-details/${identifier}`);
-  };
+
   const handleItemClick = (identifier: string) => {
     const path = `/player/${identifier}`;
     router.push(path);
   };
   return (
     <Box sx={{ margin: '10px' }}>
-      <Box
-        sx={{
-          backgroundColor: '#E9DDFF',
-          padding: '8px',
-          borderRadius: '4px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-        }}
-      >
-        {}
-        <LensOutlinedIcon sx={{ fontSize: '17px' }} />
-        <Typography variant="h6" fontSize={'12px'} fontWeight={500}>
-          {data?.length > 0 ? (
-            title
-          ) : (
-            <span
-              style={{ cursor: 'pointer' }}
-              onClick={() => handleItemClick(identifier)}
-            >
-              {title}
-              {/*  */}
-            </span>
-          )}
-        </Typography>
+      {data?.length > 0 ? (
         <Box
-          sx={{ marginLeft: 'auto' }}
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleExpanded(identifier);
+          sx={{
+            backgroundColor: '#E9DDFF',
+            padding: '8px',
+            borderRadius: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
           }}
         >
-          {expandedItems.has(identifier) ? (
-            <ExpandLessIcon />
-          ) : (
-            <ExpandMoreIcon />
-          )}
+          <LensOutlinedIcon sx={{ fontSize: '17px' }} />
+          <Typography variant="h6" fontSize={'12px'} fontWeight={500}>
+            {title}
+          </Typography>
+          <Box
+            sx={{ marginLeft: 'auto' }}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleExpanded(identifier);
+            }}
+          >
+            {expandedItems.has(identifier) ? (
+              <ExpandLessIcon />
+            ) : (
+              <ExpandMoreIcon />
+            )}
+          </Box>
         </Box>
-      </Box>
+      ) : (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+          onClick={() => handleItemClick(identifier)}
+        >
+          <Typography variant="body1" fontSize={'14px'} fontWeight={400}>
+            {getIconByMimeType(data?.mimeType)} {title}
+          </Typography>
+        </Box>
+      )}
 
       <Box sx={{ marginTop: '8px' }}>
         {expandedItems.has(identifier) && (

@@ -94,6 +94,8 @@ const ContentDetails = () => {
             sx={{
               margin: 'auto',
               textAlign: 'center',
+              width: { xs: '100%', sm: '100%', md: '500px', lg: '500px' },
+              // height: { xs: 'auto', md: 'auto', lg: '100vh' },
             }}
           >
             <img
@@ -102,7 +104,7 @@ const ContentDetails = () => {
               }
               alt="Course Thumbnail"
               style={{
-                width: '100%',
+                // width: '100%',
                 borderRadius: '8px',
                 marginBottom: '16px',
               }}

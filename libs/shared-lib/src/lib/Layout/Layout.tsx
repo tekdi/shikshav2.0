@@ -127,10 +127,10 @@ const FilterDialog = ({
     filterValues ? filterValues : {}
   ); // Initialize as an empty object
 
-  const handleChange = (event, filterCode) => {
+  const handleChange = (event: any, filterCode: any) => {
     const { value } = event.target;
 
-    setSelectedValues((prev) => ({
+    setSelectedValues((prev: any) => ({
       ...prev,
       [filterCode]: typeof value === 'string' ? value.split(',') : value,
     }));
@@ -141,7 +141,7 @@ const FilterDialog = ({
       open={open}
       onClose={onClose}
       fullWidth
-      sx={{ borderRadius: '12px' }}
+      sx={{ borderRadius: '16px' }}
     >
       <DialogTitle>Filters</DialogTitle>
       <IconButton
@@ -160,12 +160,12 @@ const FilterDialog = ({
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {/* new filter frameworkFilter */}
           {frameworkFilter?.categories &&
-            frameworkFilter.categories.map((categories) => {
+            frameworkFilter.categories.map((categories: any) => {
               const filterCode = `se_${categories?.code}s`; // A unique identifier for the category
               const componentKey = `multi-checkbox-label_${categories?.identifier}`;
 
               // Transform terms into options
-              const options = categories?.terms.map((term) => ({
+              const options = categories?.terms.map((term: any) => ({
                 label: term.name,
                 value: term.code,
               }));
@@ -174,36 +174,58 @@ const FilterDialog = ({
               const currentSelectedValues = selectedValues[filterCode] || [];
 
               return (
-                <FormControl fullWidth key={filterCode}>
-                  <InputLabel
-                    id={componentKey}
-                    sx={{
-                      marginBottom: '8px', // Adjust margin between the label and the Select
-                      color: '#000', // Optional: Customize label color
-                      fontSize: '14px', // Optional: Adjust label font size
-                    }}
-                  >
-                    {categories?.name}
-                  </InputLabel>
+                <FormControl
+                  fullWidth
+                  key={filterCode}
+                  sx={{
+                    '&.Mui-focused': {
+                      color: '#1D1B20', // Label color when focused
+                    },
+                    '& .MuiInputLabel-root.Mui-focused': {
+                      color: '#1D1B20', // Label color when focused
+                    },
+                    '& .MuiInputLabel-root': { color: '#1D1B20' }, // Label color
+                    '& .MuiOutlinedInput-root': {
+                      color: '#1D1B20', // Value color
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#1D1B20', // Outline color
+                      },
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#1D1B20', // Outline color on hover
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#1D1B20', // Outline color when focused
+                      },
+                    },
+                  }}
+                >
+                  <InputLabel id={componentKey}>{categories?.name}</InputLabel>
                   <Select
                     labelId={componentKey}
+                    input={<OutlinedInput label={categories?.name} />}
                     multiple
                     value={currentSelectedValues}
                     onChange={(event) => handleChange(event, filterCode)}
                     renderValue={(selected) =>
                       selected
-                        .map((selectedValue) => {
+                        .map((selectedValue: any) => {
                           const selectedOption = options.find(
-                            (option) => option.value === selectedValue
+                            (option: any) => option.value === selectedValue
                           );
                           return selectedOption ? selectedOption.label : '';
                         })
                         .join(', ')
                     }
                   >
-                    {options.map((option) => (
+                    {options.map((option: any) => (
                       <MenuItem key={option.value} value={option.value}>
                         <Checkbox
+                          sx={{
+                            color: '#6750A4', // Default checkbox color
+                            '&.Mui-checked': {
+                              color: '#6750A4', // Checked checkbox color
+                            },
+                          }}
                           checked={currentSelectedValues.includes(option.value)}
                         />
                         <ListItemText primary={option.label} />
@@ -406,7 +428,7 @@ export const Layout: React.FC<LayoutProps> = ({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        alignItems: 'center',
+        // alignItems: 'center',
         // bgcolor: 'grey',
         ...sx,
       }}
@@ -482,7 +504,9 @@ export const Layout: React.FC<LayoutProps> = ({
                 cursor: 'pointer',
                 backgroundColor: '#ECE6F0',
                 borderRadius: '12px',
-                padding: '10px',
+                // padding: '8px',
+                width: '48px',
+                height: '48px',
                 '&:hover': {
                   backgroundColor: '#E0E0E0',
                   boxShadow: '0px 4px 8px 3px #00000026',
@@ -493,7 +517,7 @@ export const Layout: React.FC<LayoutProps> = ({
               onClick={() => setFilterShow(true)}
             >
               <FilterAltOutlinedIcon
-                sx={{ color: '#6750A4', fontSize: '40px' }}
+                sx={{ color: '#6750A4', fontSize: '25px' }}
               />
             </Box>
           )}

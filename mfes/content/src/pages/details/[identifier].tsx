@@ -65,7 +65,7 @@ export default function Details({ details }: DetailsProps) {
     return children?.map((item: any) => (
       <CommonCollapse
         key={item.id}
-        identifier={identifier as string}
+        identifier={item.identifier as string}
         title={item.name}
         data={item?.children}
         defaultExpanded={false}
