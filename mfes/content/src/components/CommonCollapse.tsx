@@ -128,14 +128,7 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
   defaultExpanded = false,
 }) => {
   const router = useRouter();
-  const [expandedItems, setExpandedItems] = useState<Set<string>>(
-    defaultExpanded ? new Set(data.map((item) => item.identifier)) : new Set()
-  );
-  useEffect(() => {
-    if (router.query.identifier) {
-      setExpandedItems(new Set([router.query.identifier as string]));
-    }
-  }, [router.query]);
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
   const toggleExpanded = (identifier: string) => {
     setExpandedItems((prev) => {
@@ -158,7 +151,10 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
   const handleTitleClick = () => {
     router.push(`/content-details/${identifier}`);
   };
-
+  const handleItemClick = (identifier: string) => {
+    const path = `/player/${identifier}`;
+    router.push(path);
+  };
   return (
     <Box sx={{ margin: '10px' }}>
       <Box
@@ -171,21 +167,27 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
           gap: '8px',
         }}
       >
-        <LensOutlinedIcon />
+        {}
+        <LensOutlinedIcon sx={{ fontSize: '17px' }} />
         <Typography variant="h6" fontSize={'12px'} fontWeight={500}>
           {data?.length > 0 ? (
             title
           ) : (
-            <span style={{ cursor: 'pointer' }}>
+            <span
+              style={{ cursor: 'pointer' }}
+              onClick={() => handleItemClick(identifier)}
+            >
               {title}
-
               {/*  */}
             </span>
           )}
         </Typography>
         <Box
           sx={{ marginLeft: 'auto' }}
-          onClick={() => toggleExpanded(identifier)}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleExpanded(identifier);
+          }}
         >
           {expandedItems.has(identifier) ? (
             <ExpandLessIcon />

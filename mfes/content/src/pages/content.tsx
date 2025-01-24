@@ -11,8 +11,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import MailIcon from '@mui/icons-material/Mail';
 import { hierarchyAPI } from '../services/Hierarchy';
 import { contentReadAPI } from '../services/Read';
-import Details from './details';
-import DeafaultImage from '../../public/assets/images/default.png';
 interface ContentItem {
   name: string;
   gradeLevel: string[];
@@ -34,7 +32,6 @@ export default function Content() {
   const [tabValue, setTabValue] = useState(0);
   const [contentData, setContentData] = useState<ContentItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
   const [selectedContent, setSelectedContent] = useState<any>(null);
   const [language, setLanguage] = useState('');
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
@@ -121,6 +118,7 @@ export default function Content() {
       setIsLoading(false);
     }
   };
+  ``;
 
   const renderTabContent = () => (
     <Box sx={{ flexGrow: 1 }}>
@@ -132,7 +130,7 @@ export default function Content() {
             <Grid key={item?.identifier} size={{ xs: 6, sm: 6, md: 3, lg: 3 }}>
               <CommonCard
                 title={item?.name.trim()}
-                image={item?.posterImage || '/assets/images/default.png'}
+                image={item?.posterImage || '/assets/images/image_ver.png'}
                 content={item?.description || '-'}
                 // subheader={item?.contentType}
                 actions={item?.contentType}

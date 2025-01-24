@@ -124,7 +124,7 @@ export const ContentSearch = async (
         filters: {
           // identifier: 'do_114228944942358528173',
           // identifier: 'do_1141652605790289921389',
-          channel: '01369885294383923244',
+          // channel: '01369885294383923244',
           primaryCategory: [type, 'posterImage'],
         },
 
