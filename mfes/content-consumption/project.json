@@ -1,9 +1,0 @@
-{
-  "name": "content-consumption",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "mfes/content-consumption/src",
-  "projectType": "application",
-  "tags": [],
-  "// targets": "to see all targets run: nx show project content-consumption --web",
-  "targets": {}
-}

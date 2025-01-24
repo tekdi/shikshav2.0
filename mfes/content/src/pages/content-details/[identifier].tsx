@@ -87,17 +87,19 @@ const ContentDetails = () => {
     >
       <Grid container spacing={2} sx={{ marginTop: '120px' }}>
         <Grid size={{ xs: 12 }} sx={{ textAlign: 'center' }}>
+          <Typography fontSize={'22px'} fontWeight={400}>
+            {contentDetails?.name}
+          </Typography>
           <Box
             sx={{
               margin: 'auto',
               textAlign: 'center',
             }}
           >
-            <Typography fontSize={'22px'} fontWeight={400}>
-              {contentDetails?.name}
-            </Typography>
             <img
-              src={contentDetails?.posterImage || '/default-thumbnail.jpg'}
+              src={
+                contentDetails?.posterImage || '/assets/images/default_hori.png'
+              }
               alt="Course Thumbnail"
               style={{
                 width: '100%',
@@ -134,11 +136,17 @@ const ContentDetails = () => {
             <Grid size={{ xs: 12 }}>
               {contentDetails?.keywords?.map((tag: string) => (
                 <Button
+                  key={tag}
                   variant="contained"
                   sx={{
                     bgcolor: '#49454F1F',
                     color: '#1D1B20',
-                    margin: '6px',
+                    margin: '3px',
+                    fontSize: '12px',
+                    backgroundColor: '#E9E9EA',
+                    borderRadius: '5px',
+                    boxShadow: 'none',
+                    textTransform: 'none',
                   }}
                 >
                   {tag}
@@ -148,19 +156,23 @@ const ContentDetails = () => {
           </Grid>
         </Grid>
       </Grid>
-      <Divider sx={{ marginY: '24px' }} />
-      <Button
-        variant="contained"
-        sx={{
-          bgcolor: '#6750A4',
-          color: '#FFFFFF',
-          margin: '12px',
-          borderRadius: '100px',
-        }}
-        onClick={() => router.push(`/details/${identifier}`)}
-      >
-        Join Now/Start Course
-      </Button>
+      <Divider sx={{ borderWidth: '1px', width: '100%', marginTop: '16px' }} />
+      <Grid container justifyContent="center" sx={{ marginBottom: '16px' }}>
+        <Button
+          variant="contained"
+          sx={{
+            bgcolor: '#6750A4',
+            color: '#FFFFFF',
+            margin: '12px',
+            borderRadius: '100px',
+            textTransform: 'none',
+            boxShadow: 'none',
+          }}
+          onClick={() => router.push(`/details/${identifier}`)}
+        >
+          Join Now/Start Course
+        </Button>
+      </Grid>
     </Layout>
   );
 };

@@ -5,9 +5,9 @@ interface PlayerPageProps {
   id: string; // Define the type for the 'id' prop
 }
 const PlayerPage: React.FC<PlayerPageProps> = ({ id }) => {
-  console.log('id-', id);
   const router = useRouter();
   const { identifier } = router.query; // Access the identifier from the URL
+  console.log('id', identifier);
   if (!identifier) {
     return <div>Loading...</div>;
   }

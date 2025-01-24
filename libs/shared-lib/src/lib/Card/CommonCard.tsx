@@ -41,10 +41,20 @@ export const CommonCard: React.FC<CommonCardProps> = ({
   return (
     <Card
       sx={{
-        height: minheight,
+        display: 'flex',
+        flexDirection: orientation === 'horizontal' ? 'column' : 'row',
+        height: minheight || 'auto',
         cursor: onClick ? 'pointer' : 'default',
         borderRadius: '12px',
         bgcolor: '#FEF7FF',
+        boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.1)',
+        overflow: 'hidden',
+        '&:hover': {
+          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.2)',
+        },
+        '@media (max-width: 600px)': {
+          flexDirection: 'column',
+        },
       }}
       onClick={onClick}
     >
@@ -54,9 +64,13 @@ export const CommonCard: React.FC<CommonCardProps> = ({
           image={image}
           alt={imageAlt || ''}
           sx={{
-            width: '100%',
-            height: 'auto',
+            width: orientation === 'horizontal' ? '100%' : '40%',
+            height: orientation === 'horizontal' ? '297px' : 'auto',
             objectFit: 'cover',
+            '@media (max-width: 600px)': {
+              width: '100%',
+              height: '150px',
+            },
           }}
         />
       )}
@@ -75,15 +89,15 @@ export const CommonCard: React.FC<CommonCardProps> = ({
         }
         title={
           <Typography
-            variant="h6"
             sx={{
               fontSize: '16px',
-              whiteSpace: 'nowrap',
+              whiteSpace: 'wrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               display: '-webkit-box',
               WebkitBoxOrient: 'vertical',
-              WebkitLineClamp: 3,
+              WebkitLineClamp: 1,
+              paddingLeft: '5px',
               // height: '70px',
             }}
           >
@@ -102,37 +116,23 @@ export const CommonCard: React.FC<CommonCardProps> = ({
             display: 'flex',
             paddingBottom: 0,
             overflow: 'hidden',
+            maxWidth: '100%',
+            height: '50px',
           }}
         >
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Typography
               sx={{
-                color: '#49454F',
-                fontSize: '14px',
-                fontWeight: 700,
-                alignContent: 'flex-start',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap', // Prevent wrapping
-                flex: 1, // Ensure it takes up remaining space
                 display: '-webkit-box',
-                WebkitBoxOrient: 'vertical',
-                WebkitLineClamp: 2,
-              }}
-            >
-              Description:
-            </Typography>{' '}
-            <Typography
-              sx={{
-                color: '#49454F',
-                fontSize: '14px',
-                fontWeight: 400,
-                alignContent: 'flex-start',
-                overflow: 'hidden',
+                WebkitLineClamp: 2, // Limit text to 2 lines
+                WebkitBoxOrient: 'vertical', // Set the box orientation
+                overflow: 'hidden', // Hide overflow
                 textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap', // Prevent wrapping
               }}
             >
+              <span style={{ fontSize: '14px', fontWeight: 700 }}>
+                Description:
+              </span>{' '}
               {content}
             </Typography>
           </Box>

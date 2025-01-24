@@ -68,7 +68,7 @@ export default function Details({ details }: DetailsProps) {
         identifier={identifier as string}
         title={item.name}
         data={item?.children}
-        defaultExpanded={item.defaultExpanded}
+        defaultExpanded={false}
       />
     ));
   };
@@ -104,7 +104,7 @@ export default function Details({ details }: DetailsProps) {
               variant="h6"
               sx={{ marginTop: '60px', fontWeight: 'bold' }}
             >
-              {selectedContent?.name}
+              {/* {selectedContent?.name} */}
             </Typography>
           </Grid>
         </Grid>
