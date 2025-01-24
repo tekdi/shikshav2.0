@@ -32,6 +32,7 @@ import { isEliminatedFromBuild } from '../../featureEliminationUtil';
 import board from '../assets/images/Board.svg';
 import checkBook from '../assets/images/checkbook.svg';
 import { useDirection } from '../hooks/useDirection';
+import GroupsIcon from '@mui/icons-material/Groups';
 
 interface DrawerProps {
   toggleDrawer?: (open: boolean) => () => void;
@@ -166,7 +167,7 @@ const MenuDrawer: React.FC<DrawerProps> = ({
 
   const navigateToYouthBoard = () => {
     closeDrawer();
-    router.push('/youthboard');
+    router.push('/');
   };
 
   const navigateToDashboard = () => {
@@ -181,7 +182,7 @@ const MenuDrawer: React.FC<DrawerProps> = ({
 
   const isDashboard = [
     '/dashboard',
-    '/youthboard',
+    '/',
     '/attendance-history',
     '/attendance-overview',
   ].includes(router.pathname);
@@ -196,6 +197,7 @@ const MenuDrawer: React.FC<DrawerProps> = ({
 
   const isAssessments = router.pathname.includes('/assessments');
   const isBoard = router.pathname.includes('/board-enrollment');
+  const isVillagesAndYouths = router.pathname.includes('/youthboard/villages');
 
   return (
     <Drawer
@@ -385,6 +387,38 @@ const MenuDrawer: React.FC<DrawerProps> = ({
               onClick={navigateToYouthBoard}
             >
               {t('DASHBOARD.DASHBOARD')}
+            </Button>
+            {/* villages and youth */}
+            <Button
+              className="fs-14"
+              sx={{
+                gap: '10px',
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'flex-start',
+                background: isVillagesAndYouths
+                  ? theme.palette.primary.main
+                  : 'transparent',
+                padding: isVillagesAndYouths
+                  ? '16px 18px !important'
+                  : '0px 18px !important',
+                marginTop: '25px',
+                color: isVillagesAndYouths
+                  ? '#2E1500'
+                  : theme.palette.warning.A200,
+                fontWeight: isVillagesAndYouths ? '600' : 500,
+                '&:hover': {
+                  background: isVillagesAndYouths
+                    ? theme.palette.primary.main
+                    : 'transparent',
+                },
+              }}
+              startIcon={<GroupsIcon sx={{ fontSize: '24px !important' }} />}
+              onClick={() => {
+                router.push(`/villages`);
+              }}
+            >
+              {t('YOUTHNET_DASHBOARD.VILLAGES_AND_YOUTH')}
             </Button>
           </Box>
         )}

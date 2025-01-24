@@ -73,7 +73,7 @@ const Header: React.FC<HeaderProps> = ({ toggleDrawer, openDrawer }) => {
   };
 
   const handleLogoutClick = async () => {
-    router.replace('/logout');
+    router.push('/logout');
     logEvent({
       action: 'logout-clicked-header',
       category: 'Dashboard',

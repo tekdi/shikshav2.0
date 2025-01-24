@@ -7,7 +7,7 @@ const teacher = () => {
   return (
     <div
       style={{
-        margin: 0,
+        margin: -10,
         padding: 0,
         height: '100vh',
         width: '100vw',

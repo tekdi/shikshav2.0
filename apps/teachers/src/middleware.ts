@@ -16,4 +16,4 @@ export function middleware(request: { nextUrl: { clone: () => any } }) {
   }
 
   return NextResponse.next();
-} 
+}

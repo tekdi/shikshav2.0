@@ -8,6 +8,7 @@ import { getUserDetails } from '../services/ProfileService';
 import { AcademicYear } from '../utils/Interfaces';
 import { getAcademicYear } from '../services/AcademicYearService';
 import router from 'next/router';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const Login = dynamic(() => import('@login'), {
   ssr: false,
@@ -144,6 +145,8 @@ const login = () => {
         tenant?.toLocaleLowerCase() === TENANT_DATA?.PRATHAM_SCP?.toLowerCase()
       ) {
         const userDetails = await getUserDetails(userId, true);
+        console.log(userDetails);
+
         if (userDetails?.result?.userData) {
           const activeSessionId = await getAcademicYearList();
           const customFields = userDetails?.result?.userData?.customFields;
@@ -193,5 +196,13 @@ const login = () => {
   };
   return <Login onLoginSuccess={handleLoginSuccess} />;
 };
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ['common'])),
+    },
+  };
+}
 
 export default login;

@@ -54,3 +54,34 @@ export const accessGranted = (
   }
   return false;
 };
+
+export const debounce = <T extends (...args: any[]) => any>(
+  func: T,
+  wait: number,
+  immediate?: boolean
+) => {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+
+  const debounced = function (
+    this: ThisParameterType<T>,
+    ...args: Parameters<T>
+  ) {
+    const context = this;
+    clearTimeout(timeout);
+
+    if (immediate && !timeout) func.apply(context, args);
+
+    timeout = setTimeout(() => {
+      timeout = undefined;
+      if (!immediate) func.apply(context, args);
+    }, wait);
+  };
+
+  // Add a cancel method to clear any pending timeout
+  debounced.cancel = () => {
+    if (timeout) clearTimeout(timeout);
+    timeout = undefined;
+  };
+
+  return debounced;
+};
