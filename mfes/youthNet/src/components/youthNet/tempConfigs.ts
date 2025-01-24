@@ -104,3 +104,114 @@ export const sampleData: SampleData = {
     { date: '1 Dec', count: 4 },
   ],
 };
+
+export const locations = [
+  'Katol',
+  'Kondhali',
+  'Metpanjara',
+  'Bhivapur',
+  'Deviyapur',
+  'Kargaon',
+  'Hastinapur',
+  'Jabarbodi',
+  'Sangoli',
+  'Sarvatra',
+  'Khurgaon',
+  'Ganoli',
+];
+
+export const users = [
+  { name: 'Ananya Gupta', age: 14, village: 'Deviyapur', image: '' },
+  { name: 'Aisha Sharma', age: 15, village: 'Kasurdi', image: '' },
+  { name: 'Bharat Kumar', age: 15, village: 'Pande', image: '' },
+  { name: 'Disha Shire', age: 14, village: 'Deviyapur', image: '' },
+  { name: 'Divya Sharma', age: 17, village: 'Khopi', image: '' },
+];
+
+export const VILLAGE_DATA = {
+  TWENTY_SIX: '26',
+  ZERO: '+0',
+  VILLAGE_ID: 'Village ID',
+  ID: '939326',
+  YOUTH_VOL: '21 Youth, 6 Volunteers',
+  THREE: '3',
+  SURVEYS_CONDUCTED: 'Surveys conducted so far',
+};
+
+export const surveyData = [
+  { title: 'Reading Camp', date: '16 Jul, 2024' },
+  { title: 'Science Camp', date: '5 May, 2024' },
+  { title: 'Sports Camp', date: '3 Feb, 2024' },
+];
+
+export const CAMP_DATA = {
+  ASSIGNED: '  Assigned to Ankita Kulkarni, Ananya Sen',
+  DATE1: 'Submitted on 10 Sep, 2024 @ 2:35 pm',
+  DATE2: 'Submitted on 05 Oct, 2024 @ 6:10 pm',
+};
+export const youthList = [
+  {
+    name: 'Ananya Gupta',
+    age: 14,
+    image: '',
+    joinOn: 'Join on 15 Jan, 2025',
+    isNew: true,
+    showMore: true,
+    showAvtar: true,
+  },
+  {
+    name: 'Aisha Sharma',
+    age: 15,
+    image: '',
+    joinOn: 'Join on 15 Jan, 2025',
+    isNew: true,
+    showMore: true,
+    showAvtar: true,
+  },
+  {
+    name: 'Bharat Kumar',
+    age: 15,
+    image: '',
+    joinOn: 'Join on 15 Jan, 2025',
+    isNew: true,
+    showMore: true,
+    showAvtar: true,
+  },
+  {
+    name: 'Disha Shire',
+    age: 14,
+    joinOn: 'Join on 15 Jan, 2025',
+    image: '',
+    showAvtar: true,
+  },
+  {
+    name: 'Divya Sharma',
+    age: 17,
+    joinOn: 'Join on 15 Jan, 2025',
+    image: '',
+    showAvtar: true,
+  },
+];
+
+export const villageList = [
+  {
+    name: 'Deviyapur',
+    totalCount: 14,
+    newRegistrations: 6,
+  },
+  {
+    name: 'Kasurdi',
+    totalCount: 20,
+    newRegistrations: 3,
+  },
+  {
+    name: 'Khopi',
+    totalCount: 25,
+    newRegistrations: 2,
+  },
+  {
+    name: 'Shivare',
+    totalCount: 10,
+    newRegistrations: 5,
+  },
+];

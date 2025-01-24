@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -24,6 +26,7 @@ import {
   Radio,
   RadioGroup,
   Select,
+  SelectChangeEvent,
   Typography,
 } from '@mui/material';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
@@ -80,7 +83,7 @@ interface LayoutProps {
     language?: string[];
     subject?: string[];
     contentType?: string[];
-  };
+  };currentSelectedValues
   language?: string;
   selectedSubjects?: string[];
   selectedContentTypes?: string[];
@@ -170,8 +173,8 @@ const FilterDialog = ({
                 value: term.code,
               }));
 
-              // Get the selected values for the current category
-              const currentSelectedValues = selectedValues[filterCode] || [];
+                // Get the selected values for the current category
+                const currentSelectedValues = selectedValues[filterCode] || [];
 
               return (
                 <FormControl

@@ -1,3 +1,5 @@
+import '../styles/globals.css';
+
 import { AppProps } from 'next/app';
 import * as React from 'react';
 import Head from 'next/head';
@@ -108,6 +110,11 @@ function CustomApp({ Component, pageProps }: AppProps) {
 
   return (
     <>
+      <style jsx global>{`
+        html {
+          font-family: ${poppins.style.fontFamily} !important;
+        }
+      `}</style>
       <Head>
         <title>{metaTags?.title}</title>
         <meta name="description" content={metaTags?.description} />
@@ -116,12 +123,11 @@ function CustomApp({ Component, pageProps }: AppProps) {
           rel="stylesheet"
         />
       </Head>
+
       <CacheProvider value={isRTL ? rtlCache : ltrCache}>
         <CssVarsProvider theme={customTheme}>
           <QueryClientProvider client={client}>
-            <main className="app">
-              <Component {...pageProps} />
-            </main>
+            <Component {...pageProps} />
           </QueryClientProvider>
           <ToastContainer
             position="bottom-left"

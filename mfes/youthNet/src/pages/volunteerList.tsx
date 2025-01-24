@@ -1,15 +1,15 @@
 import React from 'react';
-import withRole from '../../components/withRole';
+import withRole from '../components/withRole';
 import { Box } from '@mui/material';
-import Header from '../../components/Header';
+import Header from '../components/Header';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { TENANT_DATA } from '../../utils/app.config';
-import BackHeader from '../../components/youthNet/BackHeader';
-import { SURVEY_DATA } from '../../components/youthNet/tempConfigs';
+import { TENANT_DATA } from '../utils/app.config';
+import BackHeader from '../components/youthNet/BackHeader';
+import { SURVEY_DATA } from '../components/youthNet/tempConfigs';
 import { useRouter } from 'next/router';
-import { volunteerData } from '../../components/youthNet/tempConfigs';
-import VolunteerListCard from '../../components/youthNet/VolunteerListCard';
-import NoDataFound from '../../components/common/NoDataFound';
+import { volunteerData } from '../components/youthNet/tempConfigs';
+import VolunteerListCard from '../components/youthNet/VolunteerListCard';
+import NoDataFound from '../components/common/NoDataFound';
 
 const volunteerList = () => {
   const router = useRouter();
@@ -52,5 +52,14 @@ const volunteerList = () => {
     </Box>
   );
 };
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ['common'])),
+      // Will be passed to the page component as props
+    },
+  };
+}
 
 export default withRole(TENANT_DATA.YOUTHNET)(volunteerList);
