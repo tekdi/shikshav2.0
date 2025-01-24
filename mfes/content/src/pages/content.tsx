@@ -33,14 +33,14 @@ export default function Content() {
   const [contentData, setContentData] = useState<ContentItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedContent, setSelectedContent] = useState<any>(null);
-  const [language, setLanguage] = useState('');
-  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
-  const [selectedContentTypes, setSelectedContentTypes] = useState<string[]>(
-    []
-  );
-  const [sort, setSort] = useState<string>('asc');
+  // const [language, setLanguage] = useState('');
+  // const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
+  // const [selectedContentTypes, setSelectedContentTypes] = useState<string[]>(
+  //   []
+  // );
+  // const [sort, setSort] = useState<string>('asc');
   const fetchContent = useCallback(
-    async (type?: string, searchValue?: string) => {
+    async (type?: string, searchValue?: string, filterValues?: {}) => {
       setIsLoading(true);
       try {
         let result;
@@ -48,7 +48,8 @@ export default function Content() {
           result = await hierarchyAPI(identifier);
           if (result) setContentData([result]);
         } else {
-          result = type && (await ContentSearch(type, searchValue));
+          result =
+            type && (await ContentSearch(type, searchValue, filterValues));
 
           setContentData(result || []);
         }
@@ -63,8 +64,8 @@ export default function Content() {
 
   useEffect(() => {
     const type = tabValue === 0 ? 'Course' : 'Learning Resource';
-    fetchContent(type);
-  }, [fetchContent, tabValue]);
+    fetchContent(type, searchValue, filterValues);
+  }, [tabValue]);
 
   const handleAccountClick = () => {
     console.log('Account clicked');
@@ -73,7 +74,7 @@ export default function Content() {
   const handleSearchClick = () => {
     if (searchValue.trim()) {
       const type = tabValue === 0 ? 'Course' : 'Learning Resource';
-      fetchContent(type, searchValue);
+      fetchContent(type, searchValue, filterValues);
     }
   };
 
@@ -166,40 +167,65 @@ export default function Content() {
     { text: 'Page2', icon: <MailIcon />, to: '/page-2' },
     { text: 'Content', icon: <MailIcon />, to: '/content' },
   ];
-  const filter = {
-    sort: true,
-    language: [
-      'Mathematics',
-      'Science',
-      'Environmental Sciences',
-      'English',
-      'Hindi',
-    ],
-    subject: [
-      'Mathematics',
-      'Science',
-      'Environmental Sciences',
-      'English',
-      'Hindi',
-    ],
-    contentType: ['Video', 'PDF', 'E-Book', 'Quiz'],
+  // const filter = {
+  //   sort: true,
+  //   language: [
+  //     'Mathematics',
+  //     'Science',
+  //     'Environmental Sciences',
+  //     'English',
+  //     'Hindi',
+  //   ],
+  //   subject: [
+  //     'Mathematics',
+  //     'Science',
+  //     'Environmental Sciences',
+  //     'English',
+  //     'Hindi',
+  //   ],
+  //   contentType: ['Video', 'PDF', 'E-Book', 'Quiz'],
+  // };
+  const [filterValues, setFilterValues] = useState({}); // Initialize as an empty object
+  useEffect(() => {
+    const type = tabValue === 0 ? 'Course' : 'Learning Resource';
+    fetchContent(type, searchValue, filterValues);
+  }, [filterValues]);
+  const handleApplyFilters = (selectedValues) => {
+    // console.log('Selected Language:', language);
+    // console.log('Selected Subjects:', selectedSubjects);
+    // console.log('Selected Content Types:', selectedContentTypes);
+    // console.log('Sort Order:', sort);
+    setFilterValues(selectedValues);
+    console.log('Filter selectedValues:', selectedValues);
   };
-  const handleApplyFilters = () => {
-    console.log('Selected Language:', language);
-    console.log('Selected Subjects:', selectedSubjects);
-    console.log('Selected Content Types:', selectedContentTypes);
-    console.log('Sort Order:', sort);
+
+  // const handleSubjectsChange = (subjects: string[]) => {
+  //   setSelectedSubjects(subjects); // Update the selected subjects as an array
+  // };
+  // const handleContentTypeChange = (contentType: string[]) => {
+  //   setSelectedContentTypes(contentType); // Update the selected subjects as an array
+  // };
+  // const handleSortChange = (newSort: string) => {
+  //   console.log('Sort Order:', newSort);
+  //   setSort(newSort);
+  // };
+
+  //get filter framework
+  const [frameworkFilter, setFrameworkFilter] = useState(false);
+  useEffect(() => {
+    fetchFramework();
+  }, [router]);
+  const fetchFramework = async () => {
+    try {
+      const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
+      const frameworkData = await fetch(url).then((res) => res.json());
+      const frameworks = frameworkData?.result?.framework;
+      setFrameworkFilter(frameworks);
+    } catch (error) {
+      console.error('Error fetching board data:', error);
+    }
   };
-  const handleSubjectsChange = (subjects: string[]) => {
-    setSelectedSubjects(subjects); // Update the selected subjects as an array
-  };
-  const handleContentTypeChange = (contentType: string[]) => {
-    setSelectedContentTypes(contentType); // Update the selected subjects as an array
-  };
-  const handleSortChange = (newSort: string) => {
-    console.log('Sort Order:', newSort);
-    setSort(newSort);
-  };
+
   return (
     <Layout
       showTopAppBar={{
@@ -229,20 +255,22 @@ export default function Content() {
       }}
       drawerItems={drawerItems}
       showFilter={true}
-      filter={filter}
+      // filter={filter}
+      frameworkFilter={frameworkFilter}
       onItemClick={handleItemClick}
       isFooter={false}
       showLogo={true}
       showBack={true}
-      language={language}
-      selectedSubjects={selectedSubjects}
-      selectedContentTypes={selectedContentTypes}
-      sort={{ sortBy: sort }}
-      onLanguageChange={(newLang) => setLanguage(newLang)}
-      onSubjectsChange={handleSubjectsChange}
-      onContentTypeChange={handleContentTypeChange}
-      onSortChange={handleSortChange}
+      // language={language}
+      // selectedSubjects={selectedSubjects}
+      // selectedContentTypes={selectedContentTypes}
+      // sort={{ sortBy: sort }}
+      // onLanguageChange={(newLang) => setLanguage(newLang)}
+      // onSubjectsChange={handleSubjectsChange}
+      // onContentTypeChange={handleContentTypeChange}
+      // onSortChange={handleSortChange}
       onApply={handleApplyFilters}
+      filterValues={filterValues}
     >
       <Box
         sx={{

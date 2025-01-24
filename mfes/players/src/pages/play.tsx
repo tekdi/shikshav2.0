@@ -98,12 +98,12 @@ const Players: React.FC<SunbirdPlayerProps> = ({
         </Box>
       ) : (
         <Box marginTop="1rem" px="14px">
-          <Typography
+          {/* <Typography
             color="#024f9d"
             sx={{ padding: '0 0 4px 4px', fontWeight: 'bold' }}
           >
             {playerConfig?.metadata?.name || 'Loading...'}
-          </Typography>
+          </Typography> */}
           <SunbirdPlayers player-config={playerConfig} />
         </Box>
       )}

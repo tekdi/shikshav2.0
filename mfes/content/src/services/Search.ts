@@ -109,7 +109,8 @@ interface ContentSearchResponse {
 
 export const ContentSearch = async (
   type: string,
-  searchText?: string
+  searchText?: string,
+  filterValues?: object
 ): Promise<ContentSearchResponse[]> => {
   try {
     // Ensure the environment variable is defined
@@ -124,8 +125,10 @@ export const ContentSearch = async (
         filters: {
           // identifier: 'do_114228944942358528173',
           // identifier: 'do_1141652605790289921389',
-          // channel: '01369885294383923244',
-          primaryCategory: [type, 'posterImage'],
+          ...filterValues,
+          //need below after login user channel for dynamic load content
+          //channel: '01369885294383923244',
+          primaryCategory: [type],
         },
 
         fields: [
