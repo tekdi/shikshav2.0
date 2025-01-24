@@ -1,6 +1,6 @@
 name: Deploy to PRAHTAM-DEV
 
-jobs:
+#jobs:
   deploy_DEV:
     runs-on: ubuntu-latest
     timeout-minutes: 120
