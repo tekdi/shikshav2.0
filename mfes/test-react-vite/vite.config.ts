@@ -35,5 +35,12 @@ export default defineConfig({
     commonjsOptions: {
       transformMixedEsModules: true,
     },
+
+    //error solution for
+    //[commonjs--resolver] Failed to resolve entry for package "fs". The package may have incorrect main/module/exports specified in its package.json.
+    rollupOptions: {
+      external: ['fs', 'stream', 'zlib'], // Exclude Node.js core modules
+    },
+    //end error solution
   },
 });

@@ -2,6 +2,8 @@ import dynamic from 'next/dynamic';
 import React from 'react';
 
 const teacher = () => {
+  const mfe_scp_teacher = process.env.NEXT_PUBLIC_SCP_PROJECT;
+
   return (
     <div
       style={{
@@ -13,7 +15,7 @@ const teacher = () => {
       }}
     >
       <iframe
-        src="http://localhost:3001"
+        src={mfe_scp_teacher}
         style={{
           width: '100%',
           height: '100%',

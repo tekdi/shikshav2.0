@@ -14,6 +14,8 @@ const nextConfig = {
     // @ts-ignore
     i18n: nextI18nextConfig.i18n,
   },
+  
+  basePath: '/authentication', // This should match the path set in Nginx
 };
 
 const plugins = [

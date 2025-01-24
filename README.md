@@ -1,119 +1,101 @@
 # Shikshav20
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+## Host App
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+### test-app
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/next?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
-
-## Run tasks
-
-To run the dev server for your app, use:
+Next JS, run:
 
 ```sh
-npx nx dev shikshav2.0
+nx dev test-app --port=3000 --verbose
 ```
 
-To create a production bundle:
+Port : `3000`
+
+### teachers
+
+Next JS, run:
 
 ```sh
-npx nx build shikshav2.0
+nx dev teachers --port=3001 --verbose
 ```
 
-To see all available targets to run for a project, run:
+##
+
+## Micro Frontend List
+
+### test-next-route
+
+Next JS, run:
 
 ```sh
-npx nx show project shikshav2.0
+nx dev test-next-route --port=4100 --verbose
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+basePath : `http://localhost:4100/iframenext/`
+Port : `4100`
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### test-react-vite
 
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
+Next JS, run:
 
 ```sh
-npx nx g @nx/next:app demo
+nx serve test-react-vite --port=4200 --verbose
 ```
 
-To generate a new library, use:
+basePath : `http://localhost:4200/iframereact/`
+Port : `4200`
+
+### authentication
+
+Next JS, run:
 
 ```sh
-npx nx g @nx/react:lib mylib
+nx dev authentication --port=4101 --verbose
 ```
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+basePath : `http://localhost:4101/authentication/`
+Port : `4101`
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### scp-teacher
 
-## Set up CI!
-
-### Step 1
-
-To connect to Nx Cloud, run the following command:
+Next JS, run:
 
 ```sh
-npx nx connect
+nx dev scp-teacher --port=4102 --verbose
 ```
 
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
+basePath : `http://localhost:4102/scp-teacher/`
+Port : `4102`
 
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### youthNet
 
-### Step 2
-
-Use the following command to configure a CI workflow for your workspace:
+Next JS, run:
 
 ```sh
-npx nx g ci-workflow
+nx dev youthNet --port=4103 --verbose
 ```
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+basePath : `http://localhost:4103/youthnet/`
+Port : `4103`
 
-## Install Nx Console
+##
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+## NX Command
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### View Nx Graph
 
-## Useful links
+` nx graph`
 
-Learn more:
+### Build All Project
 
-- [Learn more about this workspace setup](https://nx.dev/nx-api/next?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+`npx nx run-many --target=build --all`
 
-And join the Nx community:
+### Install NX Globally
 
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+`npm install -g nx`
 
-# Custom Libs and Mfes
-
-## run registration mfes
-
-```sh
-nx dev registration --verbose
-```
-
-## run content-consumption mfes
-
-```sh
-nx serve content-consumption --verbose
-```
+## Notes
 
 ## use shared library in any project
 

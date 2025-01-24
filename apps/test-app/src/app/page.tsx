@@ -1,10 +1,13 @@
-//'use client';
+'use client';
 
 import styles from './page.module.css';
 import dynamic from 'next/dynamic';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+
+//shared DataClient
+import { setData, getData, removeData } from '@shared-lib';
 
 const TestNextRoute = dynamic(() => import('@test-next-route'), {
   ssr: false,
@@ -16,6 +19,22 @@ export default function Index() {
    *
    * Note: The corresponding styles are in the ./index.css file.
    */
+  const [storeData, setStoreData] = useState('');
+
+  const handleSetData = async () => {
+    await setData('myKey', { test: 'test', value: 'hello' });
+  };
+
+  const handleGetData = async () => {
+    const value = await getData('myKey');
+    console.log('Retrieved value:', value);
+    setStoreData(value);
+  };
+
+  const handleRemoveData = async () => {
+    await removeData('myKey');
+  };
+
   return (
     <div className={styles.page}>
       <div className="wrapper">
@@ -39,6 +58,17 @@ export default function Index() {
                 <h1>React Microfrontend Iframe</h1>
               </button>
             </Link>
+            <br />
+            <br />
+            <h5>{JSON.stringify(storeData)}</h5>
+            <div>
+              <button onClick={handleSetData}>Set Data</button>
+              <br />
+              <button onClick={handleGetData}>Get Data</button>
+              <br />
+              <button onClick={handleRemoveData}>Remove Data</button>
+              <br />
+            </div>
           </div>
         </div>
       </div>

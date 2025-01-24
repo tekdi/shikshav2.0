@@ -755,9 +755,7 @@ main {
   background-color: var(--mui-palette-warning-A400);
   border: 1.5px solid var(--mui-palette-warning-A400);
   border-radius: 100px;
-  box-shadow:
-    0 1px 2px 0 rgb(0 0 0 / 30%),
-    0 2px 6px 2px rgb(0 0 0 / 15%);
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 30%), 0 2px 6px 2px rgb(0 0 0 / 15%);
 }
 
 .modal-bottom div:nth-child(3) {
@@ -992,9 +990,7 @@ main {
   border-radius: 16px;
   overflow: hidden;
   /* box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); */
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .facilitator-card:hover {
@@ -1218,10 +1214,8 @@ mat-radio-group.mat-mdc-radio-group {
 .btn-outline-secondary {
   background: transparent !important;
   border-radius: 100px !important;
-  box-shadow:
-    0px 3px 1px -2px rgba(0, 0, 0, 0.2),
-    0px 2px 2px 0px rgba(0, 0, 0, 0.14),
-    0px 1px 5px 0px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12) !important;
   color: #1e1b16 !important;
   font-size: 14px !important;
   font-weight: 600 !important;
@@ -1230,10 +1224,8 @@ mat-radio-group.mat-mdc-radio-group {
 .btn-primary {
   background: #fdbe16 !important;
   border-radius: 100px !important;
-  box-shadow:
-    0px 3px 1px -2px rgba(0, 0, 0, 0.2),
-    0px 2px 2px 0px rgba(0, 0, 0, 0.14),
-    0px 1px 5px 0px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12) !important;
   color: #1e1b16 !important;
   font-size: 14px !important;
   font-weight: 600 !important;

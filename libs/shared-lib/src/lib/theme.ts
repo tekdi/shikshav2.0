@@ -60,6 +60,7 @@ export const lightTheme = createTheme({
       paper: '#f5f5f5',
     },
   },
+  //@ts-ignore
   components: commonComponents,
   typography: {
     fontFamily: 'inherit',
@@ -82,6 +83,7 @@ export const darkTheme = createTheme({
       paper: '#1d1d1d',
     },
   },
+  //@ts-ignore
   components: commonComponents,
   typography: {
     fontFamily: 'inherit',

@@ -129,14 +129,6 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
 }) => {
   const router = useRouter();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
-  // const [expandedItems, setExpandedItems] = useState<Set<string>>(
-  //   defaultExpanded ? new Set(data.map((item) => item.identifier)) : new Set()
-  // );
-  // useEffect(() => {
-  //   if (router.query.identifier) {
-  //     setExpandedItems(new Set([router.query.identifier as string]));
-  //   }
-  // }, [router.query]);
 
   const toggleExpanded = (identifier: string) => {
     setExpandedItems((prev) => {
@@ -198,9 +190,9 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
           }}
         >
           {expandedItems.has(identifier) ? (
-            <ExpandMoreIcon />
-          ) : (
             <ExpandLessIcon />
+          ) : (
+            <ExpandMoreIcon />
           )}
         </Box>
       </Box>

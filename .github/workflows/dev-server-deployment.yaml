@@ -1,0 +1,57 @@
+name: Deploy to PRAHTAM-DEV
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy_DEV:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      # Step to cache pnpm store for faster builds
+      - name: Cache pnpm store
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js and Install dependencies
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies using pnpm
+        run: |
+          npm install -g pnpm
+          pnpm install
+
+      - name: Deploy Stack
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEV_HOST_NAME }}
+          username: ${{ secrets.DEV_USERNAME }}
+          key: ${{ secrets.DEV_EC2_SSH_KEY }}
+          port: ${{ secrets.DEV_PORT }}
+          script: |
+            cd ${{ secrets.DEV_TARGET_DIR }}
+            git stash
+            git pull --all
+            if [ -f .env ]; then
+              rm .env
+            fi
+            echo "${{ secrets.DEV_ENV }}" > .env
+            ls -ltra
+
+            # Stop running containers, clean up, and restart
+            docker-compose -f docker-compose.teachers.yml down
+            docker system prune -af
+            docker-compose -f docker-compose.teachers.yml up -d --timeout 600 | tee docker-compose.log
+            sudo systemctl restart nginx

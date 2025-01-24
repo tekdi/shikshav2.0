@@ -2,6 +2,8 @@ import dynamic from 'next/dynamic';
 import React from 'react';
 
 const youth = () => {
+  const mfe_youthnet = process.env.NEXT_PUBLIC_YOUTHNET_PROJECT;
+
   return (
     <div
       style={{
@@ -13,7 +15,7 @@ const youth = () => {
       }}
     >
       <iframe
-        src="http://localhost:3002"
+        src={mfe_youthnet}
         style={{
           width: '100%',
           height: '100%',

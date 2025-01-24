@@ -11,7 +11,7 @@ import {
   CommonSelect,
   CommonTextField,
   Layout,
-  login,
+  // login,
 } from '@shared-lib';
 import { SelectChangeEvent } from '@mui/material/Select';
 import Link from 'next/link';
@@ -21,9 +21,6 @@ const languageData = [
   { id: 1, name: 'English' },
   { id: 2, name: 'Marathi' },
   { id: 3, name: 'Hindi' },
-  { id: 4, name: 'Gujarati' },
-  { id: 5, name: 'Bengali' },
-  { id: 6, name: 'Tamil' },
 ];
 
 const checkboxData = [{ label: 'Remember Me' }];
@@ -69,25 +66,37 @@ export default function Login() {
   };
 
   const handleButtonClick = async () => {
-    if (formData.userName && formData.password) {
-      try {
-        const response = await login({
-          username: formData.userName,
-          password: formData.password,
-        });
-        if (response) {
-          if (typeof window !== 'undefined' && window.localStorage) {
-            const token = response?.result?.access_token;
-            const refreshToken = response?.result?.refresh_token;
-            localStorage.setItem('token', token);
-            checked
-              ? localStorage.setItem('refreshToken', refreshToken)
-              : localStorage.removeItem('refreshToken');
-          }
+    if (!formData.userName || !formData.password) {
+      setError({
+        userName: !formData.userName,
+        password: !formData.password,
+      });
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await getToken({
+        username: formData.userName,
+        password: formData.password,
+      });
+
+      if (response?.access_token) {
+        localStorage.setItem('accToken', response?.access_token);
+        localStorage.setItem('refToken', response?.refresh_token);
+        const redirectUrl = process.env.NEXT_PUBLIC_CONTENT;
+        if (redirectUrl) {
+          router.push(redirectUrl);
         }
-      } catch (error: any) {
-        console.log(error);
+      } else {
+        setShowError(true);
+        setErrorMessage(response);
       }
+    } catch (error: any) {
+      console.error('Login failed:', error);
+      setShowError(true);
+      setErrorMessage(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -116,7 +125,7 @@ export default function Login() {
           mx: 'auto',
         }}
       >
-        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 3 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
           <Grid
             container
             sx={{
@@ -207,6 +216,7 @@ export default function Login() {
           />
 
           <Button
+            disabled={loading}
             onClick={handleButtonClick}
             sx={{
               color: '#FFFFFF',
@@ -218,7 +228,7 @@ export default function Login() {
               fontWeight: 500,
             }}
           >
-            Login
+            {loading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
           </Button>
           <Typography
             variant="h1"
@@ -226,7 +236,7 @@ export default function Login() {
             color="#3B383E"
             fontWeight={500}
           >
-            Don’t Have An Account? Register
+            Don’t Have An Account? <Link href="/newUser">Register </Link>
           </Typography>
         </Grid>
       </Grid>

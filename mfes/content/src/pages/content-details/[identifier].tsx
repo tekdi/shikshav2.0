@@ -136,6 +136,7 @@ const ContentDetails = () => {
             <Grid size={{ xs: 12 }}>
               {contentDetails?.keywords?.map((tag: string) => (
                 <Button
+                  key={tag}
                   variant="contained"
                   sx={{
                     bgcolor: '#49454F1F',

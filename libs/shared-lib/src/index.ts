@@ -10,7 +10,7 @@ export * from './lib/Select/CommonSelect';
 export * from './lib/Search/CommonSearch';
 export * from './lib/Tabs/CommonTabs';
 export * from './lib/Card/CommonCard';
-export * from './lib/Collapse/CommonCollapse';
+export * from './lib/Collapse/CommonAccordian';
 export * from './lib/Drawer/CommonDrawer';
 export * from './lib/Services/LoginService';
 export * from './lib/Services/RestClient';
@@ -27,3 +27,6 @@ import Image from '../images/default.png';
 export const IMAGES = {
   DEFAULT_PLACEHOLDER: Image,
 };
+
+//utils
+export * from './utils/DataClient';

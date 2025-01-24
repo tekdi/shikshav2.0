@@ -10,6 +10,11 @@ import CustomSelect from '../components/Select/CustomSelect';
 import CustomSwitch from '../components/Switches/CustomSwitch';
 import CustomTextField from '../components/Textfields/CustomTextField';
 // import { SunbirdPlayer } from '@shared-lib';
+<<<<<<< Updated upstream
+=======
+import { Collection } from '@shared-lib';
+import { QuestionSet } from '@shared-lib';
+>>>>>>> Stashed changes
 
 const Demo: React.FC = () => {
   const [name, setName] = useState<string>('');

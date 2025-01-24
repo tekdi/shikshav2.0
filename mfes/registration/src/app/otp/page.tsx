@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TextField, Box } from '@mui/material';
 
-export default function OTP({
+export default function Otp({
   separator,
   length,
   value,

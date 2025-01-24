@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { VillageDetailProps } from '@/utils/Interfaces';
+import { VillageDetailProps } from '../../utils/Interfaces';
 import { useTheme } from '@mui/material/styles';
 import Image from 'next/image';
 import mp from './../../assets/images/mp.png'
