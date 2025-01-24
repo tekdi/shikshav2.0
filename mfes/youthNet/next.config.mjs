@@ -1,7 +1,7 @@
 //@ts-check
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { composePlugins, withNx } = require('@nx/next');
+import { composePlugins, withNx } from '@nx/next';
+import nextI18nextConfig from './next-i18next.config.js';
 
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
@@ -13,6 +13,8 @@ const nextConfig = {
     svgr: false,
   },
 
+  // @ts-ignore
+  i18n: nextI18nextConfig.i18n,
   basePath: '/youthnet', // This should match the path set in Nginx
 };
 
@@ -21,4 +23,4 @@ const plugins = [
   withNx,
 ];
 
-module.exports = composePlugins(...plugins)(nextConfig);
+export default composePlugins(...plugins)(nextConfig);

@@ -897,9 +897,10 @@ export interface RegistrationStatisticsProps {
   statistic?: string | number;
   avatar?: boolean;
   subtile?: string;
+  onPrimaryClick?: () => void;
 }
 export interface VillageNewRegistrationProps {
-  locations: string | React.ReactNode;
+  locations: any;
 }
 export interface RegistrationModalProps {
   avatar?: string;
@@ -910,10 +911,12 @@ export interface RegistrationModalProps {
 export interface SurveysProps {
   title: string;
   date: string;
+  onClick: () => void;
 }
 
 export interface VillageDetailProps {
   title?: string;
-  icon?: React.ReactNode;
+  imageSrc?: any;
   subtitle?: string;
+  onClick?: () => void;
 }

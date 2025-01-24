@@ -1,29 +1,26 @@
-import React, { useEffect } from 'react';
-// Import necessary modules
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-
-// const Login = dynamic(() => import('./Login'), { ssr: false });
-// const Dashboard = dynamic(() => import('./Dashboard'), { ssr: false });
 
 const Home: React.FC = () => {
   const { push } = useRouter();
   const { t } = useTranslation();
 
-  const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.localStorage) {
+    if (typeof window !== 'undefined') {
       const token = localStorage.getItem('token');
-      setLoading(false);
       if (token) {
-        push('/login');
+        push('/dashboard');
       } else {
         push('/login', undefined, { locale: 'en' });
       }
+      setLoading(false);
     }
-  }, []);
+  }, [push]);
+
   useEffect(() => {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
@@ -37,7 +34,17 @@ const Home: React.FC = () => {
     }
   }, []);
 
+  if (loading === null) return null;
+
   return <>{loading && <p>{t('COMMON.LOADING')}...</p>}</>;
 };
+
+export async function getStaticProps({ locale }: { locale: string }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ['common'])),
+    },
+  };
+}
 
 export default Home;

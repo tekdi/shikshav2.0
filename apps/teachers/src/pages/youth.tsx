@@ -1,5 +1,7 @@
 import dynamic from 'next/dynamic';
 import React from 'react';
+import { TENANT_DATA } from '../utils/app.config';
+import withRole from '../utils/hoc/withRole';
 
 const youth = () => {
   const mfe_youthnet = process.env.NEXT_PUBLIC_YOUTHNET_PROJECT;
@@ -7,7 +9,6 @@ const youth = () => {
   return (
     <div
       style={{
-        margin: 0,
         padding: 0,
         height: '100vh',
         width: '100vw',
@@ -17,8 +18,11 @@ const youth = () => {
       <iframe
         src={mfe_youthnet}
         style={{
-          width: '100%',
-          height: '100%',
+          display: 'block', // Ensures no extra space around the iframe
+          margin: 0,
+          padding: 0,
+          width: '100vw',
+          height: '100vh',
           border: 'none',
         }}
         title="Embedded Localhost"
@@ -27,4 +31,4 @@ const youth = () => {
   );
 };
 
-export default youth;
+export default withRole(TENANT_DATA.YOUTHNET)(youth);

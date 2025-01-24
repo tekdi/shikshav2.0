@@ -108,6 +108,11 @@ function CustomApp({ Component, pageProps }: AppProps) {
 
   return (
     <>
+      <style jsx global>{`
+        html {
+          font-family: ${poppins.style.fontFamily} !important;
+        }
+      `}</style>
       <Head>
         <title>{metaTags?.title}</title>
         <meta name="description" content={metaTags?.description} />
@@ -116,18 +121,33 @@ function CustomApp({ Component, pageProps }: AppProps) {
           rel="stylesheet"
         />
       </Head>
+
       <CacheProvider value={isRTL ? rtlCache : ltrCache}>
         <CssVarsProvider theme={customTheme}>
-          <QueryClientProvider client={client}>
-            <main className="app">
+          <Box
+            sx={{
+              padding: '0',
+              '@media (min-width: 900px)': {
+                width: !isFullWidthPage ? 'calc(100% - 22rem)' : '100%',
+                marginLeft: !isFullWidthPage ? '351px' : '0',
+              },
+              '@media (min-width: 2000px)': {
+                width: '100%',
+                marginLeft: !isFullWidthPage ? '351px' : '0',
+              },
+              background: theme.palette.warning['A400'],
+              overflowX: 'hidden',
+            }}
+          >
+            <QueryClientProvider client={client}>
               <Component {...pageProps} />
-            </main>
-          </QueryClientProvider>
-          <ToastContainer
-            position="bottom-left"
-            autoClose={3000}
-            stacked={false}
-          />
+            </QueryClientProvider>
+            <ToastContainer
+              position="bottom-left"
+              autoClose={3000}
+              stacked={false}
+            />
+          </Box>
         </CssVarsProvider>
       </CacheProvider>
     </>
