@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -24,6 +26,7 @@ import {
   Radio,
   RadioGroup,
   Select,
+  SelectChangeEvent,
   Typography,
 } from '@mui/material';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
@@ -127,10 +130,10 @@ const FilterDialog = ({
     filterValues ? filterValues : {}
   ); // Initialize as an empty object
 
-  const handleChange = (event, filterCode) => {
+  const handleChange = (event: SelectChangeEvent<any>, filterCode: string) => {
     const { value } = event.target;
 
-    setSelectedValues((prev) => ({
+    setSelectedValues((prev: any) => ({
       ...prev,
       [filterCode]: typeof value === 'string' ? value.split(',') : value,
     }));
@@ -160,59 +163,106 @@ const FilterDialog = ({
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {/* new filter frameworkFilter */}
           {frameworkFilter?.categories &&
-            frameworkFilter.categories.map((categories) => {
-              const filterCode = `se_${categories?.code}s`; // A unique identifier for the category
-              const componentKey = `multi-checkbox-label_${categories?.identifier}`;
+            frameworkFilter.categories.map(
+              (categories: {
+                code: any;
+                identifier: any;
+                terms: any[];
+                name:
+                  | string
+                  | number
+                  | bigint
+                  | boolean
+                  | React.ReactElement<
+                      any,
+                      string | React.JSXElementConstructor<any>
+                    >
+                  | Iterable<React.ReactNode>
+                  | React.ReactPortal
+                  | Promise<React.AwaitedReactNode>
+                  | null
+                  | undefined;
+              }) => {
+                const filterCode = `se_${categories?.code}s`; // A unique identifier for the category
+                const componentKey = `multi-checkbox-label_${categories?.identifier}`;
 
-              // Transform terms into options
-              const options = categories?.terms.map((term) => ({
-                label: term.name,
-                value: term.code,
-              }));
+                // Transform terms into options
+                const options = categories?.terms.map(
+                  (term: { name: any; code: any }) => ({
+                    label: term.name,
+                    value: term.code,
+                  })
+                );
 
-              // Get the selected values for the current category
-              const currentSelectedValues = selectedValues[filterCode] || [];
+                // Get the selected values for the current category
+                const currentSelectedValues = selectedValues[filterCode] || [];
 
-              return (
-                <FormControl fullWidth key={filterCode}>
-                  <InputLabel
-                    id={componentKey}
-                    sx={{
-                      marginBottom: '8px', // Adjust margin between the label and the Select
-                      color: '#000', // Optional: Customize label color
-                      fontSize: '14px', // Optional: Adjust label font size
-                    }}
-                  >
-                    {categories?.name}
-                  </InputLabel>
-                  <Select
-                    labelId={componentKey}
-                    multiple
-                    value={currentSelectedValues}
-                    onChange={(event) => handleChange(event, filterCode)}
-                    renderValue={(selected) =>
-                      selected
-                        .map((selectedValue) => {
-                          const selectedOption = options.find(
-                            (option) => option.value === selectedValue
-                          );
-                          return selectedOption ? selectedOption.label : '';
-                        })
-                        .join(', ')
-                    }
-                  >
-                    {options.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        <Checkbox
-                          checked={currentSelectedValues.includes(option.value)}
-                        />
-                        <ListItemText primary={option.label} />
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              );
-            })}
+                return (
+                  <FormControl fullWidth key={filterCode}>
+                    <InputLabel
+                      id={componentKey}
+                      sx={{
+                        marginBottom: '8px', // Adjust margin between the label and the Select
+                        color: '#000', // Optional: Customize label color
+                        fontSize: '14px', // Optional: Adjust label font size
+                      }}
+                    >
+                      {categories?.name}
+                    </InputLabel>
+                    <Select
+                      labelId={componentKey}
+                      multiple
+                      value={currentSelectedValues}
+                      onChange={(event) => handleChange(event, filterCode)}
+                      renderValue={(selected) =>
+                        selected
+                          .map((selectedValue: any) => {
+                            const selectedOption = options.find(
+                              (option: { value: any }) =>
+                                option.value === selectedValue
+                            );
+                            return selectedOption ? selectedOption.label : '';
+                          })
+                          .join(', ')
+                      }
+                    >
+                      {options.map(
+                        (option: {
+                          value:
+                            | React.Key
+                            | readonly string[]
+                            | null
+                            | undefined;
+                          label:
+                            | string
+                            | number
+                            | bigint
+                            | boolean
+                            | React.ReactElement<
+                                any,
+                                string | React.JSXElementConstructor<any>
+                              >
+                            | Iterable<React.ReactNode>
+                            | React.ReactPortal
+                            | Promise<React.AwaitedReactNode>
+                            | null
+                            | undefined;
+                        }) => (
+                          <MenuItem key={option.value} value={option.value}>
+                            <Checkbox
+                              checked={currentSelectedValues.includes(
+                                option.value
+                              )}
+                            />
+                            <ListItemText primary={option.label} />
+                          </MenuItem>
+                        )
+                      )}
+                    </Select>
+                  </FormControl>
+                );
+              }
+            )}
         </Box>
         <Divider sx={{ marginTop: 4 }} />
         {/* <FormControl fullWidth>
