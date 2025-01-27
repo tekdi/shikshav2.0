@@ -6,7 +6,7 @@ import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 
 export default defineConfig({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/mfes/mfe-react-vite',
+  cacheDir: '../../node_modules/.vite/mfes/test-react-vite',
 
   server: {
     port: 4200,
@@ -19,7 +19,7 @@ export default defineConfig({
   },
 
   plugins: [react(), nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
-
+  
   //add nginix base here
   base: '/iframereact/', // Prepend this base path to all assets
 
@@ -29,7 +29,7 @@ export default defineConfig({
   // },
 
   build: {
-    outDir: '../../dist/mfes/mfe-react-vite',
+    outDir: '../../dist/mfes/test-react-vite',
     emptyOutDir: true,
     reportCompressedSize: true,
     commonjsOptions: {

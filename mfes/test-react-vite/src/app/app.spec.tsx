@@ -19,6 +19,6 @@ describe('App', () => {
         <App />
       </BrowserRouter>
     );
-    expect(getByText(/Welcome mfe-react-vite/gi)).toBeTruthy();
+    expect(getByText(/Welcome test-react-vite/gi)).toBeTruthy();
   });
 });
