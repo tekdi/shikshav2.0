@@ -75,6 +75,9 @@ export default function Content() {
     if (searchValue.trim()) {
       const type = tabValue === 0 ? 'Course' : 'Learning Resource';
       fetchContent(type, searchValue, filterValues);
+    } else {
+      const type = tabValue === 0 ? 'Course' : 'Learning Resource';
+      fetchContent(type);
     }
   };
 
@@ -131,7 +134,11 @@ export default function Content() {
             <Grid key={item?.identifier} size={{ xs: 6, sm: 6, md: 3, lg: 3 }}>
               <CommonCard
                 title={item?.name.trim()}
-                image={item?.posterImage || '/assets/images/image_ver.png'}
+                image={
+                  item?.posterImage && item?.posterImage !== 'undefined'
+                    ? item?.posterImage
+                    : '/assests/images/image_ver.png'
+                }
                 content={item?.description || '-'}
                 // subheader={item?.contentType}
                 actions={item?.contentType}
