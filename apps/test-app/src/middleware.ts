@@ -14,6 +14,6 @@ export function middleware(request: { nextUrl: { clone: () => any } }) {
     url.port = '4200';
     return NextResponse.rewrite(url);
   }
-
+  
   return NextResponse.next();
 }

@@ -28,7 +28,7 @@
       "@scp-teacher": ["mfes/scp-teacher/src/pages/index.tsx"],
       "@shared-lib": ["libs/shared-lib/src/index.ts"],
       "@test-next-route": ["mfes/test-next-route/src/pages/index.tsx"],
-      "@test-react-vite": ["mfes/mfes/test-react-vite"],
+      "@test-react-vite-old": ["mfes/mfes/test-react-vite-old"],
       "@youthNet": ["mfes/youthNet/src/pages/index.tsx"]
     }
   },

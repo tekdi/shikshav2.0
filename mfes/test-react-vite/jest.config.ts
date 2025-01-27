@@ -1,10 +1,10 @@
 export default {
-  displayName: 'mfe-react-vite',
+  displayName: 'test-react-vite',
   preset: '../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../coverage/mfes/mfe-react-vite',
+  coverageDirectory: '../../coverage/mfes/test-react-vite',
 };

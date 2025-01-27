@@ -19,10 +19,10 @@ module.exports = {
       },
     },
     {
-      name: 'test-react-vite',
+      name: 'test-react-vite-old',
       script: 'npx',
       args: 'vite preview --port 4200 --host 0.0.0.0',
-      cwd: 'mfes/test-react-vite',
+      cwd: 'mfes/test-react-vite-old',
       env: {
         NODE_ENV: 'production',
       },
