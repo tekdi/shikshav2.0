@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { Box } from '@mui/material';
+import { Box, Menu, MenuItem } from '@mui/material';
 import { CommonCard, CommonTabs, Layout, Circular } from '@shared-lib';
 import { ContentSearch } from '../services/Search';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LogoutIcon from '@mui/icons-material/Logout';
 import SearchIcon from '@mui/icons-material/Search';
 import Grid from '@mui/material/Grid2';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -33,6 +33,7 @@ export default function Content() {
   const [contentData, setContentData] = useState<ContentItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedContent, setSelectedContent] = useState<any>(null);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   // const [language, setLanguage] = useState('');
   // const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   // const [selectedContentTypes, setSelectedContentTypes] = useState<string[]>(
@@ -67,8 +68,14 @@ export default function Content() {
     fetchContent(type, searchValue, filterValues);
   }, [tabValue]);
 
-  const handleAccountClick = () => {
+  const handleAccountClick = (event: React.MouseEvent<HTMLElement>) => {
     console.log('Account clicked');
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+    localStorage.removeItem('accToken');
+    router.push(`${process.env.NEXT_PUBLIC_LOGIN}`);
   };
 
   const handleSearchClick = () => {
@@ -104,6 +111,7 @@ export default function Content() {
           'video/mp4',
           'video/webm',
           'application/epub',
+          'video/x-youtube',
           'application/vnd.sunbird.questionset',
         ].includes(contentMimeType)
       ) {
@@ -130,7 +138,7 @@ export default function Content() {
         <Circular />
       ) : (
         <Grid container spacing={2} sx={{ mt: 2 }}>
-          {contentData.map((item) => (
+          {contentData?.map((item) => (
             <Grid key={item?.identifier} size={{ xs: 6, sm: 6, md: 3, lg: 3 }}>
               <CommonCard
                 title={item?.name.trim()}
@@ -143,6 +151,8 @@ export default function Content() {
                 // subheader={item?.contentType}
                 actions={item?.contentType}
                 orientation="horizontal"
+                status={'Not started'}
+                progress={0}
                 onClick={() =>
                   handleCardClick(item?.identifier, item?.mimeType)
                 }
@@ -241,9 +251,9 @@ export default function Content() {
         actionButtonLabel: 'Action',
         actionIcons: [
           {
-            icon: <AccountCircleIcon />,
+            icon: <LogoutIcon />,
             ariaLabel: 'Account',
-            onClick: handleAccountClick,
+            onLogoutClick: (e: any) => handleAccountClick(e),
           },
         ],
       }}
@@ -296,6 +306,23 @@ export default function Content() {
           ariaLabel="Custom icon label tabs"
         />
       </Box>
+      <Menu
+        id="menu-appbar"
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        keepMounted
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={handleClose}>Logout</MenuItem>
+      </Menu>
     </Layout>
   );
 }

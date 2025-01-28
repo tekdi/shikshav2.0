@@ -3,8 +3,7 @@ import { useRouter } from 'next/router';
 import { Box, Typography } from '@mui/material';
 import { Layout } from '@shared-lib';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import SearchIcon from '@mui/icons-material/Search';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+
 import Grid from '@mui/material/Grid2';
 import CommonCollapse from '../../components/CommonCollapse'; // Adjust the import based on your folder structure
 import { hierarchyAPI } from '../../services/Hierarchy';
@@ -69,6 +68,8 @@ export default function Details({ details }: DetailsProps) {
         title={item.name}
         data={item?.children}
         defaultExpanded={false}
+        progress={20}
+        status={'Not started'}
       />
     ));
   };

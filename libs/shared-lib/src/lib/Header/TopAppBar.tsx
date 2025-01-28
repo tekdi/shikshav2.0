@@ -9,7 +9,9 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 interface ActionIcon {
   icon: React.ReactNode;
   ariaLabel: string;
-  onClick: () => void;
+  onLogoutClick: (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => void;
 }
 interface CommonAppBarProps {
   title?: string;
@@ -100,7 +102,7 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
               key={index}
               color={actionButtonColor}
               aria-label={action.ariaLabel}
-              //   onClick={action.onClick}
+              onClick={action.onLogoutClick}
             >
               {action.icon}
             </IconButton>

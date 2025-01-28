@@ -5,12 +5,10 @@ import React, { useEffect, useState } from 'react';
 import { Box, Button, Divider, Typography } from '@mui/material';
 import { Layout } from '@shared-lib';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Grid from '@mui/material/Grid2';
 
 import { useRouter } from 'next/router';
 import { fetchContent } from '../../services/Read';
-import PlayerPage from '../player/[identifier]';
 
 interface ContentDetailsObject {
   name: string;
@@ -104,7 +102,7 @@ const ContentDetails = () => {
               }
               alt="Course Thumbnail"
               style={{
-                // width: '100%',
+                width: '80%',
                 borderRadius: '8px',
                 marginBottom: '16px',
               }}

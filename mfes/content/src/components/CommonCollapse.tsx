@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -8,6 +8,7 @@ import PlayCircleOutlineOutlinedIcon from '@mui/icons-material/PlayCircleOutline
 import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined';
 import LensOutlinedIcon from '@mui/icons-material/LensOutlined';
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
+import { Progress } from '@shared-lib';
 // Types for nested data structure and actions
 interface NestedItem {
   identifier: string;
@@ -22,6 +23,8 @@ interface CommonAccordionProps {
   data: NestedItem[];
   actions?: { label: string; onClick: () => void }[];
   defaultExpanded?: boolean;
+  status?: 'Not started' | 'Completed' | 'In progress' | string;
+  progress?: number;
 }
 
 const getIconByMimeType = (mimeType?: string): React.ReactNode => {
@@ -29,6 +32,7 @@ const getIconByMimeType = (mimeType?: string): React.ReactNode => {
     'application/pdf': <PictureAsPdfOutlinedIcon />,
     'video/mp4': <PlayCircleOutlineOutlinedIcon />,
     'video/webm': <PlayCircleOutlineOutlinedIcon />,
+    'video/x-youtube': <PlayCircleOutlineOutlinedIcon />,
     'application/vnd.sunbird.questionset': <TextSnippetOutlinedIcon />,
   };
   return icons[mimeType] || <TextSnippetOutlinedIcon />;
@@ -37,8 +41,10 @@ const getIconByMimeType = (mimeType?: string): React.ReactNode => {
 const RenderNestedData: React.FC<{
   data: NestedItem[];
   expandedItems: Set<string>;
+  status?: 'Not started' | 'Completed' | 'In progress' | string;
+  progressNumber?: number;
   toggleExpanded: (identifier: string) => void;
-}> = ({ data, expandedItems, toggleExpanded }) => {
+}> = ({ data, expandedItems, toggleExpanded, progressNumber }) => {
   const router = useRouter();
 
   return (
@@ -101,6 +107,53 @@ const RenderNestedData: React.FC<{
                     </Typography>
                   </Box>
                 )}
+                {progressNumber !== undefined && (
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      marginLeft: '100%',
+                      position: 'relative',
+                      bottom: '20px',
+                    }}
+                  >
+                    <Progress
+                      variant="determinate"
+                      value={100}
+                      size={30}
+                      thickness={6}
+                      sx={{
+                        color: '#cccccc',
+                        position: 'absolute',
+                        left: '10px',
+                      }}
+                    />
+                    <Progress
+                      variant="determinate"
+                      value={progressNumber}
+                      size={30}
+                      thickness={6}
+                      sx={{
+                        color: progressNumber === 100 ? '#21A400' : '#FFB74D',
+                        position: 'absolute',
+                        left: '10px',
+                      }}
+                    />
+                    <Typography
+                      sx={{
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                        marginLeft: '12px',
+                        color: progressNumber === 100 ? '#21A400' : '#FFB74D',
+                        position: 'absolute',
+                        left: '50px',
+                      }}
+                    >
+                      {`${progressNumber}%`}
+                    </Typography>
+                  </Box>
+                )}
               </Box>
             </Box>
 
@@ -125,6 +178,8 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
   title,
   data,
   actions = [],
+  progress,
+  status,
   defaultExpanded = false,
 }) => {
   const router = useRouter();
@@ -162,6 +217,55 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
           <Typography variant="h6" fontSize={'12px'} fontWeight={500}>
             {title}
           </Typography>
+          {progress !== undefined && (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '2px',
+                // marginLeft: 'auto',
+                position: 'relative',
+              }}
+            >
+              <Progress
+                variant="determinate"
+                value={100}
+                size={30}
+                thickness={6}
+                sx={{
+                  color: '#cccccc',
+                  position: 'absolute',
+                  left: '10px',
+                }}
+              />
+              <Progress
+                variant="determinate"
+                value={progress}
+                size={30}
+                thickness={6}
+                sx={{
+                  color: progress === 100 ? '#21A400' : '#FFB74D',
+                  position: 'absolute',
+                  left: '10px',
+                }}
+              />
+              <Typography
+                sx={{
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                  marginLeft: '6px',
+                  color: progress === 100 ? '#21A400' : '#FFB74D',
+                  position: 'absolute',
+                  left: '40px',
+                }}
+              >
+                {status &&
+                data?.mimeType === 'application/vnd.ekstep.content-collection'
+                  ? status
+                  : `${progress}%`}
+              </Typography>
+            </Box>
+          )}
           <Box
             sx={{ marginLeft: 'auto' }}
             onClick={(e) => {
@@ -180,7 +284,7 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
         <Box
           sx={{
             display: 'flex',
-            justifyContent: 'space-between',
+            // justifyContent: 'space-between',
             alignItems: 'center',
           }}
           onClick={() => handleItemClick(identifier)}
@@ -188,6 +292,55 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
           <Typography variant="body1" fontSize={'14px'} fontWeight={400}>
             {getIconByMimeType(data?.mimeType)} {title}
           </Typography>
+          {progress !== undefined && (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '2px',
+                // marginLeft: 'auto',
+                position: 'relative',
+              }}
+            >
+              <Progress
+                variant="determinate"
+                value={100}
+                size={30}
+                thickness={6}
+                sx={{
+                  color: '#cccccc',
+                  position: 'absolute',
+                  left: '10px',
+                }}
+              />
+              <Progress
+                variant="determinate"
+                value={progress}
+                size={30}
+                thickness={6}
+                sx={{
+                  color: progress === 100 ? '#21A400' : '#FFB74D',
+                  position: 'absolute',
+                  left: '10px',
+                }}
+              />
+              <Typography
+                sx={{
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                  marginLeft: '6px',
+                  color: progress === 100 ? '#21A400' : '#FFB74D',
+                  position: 'absolute',
+                  left: '40px',
+                }}
+              >
+                {status &&
+                data?.mimeType === 'application/vnd.ekstep.content-collection'
+                  ? status
+                  : `${progress}%`}
+              </Typography>
+            </Box>
+          )}
         </Box>
       )}
 
@@ -197,6 +350,7 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
             data={data}
             expandedItems={expandedItems}
             toggleExpanded={toggleExpanded}
+            progressNumber={progress}
           />
         )}
       </Box>
