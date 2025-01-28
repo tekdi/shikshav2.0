@@ -8,6 +8,7 @@ import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
 import { Box } from '@mui/material';
+import { Progress } from '../Progress/Progress';
 
 interface CommonCardProps {
   title: string;
@@ -21,6 +22,8 @@ interface CommonCardProps {
   children?: React.ReactNode;
   orientation?: 'vertical' | 'horizontal';
   minheight?: string;
+  status?: 'Not started' | 'Completed' | 'In progress' | string;
+  progress?: number;
   onClick?: () => void;
 }
 
@@ -36,6 +39,8 @@ export const CommonCard: React.FC<CommonCardProps> = ({
   children,
   orientation,
   minheight,
+  status,
+  progress,
   onClick,
 }) => {
   return (
@@ -58,22 +63,83 @@ export const CommonCard: React.FC<CommonCardProps> = ({
       }}
       onClick={onClick}
     >
-      {image && orientation === 'horizontal' && (
-        <CardMedia
-          component="img"
-          image={image || '/assets/images/default.png'}
-          alt={imageAlt || ''}
-          sx={{
-            width: orientation === 'horizontal' ? '100%' : '40%',
-            height: orientation === 'horizontal' ? '297px' : 'auto',
-            objectFit: 'cover',
-            '@media (max-width: 600px)': {
+      {/* Image and Progress Overlay */}
+      <Box sx={{ position: 'relative', width: '100%' }}>
+        {image && (
+          <CardMedia
+            component="img"
+            image={image || '/assets/images/default.png'}
+            alt={imageAlt || 'Image'}
+            sx={{
               width: '100%',
-              height: '200px',
-            },
-          }}
-        />
-      )}
+              height: orientation === 'horizontal' ? '297px' : 'auto',
+              objectFit: 'cover', //set contain
+              '@media (max-width: 600px)': {
+                height: '200px',
+              },
+            }}
+          />
+        )}
+
+        {/* Progress Bar Overlay */}
+        {progress !== undefined && (
+          <Box
+            sx={{
+              position: 'absolute',
+              height: '40px',
+              top: 0,
+              width: '100%',
+              display: 'flex',
+              // justifyContent: 'center',
+              alignItems: 'center',
+              background: 'rgba(0, 0, 0, 0.5)',
+            }}
+          >
+            <Progress
+              variant="determinate"
+              value={100}
+              size={30}
+              thickness={5}
+              sx={{
+                color: '#fff8fb',
+                position: 'absolute',
+                left: '10px',
+              }}
+            />
+            <Progress
+              variant="determinate"
+              value={progress}
+              size={30}
+              thickness={5}
+              sx={{
+                color: progress === 100 ? '#21A400' : '#FFB74D',
+                position: 'absolute',
+                left: '10px',
+              }}
+            />
+            <Typography
+              sx={{
+                fontSize: '12px',
+                fontWeight: 'bold',
+                marginLeft: '12px',
+                color: progress === 100 ? '#21A400' : '#FFB74D',
+                position: 'absolute',
+                left: '50px',
+              }}
+            >
+              {status &&
+                actions &&
+                actions?.toString().toLowerCase() === 'resource' &&
+                status}
+              {status &&
+                actions &&
+                actions?.toString().toLowerCase() === 'course' &&
+                `${progress}%`}
+            </Typography>
+          </Box>
+        )}
+      </Box>
+
       <CardHeader
         avatar={
           avatarLetter && (
@@ -81,11 +147,6 @@ export const CommonCard: React.FC<CommonCardProps> = ({
               {avatarLetter}
             </Avatar>
           )
-        }
-        action={
-          orientation === 'vertical' ? (
-            <CardMedia component="img" image={image} />
-          ) : undefined
         }
         title={
           <Typography
@@ -98,7 +159,6 @@ export const CommonCard: React.FC<CommonCardProps> = ({
               WebkitBoxOrient: 'vertical',
               WebkitLineClamp: 1,
               paddingLeft: '5px',
-              // height: '70px',
             }}
           >
             {title}
@@ -124,9 +184,9 @@ export const CommonCard: React.FC<CommonCardProps> = ({
             <Typography
               sx={{
                 display: '-webkit-box',
-                WebkitLineClamp: 2, // Limit text to 2 lines
-                WebkitBoxOrient: 'vertical', // Set the box orientation
-                overflow: 'hidden', // Hide overflow
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
                 textOverflow: 'ellipsis',
               }}
             >
