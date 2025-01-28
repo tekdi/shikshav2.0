@@ -6,9 +6,11 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { Menu, MenuItem } from '@mui/material';
 interface ActionIcon {
   icon: React.ReactNode;
   ariaLabel: string;
+  anchorEl?: HTMLElement | null;
   onLogoutClick: (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
@@ -26,6 +28,7 @@ interface CommonAppBarProps {
   color?: 'primary' | 'secondary' | 'default' | 'transparent' | 'inherit';
   actionIcons?: ActionIcon[];
   bgcolor?: string;
+  onMenuClose?: () => void;
 }
 
 export const TopAppBar: React.FC<CommonAppBarProps> = ({
@@ -34,6 +37,7 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
   showBackIcon = false,
   menuIconClick,
   backIconClick,
+  onMenuClose,
   actionButtonLabel = 'Action',
   actionButtonClick,
   actionButtonColor = 'inherit',
@@ -42,6 +46,7 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
   actionIcons = [],
   bgcolor = '#FDF7FF',
 }) => {
+  const accountIcon = actionIcons.find((icon) => icon.ariaLabel === 'Account');
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -109,6 +114,25 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
           ))}
         </Toolbar>
       </AppBar>
+      {accountIcon?.anchorEl && (
+        <Menu
+          id="menu-appbar"
+          anchorEl={accountIcon.anchorEl}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          keepMounted
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          open={Boolean(accountIcon.anchorEl)}
+          onClose={onMenuClose}
+        >
+          <MenuItem onClick={onMenuClose}>Logout</MenuItem>
+        </Menu>
+      )}
     </Box>
   );
 };

@@ -254,8 +254,10 @@ export default function Content() {
             icon: <LogoutIcon />,
             ariaLabel: 'Account',
             onLogoutClick: (e: any) => handleAccountClick(e),
+            anchorEl: anchorEl,
           },
         ],
+        onMenuClose: handleClose,
       }}
       showSearch={{
         placeholder: 'Search content..',

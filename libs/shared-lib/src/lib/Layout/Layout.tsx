@@ -61,7 +61,7 @@ interface LayoutProps {
     showMenuIcon?: boolean;
     showBackIcon?: boolean;
     menuIconClick?: () => void;
-
+    onMenuClose?: () => void;
     actionButtonLabel?: string;
     actionButtonClick?: () => void;
     actionButtonColor?: 'inherit' | 'primary' | 'secondary' | 'default';
@@ -70,6 +70,7 @@ interface LayoutProps {
     actionIcons?: {
       icon: React.ReactNode;
       ariaLabel: string;
+      anchorEl?: HTMLElement | null;
       onLogoutClick: (
         event: React.MouseEvent<HTMLButtonElement, MouseEvent>
       ) => void;
