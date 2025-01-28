@@ -4,7 +4,8 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Divider, Typography } from '@mui/material';
 import { Layout } from '@shared-lib';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LogoutIcon from '@mui/icons-material/Logout';
+
 import Grid from '@mui/material/Grid2';
 
 import { useRouter } from 'next/router';
@@ -19,13 +20,20 @@ const ContentDetails = () => {
   const router = useRouter();
   const { identifier } = router.query;
   const [searchValue, setSearchValue] = useState('');
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [contentDetails, setContentDetails] =
     useState<ContentDetailsObject | null>(null);
   const handleBackClick = () => {
     router.back(); // Navigate to the previous page
   };
-  const handleAccountClick = () => {
+  const handleAccountClick = (event: React.MouseEvent<HTMLElement>) => {
     console.log('Account clicked');
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+    localStorage.removeItem('accToken');
+    router.push(`${process.env.NEXT_PUBLIC_LOGIN}`);
   };
 
   const handleMenuClick = () => {
@@ -70,11 +78,13 @@ const ContentDetails = () => {
         actionButtonLabel: 'Action',
         actionIcons: [
           {
-            icon: <AccountCircleIcon />,
+            icon: <LogoutIcon />,
             ariaLabel: 'Account',
-            onClick: handleAccountClick,
+            onLogoutClick: (e: any) => handleAccountClick(e),
+            anchorEl: anchorEl,
           },
         ],
+        onMenuClose: handleClose,
       }}
       showBack={true}
       backTitle="Course Details"

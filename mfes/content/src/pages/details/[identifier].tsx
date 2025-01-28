@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Box, Typography } from '@mui/material';
 import { Layout } from '@shared-lib';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 import Grid from '@mui/material/Grid2';
 import CommonCollapse from '../../components/CommonCollapse'; // Adjust the import based on your folder structure
@@ -16,6 +16,8 @@ export default function Details({ details }: DetailsProps) {
   const router = useRouter();
   const { identifier } = router.query; // Fetch the 'id' from the URL
   const [searchValue, setSearchValue] = useState('');
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
   const [selectedContent, setSelectedContent] = useState<any>(null);
   useEffect(() => {
     if (identifier) {
@@ -23,8 +25,14 @@ export default function Details({ details }: DetailsProps) {
     }
   }, [identifier]);
 
-  const handleAccountClick = () => {
+  const handleAccountClick = (event: React.MouseEvent<HTMLElement>) => {
     console.log('Account clicked');
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+    localStorage.removeItem('accToken');
+    router.push(`${process.env.NEXT_PUBLIC_LOGIN}`);
   };
 
   const handleMenuClick = () => {
@@ -85,11 +93,13 @@ export default function Details({ details }: DetailsProps) {
         actionButtonLabel: 'Action',
         actionIcons: [
           {
-            icon: <AccountCircleIcon />,
+            icon: <LogoutIcon />,
             ariaLabel: 'Account',
-            onClick: handleAccountClick,
+            onLogoutClick: (e: any) => handleAccountClick(e),
+            anchorEl: anchorEl,
           },
         ],
+        onMenuClose: handleClose,
       }}
       isFooter={false}
       showLogo={true}

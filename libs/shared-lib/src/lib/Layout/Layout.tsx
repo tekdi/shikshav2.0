@@ -71,7 +71,7 @@ interface LayoutProps {
       icon: React.ReactNode;
       ariaLabel: string;
       anchorEl?: HTMLElement | null;
-      onLogoutClick: (
+      onLogoutClick?: (
         event: React.MouseEvent<HTMLButtonElement, MouseEvent>
       ) => void;
     }[];
