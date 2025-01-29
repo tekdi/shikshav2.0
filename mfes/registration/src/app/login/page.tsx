@@ -136,7 +136,7 @@ export default function Login() {
             }}
           >
             <img
-              src="/assets/images/logo.png"
+              src="/assets/images/logo-tekdi.png"
               alt="Company Logo"
               style={{ maxWidth: '100%', height: 'auto' }}
             />
