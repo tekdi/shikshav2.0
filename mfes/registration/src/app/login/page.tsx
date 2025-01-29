@@ -135,14 +135,11 @@ export default function Login() {
               alignItems: 'center',
             }}
           >
-            <Typography
-              variant="h1"
-              fontSize="18px"
-              color="#1D1B20"
-              fontWeight={500}
-            >
-              Placeholder Content
-            </Typography>
+            <img
+              src="/assets/images/logo.png"
+              alt="Company Logo"
+              style={{ maxWidth: '100%', height: 'auto' }}
+            />
           </Grid>
         </Grid>
 
@@ -157,7 +154,7 @@ export default function Login() {
             backgroundColor: '#FFFFFF',
           }}
         >
-          <CommonSelect
+          {/* <CommonSelect
             label=""
             value={selectedValue}
             onChange={handleSelectChange}
@@ -168,7 +165,7 @@ export default function Login() {
             width="100px"
             height="32px"
             borderRadius="8px"
-          />
+          /> */}
           <CommonTextField
             label="Username"
             value={formData.userName}
@@ -200,7 +197,7 @@ export default function Login() {
               ),
             }}
           />
-          <Typography
+          {/* <Typography
             variant="h1"
             fontSize="14px"
             color="#1D1B20"
@@ -213,7 +210,7 @@ export default function Login() {
             checkboxes={checkboxData}
             onChange={handleCheckboxChange}
             direction="row"
-          />
+          /> */}
 
           <Button
             disabled={loading}
@@ -230,14 +227,14 @@ export default function Login() {
           >
             {loading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
           </Button>
-          <Typography
+          {/* <Typography
             variant="h1"
             fontSize={'16px'}
             color="#3B383E"
             fontWeight={500}
           >
             Don’t Have An Account? <Link href="/newUser">Register </Link>
-          </Typography>
+          </Typography> */}
         </Grid>
       </Grid>
       {showError && (
