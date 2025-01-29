@@ -1,0 +1,12 @@
+version: '3'
+services:
+  shiksha-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.shiksha2
+    ports:
+      - '3002:3002'
+      - '4104:4104'
+      - '4105:4105'
+    environment:
+      - NODE_ENV=production

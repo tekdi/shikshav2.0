@@ -47,11 +47,12 @@ export default function Content() {
         let result;
         if (identifier) {
           result = await hierarchyAPI(identifier);
+          //@ts-ignore
           if (result) setContentData([result]);
         } else {
           result =
             type && (await ContentSearch(type, searchValue, filterValues));
-
+          //@ts-ignore
           setContentData(result || []);
         }
       } catch (error) {
@@ -75,7 +76,10 @@ export default function Content() {
   const handleClose = () => {
     setAnchorEl(null);
     localStorage.removeItem('accToken');
-    router.push(`${process.env.NEXT_PUBLIC_LOGIN}`);
+    localStorage.removeItem('refToken');
+    let LOGIN = process.env.NEXT_PUBLIC_LOGIN;
+    //@ts-ignore
+    window.location.href = LOGIN;
   };
 
   const handleSearchClick = () => {
@@ -119,6 +123,7 @@ export default function Content() {
         router.push(`/player/${identifier}`);
       } else {
         const result = await hierarchyAPI(identifier);
+        //@ts-ignore
         const trackable = result?.trackable;
         setSelectedContent(result);
 
@@ -207,6 +212,7 @@ export default function Content() {
     const type = tabValue === 0 ? 'Course' : 'Learning Resource';
     fetchContent(type, searchValue, filterValues);
   }, [filterValues]);
+  //@ts-ignore
   const handleApplyFilters = (selectedValues) => {
     // console.log('Selected Language:', language);
     // console.log('Selected Subjects:', selectedSubjects);
@@ -288,6 +294,7 @@ export default function Content() {
       // onSubjectsChange={handleSubjectsChange}
       // onContentTypeChange={handleContentTypeChange}
       // onSortChange={handleSortChange}
+      //@ts-ignore
       onApply={handleApplyFilters}
       filterValues={filterValues}
     >

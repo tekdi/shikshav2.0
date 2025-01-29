@@ -3,7 +3,7 @@ import { Layout, CommonTextField, CommonDialog } from '@shared-lib';
 import React, { useState } from 'react';
 import { Button, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import Otp from '../otp/page';
+//import Otp from '../otp/page';
 
 const NewUser = () => {
   const [formData, setFormData] = useState({
@@ -182,12 +182,12 @@ const NewUser = () => {
               We’ve sent an OTP to verify your number {formData.phoneNumber}
             </Typography>
 
-            <Otp
+            {/* <Otp
               separator={<span></span>}
               value={otp}
               onChange={setOtp}
               length={6}
-            />
+            /> */}
             {otpError && (
               <Typography
                 variant="body2"
