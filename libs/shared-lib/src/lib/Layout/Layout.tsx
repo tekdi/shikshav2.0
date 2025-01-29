@@ -61,7 +61,7 @@ interface LayoutProps {
     showMenuIcon?: boolean;
     showBackIcon?: boolean;
     menuIconClick?: () => void;
-
+    onMenuClose?: () => void;
     actionButtonLabel?: string;
     actionButtonClick?: () => void;
     actionButtonColor?: 'inherit' | 'primary' | 'secondary' | 'default';
@@ -70,7 +70,10 @@ interface LayoutProps {
     actionIcons?: {
       icon: React.ReactNode;
       ariaLabel: string;
-      onClick: () => void;
+      anchorEl?: HTMLElement | null;
+      onLogoutClick?: (
+        event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+      ) => void;
     }[];
   };
   topAppBarIcons?: {
@@ -83,7 +86,8 @@ interface LayoutProps {
     language?: string[];
     subject?: string[];
     contentType?: string[];
-  };currentSelectedValues
+  };
+  currentSelectedValues?;
   language?: string;
   selectedSubjects?: string[];
   selectedContentTypes?: string[];
@@ -144,7 +148,10 @@ const FilterDialog = ({
       open={open}
       onClose={onClose}
       fullWidth
-      sx={{ borderRadius: '16px' }}
+      sx={{
+        borderRadius: '16px',
+        '& .MuiDialog-paper': { backgroundColor: '#FEF7FF' },
+      }}
     >
       <DialogTitle>Filters</DialogTitle>
       <IconButton
@@ -173,8 +180,8 @@ const FilterDialog = ({
                 value: term.code,
               }));
 
-                // Get the selected values for the current category
-                const currentSelectedValues = selectedValues[filterCode] || [];
+              // Get the selected values for the current category
+              const currentSelectedValues = selectedValues[filterCode] || [];
 
               return (
                 <FormControl
@@ -459,6 +466,7 @@ export const Layout: React.FC<LayoutProps> = ({
               bgcolor="#FDF7FF"
               actionIcons={topAppBarIcons}
               menuIconClick={() => setIsDrawerOpen(true)}
+              onLogoutClick={(event) => action.onLogoutClick(event)}
               {...showTopAppBar}
             />
           </Box>
