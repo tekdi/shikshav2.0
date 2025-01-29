@@ -183,6 +183,7 @@ export default function Login() {
             variant="outlined"
             helperText={error.password ? `Required password ` : ''}
             error={error.password}
+            //@ts-ignore
             InputProps={{
               endAdornment: !showPassword ? (
                 <VisibilityOffIcon

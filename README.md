@@ -20,6 +20,14 @@ Next JS, run:
 nx dev teachers --port=3001 --verbose
 ```
 
+### shiksha-app
+
+Next JS, run:
+
+```sh
+nx dev shiksha-app --port=3002 --verbose
+```
+
 ##
 
 ## Micro Frontend List
@@ -78,6 +86,28 @@ nx dev youthNet --port=4103 --verbose
 
 basePath : `http://localhost:4103/youthnet/`
 Port : `4103`
+
+### registration
+
+Next JS, run:
+
+```sh
+nx dev registration --port=4104 --verbose
+```
+
+basePath : `http://localhost:4104/mfe_registration/`
+Port : `4104`
+
+### content
+
+Next JS, run:
+
+```sh
+nx dev content --port=4105 --verbose
+```
+
+basePath : `http://localhost:4105/mfe_content/`
+Port : `4105`
 
 ##
 

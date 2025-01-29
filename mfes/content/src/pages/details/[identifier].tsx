@@ -50,6 +50,7 @@ export default function Details({ details }: DetailsProps) {
   const getDetails = async (identifier: string) => {
     try {
       const result = await hierarchyAPI(identifier);
+      //@ts-ignore
       const trackable = result?.trackable;
       setSelectedContent(result);
 

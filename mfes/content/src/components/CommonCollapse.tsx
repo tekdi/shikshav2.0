@@ -35,6 +35,7 @@ const getIconByMimeType = (mimeType?: string): React.ReactNode => {
     'video/x-youtube': <PlayCircleOutlineOutlinedIcon />,
     'application/vnd.sunbird.questionset': <TextSnippetOutlinedIcon />,
   };
+  //@ts-ignore
   return icons[mimeType] || <TextSnippetOutlinedIcon />;
 };
 
@@ -260,6 +261,7 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
                 }}
               >
                 {status &&
+                //@ts-ignore
                 data?.mimeType === 'application/vnd.ekstep.content-collection'
                   ? status
                   : `${progress}%`}
@@ -290,6 +292,7 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
           onClick={() => handleItemClick(identifier)}
         >
           <Typography variant="body1" fontSize={'14px'} fontWeight={400}>
+            {/* @ts-ignore */}
             {getIconByMimeType(data?.mimeType)} {title}
           </Typography>
           {progress !== undefined && (
@@ -335,6 +338,7 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
                 }}
               >
                 {status &&
+                //@ts-ignore
                 data?.mimeType === 'application/vnd.ekstep.content-collection'
                   ? status
                   : `${progress}%`}
