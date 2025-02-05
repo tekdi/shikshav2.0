@@ -27,6 +27,7 @@
       "@registration": ["mfes/registration/src/app/page.tsx"],
       "@scp-teacher": ["mfes/scp-teacher/src/pages/index.tsx"],
       "@shared-lib": ["libs/shared-lib/src/index.ts"],
+      "@shikshav2.0/shared": ["libs/shared/src/index.ts"],
       "@test-next-route": ["mfes/test-next-route/src/pages/index.tsx"],
       "@test-react-vite": ["mfes/mfes/test-react-vite"],
       "@youthNet": ["mfes/youthNet/src/pages/index.tsx"]

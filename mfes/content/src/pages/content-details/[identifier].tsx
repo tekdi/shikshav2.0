@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Button, Divider, Typography } from '@mui/material';
 import { Layout } from '@shared-lib';
 import LogoutIcon from '@mui/icons-material/Logout';
-
+import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid2';
 
 import { useRouter } from 'next/router';
@@ -23,6 +23,7 @@ const ContentDetails = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [contentDetails, setContentDetails] =
     useState<ContentDetailsObject | null>(null);
+  const theme = useTheme();
   const handleBackClick = () => {
     router.back(); // Navigate to the previous page
   };
@@ -122,7 +123,7 @@ const ContentDetails = () => {
       </Grid>
 
       {/* Section Header */}
-      <Grid container spacing={2} sx={{ marginBottom: '16px' }}>
+      <Grid container spacing={2} sx={{ margin: '16px' }}>
         <Grid size={{ xs: 12 }}>
           <Typography fontSize={'22px'} fontWeight={400}>
             Description
@@ -171,8 +172,10 @@ const ContentDetails = () => {
         <Button
           variant="contained"
           sx={{
-            bgcolor: '#6750A4',
-            color: '#FFFFFF',
+            // bgcolor: '#6750A4',
+
+            bgcolor: theme.palette.primary.main,
+            color: theme.palette.text.secondary,
             margin: '12px',
             borderRadius: '100px',
             textTransform: 'none',

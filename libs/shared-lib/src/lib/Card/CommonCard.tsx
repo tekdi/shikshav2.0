@@ -177,7 +177,7 @@ export const CommonCard: React.FC<CommonCardProps> = ({
             paddingBottom: 0,
             overflow: 'hidden',
             maxWidth: '100%',
-            height: '50px',
+            // height: '50px',
           }}
         >
           <Box sx={{ display: 'flex', gap: 1 }}>

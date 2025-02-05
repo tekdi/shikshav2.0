@@ -17,6 +17,7 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import Link from 'next/link';
 import { getToken } from '../../services/LoginService';
 import { useRouter } from 'next/navigation';
+import { jwtDecode } from 'jwt-decode';
 const languageData = [
   { id: 1, name: 'English' },
   { id: 2, name: 'Marathi' },
@@ -83,6 +84,9 @@ export default function Login() {
       if (response?.access_token) {
         localStorage.setItem('accToken', response?.access_token);
         localStorage.setItem('refToken', response?.refresh_token);
+        const decoded = jwtDecode(response?.access_token);
+        const subId = decoded?.sub?.split(':')[2];
+        document.cookie = `subid=${subId}; path=/;`;
         const redirectUrl = process.env.NEXT_PUBLIC_CONTENT;
         if (redirectUrl) {
           router.push(redirectUrl);

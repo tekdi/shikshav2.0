@@ -1,16 +1,24 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { Box, Menu, MenuItem } from '@mui/material';
+import { Box, Menu, MenuItem, Fab, Typography, Button } from '@mui/material';
 import { CommonCard, CommonTabs, Layout, Circular } from '@shared-lib';
 import { ContentSearch } from '../services/Search';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SearchIcon from '@mui/icons-material/Search';
 import Grid from '@mui/material/Grid2';
 import { useRouter, useSearchParams } from 'next/navigation';
 import MailIcon from '@mui/icons-material/Mail';
+import CircleIcon from '@mui/icons-material/Circle';
 import { hierarchyAPI } from '../services/Hierarchy';
 import { contentReadAPI } from '../services/Read';
+import { useTheme } from '@mui/material/styles';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 interface ContentItem {
   name: string;
   gradeLevel: string[];
@@ -34,26 +42,48 @@ export default function Content() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedContent, setSelectedContent] = useState<any>(null);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  // const [language, setLanguage] = useState('');
-  // const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
-  // const [selectedContentTypes, setSelectedContentTypes] = useState<string[]>(
-  //   []
-  // );
-  // const [sort, setSort] = useState<string>('asc');
+  const [limit, setLimit] = useState(5); // Set default limit
+  const [offset, setOffset] = useState(0);
+  const [hasMoreData, setHasMoreData] = useState(true);
+  const [filterValues, setFilterValues] = useState({});
+  const theme = useTheme();
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
   const fetchContent = useCallback(
-    async (type?: string, searchValue?: string, filterValues?: {}) => {
+    async (
+      type?: string,
+      searchValue?: string,
+      filterValues?: {},
+      limit?: number,
+      offset?: number
+    ) => {
       setIsLoading(true);
       try {
         let result;
         if (identifier) {
           result = await hierarchyAPI(identifier);
           //@ts-ignore
-          if (result) setContentData([result]);
+          setContentData([result]);
+          // if (result) setContentData([result]);
         } else {
           result =
-            type && (await ContentSearch(type, searchValue, filterValues));
+            type &&
+            (await ContentSearch(
+              type,
+              searchValue,
+              filterValues,
+              limit,
+              offset
+            ));
           //@ts-ignore
-          setContentData(result || []);
+          if (!result || result === undefined || result?.length === 0) {
+            setHasMoreData(false); // No more data available
+          } else {
+            // setContentData(result || []);
+
+            setContentData((prevData) => [...prevData, ...result]);
+            setHasMoreData(true);
+          }
         }
       } catch (error) {
         console.error('Failed to fetch content:', error);
@@ -61,19 +91,42 @@ export default function Content() {
         setIsLoading(false);
       }
     },
-    [identifier, searchValue]
+    [identifier]
   );
 
   useEffect(() => {
     const type = tabValue === 0 ? 'Course' : 'Learning Resource';
+    // setContentData([]);
+    const cookies = document.cookie.split('; ');
+    const subid = cookies
+      .find((row) => row.startsWith('subid='))
+      ?.split('=')[1];
+    localStorage.setItem('subId', subid);
     fetchContent(type, searchValue, filterValues);
-  }, [tabValue]);
+  }, [tabValue, filterValues]);
+
+  const handleLoadMore = (event: React.MouseEvent) => {
+    event.preventDefault();
+
+    const newOffset = offset + limit;
+    setOffset(newOffset);
+
+    const currentScrollPosition = window.scrollY;
+
+    const type = tabValue === 0 ? 'Course' : 'Learning Resource';
+
+    fetchContent(type, searchValue, filterValues, limit, newOffset).then(() => {
+      setTimeout(() => {
+        window.scrollTo({ top: currentScrollPosition, behavior: 'auto' });
+      }, 0);
+    });
+  };
 
   const handleAccountClick = (event: React.MouseEvent<HTMLElement>) => {
     console.log('Account clicked');
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
+  const handleLogout = () => {
     setAnchorEl(null);
     localStorage.removeItem('accToken');
     localStorage.removeItem('refToken');
@@ -82,6 +135,9 @@ export default function Content() {
     window.location.href = LOGIN;
   };
 
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const handleSearchClick = () => {
     if (searchValue.trim()) {
       const type = tabValue === 0 ? 'Course' : 'Learning Resource';
@@ -98,6 +154,8 @@ export default function Content() {
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
+    const type = newValue === 0 ? 'Course' : 'Learning Resource';
+    setContentData([]);
   };
 
   const handleCardClick = async (
@@ -136,35 +194,66 @@ export default function Content() {
     }
   };
   ``;
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 300);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleBackToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const renderTabContent = () => (
     <Box sx={{ flexGrow: 1 }}>
       {isLoading ? (
         <Circular />
       ) : (
-        <Grid container spacing={2} sx={{ mt: 2 }}>
-          {contentData?.map((item) => (
-            <Grid key={item?.identifier} size={{ xs: 6, sm: 6, md: 3, lg: 3 }}>
-              <CommonCard
-                title={item?.name.trim()}
-                image={
-                  item?.posterImage && item?.posterImage !== 'undefined'
-                    ? item?.posterImage
-                    : '/assests/images/image_ver.png'
-                }
-                content={item?.description || '-'}
-                // subheader={item?.contentType}
-                actions={item?.contentType}
-                orientation="horizontal"
-                status={'Not started'}
-                progress={0}
-                onClick={() =>
-                  handleCardClick(item?.identifier, item?.mimeType)
-                }
-              />
-            </Grid>
-          ))}
-        </Grid>
+        <>
+          <Grid container spacing={2} sx={{ mt: 2 }}>
+            {contentData?.map((item) => (
+              <Grid
+                key={item?.identifier}
+                size={{ xs: 6, sm: 6, md: 3, lg: 3 }}
+              >
+                <CommonCard
+                  title={item?.name.trim()}
+                  image={
+                    item?.posterImage && item?.posterImage !== 'undefined'
+                      ? item?.posterImage
+                      : '/assests/images/image_ver.png'
+                  }
+                  content={item?.description || '-'}
+                  // subheader={item?.contentType}
+                  actions={item?.contentType}
+                  orientation="horizontal"
+                  status={'Not started'}
+                  progress={0}
+                  onClick={() =>
+                    handleCardClick(item?.identifier, item?.mimeType)
+                  }
+                />
+              </Grid>
+            ))}
+          </Grid>
+          <Box sx={{ textAlign: 'center', mt: 4 }}>
+            {hasMoreData ? (
+              <Button
+                variant="contained"
+                onClick={handleLoadMore}
+                disabled={isLoading}
+              >
+                {isLoading ? 'Loading...' : 'Load More'}
+              </Button>
+            ) : (
+              <Typography variant="body1" color="textSecondary">
+                No more data available
+              </Typography>
+            )}
+          </Box>
+        </>
       )}
     </Box>
   );
@@ -185,11 +274,15 @@ export default function Content() {
   };
 
   const drawerItems = [
-    { text: 'Home', icon: <MailIcon />, to: '/' },
-    { text: 'Page2', icon: <MailIcon />, to: '/page-2' },
-    { text: 'Content', icon: <MailIcon />, to: '/content' },
+    { text: 'Home', icon: <CircleIcon fontSize="small" />, to: '/' },
+    { text: 'Content', icon: <CircleIcon fontSize="small" />, to: '/content' },
   ];
-  // const filter = {
+  const categoriesItems = [
+    { text: 'Development', icon: <ChevronRightIcon />, to: '/' },
+    { text: 'Marketing', icon: <ChevronRightIcon />, to: '/page-2' },
+    { text: 'Business Studies', icon: <ChevronRightIcon />, to: '/content' },
+  ];
+
   //   sort: true,
   //   language: [
   //     'Mathematics',
@@ -207,31 +300,16 @@ export default function Content() {
   //   ],
   //   contentType: ['Video', 'PDF', 'E-Book', 'Quiz'],
   // };
-  const [filterValues, setFilterValues] = useState({}); // Initialize as an empty object
-  useEffect(() => {
-    const type = tabValue === 0 ? 'Course' : 'Learning Resource';
-    fetchContent(type, searchValue, filterValues);
-  }, [filterValues]);
+  // Initialize as an empty object
+  // useEffect(() => {
+  //   const type = tabValue === 0 ? 'Course' : 'Learning Resource';
+  //   fetchContent(type, searchValue, filterValues);
+  // }, [filterValues]);
   //@ts-ignore
   const handleApplyFilters = (selectedValues) => {
-    // console.log('Selected Language:', language);
-    // console.log('Selected Subjects:', selectedSubjects);
-    // console.log('Selected Content Types:', selectedContentTypes);
-    // console.log('Sort Order:', sort);
     setFilterValues(selectedValues);
     console.log('Filter selectedValues:', selectedValues);
   };
-
-  // const handleSubjectsChange = (subjects: string[]) => {
-  //   setSelectedSubjects(subjects); // Update the selected subjects as an array
-  // };
-  // const handleContentTypeChange = (contentType: string[]) => {
-  //   setSelectedContentTypes(contentType); // Update the selected subjects as an array
-  // };
-  // const handleSortChange = (newSort: string) => {
-  //   console.log('Sort Order:', newSort);
-  //   setSort(newSort);
-  // };
 
   //get filter framework
   const [frameworkFilter, setFrameworkFilter] = useState(false);
@@ -255,12 +333,39 @@ export default function Content() {
         title: 'Shiksha: Home',
         showMenuIcon: true,
         actionButtonLabel: 'Action',
-        actionIcons: [
+        profileIcon: [
           {
-            icon: <LogoutIcon />,
+            icon: <AccountCircleIcon />,
             ariaLabel: 'Account',
             onLogoutClick: (e: any) => handleAccountClick(e),
             anchorEl: anchorEl,
+          },
+        ],
+        actionIcons: [
+          {
+            icon: <AccountCircleIcon />,
+            ariaLabel: 'Profile',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <DashboardIcon />,
+            ariaLabel: 'Admin dashboard',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <BorderColorIcon />,
+            ariaLabel: 'Workspace',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <HelpOutlineIcon />,
+            ariaLabel: 'Help',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <LogoutIcon />,
+            ariaLabel: 'Logout',
+            onOptionClick: handleLogout,
           },
         ],
         onMenuClose: handleClose,
@@ -279,6 +384,7 @@ export default function Content() {
         },
       }}
       drawerItems={drawerItems}
+      categorieItems={categoriesItems}
       showFilter={true}
       // filter={filter}
       frameworkFilter={frameworkFilter}
@@ -286,14 +392,6 @@ export default function Content() {
       isFooter={false}
       showLogo={true}
       showBack={true}
-      // language={language}
-      // selectedSubjects={selectedSubjects}
-      // selectedContentTypes={selectedContentTypes}
-      // sort={{ sortBy: sort }}
-      // onLanguageChange={(newLang) => setLanguage(newLang)}
-      // onSubjectsChange={handleSubjectsChange}
-      // onContentTypeChange={handleContentTypeChange}
-      // onSortChange={handleSortChange}
       //@ts-ignore
       onApply={handleApplyFilters}
       filterValues={filterValues}
@@ -303,7 +401,7 @@ export default function Content() {
           width: '100%',
           display: 'flex',
           alignItems: 'center',
-          bgcolor: '#FEF7FF',
+          bgcolor: theme.palette.background.default,
           flexDirection: 'column',
           marginTop: '20px',
         }}
@@ -315,23 +413,30 @@ export default function Content() {
           ariaLabel="Custom icon label tabs"
         />
       </Box>
-      <Menu
-        id="menu-appbar"
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        keepMounted
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
-        <MenuItem onClick={handleClose}>Logout</MenuItem>
-      </Menu>
+
+      {showBackToTop && (
+        <Fab
+          color="secondary"
+          aria-label="back to top"
+          sx={{
+            position: 'fixed',
+            display: 'table-column',
+            bottom: 80,
+            right: 16,
+            height: '75px',
+            borderRadius: '100px',
+            bgcolor: theme.palette.primary.main,
+            color: theme.palette.primary.contrastText,
+            '&:hover': {
+              bgcolor: theme.palette.primary.dark,
+            },
+          }}
+          onClick={handleBackToTop}
+        >
+          <ArrowUpwardIcon />
+          <Typography fontSize={'10px'}>Back to Top</Typography>
+        </Fab>
+      )}
     </Layout>
   );
 }

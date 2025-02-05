@@ -9,6 +9,8 @@ import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined';
 import LensOutlinedIcon from '@mui/icons-material/LensOutlined';
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 import { Progress } from '@shared-lib';
+import { useTheme } from '@mui/material/styles';
+
 // Types for nested data structure and actions
 interface NestedItem {
   identifier: string;
@@ -184,6 +186,8 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
   defaultExpanded = false,
 }) => {
   const router = useRouter();
+  const theme = useTheme();
+
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const toggleExpanded = (identifier: string) => {
     setExpandedItems((prev) => {
@@ -206,7 +210,7 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
       {data?.length > 0 ? (
         <Box
           sx={{
-            backgroundColor: '#E9DDFF',
+            backgroundColor: theme.palette.custom?.secondaryBackground,
             padding: '8px',
             borderRadius: '4px',
             display: 'flex',
