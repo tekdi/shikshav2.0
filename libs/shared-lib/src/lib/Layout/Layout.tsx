@@ -526,7 +526,13 @@ export const Layout: React.FC<LayoutProps> = ({
             }
             inputValue={showSearch.inputValue || ''}
             onInputChange={showSearch.onInputChange}
-            sx={showSearch.sx || { width: 400, marginTop: '8px' }}
+            sx={
+              showSearch.sx || {
+                width: 400,
+                marginTop: '8px',
+                marginLeft: '10px',
+              }
+            }
           />
           {showFilter && (
             <Box
@@ -538,13 +544,15 @@ export const Layout: React.FC<LayoutProps> = ({
                 backgroundColor: '#ECE6F0',
                 borderRadius: '12px',
                 // padding: '8px',
-                width: '48px',
-                height: '48px',
+                width: '56px',
+                height: '46px',
                 '&:hover': {
                   backgroundColor: '#E0E0E0',
                   boxShadow: '0px 4px 8px 3px #00000026',
                 },
-                marginLeft: '10px',
+                marginLeft: '4px',
+                marginRight: '7px',
+
                 boxShadow: '0px 1px 3px 0px #0000004D',
               }}
               onClick={() => setFilterShow(true)}

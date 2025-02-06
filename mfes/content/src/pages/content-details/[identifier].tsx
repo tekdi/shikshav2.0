@@ -7,7 +7,10 @@ import { Layout } from '@shared-lib';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid2';
-
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { useRouter } from 'next/router';
 import { fetchContent } from '../../services/Read';
 
@@ -69,6 +72,14 @@ const ContentDetails = () => {
   if (!identifier) {
     return <Typography>Loading...</Typography>; // Show loading state while identifier is undefined
   }
+  const handleLogout = () => {
+    setAnchorEl(null);
+    localStorage.removeItem('accToken');
+    localStorage.removeItem('refToken');
+    let LOGIN = process.env.NEXT_PUBLIC_LOGIN;
+    //@ts-ignore
+    window.location.href = LOGIN;
+  };
   return (
     <Layout
       showTopAppBar={{
@@ -77,12 +88,39 @@ const ContentDetails = () => {
 
         menuIconClick: handleMenuClick,
         actionButtonLabel: 'Action',
-        actionIcons: [
+        profileIcon: [
           {
-            icon: <LogoutIcon />,
+            icon: <AccountCircleIcon />,
             ariaLabel: 'Account',
             onLogoutClick: (e: any) => handleAccountClick(e),
             anchorEl: anchorEl,
+          },
+        ],
+        actionIcons: [
+          {
+            icon: <AccountCircleIcon />,
+            ariaLabel: 'Profile',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <DashboardIcon />,
+            ariaLabel: 'Admin dashboard',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <BorderColorIcon />,
+            ariaLabel: 'Workspace',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <HelpOutlineIcon />,
+            ariaLabel: 'Help',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <LogoutIcon />,
+            ariaLabel: 'Logout',
+            onOptionClick: handleLogout,
           },
         ],
         onMenuClose: handleClose,

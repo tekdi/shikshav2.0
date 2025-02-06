@@ -1,8 +1,25 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { Box, Fab, Typography, Button } from '@mui/material';
-import { CommonCard, CommonTabs, Layout, Circular } from '@shared-lib';
+import type { ChangeEvent } from 'react';
+import {
+  Box,
+  Fab,
+  Typography,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from '@mui/material';
+import {
+  CommonCard,
+  CommonTabs,
+  Layout,
+  Circular,
+  CommonDialog,
+  CommonTextField,
+} from '@shared-lib';
 import { ContentSearch } from '../services/Search';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -18,6 +35,8 @@ import { contentReadAPI } from '../services/Read';
 import { useTheme } from '@mui/material/styles';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import HelpIcon from '@mui/icons-material/Help';
+import { SelectChangeEvent } from '@mui/material';
 import { trackingData } from '../services/TrackingService';
 interface ContentItem {
   name: string;
@@ -51,7 +70,13 @@ export default function Content() {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [frameworkFilter, setFrameworkFilter] = useState(false);
   const [trackData, setTrackData] = useState([]);
-
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [issueData, setIssueData] = useState({
+    subject: '',
+    description: '',
+    status: '',
+    priority: '',
+  });
   const fetchContent = useCallback(
     async (
       type?: string,
@@ -393,7 +418,28 @@ export default function Content() {
       console.error('Error fetching board data:', error);
     }
   };
-
+  const handleHelpClick = () => {
+    // alert('Contact Help Desk at help@shiksha.com');
+    setIsDialogOpen(true);
+  };
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+  };
+  const handleChange =
+    (field: string) =>
+    (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
+      const value = event.target.value;
+      setIssueData({
+        ...issueData,
+        [field]: value,
+      });
+    };
+  const handleOtpSubmit = async () => {
+    console.log(issueData);
+    const queryString = new URLSearchParams(issueData).toString();
+    const frappeDeskUrl = `http://localhost:8000/helpdesk/tickets/new?${queryString}`;
+    router.push(frappeDeskUrl);
+  };
   return (
     <Layout
       showTopAppBar={{
@@ -480,7 +526,23 @@ export default function Content() {
           ariaLabel="Custom icon label tabs"
         />
       </Box>
-
+      <Fab
+        color="primary"
+        aria-label="help"
+        sx={{
+          position: 'fixed',
+          bottom: 16,
+          right: 16,
+          bgcolor: theme.palette.primary.main,
+          color: theme.palette.primary.contrastText,
+          '&:hover': {
+            bgcolor: theme.palette.primary.dark,
+          },
+        }}
+        onClick={handleHelpClick}
+      >
+        <HelpIcon />
+      </Fab>
       {showBackToTop && (
         <Fab
           color="secondary"
@@ -504,6 +566,86 @@ export default function Content() {
           <Typography fontSize={'10px'}>Back to Top</Typography>
         </Fab>
       )}
+      <CommonDialog
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+        header="Help desk"
+        content={
+          <Grid container spacing={2}>
+            <Typography>We’ve sent an your issue to help desk</Typography>
+            <Grid
+              size={{ xs: 12, sm: 6, md: 12, lg: 12 }}
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+                borderRadius: '20px 20px 0 0',
+                padding: '15px',
+                backgroundColor: '#FFFFFF',
+              }}
+            >
+              <CommonTextField
+                label="Subject"
+                value={issueData.subject}
+                type="text"
+                variant="outlined"
+                onChange={handleChange('subject')}
+              />
+              <CommonTextField
+                label="Description"
+                type="text"
+                variant="outlined"
+                multiline
+                rows={4}
+                value={issueData.description}
+                onChange={handleChange('description')}
+              />
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Status</InputLabel>
+                <Select
+                  fullWidth
+                  value={issueData.status}
+                  onChange={handleChange('status')}
+                >
+                  <MenuItem value="Open">Open</MenuItem>
+                  <MenuItem value="Closed">Closed</MenuItem>
+                  <MenuItem value="In Progress">In Progress</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Priority</InputLabel>
+
+                <Select
+                  fullWidth
+                  value={issueData.priority}
+                  onChange={handleChange('priority')}
+                  sx={{ mt: 2 }}
+                >
+                  <MenuItem value="High">High</MenuItem>
+                  <MenuItem value="Medium">Medium</MenuItem>
+                  <MenuItem value="Low">Low</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        }
+        actions={
+          <Button
+            onClick={handleOtpSubmit}
+            sx={{
+              color: '#FFFFFF',
+              width: '20%',
+              height: '40px',
+              bgcolor: '#6750A4',
+              borderRadius: '50px',
+              fontSize: '14px',
+              fontWeight: 500,
+            }}
+          >
+            Submit
+          </Button>
+        }
+      />
     </Layout>
   );
 }

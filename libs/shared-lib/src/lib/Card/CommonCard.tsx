@@ -231,13 +231,31 @@ export const CommonCard: React.FC<CommonCardProps> = ({
                     left: '50px',
                   }}
                 >
-                  {trackCompleted >= 100
-                    ? 'Completed'
-                    : trackCompleted > 0
-                    ? 'Inprogress'
-                    : trackProgress > 0
-                    ? `${trackProgress}% progress`
-                    : `${trackProgress}% Enrolled`}
+                  {trackCompleted >= 100 ? (
+                    <>
+                      {' '}
+                      <CheckCircleIcon sx={{ color: '#21A400' }} />
+                      <Typography
+                        sx={{
+                          fontSize: '12px',
+                          fontWeight: 'bold',
+                          marginLeft: '12px',
+                          color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
+                          position: 'absolute',
+                          left: '50px',
+                        }}
+                      >
+                        {' '}
+                        Completed
+                      </Typography>
+                    </>
+                  ) : trackCompleted > 0 ? (
+                    `${trackProgress}In progress`
+                  ) : trackProgress > 0 && trackProgress < 100 ? (
+                    `${trackProgress}% In progress`
+                  ) : (
+                    `Enrolled`
+                  )}
                 </Typography>
               </>
             ) : (
@@ -253,7 +271,7 @@ export const CommonCard: React.FC<CommonCardProps> = ({
                   background: 'rgba(0, 0, 0, 0.5)',
                 }}
               >
-                {trackCompleted >= 100 ? (
+                {trackCompleted === 100 ? (
                   <>
                     <CheckCircleIcon sx={{ color: '#21A400' }} />
                     <Typography
@@ -284,7 +302,7 @@ export const CommonCard: React.FC<CommonCardProps> = ({
                       }}
                     >
                       {' '}
-                      Inprogress
+                      In progress
                     </Typography>
                   </>
                 )}

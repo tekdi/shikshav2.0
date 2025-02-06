@@ -3,10 +3,14 @@ import { useRouter } from 'next/router';
 import { Box, Typography } from '@mui/material';
 import { Layout } from '@shared-lib';
 import LogoutIcon from '@mui/icons-material/Logout';
-
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Grid from '@mui/material/Grid2';
 import CommonCollapse from '../../components/CommonCollapse'; // Adjust the import based on your folder structure
 import { hierarchyAPI } from '../../services/Hierarchy';
+import { trackingData } from '../../services/TrackingService';
 
 interface DetailsProps {
   details: any;
@@ -17,6 +21,7 @@ export default function Details({ details }: DetailsProps) {
   const { identifier } = router.query; // Fetch the 'id' from the URL
   const [searchValue, setSearchValue] = useState('');
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [trackData, setTrackData] = useState([]);
 
   const [selectedContent, setSelectedContent] = useState<any>(null);
   useEffect(() => {
@@ -46,14 +51,37 @@ export default function Details({ details }: DetailsProps) {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(event.target.value);
   };
+  const fetchDataTrack = async (resultData: any) => {
+    if (!resultData.length) return; // Ensure contentData is available
 
+    try {
+      const courseList = resultData.map((item: any) => item.identifier); // Extract all identifiers
+      const userId = localStorage.getItem('subId');
+      const userIdArray = userId?.split(',');
+      if (!userId || !courseList.length) return; // Ensure required values exist
+      //@ts-ignore
+
+      const course_track_data = await trackingData(userIdArray, courseList);
+
+      if (course_track_data?.data) {
+        //@ts-ignore
+
+        const userTrackData =
+          course_track_data.data.find((course: any) => course.userId === userId)
+            ?.course || [];
+        setTrackData(userTrackData);
+      }
+    } catch (error) {
+      console.error('Error fetching track data:', error);
+    }
+  };
   const getDetails = async (identifier: string) => {
     try {
       const result = await hierarchyAPI(identifier);
       //@ts-ignore
       const trackable = result?.trackable;
       setSelectedContent(result);
-
+      fetchDataTrack(result);
       // if (trackable?.autoBatch?.toString().toLowerCase() === 'no') {
       //   router.push(`/content-details/${identifier}`);
       // } else {
@@ -62,6 +90,14 @@ export default function Details({ details }: DetailsProps) {
     } catch (error) {
       console.error('Failed to fetch content:', error);
     }
+  };
+  const handleLogout = () => {
+    setAnchorEl(null);
+    localStorage.removeItem('accToken');
+    localStorage.removeItem('refToken');
+    let LOGIN = process.env.NEXT_PUBLIC_LOGIN;
+    //@ts-ignore
+    window.location.href = LOGIN;
   };
   useEffect(() => {
     getDetails(identifier as string);
@@ -77,8 +113,8 @@ export default function Details({ details }: DetailsProps) {
         title={item.name}
         data={item?.children}
         defaultExpanded={false}
-        progress={20}
-        status={'Not started'}
+        TrackData={trackData}
+        item={[item]}
       />
     ));
   };
@@ -92,12 +128,39 @@ export default function Details({ details }: DetailsProps) {
         showMenuIcon: true,
         menuIconClick: handleMenuClick,
         actionButtonLabel: 'Action',
-        actionIcons: [
+        profileIcon: [
           {
-            icon: <LogoutIcon />,
+            icon: <AccountCircleIcon />,
             ariaLabel: 'Account',
             onLogoutClick: (e: any) => handleAccountClick(e),
             anchorEl: anchorEl,
+          },
+        ],
+        actionIcons: [
+          {
+            icon: <AccountCircleIcon />,
+            ariaLabel: 'Profile',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <DashboardIcon />,
+            ariaLabel: 'Admin dashboard',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <BorderColorIcon />,
+            ariaLabel: 'Workspace',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <HelpOutlineIcon />,
+            ariaLabel: 'Help',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <LogoutIcon />,
+            ariaLabel: 'Logout',
+            onOptionClick: handleLogout,
           },
         ],
         onMenuClose: handleClose,

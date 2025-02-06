@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { Box, Typography, Button } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { useRouter } from 'next/router'; // Use Next.js router for navigation
 import PictureAsPdfOutlinedIcon from '@mui/icons-material/PictureAsPdfOutlined';
 import PlayCircleOutlineOutlinedIcon from '@mui/icons-material/PlayCircleOutlineOutlined';
@@ -10,7 +8,10 @@ import LensOutlinedIcon from '@mui/icons-material/LensOutlined';
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 import { Progress } from '@shared-lib';
 import { useTheme } from '@mui/material/styles';
-
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ErrorIcon from '@mui/icons-material/Error';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 // Types for nested data structure and actions
 interface NestedItem {
   identifier: string;
@@ -27,6 +28,8 @@ interface CommonAccordionProps {
   defaultExpanded?: boolean;
   status?: 'Not started' | 'Completed' | 'In progress' | string;
   progress?: number;
+  TrackData?: never[];
+  item: NestedItem[];
 }
 
 const getIconByMimeType = (mimeType?: string): React.ReactNode => {
@@ -46,8 +49,10 @@ const RenderNestedData: React.FC<{
   expandedItems: Set<string>;
   status?: 'Not started' | 'Completed' | 'In progress' | string;
   progressNumber?: number;
+  trackComplete?: number;
+
   toggleExpanded: (identifier: string) => void;
-}> = ({ data, expandedItems, toggleExpanded, progressNumber }) => {
+}> = ({ data, expandedItems, toggleExpanded, trackComplete }) => {
   const router = useRouter();
 
   return (
@@ -73,91 +78,51 @@ const RenderNestedData: React.FC<{
               borderRadius: '4px',
               margin: '8px 0',
               padding: '8px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
             }}
           >
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <Box onClick={() => handleItemClick(item.identifier)}>
-                <Typography variant="body1" fontSize={'14px'} fontWeight={400}>
-                  {childrenCount === 0 && getIconByMimeType(item.mimeType)}{' '}
-                  {item.name}
-                </Typography>
+            <Box onClick={() => handleItemClick(item.identifier)}>
+              <Typography variant="body1" fontSize={'14px'} fontWeight={400}>
+                {childrenCount === 0 && getIconByMimeType(item.mimeType)}{' '}
+                {item.name}
+              </Typography>
 
-                {childrenCount > 0 && (
-                  <Box
+              {childrenCount > 0 && (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    color="textSecondary"
                     sx={{
+                      color: '#65558F',
+                      textDecoration: 'underline',
                       display: 'flex',
-                      justifyContent: 'space-between',
                       alignItems: 'center',
                     }}
                   >
-                    <Typography
-                      variant="caption"
-                      color="textSecondary"
-                      sx={{
-                        color: '#65558F',
-                        textDecoration: 'underline',
-                        display: 'flex',
-                        alignItems: 'center',
-                      }}
-                    >
-                      {childrenCount} Units <ArrowForwardOutlinedIcon />
-                    </Typography>
-                  </Box>
-                )}
-                {progressNumber !== undefined && (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      marginLeft: '100%',
-                      position: 'relative',
-                      bottom: '20px',
-                    }}
-                  >
-                    <Progress
-                      variant="determinate"
-                      value={100}
-                      size={30}
-                      thickness={6}
-                      sx={{
-                        color: '#cccccc',
-                        position: 'absolute',
-                        left: '10px',
-                      }}
-                    />
-                    <Progress
-                      variant="determinate"
-                      value={progressNumber}
-                      size={30}
-                      thickness={6}
-                      sx={{
-                        color: progressNumber === 100 ? '#21A400' : '#FFB74D',
-                        position: 'absolute',
-                        left: '10px',
-                      }}
-                    />
-                    <Typography
-                      sx={{
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        marginLeft: '12px',
-                        color: progressNumber === 100 ? '#21A400' : '#FFB74D',
-                        position: 'absolute',
-                        left: '50px',
-                      }}
-                    >
-                      {`${progressNumber}%`}
-                    </Typography>
-                  </Box>
-                )}
-              </Box>
+                    {childrenCount} Units <ArrowForwardOutlinedIcon />
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+            <Box>
+              {trackComplete === 100 ? (
+                <>
+                  <CheckCircleIcon sx={{ color: '#21A400' }} />
+                </>
+              ) : (
+                <>
+                  <ErrorIcon sx={{ color: '#FFB74D' }} />
+                </>
+              )}
             </Box>
 
             {isExpanded && item.children?.length && (
@@ -181,14 +146,98 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
   title,
   data,
   actions = [],
-  progress,
-  status,
+
+  TrackData,
   defaultExpanded = false,
 }) => {
   const router = useRouter();
   const theme = useTheme();
 
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+  const [trackCompleted, setTrackCompleted] = React.useState(0);
+  const [trackProgress, setTrackProgress] = React.useState(0);
+
+  React.useEffect(() => {
+    fetchDataTrack();
+  }, []);
+  const getLeafNodes = (node: any) => {
+    let result = [];
+
+    // If the node has leafNodes, add them to the result array
+    if (node.leafNodes) {
+      result.push(...node.leafNodes);
+    }
+
+    // If the node has children, iterate through them and recursively collect leaf nodes
+    if (node.children) {
+      node.children.forEach((child: any) => {
+        result.push(...getLeafNodes(child));
+      });
+    }
+
+    return result;
+  };
+  const fetchDataTrack = async () => {
+    try {
+      //@ts-ignore
+      if (TrackData && item?.children) {
+        for (let i = 0; i < TrackData.length; i++) {
+          //@ts-ignore
+          if (TrackData[i]?.courseId) {
+            //merge offlien and online
+            //@ts-ignore
+            const mergedArray = [...TrackData[i]?.completed_list];
+            const uniqueArray = [...new Set(mergedArray)];
+            let completed_list = uniqueArray;
+
+            //merge offlien and online
+            //@ts-ignore
+            const mergedArray_progress = [...TrackData[i]?.in_progress_list];
+            const uniqueArray_progress = [...new Set(mergedArray_progress)];
+            let in_progress_list = uniqueArray_progress;
+
+            //fetch all content in unit
+            let unit_content_list = getLeafNodes(item);
+            let unit_content_completed_list = [];
+            if (unit_content_list && completed_list) {
+              if (unit_content_list.length > 0 && completed_list.length > 0) {
+                for (let ii = 0; ii < unit_content_list.length; ii++) {
+                  let temp_item = unit_content_list[ii];
+                  if (completed_list.includes(temp_item)) {
+                    unit_content_completed_list.push(temp_item);
+                  }
+                }
+                let totalContent = unit_content_list.length;
+                let completed = unit_content_completed_list.length;
+                let percentageCompleted = (completed / totalContent) * 100;
+                percentageCompleted = Math.round(percentageCompleted);
+
+                setTrackCompleted(percentageCompleted);
+              }
+            }
+            let unit_content_in_progress_list = [];
+            if (unit_content_list && in_progress_list) {
+              if (unit_content_list.length > 0 && in_progress_list.length > 0) {
+                for (let ii = 0; ii < unit_content_list.length; ii++) {
+                  let temp_item = unit_content_list[ii];
+                  if (in_progress_list.includes(temp_item)) {
+                    unit_content_in_progress_list.push(temp_item);
+                  }
+                }
+                let totalContent = unit_content_list.length;
+                let in_progress = unit_content_in_progress_list.length;
+                let percentageInProgress = (in_progress / totalContent) * 100;
+                percentageInProgress = Math.round(percentageInProgress);
+                setTrackProgress(percentageInProgress);
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.log('error', e);
+    }
+  };
   const toggleExpanded = (identifier: string) => {
     setExpandedItems((prev) => {
       const newExpandedItems = new Set(prev);
@@ -222,13 +271,13 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
           <Typography variant="h6" fontSize={'12px'} fontWeight={500}>
             {title}
           </Typography>
-          {progress !== undefined && (
+          {/* {trackProgress >= 0 && (
             <Box
               sx={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '2px',
-                // marginLeft: 'auto',
+               
                 position: 'relative',
               }}
             >
@@ -245,11 +294,11 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
               />
               <Progress
                 variant="determinate"
-                value={progress}
+                value={trackCompleted}
                 size={30}
                 thickness={6}
                 sx={{
-                  color: progress === 100 ? '#21A400' : '#FFB74D',
+                  color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
                   position: 'absolute',
                   left: '10px',
                 }}
@@ -259,7 +308,7 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
                   fontSize: '12px',
                   fontWeight: 'bold',
                   marginLeft: '6px',
-                  color: progress === 100 ? '#21A400' : '#FFB74D',
+                  color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
                   position: 'absolute',
                   left: '40px',
                 }}
@@ -268,10 +317,10 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
                 //@ts-ignore
                 data?.mimeType === 'application/vnd.ekstep.content-collection'
                   ? status
-                  : `${progress}%`}
+                  : `${trackCompleted}%`}
               </Typography>
             </Box>
-          )}
+          )} */}
           <Box
             sx={{ marginLeft: 'auto' }}
             onClick={(e) => {
@@ -280,9 +329,9 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
             }}
           >
             {expandedItems.has(identifier) ? (
-              <ExpandLessIcon />
+              <ArrowDropDownIcon />
             ) : (
-              <ExpandMoreIcon />
+              <ArrowDropUpIcon />
             )}
           </Box>
         </Box>
@@ -290,7 +339,7 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
         <Box
           sx={{
             display: 'flex',
-            // justifyContent: 'space-between',
+            justifyContent: 'space-between',
             alignItems: 'center',
           }}
           onClick={() => handleItemClick(identifier)}
@@ -299,7 +348,18 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
             {/* @ts-ignore */}
             {getIconByMimeType(data?.mimeType)} {title}
           </Typography>
-          {progress !== undefined && (
+          <Box>
+            {trackCompleted === 100 ? (
+              <>
+                <CheckCircleIcon sx={{ color: '#21A400' }} />
+              </>
+            ) : (
+              <>
+                <ErrorIcon sx={{ color: '#FFB74D' }} />
+              </>
+            )}
+          </Box>
+          {/* {trackProgress >= 0 && (
             <Box
               sx={{
                 display: 'flex',
@@ -322,11 +382,11 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
               />
               <Progress
                 variant="determinate"
-                value={progress}
+                value={trackCompleted}
                 size={30}
                 thickness={6}
                 sx={{
-                  color: progress === 100 ? '#21A400' : '#FFB74D',
+                  color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
                   position: 'absolute',
                   left: '10px',
                 }}
@@ -336,7 +396,7 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
                   fontSize: '12px',
                   fontWeight: 'bold',
                   marginLeft: '6px',
-                  color: progress === 100 ? '#21A400' : '#FFB74D',
+                  color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
                   position: 'absolute',
                   left: '40px',
                 }}
@@ -345,10 +405,10 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
                 //@ts-ignore
                 data?.mimeType === 'application/vnd.ekstep.content-collection'
                   ? status
-                  : `${progress}%`}
+                  : `${trackCompleted}%`}
               </Typography>
             </Box>
-          )}
+          )} */}
         </Box>
       )}
 
@@ -358,7 +418,8 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
             data={data}
             expandedItems={expandedItems}
             toggleExpanded={toggleExpanded}
-            progressNumber={progress}
+            progressNumber={trackProgress}
+            trackComplete={trackCompleted}
           />
         )}
       </Box>
