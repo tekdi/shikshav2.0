@@ -9,7 +9,21 @@ import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
 import { Box } from '@mui/material';
 import { Progress } from '../Progress/Progress';
-
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ErrorIcon from '@mui/icons-material/Error';
+interface ContentItem {
+  name: string;
+  gradeLevel: string[];
+  language: string[];
+  artifactUrl: string;
+  identifier: string;
+  appIcon: string;
+  contentType: string;
+  mimeType: string;
+  description: string;
+  posterImage: string;
+  children: [{}];
+}
 interface CommonCardProps {
   title: string;
   avatarLetter?: string;
@@ -22,8 +36,10 @@ interface CommonCardProps {
   children?: React.ReactNode;
   orientation?: 'vertical' | 'horizontal';
   minheight?: string;
-  status?: 'Not started' | 'Completed' | 'In progress' | string;
-  progress?: number;
+
+  TrackData?: never[];
+  item: ContentItem[];
+  type: string;
   onClick?: () => void;
 }
 
@@ -39,10 +55,96 @@ export const CommonCard: React.FC<CommonCardProps> = ({
   children,
   orientation,
   minheight,
-  status,
-  progress,
+
+  TrackData,
+  item,
+  type,
   onClick,
 }) => {
+  const [trackCompleted, setTrackCompleted] = React.useState(0);
+  const [trackProgress, setTrackProgress] = React.useState(0);
+
+  React.useEffect(() => {
+    fetchDataTrack();
+  }, []);
+  const getLeafNodes = (node: any) => {
+    let result = [];
+
+    // If the node has leafNodes, add them to the result array
+    if (node.leafNodes) {
+      result.push(...node.leafNodes);
+    }
+
+    // If the node has children, iterate through them and recursively collect leaf nodes
+    if (node.children) {
+      node.children.forEach((child: any) => {
+        result.push(...getLeafNodes(child));
+      });
+    }
+
+    return result;
+  };
+  const fetchDataTrack = async () => {
+    try {
+      //@ts-ignore
+      if (TrackData && item?.children) {
+        for (let i = 0; i < TrackData.length; i++) {
+          //@ts-ignore
+          if (TrackData[i]?.courseId) {
+            //merge offlien and online
+            //@ts-ignore
+            const mergedArray = [...TrackData[i]?.completed_list];
+            const uniqueArray = [...new Set(mergedArray)];
+            let completed_list = uniqueArray;
+
+            //merge offlien and online
+            //@ts-ignore
+            const mergedArray_progress = [...TrackData[i]?.in_progress_list];
+            const uniqueArray_progress = [...new Set(mergedArray_progress)];
+            let in_progress_list = uniqueArray_progress;
+
+            //fetch all content in unit
+            let unit_content_list = getLeafNodes(item);
+            let unit_content_completed_list = [];
+            if (unit_content_list && completed_list) {
+              if (unit_content_list.length > 0 && completed_list.length > 0) {
+                for (let ii = 0; ii < unit_content_list.length; ii++) {
+                  let temp_item = unit_content_list[ii];
+                  if (completed_list.includes(temp_item)) {
+                    unit_content_completed_list.push(temp_item);
+                  }
+                }
+                let totalContent = unit_content_list.length;
+                let completed = unit_content_completed_list.length;
+                let percentageCompleted = (completed / totalContent) * 100;
+                percentageCompleted = Math.round(percentageCompleted);
+
+                setTrackCompleted(percentageCompleted);
+              }
+            }
+            let unit_content_in_progress_list = [];
+            if (unit_content_list && in_progress_list) {
+              if (unit_content_list.length > 0 && in_progress_list.length > 0) {
+                for (let ii = 0; ii < unit_content_list.length; ii++) {
+                  let temp_item = unit_content_list[ii];
+                  if (in_progress_list.includes(temp_item)) {
+                    unit_content_in_progress_list.push(temp_item);
+                  }
+                }
+                let totalContent = unit_content_list.length;
+                let in_progress = unit_content_in_progress_list.length;
+                let percentageInProgress = (in_progress / totalContent) * 100;
+                percentageInProgress = Math.round(percentageInProgress);
+                setTrackProgress(percentageInProgress);
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.log('error', e);
+    }
+  };
   return (
     <Card
       sx={{
@@ -82,7 +184,7 @@ export const CommonCard: React.FC<CommonCardProps> = ({
         )}
 
         {/* Progress Bar Overlay */}
-        {progress !== undefined && (
+        {trackProgress >= 0 && (
           <Box
             sx={{
               position: 'absolute',
@@ -95,47 +197,99 @@ export const CommonCard: React.FC<CommonCardProps> = ({
               background: 'rgba(0, 0, 0, 0.5)',
             }}
           >
-            <Progress
-              variant="determinate"
-              value={100}
-              size={30}
-              thickness={5}
-              sx={{
-                color: '#fff8fb',
-                position: 'absolute',
-                left: '10px',
-              }}
-            />
-            <Progress
-              variant="determinate"
-              value={progress}
-              size={30}
-              thickness={5}
-              sx={{
-                color: progress === 100 ? '#21A400' : '#FFB74D',
-                position: 'absolute',
-                left: '10px',
-              }}
-            />
-            <Typography
-              sx={{
-                fontSize: '12px',
-                fontWeight: 'bold',
-                marginLeft: '12px',
-                color: progress === 100 ? '#21A400' : '#FFB74D',
-                position: 'absolute',
-                left: '50px',
-              }}
-            >
-              {status &&
-                actions &&
-                actions?.toString().toLowerCase() === 'resource' &&
-                status}
-              {status &&
-                actions &&
-                actions?.toString().toLowerCase() === 'course' &&
-                `${progress}%`}
-            </Typography>
+            {type === 'course' ? (
+              <>
+                <Progress
+                  variant="determinate"
+                  value={100}
+                  size={30}
+                  thickness={5}
+                  sx={{
+                    color: '#fff8fb',
+                    position: 'absolute',
+                    left: '10px',
+                  }}
+                />
+                <Progress
+                  variant="determinate"
+                  value={trackCompleted}
+                  size={30}
+                  thickness={5}
+                  sx={{
+                    color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
+                    position: 'absolute',
+                    left: '10px',
+                  }}
+                />
+                <Typography
+                  sx={{
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    marginLeft: '12px',
+                    color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
+                    position: 'absolute',
+                    left: '50px',
+                  }}
+                >
+                  {trackCompleted >= 100
+                    ? 'Completed'
+                    : trackCompleted > 0
+                    ? 'Inprogress'
+                    : trackProgress > 0
+                    ? `${trackProgress}% progress`
+                    : `${trackProgress}% Enrolled`}
+                </Typography>
+              </>
+            ) : (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  height: '40px',
+                  top: 0,
+                  width: '100%',
+                  display: 'flex',
+                  // justifyContent: 'center',
+                  alignItems: 'center',
+                  background: 'rgba(0, 0, 0, 0.5)',
+                }}
+              >
+                {trackCompleted >= 100 ? (
+                  <>
+                    <CheckCircleIcon sx={{ color: '#21A400' }} />
+                    <Typography
+                      sx={{
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                        marginLeft: '12px',
+                        color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
+                        position: 'absolute',
+                        left: '50px',
+                      }}
+                    >
+                      {' '}
+                      Completed
+                    </Typography>
+                  </>
+                ) : (
+                  <>
+                    <ErrorIcon sx={{ color: '#FFB74D' }} />
+                    <Typography
+                      sx={{
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                        marginLeft: '12px',
+                        color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
+                        position: 'absolute',
+                        left: '20px',
+                      }}
+                    >
+                      {' '}
+                      Inprogress
+                    </Typography>
+                  </>
+                )}
+              </Box>
+            )}
           </Box>
         )}
       </Box>

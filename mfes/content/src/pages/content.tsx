@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { Box, Menu, MenuItem, Fab, Typography, Button } from '@mui/material';
+import { Box, Fab, Typography, Button } from '@mui/material';
 import { CommonCard, CommonTabs, Layout, Circular } from '@shared-lib';
 import { ContentSearch } from '../services/Search';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -12,13 +12,13 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import SearchIcon from '@mui/icons-material/Search';
 import Grid from '@mui/material/Grid2';
 import { useRouter, useSearchParams } from 'next/navigation';
-import MailIcon from '@mui/icons-material/Mail';
 import CircleIcon from '@mui/icons-material/Circle';
 import { hierarchyAPI } from '../services/Hierarchy';
 import { contentReadAPI } from '../services/Read';
 import { useTheme } from '@mui/material/styles';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { trackingData } from '../services/TrackingService';
 interface ContentItem {
   name: string;
   gradeLevel: string[];
@@ -30,6 +30,7 @@ interface ContentItem {
   mimeType: string;
   description: string;
   posterImage: string;
+  children: [{}];
 }
 
 export default function Content() {
@@ -48,6 +49,8 @@ export default function Content() {
   const [filterValues, setFilterValues] = useState({});
   const theme = useTheme();
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [frameworkFilter, setFrameworkFilter] = useState(false);
+  const [trackData, setTrackData] = useState([]);
 
   const fetchContent = useCallback(
     async (
@@ -59,6 +62,7 @@ export default function Content() {
     ) => {
       setIsLoading(true);
       try {
+        //@ts-ignore
         let result;
         if (identifier) {
           result = await hierarchyAPI(identifier);
@@ -80,8 +84,9 @@ export default function Content() {
             setHasMoreData(false); // No more data available
           } else {
             // setContentData(result || []);
-
+            //@ts-ignore
             setContentData((prevData) => [...prevData, ...result]);
+            fetchDataTrack(result);
             setHasMoreData(true);
           }
         }
@@ -93,7 +98,32 @@ export default function Content() {
     },
     [identifier]
   );
+  const fetchDataTrack = async (resultData: any) => {
+    if (!resultData.length) return; // Ensure contentData is available
 
+    try {
+      const courseList = resultData.map((item: any) => item.identifier); // Extract all identifiers
+      const userId = localStorage.getItem('subId');
+      const userIdArray = userId?.split(',');
+      if (!userId || !courseList.length) return; // Ensure required values exist
+      //@ts-ignore
+
+      const course_track_data = await trackingData(userIdArray, courseList);
+
+      if (course_track_data?.data) {
+        //@ts-ignore
+
+        const userTrackData =
+          course_track_data.data.find((course: any) => course.userId === userId)
+            ?.course || [];
+        setTrackData(userTrackData);
+      }
+    } catch (error) {
+      console.error('Error fetching track data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   useEffect(() => {
     const type = tabValue === 0 ? 'Course' : 'Learning Resource';
     // setContentData([]);
@@ -101,6 +131,7 @@ export default function Content() {
     const subid = cookies
       .find((row) => row.startsWith('subid='))
       ?.split('=')[1];
+    //@ts-ignore
     localStorage.setItem('subId', subid);
     fetchContent(type, searchValue, filterValues);
   }, [tabValue, filterValues]);
@@ -138,13 +169,27 @@ export default function Content() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleSearchClick = () => {
+  const handleSearchClick = async () => {
     if (searchValue.trim()) {
       const type = tabValue === 0 ? 'Course' : 'Learning Resource';
-      fetchContent(type, searchValue, filterValues);
+      // fetchContent(type, searchValue, filterValues);
+      let result =
+        type &&
+        (await ContentSearch(type, searchValue, filterValues, limit, offset));
+      //@ts-ignore
+      if (!result || result === undefined || result?.length === 0) {
+        setHasMoreData(false);
+      } else {
+        // setContentData(result || []);
+        //@ts-ignore
+        setContentData(result || []);
+        setHasMoreData(true);
+      }
     } else {
+      setSearchValue('');
+      setContentData([]);
       const type = tabValue === 0 ? 'Course' : 'Learning Resource';
-      fetchContent(type);
+      fetchContent(type, searchValue, filterValues);
     }
   };
 
@@ -229,8 +274,9 @@ export default function Content() {
                   // subheader={item?.contentType}
                   actions={item?.contentType}
                   orientation="horizontal"
-                  status={'Not started'}
-                  progress={0}
+                  item={[item]}
+                  TrackData={trackData}
+                  type={tabValue === 0 ? 'course' : 'content'}
                   onClick={() =>
                     handleCardClick(item?.identifier, item?.mimeType)
                   }
@@ -278,41 +324,62 @@ export default function Content() {
     { text: 'Content', icon: <CircleIcon fontSize="small" />, to: '/content' },
   ];
   const categoriesItems = [
-    { text: 'Development', icon: <ChevronRightIcon />, to: '/' },
-    { text: 'Marketing', icon: <ChevronRightIcon />, to: '/page-2' },
-    { text: 'Business Studies', icon: <ChevronRightIcon />, to: '/content' },
+    {
+      text: 'Development',
+      icon: <ChevronRightIcon />,
+      to: '/',
+      subCategories: [
+        {
+          text: 'Primary',
+          to: '/education/primary',
+          subCategories: [
+            { text: 'Quantum Mechanics', to: '/science/physics/quantum' },
+            { text: 'Relativity', to: '/science/physics/relativity' },
+          ],
+        },
+        { text: 'Secondary', to: '/education/secondary' },
+      ],
+    },
+    {
+      text: 'Marketing',
+      icon: <ChevronRightIcon />,
+      to: '/page-2',
+      subCategories: [
+        { text: 'Primary', to: '/education/primary' },
+        { text: 'Secondary', to: '/education/secondary' },
+      ],
+    },
+    {
+      text: 'Business Studies',
+      icon: <ChevronRightIcon />,
+      to: '/content',
+      subCategories: [
+        { text: 'Primary', to: '/education/primary' },
+        { text: 'Secondary', to: '/education/secondary' },
+      ],
+    },
   ];
 
-  //   sort: true,
-  //   language: [
-  //     'Mathematics',
-  //     'Science',
-  //     'Environmental Sciences',
-  //     'English',
-  //     'Hindi',
-  //   ],
-  //   subject: [
-  //     'Mathematics',
-  //     'Science',
-  //     'Environmental Sciences',
-  //     'English',
-  //     'Hindi',
-  //   ],
-  //   contentType: ['Video', 'PDF', 'E-Book', 'Quiz'],
-  // };
-  // Initialize as an empty object
-  // useEffect(() => {
-  //   const type = tabValue === 0 ? 'Course' : 'Learning Resource';
-  //   fetchContent(type, searchValue, filterValues);
-  // }, [filterValues]);
   //@ts-ignore
-  const handleApplyFilters = (selectedValues) => {
-    setFilterValues(selectedValues);
+  const handleApplyFilters = async (selectedValues) => {
+    // setFilterValues(selectedValues);
+    setContentData([]);
+    const type = tabValue === 0 ? 'Course' : 'Learning Resource';
+    let result =
+      type &&
+      (await ContentSearch(type, searchValue, selectedValues, limit, offset));
+    //@ts-ignore
+    if (!result || result === undefined || result?.length === 0) {
+      setHasMoreData(false); // No more data available
+    } else {
+      //@ts-ignore
+      setContentData(result || []);
+      setHasMoreData(true);
+    }
     console.log('Filter selectedValues:', selectedValues);
   };
 
   //get filter framework
-  const [frameworkFilter, setFrameworkFilter] = useState(false);
   useEffect(() => {
     fetchFramework();
   }, [router]);

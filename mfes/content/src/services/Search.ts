@@ -110,7 +110,9 @@ interface ContentSearchResponse {
 export const ContentSearch = async (
   type: string,
   searchText?: string,
-  filterValues?: object
+  filterValues?: object,
+  limit: number = 5,
+  offset: number = 0
 ): Promise<ContentSearchResponse[]> => {
   try {
     // Ensure the environment variable is defined
@@ -127,10 +129,10 @@ export const ContentSearch = async (
           // identifier: 'do_1141652605790289921389',
           ...filterValues,
           //need below after login user channel for dynamic load content
-          //channel: '01369885294383923244',
+          // channel: '0135656861912678406',
+
           primaryCategory: [type],
         },
-
         fields: [
           'name',
           'appIcon',
@@ -146,6 +148,8 @@ export const ContentSearch = async (
           'leafNodes',
         ],
         query: searchText,
+        limit: limit,
+        offset: offset,
       },
     };
     const config: AxiosRequestConfig = {
