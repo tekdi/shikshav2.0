@@ -146,7 +146,7 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
   title,
   data,
   actions = [],
-
+  item,
   TrackData,
   defaultExpanded = false,
 }) => {

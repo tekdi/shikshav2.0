@@ -427,7 +427,11 @@ export default function Content() {
   };
   const handleChange =
     (field: string) =>
-    (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
+    (
+      event:
+        | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        | SelectChangeEvent<string>
+    ) => {
       const value = event.target.value;
       setIssueData({
         ...issueData,
@@ -494,6 +498,7 @@ export default function Content() {
           padding: '4px',
           borderRadius: '50px',
           width: '100%',
+          marginLeft: '10px',
         },
       }}
       drawerItems={drawerItems}
