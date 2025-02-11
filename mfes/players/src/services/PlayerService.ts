@@ -84,10 +84,8 @@ export const getQumlData = async (identifier: any) => {
   }
 };
 
-
-
 export const createContentTracking = async (reqBody: ContentCreate) => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_MIDDLEWARE_URL}/v1/tracking/content/create`;
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_TRACKING_TELEMETRY_URL}/content/create`;
   try {
     const response = await post(apiUrl, reqBody);
     return response?.data;
