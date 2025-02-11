@@ -28,6 +28,7 @@ const SunbirdPlayers = ({ 'player-config': playerConfig }: PlayerProps) => {
   console.log('workspace playerconfig', playerConfig);
 
   const mimeType = playerConfig?.metadata?.mimeType;
+  localStorage.setItem('mimeType', mimeType);
   switch (mimeType) {
     case 'application/pdf':
       return <SunbirdPdfPlayer playerConfig={playerConfig} />;

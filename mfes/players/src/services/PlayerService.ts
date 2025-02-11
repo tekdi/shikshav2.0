@@ -1,5 +1,7 @@
+import { post } from '@shared-lib';
 import { URL_CONFIG } from '../utils/url.config';
 import axios from 'axios';
+import { ContentCreate } from '../utils/Interface';
 
 export const fetchContent = async (identifier: any) => {
   try {
@@ -78,6 +80,19 @@ export const getQumlData = async (identifier: any) => {
     return response?.data?.result?.content || response?.data?.result;
   } catch (error) {
     console.error('Error fetching content:', error);
+    throw error;
+  }
+};
+
+
+
+export const createContentTracking = async (reqBody: ContentCreate) => {
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_MIDDLEWARE_URL}/v1/tracking/content/create`;
+  try {
+    const response = await post(apiUrl, reqBody);
+    return response?.data;
+  } catch (error) {
+    console.log(error);
     throw error;
   }
 };
