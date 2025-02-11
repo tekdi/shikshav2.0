@@ -1,7 +1,10 @@
 import 'reflect-metadata';
 import React, { useEffect, useRef } from 'react';
 import $ from 'jquery';
-import { getTelemetryEvents, handleExitEvent } from '../utils/Helper';
+import {
+  getTelemetryEvents,
+  handleExitEvent,
+} from '../../services/TelemetryService';
 interface PlayerConfigProps {
   playerConfig: any;
 }

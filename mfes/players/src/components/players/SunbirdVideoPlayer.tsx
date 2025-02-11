@@ -1,4 +1,7 @@
-import { getTelemetryEvents, handleExitEvent } from '../utils/Helper';
+import {
+  getTelemetryEvents,
+  handleExitEvent,
+} from '../../services/TelemetryService';
 import React, { useEffect, useRef } from 'react';
 
 interface PlayerConfigProps {
