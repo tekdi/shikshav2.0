@@ -38,6 +38,11 @@ interface LayoutProps {
   showLogo?: boolean;
   showFilter?: boolean;
   sx?: object;
+  categorieItems?: {
+    text: string;
+    to: string;
+    icon?: React.ReactNode;
+  }[];
   drawerItems?: {
     text: string;
     to: string;
@@ -67,11 +72,25 @@ interface LayoutProps {
     actionButtonColor?: 'inherit' | 'primary' | 'secondary' | 'default';
     position?: 'fixed' | 'absolute' | 'sticky' | 'static' | 'relative';
     color?: 'primary' | 'secondary' | 'default' | 'transparent' | 'inherit';
+    profileIcon?: {
+      icon: React.ReactNode;
+      ariaLabel: string;
+      anchorEl?: HTMLElement | null;
+      onLogoutClick?: (
+        event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+      ) => void;
+      onOptionClick?: (
+        event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+      ) => void;
+    }[];
     actionIcons?: {
       icon: React.ReactNode;
       ariaLabel: string;
       anchorEl?: HTMLElement | null;
       onLogoutClick?: (
+        event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+      ) => void;
+      onOptionClick?: (
         event: React.MouseEvent<HTMLButtonElement, MouseEvent>
       ) => void;
     }[];
@@ -411,6 +430,7 @@ export const Layout: React.FC<LayoutProps> = ({
   frameworkFilter,
   topAppBarIcons = [],
   drawerItems = [],
+  categorieItems = [],
   onItemClick,
   backIconClick,
   filter,
@@ -464,6 +484,7 @@ export const Layout: React.FC<LayoutProps> = ({
             <TopAppBar
               title="Dashboard"
               bgcolor="#FDF7FF"
+              profileIcon={showTopAppBar?.profileIcon}
               actionIcons={topAppBarIcons}
               menuIconClick={() => setIsDrawerOpen(true)}
               onLogoutClick={(event) => action.onLogoutClick(event)}
@@ -477,6 +498,7 @@ export const Layout: React.FC<LayoutProps> = ({
         open={isDrawerOpen}
         onDrawerClose={() => setIsDrawerOpen(false)}
         items={drawerItems}
+        categories={categorieItems}
         onItemClick={(to) => {
           onItemClick?.(to);
           setIsDrawerOpen(false);
@@ -504,7 +526,13 @@ export const Layout: React.FC<LayoutProps> = ({
             }
             inputValue={showSearch.inputValue || ''}
             onInputChange={showSearch.onInputChange}
-            sx={showSearch.sx || { width: 400, marginTop: '8px' }}
+            sx={
+              showSearch.sx || {
+                width: 400,
+                marginTop: '8px',
+                marginLeft: '10px',
+              }
+            }
           />
           {showFilter && (
             <Box
@@ -516,13 +544,15 @@ export const Layout: React.FC<LayoutProps> = ({
                 backgroundColor: '#ECE6F0',
                 borderRadius: '12px',
                 // padding: '8px',
-                width: '48px',
-                height: '48px',
+                width: '56px',
+                height: '46px',
                 '&:hover': {
                   backgroundColor: '#E0E0E0',
                   boxShadow: '0px 4px 8px 3px #00000026',
                 },
-                marginLeft: '10px',
+                marginLeft: '4px',
+                marginRight: '7px',
+
                 boxShadow: '0px 1px 3px 0px #0000004D',
               }}
               onClick={() => setFilterShow(true)}

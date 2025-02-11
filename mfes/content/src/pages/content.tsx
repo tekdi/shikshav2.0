@@ -1,16 +1,43 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { Box, Menu, MenuItem } from '@mui/material';
-import { CommonCard, CommonTabs, Layout, Circular } from '@shared-lib';
+import type { ChangeEvent } from 'react';
+import {
+  Box,
+  Fab,
+  Typography,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from '@mui/material';
+import {
+  CommonCard,
+  CommonTabs,
+  Layout,
+  Circular,
+  CommonDialog,
+  CommonTextField,
+} from '@shared-lib';
 import { ContentSearch } from '../services/Search';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SearchIcon from '@mui/icons-material/Search';
 import Grid from '@mui/material/Grid2';
 import { useRouter, useSearchParams } from 'next/navigation';
-import MailIcon from '@mui/icons-material/Mail';
+import CircleIcon from '@mui/icons-material/Circle';
 import { hierarchyAPI } from '../services/Hierarchy';
 import { contentReadAPI } from '../services/Read';
+import { useTheme } from '@mui/material/styles';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import HelpIcon from '@mui/icons-material/Help';
+import { SelectChangeEvent } from '@mui/material';
+import { trackingData } from '../services/TrackingService';
 interface ContentItem {
   name: string;
   gradeLevel: string[];
@@ -22,6 +49,7 @@ interface ContentItem {
   mimeType: string;
   description: string;
   posterImage: string;
+  children: [{}];
 }
 
 export default function Content() {
@@ -34,26 +62,58 @@ export default function Content() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedContent, setSelectedContent] = useState<any>(null);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  // const [language, setLanguage] = useState('');
-  // const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
-  // const [selectedContentTypes, setSelectedContentTypes] = useState<string[]>(
-  //   []
-  // );
-  // const [sort, setSort] = useState<string>('asc');
+  const [limit, setLimit] = useState(5); // Set default limit
+  const [offset, setOffset] = useState(0);
+  const [hasMoreData, setHasMoreData] = useState(true);
+  const [filterValues, setFilterValues] = useState({});
+  const theme = useTheme();
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const [frameworkFilter, setFrameworkFilter] = useState(false);
+  const [trackData, setTrackData] = useState([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [issueData, setIssueData] = useState({
+    subject: '',
+    description: '',
+    status: '',
+    priority: '',
+  });
   const fetchContent = useCallback(
-    async (type?: string, searchValue?: string, filterValues?: {}) => {
+    async (
+      type?: string,
+      searchValue?: string,
+      filterValues?: {},
+      limit?: number,
+      offset?: number
+    ) => {
       setIsLoading(true);
       try {
+        //@ts-ignore
         let result;
         if (identifier) {
           result = await hierarchyAPI(identifier);
           //@ts-ignore
-          if (result) setContentData([result]);
+          setContentData([result]);
+          // if (result) setContentData([result]);
         } else {
           result =
-            type && (await ContentSearch(type, searchValue, filterValues));
+            type &&
+            (await ContentSearch(
+              type,
+              searchValue,
+              filterValues,
+              limit,
+              offset
+            ));
           //@ts-ignore
-          setContentData(result || []);
+          if (!result || result === undefined || result?.length === 0) {
+            setHasMoreData(false); // No more data available
+          } else {
+            // setContentData(result || []);
+            //@ts-ignore
+            setContentData((prevData) => [...prevData, ...result]);
+            fetchDataTrack(result);
+            setHasMoreData(true);
+          }
         }
       } catch (error) {
         console.error('Failed to fetch content:', error);
@@ -61,19 +121,68 @@ export default function Content() {
         setIsLoading(false);
       }
     },
-    [identifier, searchValue]
+    [identifier]
   );
+  const fetchDataTrack = async (resultData: any) => {
+    if (!resultData.length) return; // Ensure contentData is available
 
+    try {
+      const courseList = resultData.map((item: any) => item.identifier); // Extract all identifiers
+      const userId = localStorage.getItem('subId');
+      const userIdArray = userId?.split(',');
+      if (!userId || !courseList.length) return; // Ensure required values exist
+      //@ts-ignore
+
+      const course_track_data = await trackingData(userIdArray, courseList);
+
+      if (course_track_data?.data) {
+        //@ts-ignore
+
+        const userTrackData =
+          course_track_data.data.find((course: any) => course.userId === userId)
+            ?.course || [];
+        setTrackData(userTrackData);
+      }
+    } catch (error) {
+      console.error('Error fetching track data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   useEffect(() => {
     const type = tabValue === 0 ? 'Course' : 'Learning Resource';
+    // setContentData([]);
+    const cookies = document.cookie.split('; ');
+    const subid = cookies
+      .find((row) => row.startsWith('subid='))
+      ?.split('=')[1];
+    //@ts-ignore
+    localStorage.setItem('subId', subid);
     fetchContent(type, searchValue, filterValues);
-  }, [tabValue]);
+  }, [tabValue, filterValues]);
+
+  const handleLoadMore = (event: React.MouseEvent) => {
+    event.preventDefault();
+
+    const newOffset = offset + limit;
+    setOffset(newOffset);
+
+    const currentScrollPosition = window.scrollY;
+
+    const type = tabValue === 0 ? 'Course' : 'Learning Resource';
+
+    fetchContent(type, searchValue, filterValues, limit, newOffset).then(() => {
+      setTimeout(() => {
+        window.scrollTo({ top: currentScrollPosition, behavior: 'auto' });
+      }, 0);
+    });
+  };
 
   const handleAccountClick = (event: React.MouseEvent<HTMLElement>) => {
     console.log('Account clicked');
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
+  const handleLogout = () => {
     setAnchorEl(null);
     localStorage.removeItem('accToken');
     localStorage.removeItem('refToken');
@@ -82,13 +191,30 @@ export default function Content() {
     window.location.href = LOGIN;
   };
 
-  const handleSearchClick = () => {
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleSearchClick = async () => {
     if (searchValue.trim()) {
       const type = tabValue === 0 ? 'Course' : 'Learning Resource';
-      fetchContent(type, searchValue, filterValues);
+      // fetchContent(type, searchValue, filterValues);
+      let result =
+        type &&
+        (await ContentSearch(type, searchValue, filterValues, limit, offset));
+      //@ts-ignore
+      if (!result || result === undefined || result?.length === 0) {
+        setHasMoreData(false);
+      } else {
+        // setContentData(result || []);
+        //@ts-ignore
+        setContentData(result || []);
+        setHasMoreData(true);
+      }
     } else {
+      setSearchValue('');
+      setContentData([]);
       const type = tabValue === 0 ? 'Course' : 'Learning Resource';
-      fetchContent(type);
+      fetchContent(type, searchValue, filterValues);
     }
   };
 
@@ -98,6 +224,8 @@ export default function Content() {
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
+    const type = newValue === 0 ? 'Course' : 'Learning Resource';
+    setContentData([]);
   };
 
   const handleCardClick = async (
@@ -136,35 +264,67 @@ export default function Content() {
     }
   };
   ``;
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 300);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleBackToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const renderTabContent = () => (
     <Box sx={{ flexGrow: 1 }}>
       {isLoading ? (
         <Circular />
       ) : (
-        <Grid container spacing={2} sx={{ mt: 2 }}>
-          {contentData?.map((item) => (
-            <Grid key={item?.identifier} size={{ xs: 6, sm: 6, md: 3, lg: 3 }}>
-              <CommonCard
-                title={item?.name.trim()}
-                image={
-                  item?.posterImage && item?.posterImage !== 'undefined'
-                    ? item?.posterImage
-                    : '/assests/images/image_ver.png'
-                }
-                content={item?.description || '-'}
-                // subheader={item?.contentType}
-                actions={item?.contentType}
-                orientation="horizontal"
-                status={'Not started'}
-                progress={0}
-                onClick={() =>
-                  handleCardClick(item?.identifier, item?.mimeType)
-                }
-              />
-            </Grid>
-          ))}
-        </Grid>
+        <>
+          <Grid container spacing={2} sx={{ mt: 2 }}>
+            {contentData?.map((item) => (
+              <Grid
+                key={item?.identifier}
+                size={{ xs: 6, sm: 6, md: 3, lg: 3 }}
+              >
+                <CommonCard
+                  title={item?.name.trim()}
+                  image={
+                    item?.posterImage && item?.posterImage !== 'undefined'
+                      ? item?.posterImage
+                      : '/assests/images/image_ver.png'
+                  }
+                  content={item?.description || '-'}
+                  // subheader={item?.contentType}
+                  actions={item?.contentType}
+                  orientation="horizontal"
+                  item={[item]}
+                  TrackData={trackData}
+                  type={tabValue === 0 ? 'course' : 'content'}
+                  onClick={() =>
+                    handleCardClick(item?.identifier, item?.mimeType)
+                  }
+                />
+              </Grid>
+            ))}
+          </Grid>
+          <Box sx={{ textAlign: 'center', mt: 4 }}>
+            {hasMoreData ? (
+              <Button
+                variant="contained"
+                onClick={handleLoadMore}
+                disabled={isLoading}
+              >
+                {isLoading ? 'Loading...' : 'Load More'}
+              </Button>
+            ) : (
+              <Typography variant="body1" color="textSecondary">
+                No more data available
+              </Typography>
+            )}
+          </Box>
+        </>
       )}
     </Box>
   );
@@ -185,56 +345,66 @@ export default function Content() {
   };
 
   const drawerItems = [
-    { text: 'Home', icon: <MailIcon />, to: '/' },
-    { text: 'Page2', icon: <MailIcon />, to: '/page-2' },
-    { text: 'Content', icon: <MailIcon />, to: '/content' },
+    { text: 'Home', icon: <CircleIcon fontSize="small" />, to: '/' },
+    { text: 'Content', icon: <CircleIcon fontSize="small" />, to: '/content' },
   ];
-  // const filter = {
-  //   sort: true,
-  //   language: [
-  //     'Mathematics',
-  //     'Science',
-  //     'Environmental Sciences',
-  //     'English',
-  //     'Hindi',
-  //   ],
-  //   subject: [
-  //     'Mathematics',
-  //     'Science',
-  //     'Environmental Sciences',
-  //     'English',
-  //     'Hindi',
-  //   ],
-  //   contentType: ['Video', 'PDF', 'E-Book', 'Quiz'],
-  // };
-  const [filterValues, setFilterValues] = useState({}); // Initialize as an empty object
-  useEffect(() => {
-    const type = tabValue === 0 ? 'Course' : 'Learning Resource';
-    fetchContent(type, searchValue, filterValues);
-  }, [filterValues]);
+  const categoriesItems = [
+    {
+      text: 'Development',
+      icon: <ChevronRightIcon />,
+      to: '/',
+      subCategories: [
+        {
+          text: 'Primary',
+          to: '/education/primary',
+          subCategories: [
+            { text: 'Quantum Mechanics', to: '/science/physics/quantum' },
+            { text: 'Relativity', to: '/science/physics/relativity' },
+          ],
+        },
+        { text: 'Secondary', to: '/education/secondary' },
+      ],
+    },
+    {
+      text: 'Marketing',
+      icon: <ChevronRightIcon />,
+      to: '/page-2',
+      subCategories: [
+        { text: 'Primary', to: '/education/primary' },
+        { text: 'Secondary', to: '/education/secondary' },
+      ],
+    },
+    {
+      text: 'Business Studies',
+      icon: <ChevronRightIcon />,
+      to: '/content',
+      subCategories: [
+        { text: 'Primary', to: '/education/primary' },
+        { text: 'Secondary', to: '/education/secondary' },
+      ],
+    },
+  ];
+
   //@ts-ignore
-  const handleApplyFilters = (selectedValues) => {
-    // console.log('Selected Language:', language);
-    // console.log('Selected Subjects:', selectedSubjects);
-    // console.log('Selected Content Types:', selectedContentTypes);
-    // console.log('Sort Order:', sort);
-    setFilterValues(selectedValues);
+  const handleApplyFilters = async (selectedValues) => {
+    // setFilterValues(selectedValues);
+    setContentData([]);
+    const type = tabValue === 0 ? 'Course' : 'Learning Resource';
+    let result =
+      type &&
+      (await ContentSearch(type, searchValue, selectedValues, limit, offset));
+    //@ts-ignore
+    if (!result || result === undefined || result?.length === 0) {
+      setHasMoreData(false); // No more data available
+    } else {
+      //@ts-ignore
+      setContentData(result || []);
+      setHasMoreData(true);
+    }
     console.log('Filter selectedValues:', selectedValues);
   };
 
-  // const handleSubjectsChange = (subjects: string[]) => {
-  //   setSelectedSubjects(subjects); // Update the selected subjects as an array
-  // };
-  // const handleContentTypeChange = (contentType: string[]) => {
-  //   setSelectedContentTypes(contentType); // Update the selected subjects as an array
-  // };
-  // const handleSortChange = (newSort: string) => {
-  //   console.log('Sort Order:', newSort);
-  //   setSort(newSort);
-  // };
-
   //get filter framework
-  const [frameworkFilter, setFrameworkFilter] = useState(false);
   useEffect(() => {
     fetchFramework();
   }, [router]);
@@ -248,19 +418,71 @@ export default function Content() {
       console.error('Error fetching board data:', error);
     }
   };
-
+  const handleHelpClick = () => {
+    // alert('Contact Help Desk at help@shiksha.com');
+    setIsDialogOpen(true);
+  };
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+  };
+  const handleChange =
+    (field: string) =>
+    (
+      event:
+        | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        | SelectChangeEvent<string>
+    ) => {
+      const value = event.target.value;
+      setIssueData({
+        ...issueData,
+        [field]: value,
+      });
+    };
+  const handleOtpSubmit = async () => {
+    console.log(issueData);
+    const queryString = new URLSearchParams(issueData).toString();
+    const frappeDeskUrl = `http://localhost:8000/helpdesk/tickets/new?${queryString}`;
+    router.push(frappeDeskUrl);
+  };
   return (
     <Layout
       showTopAppBar={{
         title: 'Shiksha: Home',
         showMenuIcon: true,
         actionButtonLabel: 'Action',
-        actionIcons: [
+        profileIcon: [
           {
-            icon: <LogoutIcon />,
+            icon: <AccountCircleIcon />,
             ariaLabel: 'Account',
             onLogoutClick: (e: any) => handleAccountClick(e),
             anchorEl: anchorEl,
+          },
+        ],
+        actionIcons: [
+          {
+            icon: <AccountCircleIcon />,
+            ariaLabel: 'Profile',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <DashboardIcon />,
+            ariaLabel: 'Admin dashboard',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <BorderColorIcon />,
+            ariaLabel: 'Workspace',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <HelpOutlineIcon />,
+            ariaLabel: 'Help',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <LogoutIcon />,
+            ariaLabel: 'Logout',
+            onOptionClick: handleLogout,
           },
         ],
         onMenuClose: handleClose,
@@ -276,9 +498,11 @@ export default function Content() {
           padding: '4px',
           borderRadius: '50px',
           width: '100%',
+          marginLeft: '10px',
         },
       }}
       drawerItems={drawerItems}
+      categorieItems={categoriesItems}
       showFilter={true}
       // filter={filter}
       frameworkFilter={frameworkFilter}
@@ -286,14 +510,6 @@ export default function Content() {
       isFooter={false}
       showLogo={true}
       showBack={true}
-      // language={language}
-      // selectedSubjects={selectedSubjects}
-      // selectedContentTypes={selectedContentTypes}
-      // sort={{ sortBy: sort }}
-      // onLanguageChange={(newLang) => setLanguage(newLang)}
-      // onSubjectsChange={handleSubjectsChange}
-      // onContentTypeChange={handleContentTypeChange}
-      // onSortChange={handleSortChange}
       //@ts-ignore
       onApply={handleApplyFilters}
       filterValues={filterValues}
@@ -303,7 +519,7 @@ export default function Content() {
           width: '100%',
           display: 'flex',
           alignItems: 'center',
-          bgcolor: '#FEF7FF',
+          bgcolor: theme.palette.background.default,
           flexDirection: 'column',
           marginTop: '20px',
         }}
@@ -315,23 +531,126 @@ export default function Content() {
           ariaLabel="Custom icon label tabs"
         />
       </Box>
-      <Menu
-        id="menu-appbar"
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
+      <Fab
+        color="primary"
+        aria-label="help"
+        sx={{
+          position: 'fixed',
+          bottom: 16,
+          right: 16,
+          bgcolor: theme.palette.primary.main,
+          color: theme.palette.primary.contrastText,
+          '&:hover': {
+            bgcolor: theme.palette.primary.dark,
+          },
         }}
-        keepMounted
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
+        onClick={handleHelpClick}
       >
-        <MenuItem onClick={handleClose}>Logout</MenuItem>
-      </Menu>
+        <HelpIcon />
+      </Fab>
+      {showBackToTop && (
+        <Fab
+          color="secondary"
+          aria-label="back to top"
+          sx={{
+            position: 'fixed',
+            display: 'table-column',
+            bottom: 80,
+            right: 16,
+            height: '75px',
+            borderRadius: '100px',
+            bgcolor: theme.palette.primary.main,
+            color: theme.palette.primary.contrastText,
+            '&:hover': {
+              bgcolor: theme.palette.primary.dark,
+            },
+          }}
+          onClick={handleBackToTop}
+        >
+          <ArrowUpwardIcon />
+          <Typography fontSize={'10px'}>Back to Top</Typography>
+        </Fab>
+      )}
+      <CommonDialog
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+        header="Help desk"
+        content={
+          <Grid container spacing={2}>
+            <Typography>We’ve sent an your issue to help desk</Typography>
+            <Grid
+              size={{ xs: 12, sm: 6, md: 12, lg: 12 }}
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+                borderRadius: '20px 20px 0 0',
+                padding: '15px',
+                backgroundColor: '#FFFFFF',
+              }}
+            >
+              <CommonTextField
+                label="Subject"
+                value={issueData.subject}
+                type="text"
+                variant="outlined"
+                onChange={handleChange('subject')}
+              />
+              <CommonTextField
+                label="Description"
+                type="text"
+                variant="outlined"
+                multiline
+                rows={4}
+                value={issueData.description}
+                onChange={handleChange('description')}
+              />
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Status</InputLabel>
+                <Select
+                  fullWidth
+                  value={issueData.status}
+                  onChange={handleChange('status')}
+                >
+                  <MenuItem value="Open">Open</MenuItem>
+                  <MenuItem value="Closed">Closed</MenuItem>
+                  <MenuItem value="In Progress">In Progress</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Priority</InputLabel>
+
+                <Select
+                  fullWidth
+                  value={issueData.priority}
+                  onChange={handleChange('priority')}
+                  sx={{ mt: 2 }}
+                >
+                  <MenuItem value="High">High</MenuItem>
+                  <MenuItem value="Medium">Medium</MenuItem>
+                  <MenuItem value="Low">Low</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        }
+        actions={
+          <Button
+            onClick={handleOtpSubmit}
+            sx={{
+              color: '#FFFFFF',
+              width: '20%',
+              height: '40px',
+              bgcolor: '#6750A4',
+              borderRadius: '50px',
+              fontSize: '14px',
+              fontWeight: 500,
+            }}
+          >
+            Submit
+          </Button>
+        }
+      />
     </Layout>
   );
 }

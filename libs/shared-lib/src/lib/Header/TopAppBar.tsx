@@ -14,6 +14,17 @@ interface ActionIcon {
   onLogoutClick: (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
+  onOptionClick?: (
+    event: React.MouseEvent<HTMLAnchorElement | HTMLLIElement, MouseEvent>
+  ) => void;
+}
+interface ProfileIcon {
+  icon: React.ReactNode;
+  ariaLabel: string;
+  anchorEl?: HTMLElement | null;
+  onLogoutClick: (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => void;
 }
 interface CommonAppBarProps {
   title?: string;
@@ -27,8 +38,10 @@ interface CommonAppBarProps {
   position?: 'fixed' | 'absolute' | 'sticky' | 'static' | 'relative';
   color?: 'primary' | 'secondary' | 'default' | 'transparent' | 'inherit';
   actionIcons?: ActionIcon[];
+  profileIcon?: ProfileIcon[];
   bgcolor?: string;
   onMenuClose?: () => void;
+  onOptionClick?: () => void;
 }
 
 export const TopAppBar: React.FC<CommonAppBarProps> = ({
@@ -38,12 +51,14 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
   menuIconClick,
   backIconClick,
   onMenuClose,
+  onOptionClick,
   actionButtonLabel = 'Action',
   actionButtonClick,
   actionButtonColor = 'inherit',
   position = 'static',
   color = 'transparent',
   actionIcons = [],
+  profileIcon = [],
   bgcolor = '#FDF7FF',
 }) => {
   const accountIcon = actionIcons.find((icon) => icon.ariaLabel === 'Account');
@@ -102,22 +117,21 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
               </Typography>
             </>
           )}
-          {actionIcons.map((action, index) => (
+          {profileIcon && profileIcon.length > 0 && (
             <IconButton
-              key={index}
               color={actionButtonColor}
-              aria-label={action.ariaLabel}
-              onClick={action.onLogoutClick}
+              aria-label={profileIcon[0]?.ariaLabel}
+              onClick={profileIcon[0]?.onLogoutClick}
             >
-              {action.icon}
+              {profileIcon[0].icon}
             </IconButton>
-          ))}
+          )}
         </Toolbar>
       </AppBar>
-      {accountIcon?.anchorEl && (
+      {profileIcon[0]?.anchorEl && (
         <Menu
           id="menu-appbar"
-          anchorEl={accountIcon.anchorEl}
+          anchorEl={profileIcon[0].anchorEl}
           anchorOrigin={{
             vertical: 'top',
             horizontal: 'right',
@@ -127,10 +141,17 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
             vertical: 'top',
             horizontal: 'right',
           }}
-          open={Boolean(accountIcon.anchorEl)}
+          open={Boolean(profileIcon[0].anchorEl)}
           onClose={onMenuClose}
         >
-          <MenuItem onClick={onMenuClose}>Logout</MenuItem>
+          {actionIcons?.map((action, index) => (
+            <MenuItem key={index} onClick={action?.onOptionClick}>
+              <IconButton size="small" color="inherit">
+                {action.icon}
+              </IconButton>
+              {action.ariaLabel}
+            </MenuItem>
+          ))}
         </Menu>
       )}
     </Box>

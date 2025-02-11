@@ -17,6 +17,8 @@ interface CommonTextFieldProps {
   color?: string;
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
+  multiline?: boolean; // Add this line
+  rows?: number; // Add this line
 }
 export const CommonTextField: React.FC<CommonTextFieldProps> = ({
   label,
@@ -34,6 +36,8 @@ export const CommonTextField: React.FC<CommonTextFieldProps> = ({
   color = '#000000',
   startIcon,
   endIcon,
+  multiline = false, // Add this line
+  rows = 1, // Add this line
   ...props
 }) => {
   return (

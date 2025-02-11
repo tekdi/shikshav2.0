@@ -5,9 +5,12 @@ import React, { useEffect, useState } from 'react';
 import { Box, Button, Divider, Typography } from '@mui/material';
 import { Layout } from '@shared-lib';
 import LogoutIcon from '@mui/icons-material/Logout';
-
+import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid2';
-
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { useRouter } from 'next/router';
 import { fetchContent } from '../../services/Read';
 
@@ -23,6 +26,7 @@ const ContentDetails = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [contentDetails, setContentDetails] =
     useState<ContentDetailsObject | null>(null);
+  const theme = useTheme();
   const handleBackClick = () => {
     router.back(); // Navigate to the previous page
   };
@@ -68,6 +72,14 @@ const ContentDetails = () => {
   if (!identifier) {
     return <Typography>Loading...</Typography>; // Show loading state while identifier is undefined
   }
+  const handleLogout = () => {
+    setAnchorEl(null);
+    localStorage.removeItem('accToken');
+    localStorage.removeItem('refToken');
+    let LOGIN = process.env.NEXT_PUBLIC_LOGIN;
+    //@ts-ignore
+    window.location.href = LOGIN;
+  };
   return (
     <Layout
       showTopAppBar={{
@@ -76,12 +88,39 @@ const ContentDetails = () => {
 
         menuIconClick: handleMenuClick,
         actionButtonLabel: 'Action',
-        actionIcons: [
+        profileIcon: [
           {
-            icon: <LogoutIcon />,
+            icon: <AccountCircleIcon />,
             ariaLabel: 'Account',
             onLogoutClick: (e: any) => handleAccountClick(e),
             anchorEl: anchorEl,
+          },
+        ],
+        actionIcons: [
+          {
+            icon: <AccountCircleIcon />,
+            ariaLabel: 'Profile',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <DashboardIcon />,
+            ariaLabel: 'Admin dashboard',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <BorderColorIcon />,
+            ariaLabel: 'Workspace',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <HelpOutlineIcon />,
+            ariaLabel: 'Help',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <LogoutIcon />,
+            ariaLabel: 'Logout',
+            onOptionClick: handleLogout,
           },
         ],
         onMenuClose: handleClose,
@@ -122,7 +161,7 @@ const ContentDetails = () => {
       </Grid>
 
       {/* Section Header */}
-      <Grid container spacing={2} sx={{ marginBottom: '16px' }}>
+      <Grid container spacing={2} sx={{ margin: '16px' }}>
         <Grid size={{ xs: 12 }}>
           <Typography fontSize={'22px'} fontWeight={400}>
             Description
@@ -171,8 +210,10 @@ const ContentDetails = () => {
         <Button
           variant="contained"
           sx={{
-            bgcolor: '#6750A4',
-            color: '#FFFFFF',
+            // bgcolor: '#6750A4',
+
+            bgcolor: theme.palette.primary.main,
+            color: theme.palette.text.secondary,
             margin: '12px',
             borderRadius: '100px',
             textTransform: 'none',
