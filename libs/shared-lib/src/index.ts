@@ -20,9 +20,11 @@ export * from './lib/SunbirdPlayer/SunbirdPlayer';
 export * from './lib/QuestionSetEditor/QuestionSet';
 export * from './lib/CollectionEditor/Collection';
 export * from './lib/Dialog/CommonDialog';
-
+export * from './lib/Card/ImageCard';
 export * from './lib/Progress/Circular';
 export * from './lib/Progress/Progress';
+export * from './lib/Stack/FolderStack';
+export * from './lib/Card/ImageBanner';
 import Image from '../images/default.png';
 export const IMAGES = {
   DEFAULT_PLACEHOLDER: Image,
