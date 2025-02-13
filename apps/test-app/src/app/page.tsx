@@ -8,6 +8,7 @@ import Link from 'next/link';
 
 //shared DataClient
 import { setData, getData, removeData } from '@shared-lib';
+import AppConst from '../utils/AppConst/AppConst';
 
 const TestNextRoute = dynamic(() => import('@test-next-route'), {
   ssr: false,
@@ -58,6 +59,13 @@ export default function Index() {
                 <h1>React Microfrontend Iframe</h1>
               </button>
             </Link>
+            <br />
+            <br />
+            <img
+              src={`${AppConst.BASEPATH}host-next-test.png`}
+              alt="Logo"
+              width="200px"
+            />
             <br />
             <br />
             <h5>{JSON.stringify(storeData)}</h5>
