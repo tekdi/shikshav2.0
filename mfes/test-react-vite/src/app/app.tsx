@@ -5,6 +5,9 @@ import { Route, Routes, Link } from 'react-router-dom';
 
 import DisplayIdComponent from '../components/DisplayIdComponent';
 
+//assest
+import logo from '../assets/src-react-test.png';
+
 //shared DataClient
 import { setData, getData, removeData } from '@shared-lib';
 import { useEffect, useState, useRef } from 'react';
@@ -12,6 +15,8 @@ import { useEffect, useState, useRef } from 'react';
 //iframe path fix
 import { useLocation, useNavigate } from 'react-router-dom';
 //end iframe path fix
+
+import AppConst from '../utils/AppConst/AppConst';
 
 export function App() {
   //iframe path fix
@@ -69,6 +74,17 @@ export function App() {
           <li>
             <Link to="/">Home</Link>
           </li>
+          <br />
+          from public
+          <img
+            src={`${AppConst.BASEPATH}public-react-test.png`}
+            alt="Logo"
+            width="200px"
+          />
+          <br />
+          from src
+          <img src={logo} alt="Logo" width="200px" />
+          <br />
           <ul>
             {Array.from({ length: 10 }, (_, i) => (
               <li key={`user_${i}`}>

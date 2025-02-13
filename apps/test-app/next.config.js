@@ -3,6 +3,8 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { composePlugins, withNx } = require('@nx/next');
 
+const BASE_PATH = process.env.NEXT_PUBLIC_HOST_TEST_APP || '';
+
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
@@ -12,6 +14,8 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
+
+  basePath: BASE_PATH, // This should match the path set in Nginx
 };
 
 const plugins = [

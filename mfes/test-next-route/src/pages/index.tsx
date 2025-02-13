@@ -4,6 +4,7 @@ import Link from 'next/link';
 //shared DataClient
 import { setData, getData, removeData } from '@shared-lib';
 import { useState } from 'react';
+import AppConst from '../utils/AppConst/AppConst';
 
 export function Index() {
   /*
@@ -45,6 +46,11 @@ export function Index() {
               </li>
             ))}
           </ul>
+          <br/>
+          <br/>
+          <img src={`${AppConst.BASEPATH}/next-test.png`} alt="Logo" width="200px" />
+          <br/>
+          <br/>
           <h5>{JSON.stringify(storeData)}</h5>
           <div>
             <button onClick={handleGetData}>Get Data</button>

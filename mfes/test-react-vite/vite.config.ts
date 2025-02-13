@@ -4,6 +4,8 @@ import react from '@vitejs/plugin-react';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 
+const BASE_PATH = process.env.VITE_MFE_TEST_REACT_VITE || '';
+
 export default defineConfig({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/mfes/test-react-vite',
@@ -21,7 +23,7 @@ export default defineConfig({
   plugins: [react(), nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
   
   //add nginix base here
-  base: '/iframereact/', // Prepend this base path to all assets
+  base: BASE_PATH, // Prepend this base path to all assets
 
   // Uncomment this if you are using workers.
   // worker: {
