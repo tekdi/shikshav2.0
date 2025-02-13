@@ -147,7 +147,9 @@ export const getTelemetryEvents = (eventData: any, contentType: string) => {
             }
             let userId = '';
             if (typeof window !== 'undefined' && window.localStorage) {
-              userId = localStorage.getItem('userId') || 'Anonymous';
+              userId =
+                localStorage.getItem('userId') ??
+                'be55bc45-cd59-416d-88ac-157aa3ac8589';
             }
             if (userId !== undefined || userId !== '') {
               const ContentTypeReverseMap = Object.fromEntries(

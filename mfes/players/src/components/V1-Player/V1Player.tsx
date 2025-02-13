@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import { getTelemetryEvents } from '../../services/TelemetryService';
 
 interface PlayerProps {
   playerConfig: any;
@@ -23,45 +24,21 @@ const V1Player = ({ playerConfig }: PlayerProps) => {
           ) {
             preview.contentWindow.initializePreview(playerConfig);
           }
-
-          // Handle cross-origin messages securely
-          const messageHandler = (event: MessageEvent) => {
-            // Allow all origins but validate the message structure
+          preview.contentWindow.addEventListener('message', (event: any) => {
             console.log('V1 player event', event);
+          });
 
-            // Example validation: Check for expected message data
-            if (
-              event.data &&
-              typeof event.data === 'object' &&
-              event.data.type === 'expectedType'
-            ) {
-              console.log('Valid message received:', event.data);
-              // Process the message
-            } else {
-              console.warn('Unexpected message format:', event.data);
-            }
-          };
-
-          // Add listener for 'message' events
-          preview.contentWindow.addEventListener('message', messageHandler);
-
-          // Handle telemetry events
-          const telemetryHandler = (event: CustomEvent) => {
+          preview.addEventListener('renderer:telemetry:event', (event: any) => {
             console.log('V1 player telemetry event ===>', event);
-
-            if (event.detail.telemetryData?.eid === 'START') {
+            if (event.detail.telemetryData.eid === 'START') {
               console.log('V1 player telemetry START event ===>', event);
             }
-            if (event.detail.telemetryData?.eid === 'END') {
+            if (event.detail.telemetryData.eid === 'END') {
               console.log('V1 player telemetry END event ===>', event);
             }
-          };
 
-          // Add listener for 'renderer:telemetry:event'
-          preview.addEventListener(
-            'renderer:telemetry:event',
-            telemetryHandler
-          );
+            getTelemetryEvents(event.detail.telemetryData, 'v1');
+          });
         }, 100);
       };
 
