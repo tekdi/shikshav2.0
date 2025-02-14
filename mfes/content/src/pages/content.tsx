@@ -542,44 +542,10 @@ export default function Content() {
           marginTop: '20px',
         }}
       >
-        {config?.type === 'card' && (
-          <CommonTabs
-            tabs={tabs}
-            value={tabValue}
-            onChange={handleTabChange}
-            ariaLabel="Custom icon label tabs"
-          />
-        )}
-        {config?.type === 'Image' && (
-          <>
-            <Box>{renderTabContent()}</Box>
-          </>
-        )}
+        <>
+          <Box>{renderTabContent()}</Box>
+        </>
       </Box>
-
-      {showBackToTop && (
-        <Fab
-          color="secondary"
-          aria-label="back to top"
-          sx={{
-            position: 'fixed',
-            display: 'table-column',
-            bottom: 80,
-            right: 16,
-            height: '75px',
-            borderRadius: '100px',
-            bgcolor: theme.palette.primary.main,
-            color: theme.palette.primary.contrastText,
-            '&:hover': {
-              bgcolor: theme.palette.primary.dark,
-            },
-          }}
-          onClick={handleBackToTop}
-        >
-          <ArrowUpwardIcon />
-          <Typography fontSize={'10px'}>Back to Top</Typography>
-        </Fab>
-      )}
     </Layout>
   );
 }

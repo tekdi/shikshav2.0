@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { Button, Typography } from '@mui/material';
+import { Button, FormLabel, Typography } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Alert from '@mui/material/Alert';
@@ -133,6 +133,7 @@ export default function Login() {
 
           padding: 2,
           mx: 'auto',
+          marginTop: '60px',
         }}
       >
         <Grid
@@ -146,20 +147,14 @@ export default function Login() {
             backgroundColor: '#FFFFFF',
           }}
         >
-          {/* <CommonSelect
-            label=""
-            value={selectedValue}
-            onChange={handleSelectChange}
-            options={languageData.map(({ name }) => ({
-              label: name,
-              value: name.toLowerCase(),
-            }))}
-            width="100px"
-            height="32px"
-            borderRadius="8px"
-          /> */}
+          <img
+            src="https://s3-alpha-sig.figma.com/img/eb56/e506/62fc7baaef70b7c3f0220d9fa1921991?Expires=1740355200&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=poZilAzhWAr1~aGQetQwPAyJX-G2~qqTH6sbIU2dbdkeU8H9A2NBbCwIZanZc3UV6k1by5a1bnLDWP5kWGRCXCjkwXEPjcbrQESWoy115gqTceQ-BIm5RpO3nt7lIt~NknBpZ~P0Zx5Z9YZlM6w4Ek8XpkWpNc8UmOkJrURejv~dl7RlQwbi17hstHEtez1hFRRHWcdA~NKpagmhCmWEa9gETNsz5cLI-klRH-bBlMMmTkTQjMQU8ZHyHYE3uNBbI5boPk7TZ4lelIPM~A2~i54GneAKpYqYNn8rO-2srT6GPFLBOSpp93HDIBNT6hOpWUTW0Af6SvCEfPCZ~1vJ1Q__"
+            alt="Company Logo"
+            style={{ maxWidth: '100%', height: '135px', width: '390px' }}
+          />
+          <FormLabel component="legend">Full Name</FormLabel>
           <CommonTextField
-            label="Username"
+            label="Full Name"
             value={formData.userName}
             onChange={handleChange('userName')}
             type="text"
@@ -167,28 +162,16 @@ export default function Login() {
             helperText={error.userName ? `Required username ` : ''}
             error={error.userName}
           />
+          <FormLabel component="legend">Email ID</FormLabel>
+
           <CommonTextField
-            label="Password"
+            label="Email ID"
             value={formData.password}
             onChange={handleChange('password')}
-            type={showPassword ? 'text' : 'password'}
+            type={'text'}
             variant="outlined"
             helperText={error.password ? `Required password ` : ''}
             error={error.password}
-            //@ts-ignore
-            InputProps={{
-              endAdornment: !showPassword ? (
-                <VisibilityOffIcon
-                  onClick={() => setShowPassword(!showPassword)}
-                  style={{ cursor: 'pointer' }}
-                />
-              ) : (
-                <VisibilityIcon
-                  onClick={() => setShowPassword(!showPassword)}
-                  style={{ cursor: 'pointer' }}
-                />
-              ),
-            }}
           />
           {/* <Typography
             variant="h1"
@@ -212,22 +195,28 @@ export default function Login() {
               color: '#FFFFFF',
               width: '100%',
               height: '40px',
-              bgcolor: '#6750A4',
+              background: 'linear-gradient(90deg,#0E28AE  0%, #0777E6 100%)',
               borderRadius: '50px',
               fontSize: '14px',
               fontWeight: 500,
+              textTransform: 'none',
             }}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              'Proceed'
+            )}
           </Button>
-          {/* <Typography
+          <Typography
+            textAlign={'center'}
             variant="h1"
             fontSize={'16px'}
             color="#3B383E"
             fontWeight={500}
           >
-            Don’t Have An Account? <Link href="/newUser">Register </Link>
-          </Typography> */}
+            Already Have An Account? <Link href="/newUser">Log In </Link>
+          </Typography>
         </Grid>
       </Grid>
       {showError && (

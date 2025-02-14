@@ -92,14 +92,35 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
               {logo && <Box sx={{ marginRight: 2 }}>{logo}</Box>}
 
               {/* Center: Title + Subtitle */}
-              <Box sx={{ flexGrow: 1, textAlign: 'left' }}>
-                <Typography sx={{ fontWeight: 600 }}>{title}</Typography>
-                {subtitle && (
-                  <Typography color="red" textAlign={'left'}>
-                    {subtitle}
-                  </Typography>
-                )}
-              </Box>
+
+              {!searchOpen ? (
+                <Box sx={{ flexGrow: 1, textAlign: 'left' }}>
+                  <Typography sx={{ fontWeight: 600 }}>{title}</Typography>
+                  {subtitle && (
+                    <Typography color="red" textAlign={'left'}>
+                      {subtitle}
+                    </Typography>
+                  )}
+                </Box>
+              ) : (
+                <Box
+                  sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}
+                >
+                  <InputBase
+                    placeholder="Search..."
+                    sx={{
+                      flexGrow: 1,
+                      marginLeft: 2,
+                      bgcolor: '#fff',
+                      padding: 1,
+                      borderRadius: 1,
+                    }}
+                  />
+                  <IconButton onClick={() => setSearchOpen(false)}>
+                    <SearchIcon />
+                  </IconButton>
+                </Box>
+              )}
 
               {/* Right: Search + Menu Icon */}
               <IconButton
@@ -185,26 +206,6 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
       </AppBar>
 
       {/* Search Input (only shown when search is open) */}
-      {searchOpen && (
-        <Box
-          sx={{
-            // padding: 2,
-            backgroundColor: '#fff',
-            display: 'flex',
-            alignItems: 'center',
-            boxShadow: 2,
-            marginTop: '58px',
-          }}
-        >
-          <InputBase
-            placeholder="Search..."
-            sx={{ flexGrow: 1, marginLeft: 2 }}
-          />
-          <IconButton onClick={() => setSearchOpen(false)}>
-            <SearchIcon />
-          </IconButton>
-        </Box>
-      )}
 
       {/* Profile Menu */}
       {profileIcon[0]?.anchorEl && (
