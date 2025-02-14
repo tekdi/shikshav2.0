@@ -233,6 +233,7 @@ export default function Content() {
     contentMimeType: string
   ) => {
     setIsLoading(true);
+    localStorage.setItem('courseId', identifier);
     try {
       if (
         [
