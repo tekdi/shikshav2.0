@@ -25,6 +25,7 @@ export * from './lib/Progress/Circular';
 export * from './lib/Progress/Progress';
 export * from './lib/Stack/FolderStack';
 export * from './lib/Card/ImageBanner';
+export * from './lib/Footer/BottomNav';
 import Image from '../images/default.png';
 export const IMAGES = {
   DEFAULT_PLACEHOLDER: Image,

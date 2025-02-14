@@ -30,9 +30,16 @@ import {
   Typography,
 } from '@mui/material';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
+import { BottomNav } from '../Footer/BottomNav';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
+import StarOutlineOutlinedIcon from '@mui/icons-material/StarOutlineOutlined';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 interface LayoutProps {
   children: React.ReactNode;
+  type?: 'Image' | 'card' | undefined;
   isFooter?: boolean;
+  isBottom?: boolean;
   showBack?: boolean;
   backTitle?: string;
   showLogo?: boolean;
@@ -418,9 +425,18 @@ const FilterDialog = ({
     </Dialog>
   );
 };
+
+const navItems: NavItem[] = [
+  { label: 'Home', icon: <HomeOutlinedIcon />, path: '/recents' },
+  { label: 'Topics', icon: <BookmarkBorderOutlinedIcon />, path: '/favorites' },
+  { label: 'Bookmarked', icon: <StarOutlineOutlinedIcon />, path: '/nearby' },
+  { label: 'Profile', icon: <AccountCircleOutlinedIcon />, path: '/nearby' },
+];
 export const Layout: React.FC<LayoutProps> = ({
   children,
+  type,
   isFooter,
+  isBottom,
   showBack,
   backTitle,
   showLogo,
@@ -488,6 +504,15 @@ export const Layout: React.FC<LayoutProps> = ({
               actionIcons={topAppBarIcons}
               menuIconClick={() => setIsDrawerOpen(true)}
               onLogoutClick={(event) => action.onLogoutClick(event)}
+              type={type}
+              subtitle={'subtitle'}
+              logo={
+                <img
+                  src={require('../../assets/images/Profile.png')}
+                  alt="Logo"
+                  style={{ height: 40 }}
+                />
+              }
               {...showTopAppBar}
             />
           </Box>
@@ -616,6 +641,15 @@ export const Layout: React.FC<LayoutProps> = ({
             bottompx={0}
             onButtonClick={handleButtonClick}
           />
+        </Box>
+      )}
+      {isBottom && (
+        <Box
+          sx={{
+            width: '100%',
+          }}
+        >
+          <BottomNav items={navItems} width="100%" />
         </Box>
       )}
       {filterShow && (

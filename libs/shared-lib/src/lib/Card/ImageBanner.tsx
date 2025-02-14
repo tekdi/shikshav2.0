@@ -40,13 +40,13 @@ export const ImageBanner: React.FC = () => {
     <Box
       sx={{
         width: '100%',
-        height: '300px', // Adjust as needed
+        // height: '300px', // Adjust as needed
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         position: 'relative',
         overflow: 'hidden',
-        borderRadius: '10px',
+        // borderRadius: '10px',
       }}
     >
       {/* Background Image */}
@@ -56,7 +56,9 @@ export const ImageBanner: React.FC = () => {
         alt={images[currentIndex].title}
         sx={{
           width: '100%',
-          height: '100%',
+          // height: '100%',
+          height: '170px',
+
           objectFit: 'cover',
           transition: 'opacity 0.5s ease-in-out',
         }}

@@ -95,24 +95,34 @@ const itemData: ItemData[] = [
 interface ImageCardProps {
   showAvatar?: boolean;
   showIcons?: boolean;
+  ContentData?: { posterImage: string; name: string }[];
 }
 
 export const ImageCard = ({
   showAvatar = false,
   showIcons = false,
+  ContentData,
 }: ImageCardProps): JSX.Element => {
   return (
     <ImageList>
       <ImageListItem key="Subheader" cols={2}>
         {/* <ListSubheader component="div">December</ListSubheader> */}
       </ImageListItem>
-      {itemData.map((item) => (
-        <ImageListItem key={item.img}>
+      {ContentData?.map((item) => (
+        <ImageListItem
+          key={item?.posterImage}
+          sx={{
+            borderRadius: '12px', // Rounded corners
+            overflow: 'hidden', // Prevents overflow of border radius
+            gap: '18px',
+          }}
+        >
           <img
-            srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
-            src={`${item.img}?w=248&fit=crop&auto=format`}
-            alt={item.title}
+            srcSet={`${item.posterImage}?w=248&fit=crop&auto=format&dpr=2 2x`}
+            src={`${item.posterImage}?w=248&fit=crop&auto=format`}
+            alt={item.name}
             loading="lazy"
+            style={{ height: '250px' }}
           />
 
           <ImageListItemBar
@@ -134,8 +144,8 @@ export const ImageCard = ({
                   flexGrow={1}
                 >
                   <Avatar
-                    src={item.title}
-                    alt={item.title}
+                    src={item.name}
+                    alt={item.name}
                     sx={{ width: 30, height: 30, marginRight: 1 }}
                   />
                   <Box
@@ -146,14 +156,14 @@ export const ImageCard = ({
                       overflow: 'hidden',
                     }}
                   >
-                    {item.title}
+                    {item.name}
                   </Box>
                 </Box>
               ) : (
-                item.title
+                item.name
               )
             }
-            subtitle={showAvatar ? undefined : `by: ${item.author}`}
+            // subtitle={showAvatar ? undefined : `by: ${item.author}`}
             actionIcon={
               !showAvatar && (
                 <Box display="flex">
