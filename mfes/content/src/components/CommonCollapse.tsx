@@ -62,6 +62,7 @@ const RenderNestedData: React.FC<{
         const childrenCount = item.children?.length || 0;
 
         const handleItemClick = (identifier: string) => {
+          localStorage.setItem('unitId', identifier);
           const path =
             childrenCount >= 1 &&
             item.mimeType === 'application/vnd.ekstep.content-collection'
@@ -326,6 +327,7 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
             onClick={(e) => {
               e.stopPropagation();
               toggleExpanded(identifier);
+              localStorage.setItem('unitId', identifier);
             }}
           >
             {expandedItems.has(identifier) ? (
