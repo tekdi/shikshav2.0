@@ -69,7 +69,7 @@ export default function Content() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedContent, setSelectedContent] = useState<any>(null);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [limit, setLimit] = useState(5); // Set default limit
+  const [limit, setLimit] = useState(6); // Set default limit
   const [offset, setOffset] = useState(0);
   const [hasMoreData, setHasMoreData] = useState(true);
   const [filterValues, setFilterValues] = useState({});
@@ -362,11 +362,27 @@ export default function Content() {
             <>
               <ImageBanner />
               <Box sx={{ textAlign: 'center', padding: '20px' }}>
-                <Typography sx={{ fontWeight: 600 }}>
-                  1000 books in 15 categories
+                <Typography sx={{ fontWeight: 400, marginBottom: '20px' }}>
+                  Change stems from local action. Hope stems from children’s
+                  empowerment to act upon local environmental problems.
                 </Typography>
-                <Typography color="red">
-                  Choose what best fits your interest and needs
+                <Typography sx={{ fontWeight: 400 }}>
+                  Our mission is to empower environment educators with both hope
+                  and action in times of climate change.
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  textAlign: 'center',
+                  padding: '5px',
+                  marginBottom: '20px',
+                }}
+              >
+                <Typography sx={{ fontWeight: 500, fontSize: '24px' }}>
+                  01 BOOKS IN 15 CATEGORIES
+                </Typography>
+                <Typography sx={{ fontWeight: 500, fontSize: '14px' }}>
+                  Choose what best fits your interests and needs
                 </Typography>
               </Box>
               <ImageCard
@@ -482,45 +498,11 @@ export default function Content() {
     <Layout
       type={(config as Config)?.type}
       showTopAppBar={{
-        title: 'Shiksha: Home',
+        showSearch: true,
+        title: 'Jal-Jungle-Jameen ',
+        subtitle: 'In Classrooms ',
         showMenuIcon: true,
         actionButtonLabel: 'Action',
-        profileIcon: [
-          {
-            icon: <AccountCircleIcon />,
-            ariaLabel: 'Account',
-            onLogoutClick: (e: any) => handleAccountClick(e),
-            anchorEl: anchorEl,
-          },
-        ],
-        actionIcons: [
-          {
-            icon: <AccountCircleIcon />,
-            ariaLabel: 'Profile',
-            onOptionClick: handleClose,
-          },
-          {
-            icon: <DashboardIcon />,
-            ariaLabel: 'Admin dashboard',
-            onOptionClick: handleClose,
-          },
-          {
-            icon: <BorderColorIcon />,
-            ariaLabel: 'Workspace',
-            onOptionClick: handleClose,
-          },
-          {
-            icon: <HelpOutlineIcon />,
-            ariaLabel: 'Help',
-            onOptionClick: handleClose,
-          },
-          {
-            icon: <LogoutIcon />,
-            ariaLabel: 'Logout',
-            onOptionClick: handleLogout,
-          },
-        ],
-        onMenuClose: handleClose,
       }}
       drawerItems={drawerItems}
       onItemClick={handleItemClick}

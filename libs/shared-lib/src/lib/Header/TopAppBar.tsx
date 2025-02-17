@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import SearchIcon from '@mui/icons-material/Search';
 import { InputBase, Menu, MenuItem } from '@mui/material';
 import Logo from '../../assets/images/Profile.png';
@@ -32,7 +33,7 @@ interface ProfileIcon {
 
 interface CommonAppBarProps {
   title?: string;
-
+  showSearch: boolean;
   subtitle?: string;
   type?: 'Image' | 'card' | undefined;
   logo?: React.ReactNode;
@@ -59,6 +60,7 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
   logo,
   showMenuIcon = true,
   showBackIcon = false,
+  showSearch,
   menuIconClick,
   backIconClick,
   onMenuClose,
@@ -74,7 +76,6 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
 }) => {
   const [searchOpen, setSearchOpen] = useState(false);
   const accountIcon = actionIcons.find((icon) => icon.ariaLabel === 'Account');
-
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -83,6 +84,7 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
         sx={{
           boxShadow: 'none',
           bgcolor,
+          paddingTop: '10px',
         }}
       >
         <Toolbar>
@@ -90,7 +92,18 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
             <>
               {/* Left: Logo */}
               {logo && <Box sx={{ marginRight: 2 }}>{logo}</Box>}
-
+              {showBackIcon && (
+                <>
+                  <IconButton
+                    size="large"
+                    edge="start"
+                    color="inherit"
+                    onClick={backIconClick}
+                  >
+                    <ChevronLeftIcon />
+                  </IconButton>
+                </>
+              )}
               {/* Center: Title + Subtitle */}
 
               {!searchOpen ? (
@@ -123,14 +136,16 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
               )}
 
               {/* Right: Search + Menu Icon */}
-              <IconButton
-                size="large"
-                edge="end"
-                color="inherit"
-                onClick={() => setSearchOpen(!searchOpen)}
-              >
-                <SearchIcon />
-              </IconButton>
+              {showSearch && (
+                <IconButton
+                  size="large"
+                  edge="end"
+                  color="inherit"
+                  onClick={() => setSearchOpen(!searchOpen)}
+                >
+                  <SearchIcon />
+                </IconButton>
+              )}
 
               {showMenuIcon && (
                 <IconButton

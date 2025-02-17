@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { Box, Button, FormLabel, TextField, Typography } from '@mui/material';
+import { Box, Button, FormLabel, Typography } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Alert from '@mui/material/Alert';
@@ -18,7 +18,6 @@ import Link from 'next/link';
 import { getToken } from '../../services/LoginService';
 import { useRouter } from 'next/navigation';
 import { jwtDecode } from 'jwt-decode';
-import Otp from '../otp/page';
 const languageData = [
   { id: 1, name: 'Educator' },
   { id: 2, name: 'Mentor' },
@@ -27,7 +26,7 @@ const languageData = [
 
 const checkboxData = [{ label: 'Remember Me' }];
 
-export default function Signin() {
+export default function Signup() {
   const [formData, setFormData] = useState({
     userName: '',
     password: '',
@@ -42,8 +41,6 @@ export default function Signin() {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [otp, setOtp] = React.useState('');
-
   const router = useRouter();
   const handleChange =
     (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,8 +102,7 @@ export default function Signin() {
     // } finally {
     //   setLoading(false);
     // }
-    const redirectUrl = process.env.NEXT_PUBLIC_CONTENT;
-    router.push(redirectUrl);
+    router.push('/verifyOTP');
   };
 
   const handleSelectChange = (event: SelectChangeEvent) => {
@@ -154,27 +150,39 @@ export default function Signin() {
             backgroundColor: '#FFFFFF',
           }}
         >
-          <FormLabel component="legend">Unlock with Your Email</FormLabel>
-
-          <TextField
-            id="outlined-email"
-            label="Email ID"
-            value={formData.password} // Use formData.password for the value
-            onChange={handleChange('email')} // Ensure handleChange updates the form data
+          <FormLabel component="legend">Full Name</FormLabel>
+          <CommonTextField
+            label="Full Name"
+            value={formData.userName}
+            onChange={handleChange('userName')}
             type="text"
             variant="outlined"
-            helperText={error.password ? 'Required email ID' : ''} // Display error message if password is required
-            error={error.password} // Set error state if password has an error
+            helperText={error.userName ? `Enter full name ` : ''}
+            error={error.userName}
           />
-          <FormLabel component="legend">
-            Enter the 6-digit code sent to your email
-          </FormLabel>
-          <Otp
-            separator={<span></span>}
-            value={otp}
-            onChange={setOtp}
-            length={6}
+          <FormLabel component="legend">Email ID</FormLabel>
+
+          <CommonTextField
+            label="Email ID"
+            value={formData.password}
+            onChange={handleChange('password')}
+            type={'text'}
+            variant="outlined"
+            helperText={error.password ? `Enter Email ID ` : ''}
+            error={error.password}
           />
+          <FormLabel component="legend">Select Role</FormLabel>
+          <CommonSelect
+            label="Select Role"
+            value={selectedValue}
+            onChange={handleSelectChange}
+            options={languageData.map(({ name }) => ({
+              label: name,
+              value: name.toLowerCase(),
+            }))}
+            // borderRadius="8px"
+          />
+
           <Button
             disabled={loading}
             onClick={handleButtonClick}
@@ -203,7 +211,7 @@ export default function Signin() {
             color="#3B383E"
             fontWeight={500}
           >
-            Don’t Have An Account? <Link href="/newUser">Sign Up </Link>
+            Already Have An Account? <Link href="/newUser">Log In </Link>
           </Typography>
         </Grid>
       </Grid>

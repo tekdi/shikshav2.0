@@ -27,7 +27,7 @@ const languageData = [
 
 const checkboxData = [{ label: 'Remember Me' }];
 
-export default function Signin() {
+export default function verifyOtp() {
   const [formData, setFormData] = useState({
     userName: '',
     password: '',
@@ -43,7 +43,6 @@ export default function Signin() {
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [otp, setOtp] = React.useState('');
-
   const router = useRouter();
   const handleChange =
     (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,43 +69,41 @@ export default function Signin() {
   };
 
   const handleButtonClick = async () => {
-    // if (!formData.userName || !formData.password) {
-    //   setError({
-    //     userName: !formData.userName,
-    //     password: !formData.password,
-    //   });
-    //   return;
-    // }
-    // setLoading(true);
-    // try {
-    //   const response = await getToken({
-    //     username: formData.userName,
-    //     password: formData.password,
-    //   });
+    if (!formData.userName || !formData.password) {
+      setError({
+        userName: !formData.userName,
+        password: !formData.password,
+      });
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await getToken({
+        username: formData.userName,
+        password: formData.password,
+      });
 
-    //   if (response?.access_token) {
-    //     localStorage.setItem('accToken', response?.access_token);
-    //     localStorage.setItem('refToken', response?.refresh_token);
-    //     const decoded = jwtDecode(response?.access_token);
-    //     const subId = decoded?.sub?.split(':')[2];
-    //     document.cookie = `subid=${subId}; path=/;`;
-    //     const redirectUrl = process.env.NEXT_PUBLIC_CONTENT;
-    //     if (redirectUrl) {
-    //       router.push(redirectUrl);
-    //     }
-    //   } else {
-    //     setShowError(true);
-    //     setErrorMessage(response);
-    //   }
-    // } catch (error: any) {
-    //   console.error('Login failed:', error);
-    //   setShowError(true);
-    //   setErrorMessage(error);
-    // } finally {
-    //   setLoading(false);
-    // }
-    const redirectUrl = process.env.NEXT_PUBLIC_CONTENT;
-    router.push(redirectUrl);
+      if (response?.access_token) {
+        localStorage.setItem('accToken', response?.access_token);
+        localStorage.setItem('refToken', response?.refresh_token);
+        const decoded = jwtDecode(response?.access_token);
+        const subId = decoded?.sub?.split(':')[2];
+        document.cookie = `subid=${subId}; path=/;`;
+        const redirectUrl = process.env.NEXT_PUBLIC_CONTENT;
+        if (redirectUrl) {
+          router.push(redirectUrl);
+        }
+      } else {
+        setShowError(true);
+        setErrorMessage(response);
+      }
+    } catch (error: any) {
+      console.error('Login failed:', error);
+      setShowError(true);
+      setErrorMessage(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSelectChange = (event: SelectChangeEvent) => {
@@ -154,16 +151,16 @@ export default function Signin() {
             backgroundColor: '#FFFFFF',
           }}
         >
-          <FormLabel component="legend">Unlock with Your Email</FormLabel>
+          <FormLabel component="legend">Email ID</FormLabel>
 
           <TextField
             id="outlined-email"
             label="Email ID"
             value={formData.password} // Use formData.password for the value
-            onChange={handleChange('email')} // Ensure handleChange updates the form data
+            onChange={handleChange('password')} // Ensure handleChange updates the form data
             type="text"
             variant="outlined"
-            helperText={error.password ? 'Required email ID' : ''} // Display error message if password is required
+            helperText={error.password ? 'Required password' : ''} // Display error message if password is required
             error={error.password} // Set error state if password has an error
           />
           <FormLabel component="legend">
@@ -174,6 +171,17 @@ export default function Signin() {
             value={otp}
             onChange={setOtp}
             length={6}
+          />
+          <FormLabel component="legend">Select Role</FormLabel>
+          <CommonSelect
+            label="Select Role"
+            value={selectedValue}
+            onChange={handleSelectChange}
+            options={languageData.map(({ name }) => ({
+              label: name,
+              value: name.toLowerCase(),
+            }))}
+            // borderRadius="8px"
           />
           <Button
             disabled={loading}
@@ -193,7 +201,7 @@ export default function Signin() {
             {loading ? (
               <CircularProgress size={24} color="inherit" />
             ) : (
-              'Proceed'
+              'Verify & Proceed'
             )}
           </Button>
           <Typography
