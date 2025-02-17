@@ -85,7 +85,6 @@ export default function Content() {
     priority: '',
   });
   const [config, setConfig] = useState<{ type: string } | null>(null);
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const fetchContent = useCallback(
     async (
       type?: string,
@@ -165,31 +164,7 @@ export default function Content() {
       .then((data) => setConfig(data))
       .catch((error) => console.error('Error fetching config:', error));
   }, []);
-  // useEffect(() => {
-  //   if (config?.type === 'Image' && loadMoreRef.current) {
-  //     const observer = new IntersectionObserver(
-  //       (entries) => {
-  //         if (entries[0].isIntersecting && hasMoreData && !isLoading) {
-  //           setOffset((prevOffset) => {
-  //             const newOffset = prevOffset + limit;
-  //             fetchContent(
-  //               tabValue === 0 ? 'Course' : 'Learning Resource',
-  //               searchValue,
-  //               filterValues,
-  //               limit,
-  //               newOffset
-  //             );
-  //             return newOffset; // Ensuring offset updates before next fetch
-  //           });
-  //         }
-  //       },
-  //       { root: null, rootMargin: '100px', threshold: 0.5 }
-  //     );
 
-  //     observer.observe(loadMoreRef.current);
-  //     return () => observer.disconnect();
-  //   }
-  // }, [config?.type, hasMoreData, isLoading]);
   useEffect(() => {
     if (offset > 0) {
       const type = tabValue === 0 ? 'Course' : 'Learning Resource';
@@ -222,56 +197,6 @@ export default function Content() {
         window.scrollTo({ top: currentScrollPosition, behavior: 'auto' });
       }, 0);
     });
-  };
-
-  const handleAccountClick = (event: React.MouseEvent<HTMLElement>) => {
-    console.log('Account clicked');
-    setAnchorEl(event.currentTarget);
-  };
-  const handleLogout = () => {
-    setAnchorEl(null);
-    localStorage.removeItem('accToken');
-    localStorage.removeItem('refToken');
-    let LOGIN = process.env.NEXT_PUBLIC_LOGIN;
-    //@ts-ignore
-    window.location.href = LOGIN;
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  const handleSearchClick = async () => {
-    if (searchValue.trim()) {
-      const type = tabValue === 0 ? 'Course' : 'Learning Resource';
-      // fetchContent(type, searchValue, filterValues);
-      let result =
-        type &&
-        (await ContentSearch(type, searchValue, filterValues, limit, offset));
-      //@ts-ignore
-      if (!result || result === undefined || result?.length === 0) {
-        setHasMoreData(false);
-      } else {
-        // setContentData(result || []);
-        //@ts-ignore
-        setContentData(result || []);
-        setHasMoreData(true);
-      }
-    } else {
-      setSearchValue('');
-      setContentData([]);
-      const type = tabValue === 0 ? 'Course' : 'Learning Resource';
-      fetchContent(type, searchValue, filterValues);
-    }
-  };
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(event.target.value);
-  };
-
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
-    const type = newValue === 0 ? 'Course' : 'Learning Resource';
-    setContentData([]);
   };
 
   const handleCardClick = async (
@@ -390,21 +315,8 @@ export default function Content() {
                 showIcons={false}
                 ContentData={contentData as []}
               />
-              {/* Infinite Scroll Trigger */}
-              {/* <div
-                ref={loadMoreRef}
-                style={{
-                  height: '10px',
-                  margin: '20px 0',
-                  background: 'yellow',
-                }}
-              >
-               
-                <Typography variant="caption">Loading Trigger</Typography>
-              </div> */}
             </>
           )}
-          {/* {config?.type === 'card' && ( */}
           <Box sx={{ textAlign: 'center', mt: 4 }}>
             {hasMoreData ? (
               <Button

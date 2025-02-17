@@ -1,30 +1,16 @@
 'use client';
 import React, { useState } from 'react';
-import { Box, Button, FormLabel, Typography } from '@mui/material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import Alert from '@mui/material/Alert';
-import CircularProgress from '@mui/material/CircularProgress';
+import { Button, FormLabel, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import {
-  CommonCheckbox,
-  CommonSelect,
-  CommonTextField,
-  Layout,
-  // login,
-} from '@shared-lib';
+import { CommonSelect, CommonTextField, Layout } from '@shared-lib';
 import { SelectChangeEvent } from '@mui/material/Select';
 import Link from 'next/link';
-import { getToken } from '../../services/LoginService';
 import { useRouter } from 'next/navigation';
-import { jwtDecode } from 'jwt-decode';
 const languageData = [
   { id: 1, name: 'Educator' },
   { id: 2, name: 'Mentor' },
   { id: 3, name: 'Student' },
 ];
-
-const checkboxData = [{ label: 'Remember Me' }];
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -36,11 +22,6 @@ export default function Signup() {
     password: false,
   });
   const [selectedValue, setSelectedValue] = useState('english');
-  const [checked, setChecked] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const handleChange =
     (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,53 +36,7 @@ export default function Signup() {
       });
     };
 
-  const handleCheckboxChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    checked: boolean,
-    label: string
-  ) => {
-    setChecked(checked);
-    console.log(
-      `Checkbox '${label}' is now ${checked ? 'checked' : 'unchecked'}`
-    );
-  };
-
   const handleButtonClick = async () => {
-    // if (!formData.userName || !formData.password) {
-    //   setError({
-    //     userName: !formData.userName,
-    //     password: !formData.password,
-    //   });
-    //   return;
-    // }
-    // setLoading(true);
-    // try {
-    //   const response = await getToken({
-    //     username: formData.userName,
-    //     password: formData.password,
-    //   });
-
-    //   if (response?.access_token) {
-    //     localStorage.setItem('accToken', response?.access_token);
-    //     localStorage.setItem('refToken', response?.refresh_token);
-    //     const decoded = jwtDecode(response?.access_token);
-    //     const subId = decoded?.sub?.split(':')[2];
-    //     document.cookie = `subid=${subId}; path=/;`;
-    //     const redirectUrl = process.env.NEXT_PUBLIC_CONTENT;
-    //     if (redirectUrl) {
-    //       router.push(redirectUrl);
-    //     }
-    //   } else {
-    //     setShowError(true);
-    //     setErrorMessage(response);
-    //   }
-    // } catch (error: any) {
-    //   console.error('Login failed:', error);
-    //   setShowError(true);
-    //   setErrorMessage(error);
-    // } finally {
-    //   setLoading(false);
-    // }
     router.push('/verifyOTP');
   };
 
@@ -184,7 +119,6 @@ export default function Signup() {
           />
 
           <Button
-            disabled={loading}
             onClick={handleButtonClick}
             sx={{
               color: '#FFFFFF',
@@ -198,11 +132,7 @@ export default function Signup() {
               textTransform: 'none',
             }}
           >
-            {loading ? (
-              <CircularProgress size={24} color="inherit" />
-            ) : (
-              'Proceed'
-            )}
+            'Proceed'
           </Button>
           <Typography
             textAlign={'center'}
@@ -215,11 +145,6 @@ export default function Signup() {
           </Typography>
         </Grid>
       </Grid>
-      {showError && (
-        <Alert variant="filled" severity="error">
-          {errorMessage}
-        </Alert>
-      )}
     </Layout>
   );
 }
