@@ -11,12 +11,10 @@ import Otp from '../otp/page';
 
 export default function Signin() {
   const [formData, setFormData] = useState({
-    userName: '',
-    password: '',
+    email: '',
   });
   const [error, setError] = useState({
-    userName: false,
-    password: false,
+    email: false,
   });
 
   const [otp, setOtp] = React.useState('');
@@ -90,12 +88,12 @@ export default function Signin() {
           <TextField
             id="outlined-email"
             label="Email ID"
-            value={formData.password} // Use formData.password for the value
+            value={formData.email} // Use formData.password for the value
             onChange={handleChange('email')} // Ensure handleChange updates the form data
             type="text"
             variant="outlined"
-            helperText={error.password ? 'Required email ID' : ''} // Display error message if password is required
-            error={error.password} // Set error state if password has an error
+            helperText={error.email ? 'Required email ID' : ''} // Display error message if password is required
+            error={error.email} // Set error state if password has an error
           />
           <FormLabel component="legend">
             Enter the 6-digit code sent to your email
@@ -120,7 +118,7 @@ export default function Signin() {
               textTransform: 'none',
             }}
           >
-            'Proceed'
+            Proceed
           </Button>
           <Typography
             textAlign={'center'}

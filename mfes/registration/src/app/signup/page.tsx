@@ -14,14 +14,14 @@ const languageData = [
 
 export default function Signup() {
   const [formData, setFormData] = useState({
-    userName: '',
-    password: '',
+    name: '',
+    email: '',
   });
   const [error, setError] = useState({
-    userName: false,
-    password: false,
+    name: false,
+    email: false,
   });
-  const [selectedValue, setSelectedValue] = useState('english');
+  const [selectedValue, setSelectedValue] = useState('Educator');
   const router = useRouter();
   const handleChange =
     (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,23 +88,23 @@ export default function Signup() {
           <FormLabel component="legend">Full Name</FormLabel>
           <CommonTextField
             label="Full Name"
-            value={formData.userName}
-            onChange={handleChange('userName')}
+            value={formData.name}
+            onChange={handleChange('name')}
             type="text"
             variant="outlined"
-            helperText={error.userName ? `Enter full name ` : ''}
-            error={error.userName}
+            helperText={error.name ? `Enter full name ` : ''}
+            error={error.name}
           />
           <FormLabel component="legend">Email ID</FormLabel>
 
           <CommonTextField
             label="Email ID"
-            value={formData.password}
-            onChange={handleChange('password')}
+            value={formData.email}
+            onChange={handleChange('email')}
             type={'text'}
             variant="outlined"
-            helperText={error.password ? `Enter Email ID ` : ''}
-            error={error.password}
+            helperText={error.email ? `Enter Email ID ` : ''}
+            error={error.email}
           />
           <FormLabel component="legend">Select Role</FormLabel>
           <CommonSelect
@@ -132,7 +132,7 @@ export default function Signup() {
               textTransform: 'none',
             }}
           >
-            'Proceed'
+            Proceed
           </Button>
           <Typography
             textAlign={'center'}

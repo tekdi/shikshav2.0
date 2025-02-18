@@ -1,11 +1,12 @@
 'use client';
 import React, { useState } from 'react';
 import { Button, FormLabel, TextField, Typography } from '@mui/material';
+
 import Grid from '@mui/material/Grid2';
 import { CommonSelect, Layout } from '@shared-lib';
 import { SelectChangeEvent } from '@mui/material/Select';
 import Link from 'next/link';
-
+import { useRouter } from 'next/navigation';
 import Otp from '../otp/page';
 const languageData = [
   { id: 1, name: 'Educator' },
@@ -15,15 +16,14 @@ const languageData = [
 
 export default function verifyOtp() {
   const [formData, setFormData] = useState({
-    userName: '',
-    password: '',
+    email: '',
   });
   const [error, setError] = useState({
-    userName: false,
-    password: false,
+    email: false,
   });
-  const [selectedValue, setSelectedValue] = useState('english');
+  const [selectedValue, setSelectedValue] = useState('Educator');
   const [otp, setOtp] = React.useState('');
+  const router = useRouter();
   const handleChange =
     (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value;
@@ -58,6 +58,7 @@ export default function verifyOtp() {
         showMenuIcon: true,
         actionButtonLabel: 'Action',
       }}
+      // sx={{ height: '100vh' }}
     >
       <Grid
         container
@@ -90,12 +91,12 @@ export default function verifyOtp() {
           <TextField
             id="outlined-email"
             label="Email ID"
-            value={formData.password} // Use formData.password for the value
-            onChange={handleChange('password')} // Ensure handleChange updates the form data
+            value={formData.email} // Use formData.password for the value
+            onChange={handleChange('email')} // Ensure handleChange updates the form data
             type="text"
             variant="outlined"
-            helperText={error.password ? 'Required password' : ''} // Display error message if password is required
-            error={error.password} // Set error state if password has an error
+            helperText={error.email ? 'Required Email ID' : ''} // Display error message if password is required
+            error={error.email} // Set error state if password has an error
           />
           <FormLabel component="legend">
             Enter the 6-digit code sent to your email
@@ -131,7 +132,7 @@ export default function verifyOtp() {
               textTransform: 'none',
             }}
           >
-            'Verify & Proceed'
+            Verify & Proceed
           </Button>
           <Typography
             textAlign={'center'}
