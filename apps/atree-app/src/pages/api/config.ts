@@ -1,7 +1,3 @@
-// export const contentConfig ={
-//     type:'Image',
-
-// }
 import { NextApiRequest, NextApiResponse } from 'next';
 
 const contentConfig = {

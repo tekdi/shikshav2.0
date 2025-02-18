@@ -1,24 +1,11 @@
 'use client';
 
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import type { ChangeEvent } from 'react';
-import {
-  Box,
-  Fab,
-  Typography,
-  Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-} from '@mui/material';
+import { Box, Typography, Button } from '@mui/material';
 import {
   CommonCard,
-  CommonTabs,
   Layout,
   Circular,
-  CommonDialog,
-  CommonTextField,
   ImageBanner,
   ImageCard,
 } from '@shared-lib';
@@ -27,23 +14,16 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import FilterDramaOutlinedIcon from '@mui/icons-material/FilterDramaOutlined';
 import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
 import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlined';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import LogoutIcon from '@mui/icons-material/Logout';
-import SearchIcon from '@mui/icons-material/Search';
+
 import Grid from '@mui/material/Grid2';
 import { useRouter, useSearchParams } from 'next/navigation';
-import CircleIcon from '@mui/icons-material/Circle';
 import { hierarchyAPI } from '../services/Hierarchy';
 import { contentReadAPI } from '../services/Read';
 import { useTheme } from '@mui/material/styles';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { SelectChangeEvent } from '@mui/material';
+
 import { trackingData } from '../services/TrackingService';
 interface Config {
-  type: 'Image' | 'card' | undefined;
+  type: 'Image' | 'card';
 }
 interface ContentItem {
   name: string;
@@ -68,7 +48,6 @@ export default function Content() {
   const [contentData, setContentData] = useState<ContentItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedContent, setSelectedContent] = useState<any>(null);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [limit, setLimit] = useState(6); // Set default limit
   const [offset, setOffset] = useState(0);
   const [hasMoreData, setHasMoreData] = useState(true);
@@ -77,13 +56,7 @@ export default function Content() {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [frameworkFilter, setFrameworkFilter] = useState(false);
   const [trackData, setTrackData] = useState([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [issueData, setIssueData] = useState({
-    subject: '',
-    description: '',
-    status: '',
-    priority: '',
-  });
+
   const [config, setConfig] = useState<{ type: string } | null>(null);
   const fetchContent = useCallback(
     async (
@@ -338,17 +311,6 @@ export default function Content() {
     </Box>
   );
 
-  const tabs = [
-    {
-      label: 'Courses',
-      content: renderTabContent(),
-    },
-    {
-      label: 'Content',
-      content: renderTabContent(),
-    },
-  ];
-
   const handleItemClick = (to: string) => {
     router.push(to);
   };
@@ -436,9 +398,7 @@ export default function Content() {
           marginTop: '20px',
         }}
       >
-        <>
-          <Box>{renderTabContent()}</Box>
-        </>
+        <Box>{renderTabContent()}</Box>
       </Box>
     </Layout>
   );

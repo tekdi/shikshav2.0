@@ -2,7 +2,6 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
-import { useNavigate } from 'react-router-dom';
 // Define the navigation item type
 interface NavItem {
   label: string;
@@ -31,7 +30,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ items, width = 500 }) => {
       >
         {items.map((item, index) => (
           <BottomNavigationAction
-            key={index}
+            key={item.label}
             label={item.label}
             icon={item.icon}
             sx={{

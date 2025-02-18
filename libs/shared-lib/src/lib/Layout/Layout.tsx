@@ -37,7 +37,7 @@ import StarOutlineOutlinedIcon from '@mui/icons-material/StarOutlineOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 interface LayoutProps {
   children: React.ReactNode;
-  type?: 'Image' | 'card' | undefined;
+  type?: 'Image' | 'card';
   isFooter?: boolean;
   isBottom?: boolean;
   showBack?: boolean;

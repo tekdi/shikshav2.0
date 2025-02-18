@@ -14,7 +14,7 @@ const languageData = [
   { id: 3, name: 'Student' },
 ];
 
-export default function verifyOtp() {
+export const verifyOtp = () => {
   const [formData, setFormData] = useState({
     email: '',
   });
@@ -23,7 +23,6 @@ export default function verifyOtp() {
   });
   const [selectedValue, setSelectedValue] = useState('Educator');
   const [otp, setOtp] = React.useState('');
-  const router = useRouter();
   const handleChange =
     (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value;
@@ -147,4 +146,4 @@ export default function verifyOtp() {
       </Grid>
     </Layout>
   );
-}
+};

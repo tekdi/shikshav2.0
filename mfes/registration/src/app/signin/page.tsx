@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Button, FormLabel, TextField, Typography } from '@mui/material';
 
-import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid2';
 import { Layout } from '@shared-lib';
 import Link from 'next/link';

@@ -9,7 +9,6 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import SearchIcon from '@mui/icons-material/Search';
 import { InputBase, Menu, MenuItem } from '@mui/material';
-import Logo from '../../assets/images/Profile.png';
 interface ActionIcon {
   icon: React.ReactNode;
   ariaLabel: string;
@@ -35,7 +34,7 @@ interface CommonAppBarProps {
   title?: string;
   showSearch: boolean;
   subtitle?: string;
-  type?: 'Image' | 'card' | undefined;
+  type?: 'Image' | 'card';
   logo?: React.ReactNode;
   showMenuIcon?: boolean;
   showBackIcon?: boolean;
@@ -93,16 +92,14 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
               {/* Left: Logo */}
               {logo && <Box sx={{ marginRight: 2 }}>{logo}</Box>}
               {showBackIcon && (
-                <>
-                  <IconButton
-                    size="large"
-                    edge="start"
-                    color="inherit"
-                    onClick={backIconClick}
-                  >
-                    <ChevronLeftIcon />
-                  </IconButton>
-                </>
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="inherit"
+                  onClick={backIconClick}
+                >
+                  <ChevronLeftIcon />
+                </IconButton>
               )}
               {/* Center: Title + Subtitle */}
 
