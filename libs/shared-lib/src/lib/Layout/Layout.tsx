@@ -30,9 +30,16 @@ import {
   Typography,
 } from '@mui/material';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
+import { BottomNav } from '../Footer/BottomNav';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
+import StarOutlineOutlinedIcon from '@mui/icons-material/StarOutlineOutlined';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 interface LayoutProps {
   children: React.ReactNode;
+  type?: 'Image' | 'card';
   isFooter?: boolean;
+  isBottom?: boolean;
   showBack?: boolean;
   backTitle?: string;
   showLogo?: boolean;
@@ -63,6 +70,8 @@ interface LayoutProps {
 
   showTopAppBar?: {
     title?: string;
+    subtitle?: string;
+    showSearch?: boolean;
     showMenuIcon?: boolean;
     showBackIcon?: boolean;
     menuIconClick?: () => void;
@@ -418,9 +427,18 @@ const FilterDialog = ({
     </Dialog>
   );
 };
+
+const navItems: NavItem[] = [
+  { label: 'Home', icon: <HomeOutlinedIcon />, path: '/recents' },
+  { label: 'Topics', icon: <BookmarkBorderOutlinedIcon />, path: '/favorites' },
+  { label: 'Bookmarked', icon: <StarOutlineOutlinedIcon />, path: '/nearby' },
+  { label: 'Profile', icon: <AccountCircleOutlinedIcon />, path: '/nearby' },
+];
 export const Layout: React.FC<LayoutProps> = ({
   children,
+  type,
   isFooter,
+  isBottom,
   showBack,
   backTitle,
   showLogo,
@@ -488,6 +506,21 @@ export const Layout: React.FC<LayoutProps> = ({
               actionIcons={topAppBarIcons}
               menuIconClick={() => setIsDrawerOpen(true)}
               onLogoutClick={(event) => action.onLogoutClick(event)}
+              type={type}
+              subtitle={''}
+              showSearch={showTopAppBar.showSearch}
+              showBack={showTopAppBar.showBackIcon}
+              logo={
+                showLogo && (
+                  <img
+                    src={
+                      'https://s3-alpha-sig.figma.com/img/1e04/7951/76723dd19fd1c092cf2b03e6ba884001?Expires=1740355200&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=uWJD93aAZaHSconUKZV46sYnl~ZJg8jTetUOF6AngXkM~bPWr6mk7VRZF4X6wU4Y2L8bhueVwmR425F1ubiBvxSxgG715ldqtaQQBlb70LXPOaJhilIJvH1TbXMjxL5~ylTpwSdCF45sN9v2OYmoG6VZjHwKGtvZyuHqHlG5IEh47qWkG7OvtUO3G9JG8yPgEgJquQIwFl7jDFREVIkkY9sxdppj72-wBDKb11jeFQc5olSsoJSTL1BdM~cPcrUDE4C-p6xwdsUdk39f6cQXhpXhjGklpMzWJTf8C-SwBKhrcBnXPBFGHPYoFXExvivntXxs58dL7j9PxGNK7XBnDw__'
+                    }
+                    alt="Logo"
+                    style={{ height: 40 }}
+                  />
+                )
+              }
               {...showTopAppBar}
             />
           </Box>
@@ -616,6 +649,15 @@ export const Layout: React.FC<LayoutProps> = ({
             bottompx={0}
             onButtonClick={handleButtonClick}
           />
+        </Box>
+      )}
+      {isBottom && (
+        <Box
+          sx={{
+            width: '100%',
+          }}
+        >
+          <BottomNav items={navItems} width="100%" />
         </Box>
       )}
       {filterShow && (
