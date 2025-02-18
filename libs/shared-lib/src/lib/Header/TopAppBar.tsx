@@ -81,7 +81,7 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
         component="nav"
         color={color}
         sx={{
-          boxShadow: 'none',
+          // boxShadow: 'none',
           bgcolor,
           paddingTop: '10px',
         }}

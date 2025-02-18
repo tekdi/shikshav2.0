@@ -1,20 +1,22 @@
 'use client';
 
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Typography, Button, DrawerProps } from '@mui/material';
 import {
   CommonCard,
   Layout,
   Circular,
   ImageBanner,
   ImageCard,
+  CommonDialog,
 } from '@shared-lib';
 import { ContentSearch } from '../services/Search';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import FilterDramaOutlinedIcon from '@mui/icons-material/FilterDramaOutlined';
 import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
 import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlined';
-
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
 import Grid from '@mui/material/Grid2';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { hierarchyAPI } from '../services/Hierarchy';
@@ -22,6 +24,7 @@ import { contentReadAPI } from '../services/Read';
 import { useTheme } from '@mui/material/styles';
 
 import { trackingData } from '../services/TrackingService';
+import { TermsAndCondition } from '../components/TermsConditions';
 interface Config {
   type: 'Image' | 'card';
 }
@@ -56,7 +59,7 @@ export default function Content() {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [frameworkFilter, setFrameworkFilter] = useState(false);
   const [trackData, setTrackData] = useState([]);
-
+  const [openTermsDialog, setOpenTermsDialog] = useState(false);
   const [config, setConfig] = useState<{ type: string } | null>(null);
   const fetchContent = useCallback(
     async (
@@ -312,11 +315,19 @@ export default function Content() {
   );
 
   const handleItemClick = (to: string) => {
-    router.push(to);
+    if (to === '/terms-and-conditions') {
+      // Handle custom action
+
+      setOpenTermsDialog(true);
+    } else {
+      router.push(to);
+    }
   };
 
   const drawerItems = [
-    { text: 'Logout', icon: <AccountCircleIcon fontSize="small" />, to: '/' },
+    { text: 'Home', icon: <HomeOutlinedIcon fontSize="small" />, to: '/' },
+
+    { text: 'Login', icon: <AccountCircleIcon fontSize="small" />, to: '/' },
     {
       text: 'About Us',
       icon: <FilterDramaOutlinedIcon fontSize="small" />,
@@ -328,9 +339,14 @@ export default function Content() {
       to: '/content',
     },
     {
-      text: 'Help',
-      icon: <ContactSupportOutlinedIcon fontSize="small" />,
+      text: 'Recommend Resources',
+      icon: <PostAddOutlinedIcon fontSize="small" />,
       to: '/content',
+    },
+    {
+      text: 'Terms & Conditions',
+      icon: <ContactSupportOutlinedIcon fontSize="small" />,
+      to: '/terms-and-conditions',
     },
   ];
 
@@ -379,6 +395,7 @@ export default function Content() {
         actionButtonLabel: 'Action',
       }}
       drawerItems={drawerItems}
+      minheight="350px"
       onItemClick={handleItemClick}
       isFooter={false}
       isBottom={true}
@@ -400,6 +417,29 @@ export default function Content() {
       >
         <Box>{renderTabContent()}</Box>
       </Box>
+
+      <CommonDialog
+        isOpen={openTermsDialog}
+        onClose={() => console.log('Dialog closed')}
+        header="Terms and Conditions"
+        content={<TermsAndCondition />}
+        actions={
+          <Button
+            onClick={() => setOpenTermsDialog(false)}
+            sx={{
+              color: '#FFFFFF',
+              width: '100%',
+              height: '40px',
+              bgcolor: '#6750A4',
+              borderRadius: '50px',
+              fontSize: '14px',
+              fontWeight: 500,
+            }}
+          >
+            Close
+          </Button>
+        }
+      />
     </Layout>
   );
 }

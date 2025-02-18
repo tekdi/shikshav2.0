@@ -6,6 +6,8 @@ import { CommonSelect, CommonTextField, Layout } from '@shared-lib';
 import { SelectChangeEvent } from '@mui/material/Select';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { GoogleLogin } from '@react-oauth/google';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 const languageData = [
   { id: 1, name: 'Educator' },
   { id: 2, name: 'Mentor' },
@@ -22,6 +24,7 @@ export default function Signup() {
     email: false,
   });
   const [selectedValue, setSelectedValue] = useState('Educator');
+  const [user, setUser] = useState<any>(null);
   const router = useRouter();
   const handleChange =
     (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,6 +45,22 @@ export default function Signup() {
 
   const handleSelectChange = (event: SelectChangeEvent) => {
     setSelectedValue(event.target.value);
+  };
+  const handleLoginSuccess = (response: any) => {
+    // Get the token and process it
+    const token = response.credential;
+    console.log('Google Login Success:', token);
+
+    // Fetch user info using token if needed (optional)
+    // For example, you can make an API call to validate the token and retrieve user info
+
+    // Assuming the login is successful, you can set user data and navigate
+    setUser(token);
+    router.push('/dashboard'); // Redirect to the dashboard or the desired route
+  };
+
+  const handleLoginFailure = () => {
+    console.error('Google Login Failure:');
   };
 
   return (
@@ -87,7 +106,6 @@ export default function Signup() {
         >
           <FormLabel component="legend">Full Name</FormLabel>
           <CommonTextField
-            label="Full Name"
             value={formData.name}
             onChange={handleChange('name')}
             type="text"
@@ -98,7 +116,6 @@ export default function Signup() {
           <FormLabel component="legend">Email ID</FormLabel>
 
           <CommonTextField
-            label="Email ID"
             value={formData.email}
             onChange={handleChange('email')}
             type={'text'}
@@ -108,7 +125,6 @@ export default function Signup() {
           />
           <FormLabel component="legend">Select Role</FormLabel>
           <CommonSelect
-            label="Select Role"
             value={selectedValue}
             onChange={handleSelectChange}
             options={languageData.map(({ name }) => ({
@@ -121,19 +137,28 @@ export default function Signup() {
           <Button
             onClick={handleButtonClick}
             sx={{
-              color: '#FFFFFF',
+              color: '#2B3133',
               width: '100%',
               height: '40px',
               background:
                 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
               borderRadius: '50px',
-              fontSize: '14px',
+              fontSize: '16px',
               fontWeight: 500,
               textTransform: 'none',
             }}
           >
             Proceed
           </Button>
+          <GoogleOAuthProvider clientId="467709515234-qu171h5np0rae7vrl23uv1audjht7fsa.apps.googleusercontent.com">
+            <GoogleLogin
+              onSuccess={handleLoginSuccess}
+              onError={handleLoginFailure}
+              useOneTap
+              theme="outline"
+            />
+          
+          </GoogleOAuthProvider>
           <Typography
             textAlign={'center'}
             variant="h1"

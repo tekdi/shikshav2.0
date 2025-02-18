@@ -26,6 +26,8 @@ interface CategoryItem {
 
 interface CommonDrawerProps {
   open: boolean;
+  minheight?: string;
+  category?: boolean;
   onDrawerClose: () => void;
   items: DrawerItem[];
   categories: CategoryItem[];
@@ -34,6 +36,8 @@ interface CommonDrawerProps {
 
 export const CommonDrawer: React.FC<CommonDrawerProps> = ({
   open,
+  minheight,
+  category,
   onDrawerClose,
   items,
   onItemClick,
@@ -82,7 +86,7 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
       open={open}
       onClose={onDrawerClose}
       PaperProps={{
-        sx: { height: '250px', overflow: 'auto' }, // Set drawer height here
+        sx: { height: minheight, overflow: 'auto' }, // Set drawer height here
       }}
     >
       <List>
@@ -112,21 +116,31 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
             </ListItemButton>
           ))}
 
-        {/* <Divider /> */}
+        {/*  */}
 
         {/* All Categories */}
-        {/* <Typography
-          fontSize={'14px'}
-          color="#6750A4"
-          sx={{ padding: '8px 16px', display: 'flex', alignItems: 'center' }}
-        >
-          {openDrawer !== 'main' && (
-            <ListItemIcon sx={{ cursor: 'pointer' }} onClick={handleBack}>
-              <ArrowBackIcon />
-            </ListItemIcon>
-          )}
-          All Categories
-        </Typography> */}
+
+        {category && (
+          <>
+            <Divider />
+            <Typography
+              fontSize={'14px'}
+              color="#6750A4"
+              sx={{
+                padding: '8px 16px',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              {openDrawer !== 'main' && (
+                <ListItemIcon sx={{ cursor: 'pointer' }} onClick={handleBack}>
+                  <ArrowBackIcon />
+                </ListItemIcon>
+              )}
+              All Categories
+            </Typography>
+          </>
+        )}
 
         {/* Render Main Categories */}
         {openDrawer === 'main' &&

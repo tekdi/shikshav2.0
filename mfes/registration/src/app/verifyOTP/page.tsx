@@ -14,7 +14,7 @@ const languageData = [
   { id: 3, name: 'Student' },
 ];
 
-export const verifyOtp = () => {
+const VerifyOTP = () => {
   const [formData, setFormData] = useState({
     email: '',
   });
@@ -147,3 +147,4 @@ export const verifyOtp = () => {
     </Layout>
   );
 };
+export default VerifyOTP;

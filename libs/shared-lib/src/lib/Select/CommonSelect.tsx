@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 
 interface DropdownProps {
-  label: string;
+  label?: string;
   value: string | number;
   onChange: (event: SelectChangeEvent) => void;
   options: { label: string; value: string | number }[];
