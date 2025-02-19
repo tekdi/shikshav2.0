@@ -65,7 +65,18 @@ export const CommonTextField: React.FC<CommonTextFieldProps> = ({
             <InputAdornment position="end">{endIcon}</InputAdornment>
           ),
         }}
-        sx={{ width: width }}
+        sx={{
+          width: width,
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#FFBD0D', // Change color on hover
+          },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#E68907', // Change color when focused
+          },
+          '& .MuiInputLabel-root': {
+            color: error ? '#f44336' : '#000', // Label color change on error
+          },
+        }}
         {...props}
       />
       {supportingText && (

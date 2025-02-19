@@ -6,3 +6,9 @@ or
 nx g @nrwl/react:library ui-theme
 
 #Navigate to the libs/shared/ui-theme/src/lib/ directory and create a theme.ts file
+
+# sign in with google
+
+npm install @react-oauth/google
+
+# Obtain Google OAuth Client ID

@@ -52,9 +52,10 @@ interface LayoutProps {
   }[];
   drawerItems?: {
     text: string;
-    to: string;
+    to?: string;
     icon?: React.ReactNode;
   }[];
+  minheight?: string;
   onItemClick?: (to: string) => void;
   backIconClick?: () => void;
   showSearch?: {
@@ -462,6 +463,7 @@ export const Layout: React.FC<LayoutProps> = ({
   onSortChange,
   onApply,
   filterValues,
+  minheight,
   sx = {},
 }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -531,6 +533,7 @@ export const Layout: React.FC<LayoutProps> = ({
         open={isDrawerOpen}
         onDrawerClose={() => setIsDrawerOpen(false)}
         items={drawerItems}
+        minheight={minheight}
         categories={categorieItems}
         onItemClick={(to) => {
           onItemClick?.(to);
