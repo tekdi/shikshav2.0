@@ -28,6 +28,14 @@ Next JS, run:
 nx dev shiksha-app --port=3002 --verbose
 ```
 
+### atree-app
+
+Next JS, run:
+
+```sh
+nx dev atree-app --port=3003 --verbose
+```
+
 ##
 
 ## Micro Frontend List

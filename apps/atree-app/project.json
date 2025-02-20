@@ -1,0 +1,9 @@
+{
+  "name": "atree-app",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/atree-app",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project atree-app --web",
+  "targets": {}
+}

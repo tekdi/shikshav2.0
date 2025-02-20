@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import type { ChangeEvent } from 'react';
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import {
   Box,
   Fab,
@@ -15,17 +16,12 @@ import {
 import {
   CommonCard,
   CommonTabs,
-  Layout,
   Circular,
   CommonDialog,
   CommonTextField,
+  CommonSearch,
 } from '@shared-lib';
 import { ContentSearch } from '../services/Search';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import LogoutIcon from '@mui/icons-material/Logout';
 import SearchIcon from '@mui/icons-material/Search';
 import Grid from '@mui/material/Grid2';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -38,6 +34,8 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import HelpIcon from '@mui/icons-material/Help';
 import { SelectChangeEvent } from '@mui/material';
 import { trackingData } from '../services/TrackingService';
+import FilterDialog from '../components/contentFilter';
+
 interface ContentItem {
   name: string;
   gradeLevel: string[];
@@ -52,7 +50,12 @@ interface ContentItem {
   children: [{}];
 }
 
-export default function Content() {
+export default function Content({
+  showFilter = true,
+  showSearch = true,
+  limit = 5,
+  filters = {},
+}: any) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const identifier = searchParams.get('identifier');
@@ -60,12 +63,9 @@ export default function Content() {
   const [tabValue, setTabValue] = useState(0);
   const [contentData, setContentData] = useState<ContentItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedContent, setSelectedContent] = useState<any>(null);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [limit, setLimit] = useState(5); // Set default limit
   const [offset, setOffset] = useState(0);
   const [hasMoreData, setHasMoreData] = useState(true);
-  const [filterValues, setFilterValues] = useState({});
+  const [filterValues] = useState(filters);
   const theme = useTheme();
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [frameworkFilter, setFrameworkFilter] = useState(false);
@@ -77,6 +77,9 @@ export default function Content() {
     status: '',
     priority: '',
   });
+
+  const [filterShow, setFilterShow] = useState(false);
+
   const fetchContent = useCallback(
     async (
       type?: string,
@@ -131,13 +134,12 @@ export default function Content() {
       const userId = localStorage.getItem('subId');
       const userIdArray = userId?.split(',');
       if (!userId || !courseList.length) return; // Ensure required values exist
-      //@ts-ignore
 
+      //@ts-ignore
       const course_track_data = await trackingData(userIdArray, courseList);
 
       if (course_track_data?.data) {
         //@ts-ignore
-
         const userTrackData =
           course_track_data.data.find((course: any) => course.userId === userId)
             ?.course || [];
@@ -163,14 +165,10 @@ export default function Content() {
 
   const handleLoadMore = (event: React.MouseEvent) => {
     event.preventDefault();
-
     const newOffset = offset + limit;
     setOffset(newOffset);
-
     const currentScrollPosition = window.scrollY;
-
     const type = tabValue === 0 ? 'Course' : 'Learning Resource';
-
     fetchContent(type, searchValue, filterValues, limit, newOffset).then(() => {
       setTimeout(() => {
         window.scrollTo({ top: currentScrollPosition, behavior: 'auto' });
@@ -178,22 +176,6 @@ export default function Content() {
     });
   };
 
-  const handleAccountClick = (event: React.MouseEvent<HTMLElement>) => {
-    console.log('Account clicked');
-    setAnchorEl(event.currentTarget);
-  };
-  const handleLogout = () => {
-    setAnchorEl(null);
-    localStorage.removeItem('accToken');
-    localStorage.removeItem('refToken');
-    let LOGIN = process.env.NEXT_PUBLIC_LOGIN;
-    //@ts-ignore
-    window.location.href = LOGIN;
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
   const handleSearchClick = async () => {
     if (searchValue.trim()) {
       const type = tabValue === 0 ? 'Course' : 'Learning Resource';
@@ -219,6 +201,7 @@ export default function Content() {
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target.value, 'value search');
     setSearchValue(event.target.value);
   };
 
@@ -250,11 +233,7 @@ export default function Content() {
         await contentReadAPI(identifier);
         router.push(`/player/${identifier}`);
       } else {
-        const result = await hierarchyAPI(identifier);
         //@ts-ignore
-        const trackable = result?.trackable;
-        setSelectedContent(result);
-
         router.push(`/content-details/${identifier}`);
       }
     } catch (error) {
@@ -276,69 +255,83 @@ export default function Content() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const renderTabContent = () => (
-    <Box sx={{ flexGrow: 1 }}>
-      {isLoading ? (
-        <Circular />
-      ) : (
-        <>
-          <Grid container spacing={2} sx={{ mt: 2 }}>
-            {contentData?.map((item) => (
-              <Grid
-                key={item?.identifier}
-                size={{ xs: 6, sm: 6, md: 3, lg: 3 }}
-              >
-                <CommonCard
-                  title={item?.name.trim()}
-                  image={
-                    item?.posterImage && item?.posterImage !== 'undefined'
-                      ? item?.posterImage
-                      : '/assests/images/image_ver.png'
-                  }
-                  content={item?.description || '-'}
-                  // subheader={item?.contentType}
-                  actions={item?.contentType}
-                  orientation="horizontal"
-                  item={[item]}
-                  TrackData={trackData}
-                  type={tabValue === 0 ? 'course' : 'content'}
-                  onClick={() =>
-                    handleCardClick(item?.identifier, item?.mimeType)
-                  }
-                />
-              </Grid>
-            ))}
-          </Grid>
-          <Box sx={{ textAlign: 'center', mt: 4 }}>
-            {hasMoreData ? (
-              <Button
-                variant="contained"
-                onClick={handleLoadMore}
-                disabled={isLoading}
-              >
-                {isLoading ? 'Loading...' : 'Load More'}
-              </Button>
-            ) : (
-              <Typography variant="body1" color="textSecondary">
-                No more data available
-              </Typography>
-            )}
-          </Box>
-        </>
-      )}
-    </Box>
+  const renderTabContent = useCallback(
+    () => (
+      <Box sx={{ flexGrow: 1 }}>
+        {isLoading ? (
+          <Circular />
+        ) : (
+          <>
+            <Grid container spacing={2} sx={{ mt: 2 }}>
+              {contentData?.map((item) => (
+                <Grid
+                  key={item?.identifier}
+                  size={{ xs: 6, sm: 6, md: 3, lg: 3 }}
+                >
+                  <CommonCard
+                    title={item?.name.trim()}
+                    image={
+                      item?.posterImage && item?.posterImage !== 'undefined'
+                        ? item?.posterImage
+                        : '/assests/images/image_ver.png'
+                    }
+                    content={item?.description || '-'}
+                    actions={item?.contentType}
+                    // subheader={item?.contentType}
+                    orientation="horizontal"
+                    item={[item]}
+                    TrackData={trackData}
+                    type={tabValue === 0 ? 'course' : 'content'}
+                    onClick={() =>
+                      handleCardClick(item?.identifier, item?.mimeType)
+                    }
+                  />
+                </Grid>
+              ))}
+            </Grid>
+            <Box sx={{ textAlign: 'center', mt: 4 }}>
+              {hasMoreData ? (
+                <Button
+                  variant="contained"
+                  onClick={handleLoadMore}
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Loading...' : 'Load More'}
+                </Button>
+              ) : (
+                <Typography variant="body1" color="textSecondary">
+                  No more data available
+                </Typography>
+              )}
+            </Box>
+          </>
+        )}
+      </Box>
+    ),
+    [
+      isLoading,
+      contentData,
+      trackData,
+      tabValue,
+      handleCardClick,
+      hasMoreData,
+      handleLoadMore,
+    ]
   );
 
-  const tabs = [
-    {
-      label: 'Courses',
-      content: renderTabContent(),
-    },
-    {
-      label: 'Content',
-      content: renderTabContent(),
-    },
-  ];
+  const tabs = useMemo(
+    () => [
+      {
+        label: 'Courses',
+        content: renderTabContent(),
+      },
+      {
+        label: 'Content',
+        content: renderTabContent(),
+      },
+    ],
+    [renderTabContent]
+  );
 
   const handleItemClick = (to: string) => {
     router.push(to);
@@ -445,75 +438,68 @@ export default function Content() {
     router.push(frappeDeskUrl);
   };
   return (
-    <Layout
-      showTopAppBar={{
-        title: 'Shiksha: Home',
-        showMenuIcon: true,
-        actionButtonLabel: 'Action',
-        profileIcon: [
-          {
-            icon: <AccountCircleIcon />,
-            ariaLabel: 'Account',
-            onLogoutClick: (e: any) => handleAccountClick(e),
-            anchorEl: anchorEl,
-          },
-        ],
-        actionIcons: [
-          {
-            icon: <AccountCircleIcon />,
-            ariaLabel: 'Profile',
-            onOptionClick: handleClose,
-          },
-          {
-            icon: <DashboardIcon />,
-            ariaLabel: 'Admin dashboard',
-            onOptionClick: handleClose,
-          },
-          {
-            icon: <BorderColorIcon />,
-            ariaLabel: 'Workspace',
-            onOptionClick: handleClose,
-          },
-          {
-            icon: <HelpOutlineIcon />,
-            ariaLabel: 'Help',
-            onOptionClick: handleClose,
-          },
-          {
-            icon: <LogoutIcon />,
-            ariaLabel: 'Logout',
-            onOptionClick: handleLogout,
-          },
-        ],
-        onMenuClose: handleClose,
-      }}
-      showSearch={{
-        placeholder: 'Search content..',
-        rightIcon: <SearchIcon />,
-        inputValue: searchValue,
-        onInputChange: handleSearchChange,
-        onRightIconClick: handleSearchClick,
-        sx: {
-          backgroundColor: '#f0f0f0',
-          padding: '4px',
-          borderRadius: '50px',
-          width: '100%',
-          marginLeft: '10px',
-        },
-      }}
-      drawerItems={drawerItems}
-      categorieItems={categoriesItems}
-      showFilter={true}
-      // filter={filter}
-      frameworkFilter={frameworkFilter}
-      onItemClick={handleItemClick}
-      isFooter={false}
-      showLogo={true}
-      showBack={true}
-      //@ts-ignore
-      onApply={handleApplyFilters}
-      filterValues={filterValues}
-    >
+    <React.Fragment>
+      {showSearch && (
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
+          <CommonSearch
+            placeholder={'Search content..'}
+            rightIcon={<SearchIcon />}
+            onRightIconClick={handleSearchClick}
+            inputValue={searchValue || ''}
+            onInputChange={handleSearchChange}
+            sx={{
+              backgroundColor: '#f0f0f0',
+              padding: '4px',
+              borderRadius: '50px',
+              width: '100%',
+              marginLeft: '10px',
+            }}
+          />
+          {showFilter && (
+            <Box>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  backgroundColor: '#ECE6F0',
+                  borderRadius: '12px',
+                  // padding: '8px',
+                  width: '56px',
+                  height: '46px',
+                  '&:hover': {
+                    backgroundColor: '#E0E0E0',
+                    boxShadow: '0px 4px 8px 3px #00000026',
+                  },
+                  marginLeft: '4px',
+                  marginRight: '7px',
+
+                  boxShadow: '0px 1px 3px 0px #0000004D',
+                }}
+                onClick={() => setFilterShow(true)}
+              >
+                <FilterAltOutlinedIcon
+                  sx={{ color: '#6750A4', fontSize: '25px' }}
+                />
+              </Box>
+              <FilterDialog
+                open={filterShow}
+                onClose={() => setFilterShow(false)}
+                frameworkFilter={frameworkFilter}
+                filterValues={filterValues}
+                onApply={handleApplyFilters}
+              />
+            </Box>
+          )}
+        </Box>
+      )}
       <Box
         sx={{
           width: '100%',
@@ -651,6 +637,6 @@ export default function Content() {
           </Button>
         }
       />
-    </Layout>
+    </React.Fragment>
   );
 }
