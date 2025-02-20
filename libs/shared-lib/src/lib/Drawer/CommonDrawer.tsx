@@ -77,14 +77,7 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
   };
 
   return (
-    <Drawer
-      anchor="right"
-      open={open}
-      onClose={onDrawerClose}
-      PaperProps={{
-        sx: { height: '250px', overflow: 'auto' }, // Set drawer height here
-      }}
-    >
+    <Drawer anchor="left" open={open} onClose={onDrawerClose}>
       <List>
         {/* Main Menu */}
         <Typography
@@ -97,7 +90,7 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
               <ArrowBackIcon />
             </ListItemIcon>
           )}
-          {/* Main menu */}
+          Main menu
         </Typography>
 
         {/* Render Main Menu Items */}
@@ -112,10 +105,10 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
             </ListItemButton>
           ))}
 
-        {/* <Divider /> */}
+        <Divider />
 
         {/* All Categories */}
-        {/* <Typography
+        <Typography
           fontSize={'14px'}
           color="#6750A4"
           sx={{ padding: '8px 16px', display: 'flex', alignItems: 'center' }}
@@ -126,7 +119,7 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
             </ListItemIcon>
           )}
           All Categories
-        </Typography> */}
+        </Typography>
 
         {/* Render Main Categories */}
         {openDrawer === 'main' &&

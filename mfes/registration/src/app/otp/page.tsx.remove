@@ -1,9 +1,15 @@
 //@ts-nocheck
-'use client';
+
 import * as React from 'react';
 import { TextField, Box } from '@mui/material';
 
-export default function Otp({ separator, length, value, onChange }) {
+
+export default function Otp({
+  separator,
+  length,
+  value,
+  onChange,
+}) {
   const inputRefs = React.useRef<HTMLInputElement[]>(
     new Array(length).fill(null)
   );

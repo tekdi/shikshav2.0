@@ -1,30 +1,43 @@
 'use client';
 
-import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import React, { useEffect, useState, useCallback } from 'react';
+import type { ChangeEvent } from 'react';
+import {
+  Box,
+  Fab,
+  Typography,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from '@mui/material';
 import {
   CommonCard,
+  CommonTabs,
   Layout,
   Circular,
-  ImageBanner,
-  ImageCard,
+  CommonDialog,
+  CommonTextField,
 } from '@shared-lib';
 import { ContentSearch } from '../services/Search';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import FilterDramaOutlinedIcon from '@mui/icons-material/FilterDramaOutlined';
-import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
-import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlined';
-
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import LogoutIcon from '@mui/icons-material/Logout';
+import SearchIcon from '@mui/icons-material/Search';
 import Grid from '@mui/material/Grid2';
 import { useRouter, useSearchParams } from 'next/navigation';
+import CircleIcon from '@mui/icons-material/Circle';
 import { hierarchyAPI } from '../services/Hierarchy';
 import { contentReadAPI } from '../services/Read';
 import { useTheme } from '@mui/material/styles';
-
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import HelpIcon from '@mui/icons-material/Help';
+import { SelectChangeEvent } from '@mui/material';
 import { trackingData } from '../services/TrackingService';
-interface Config {
-  type: 'Image' | 'card';
-}
 interface ContentItem {
   name: string;
   gradeLevel: string[];
@@ -48,7 +61,8 @@ export default function Content() {
   const [contentData, setContentData] = useState<ContentItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedContent, setSelectedContent] = useState<any>(null);
-  const [limit, setLimit] = useState(6); // Set default limit
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [limit, setLimit] = useState(5); // Set default limit
   const [offset, setOffset] = useState(0);
   const [hasMoreData, setHasMoreData] = useState(true);
   const [filterValues, setFilterValues] = useState({});
@@ -56,8 +70,13 @@ export default function Content() {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [frameworkFilter, setFrameworkFilter] = useState(false);
   const [trackData, setTrackData] = useState([]);
-
-  const [config, setConfig] = useState<{ type: string } | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [issueData, setIssueData] = useState({
+    subject: '',
+    description: '',
+    status: '',
+    priority: '',
+  });
   const fetchContent = useCallback(
     async (
       type?: string,
@@ -130,20 +149,6 @@ export default function Content() {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetch('http://localhost:3003/api/config') // Fetch from atree-app
-      .then((res) => res.json())
-      .then((data) => setConfig(data))
-      .catch((error) => console.error('Error fetching config:', error));
-  }, []);
-
-  useEffect(() => {
-    if (offset > 0) {
-      const type = tabValue === 0 ? 'Course' : 'Learning Resource';
-      fetchContent(type, searchValue, filterValues, limit, offset);
-    }
-  }, [offset]);
   useEffect(() => {
     const type = tabValue === 0 ? 'Course' : 'Learning Resource';
     // setContentData([]);
@@ -158,6 +163,7 @@ export default function Content() {
 
   const handleLoadMore = (event: React.MouseEvent) => {
     event.preventDefault();
+
     const newOffset = offset + limit;
     setOffset(newOffset);
 
@@ -170,6 +176,56 @@ export default function Content() {
         window.scrollTo({ top: currentScrollPosition, behavior: 'auto' });
       }, 0);
     });
+  };
+
+  const handleAccountClick = (event: React.MouseEvent<HTMLElement>) => {
+    console.log('Account clicked');
+    setAnchorEl(event.currentTarget);
+  };
+  const handleLogout = () => {
+    setAnchorEl(null);
+    localStorage.removeItem('accToken');
+    localStorage.removeItem('refToken');
+    let LOGIN = process.env.NEXT_PUBLIC_LOGIN;
+    //@ts-ignore
+    window.location.href = LOGIN;
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleSearchClick = async () => {
+    if (searchValue.trim()) {
+      const type = tabValue === 0 ? 'Course' : 'Learning Resource';
+      // fetchContent(type, searchValue, filterValues);
+      let result =
+        type &&
+        (await ContentSearch(type, searchValue, filterValues, limit, offset));
+      //@ts-ignore
+      if (!result || result === undefined || result?.length === 0) {
+        setHasMoreData(false);
+      } else {
+        // setContentData(result || []);
+        //@ts-ignore
+        setContentData(result || []);
+        setHasMoreData(true);
+      }
+    } else {
+      setSearchValue('');
+      setContentData([]);
+      const type = tabValue === 0 ? 'Course' : 'Learning Resource';
+      fetchContent(type, searchValue, filterValues);
+    }
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(event.target.value);
+  };
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+    const type = newValue === 0 ? 'Course' : 'Learning Resource';
+    setContentData([]);
   };
 
   const handleCardClick = async (
@@ -226,70 +282,33 @@ export default function Content() {
         <Circular />
       ) : (
         <>
-          {config?.type === 'card' && (
-            <Grid container spacing={2} sx={{ mt: 2 }}>
-              {contentData?.map((item) => (
-                <Grid
-                  key={item?.identifier}
-                  size={{ xs: 6, sm: 6, md: 3, lg: 3 }}
-                >
-                  <CommonCard
-                    title={item?.name.trim()}
-                    image={
-                      item?.posterImage && item?.posterImage !== 'undefined'
-                        ? item?.posterImage
-                        : '/assests/images/image_ver.png'
-                    }
-                    content={item?.description || '-'}
-                    // subheader={item?.contentType}
-                    actions={item?.contentType}
-                    orientation="horizontal"
-                    item={[item]}
-                    TrackData={trackData}
-                    type={tabValue === 0 ? 'course' : 'content'}
-                    onClick={() =>
-                      handleCardClick(item?.identifier, item?.mimeType)
-                    }
-                  />
-                </Grid>
-              ))}
-            </Grid>
-          )}
-
-          {config?.type === 'Image' && (
-            <>
-              <ImageBanner />
-              <Box sx={{ textAlign: 'center', padding: '20px' }}>
-                <Typography sx={{ fontWeight: 400, marginBottom: '20px' }}>
-                  Change stems from local action. Hope stems from children’s
-                  empowerment to act upon local environmental problems.
-                </Typography>
-                <Typography sx={{ fontWeight: 400 }}>
-                  Our mission is to empower environment educators with both hope
-                  and action in times of climate change.
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  textAlign: 'center',
-                  padding: '5px',
-                  marginBottom: '20px',
-                }}
+          <Grid container spacing={2} sx={{ mt: 2 }}>
+            {contentData?.map((item) => (
+              <Grid
+                key={item?.identifier}
+                size={{ xs: 6, sm: 6, md: 3, lg: 3 }}
               >
-                <Typography sx={{ fontWeight: 500, fontSize: '24px' }}>
-                  01 BOOKS IN 15 CATEGORIES
-                </Typography>
-                <Typography sx={{ fontWeight: 500, fontSize: '14px' }}>
-                  Choose what best fits your interests and needs
-                </Typography>
-              </Box>
-              <ImageCard
-                showAvatar={true}
-                showIcons={false}
-                ContentData={contentData as []}
-              />
-            </>
-          )}
+                <CommonCard
+                  title={item?.name.trim()}
+                  image={
+                    item?.posterImage && item?.posterImage !== 'undefined'
+                      ? item?.posterImage
+                      : '/assests/images/image_ver.png'
+                  }
+                  content={item?.description || '-'}
+                  // subheader={item?.contentType}
+                  actions={item?.contentType}
+                  orientation="horizontal"
+                  item={[item]}
+                  TrackData={trackData}
+                  type={tabValue === 0 ? 'course' : 'content'}
+                  onClick={() =>
+                    handleCardClick(item?.identifier, item?.mimeType)
+                  }
+                />
+              </Grid>
+            ))}
+          </Grid>
           <Box sx={{ textAlign: 'center', mt: 4 }}>
             {hasMoreData ? (
               <Button
@@ -305,32 +324,64 @@ export default function Content() {
               </Typography>
             )}
           </Box>
-          {/*  )} */}
         </>
       )}
     </Box>
   );
+
+  const tabs = [
+    {
+      label: 'Courses',
+      content: renderTabContent(),
+    },
+    {
+      label: 'Content',
+      content: renderTabContent(),
+    },
+  ];
 
   const handleItemClick = (to: string) => {
     router.push(to);
   };
 
   const drawerItems = [
-    { text: 'Logout', icon: <AccountCircleIcon fontSize="small" />, to: '/' },
+    { text: 'Home', icon: <CircleIcon fontSize="small" />, to: '/' },
+    { text: 'Content', icon: <CircleIcon fontSize="small" />, to: '/content' },
+  ];
+  const categoriesItems = [
     {
-      text: 'About Us',
-      icon: <FilterDramaOutlinedIcon fontSize="small" />,
-      to: '/content',
+      text: 'Development',
+      icon: <ChevronRightIcon />,
+      to: '/',
+      subCategories: [
+        {
+          text: 'Primary',
+          to: '/education/primary',
+          subCategories: [
+            { text: 'Quantum Mechanics', to: '/science/physics/quantum' },
+            { text: 'Relativity', to: '/science/physics/relativity' },
+          ],
+        },
+        { text: 'Secondary', to: '/education/secondary' },
+      ],
     },
     {
-      text: 'Contact Us',
-      icon: <AlternateEmailOutlinedIcon fontSize="small" />,
-      to: '/content',
+      text: 'Marketing',
+      icon: <ChevronRightIcon />,
+      to: '/page-2',
+      subCategories: [
+        { text: 'Primary', to: '/education/primary' },
+        { text: 'Secondary', to: '/education/secondary' },
+      ],
     },
     {
-      text: 'Help',
-      icon: <ContactSupportOutlinedIcon fontSize="small" />,
+      text: 'Business Studies',
+      icon: <ChevronRightIcon />,
       to: '/content',
+      subCategories: [
+        { text: 'Primary', to: '/education/primary' },
+        { text: 'Secondary', to: '/education/secondary' },
+      ],
     },
   ];
 
@@ -367,21 +418,96 @@ export default function Content() {
       console.error('Error fetching board data:', error);
     }
   };
-
+  const handleHelpClick = () => {
+    // alert('Contact Help Desk at help@shiksha.com');
+    setIsDialogOpen(true);
+  };
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+  };
+  const handleChange =
+    (field: string) =>
+    (
+      event:
+        | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        | SelectChangeEvent<string>
+    ) => {
+      const value = event.target.value;
+      setIssueData({
+        ...issueData,
+        [field]: value,
+      });
+    };
+  const handleOtpSubmit = async () => {
+    console.log(issueData);
+    const queryString = new URLSearchParams(issueData).toString();
+    const frappeDeskUrl = `http://localhost:8000/helpdesk/tickets/new?${queryString}`;
+    router.push(frappeDeskUrl);
+  };
   return (
     <Layout
-      type={(config as Config)?.type}
       showTopAppBar={{
-        showSearch: true,
-        title: 'Jal-Jungle-Jameen ',
-        subtitle: 'In Classrooms ',
+        title: 'Shiksha: Home',
         showMenuIcon: true,
         actionButtonLabel: 'Action',
+        profileIcon: [
+          {
+            icon: <AccountCircleIcon />,
+            ariaLabel: 'Account',
+            onLogoutClick: (e: any) => handleAccountClick(e),
+            anchorEl: anchorEl,
+          },
+        ],
+        actionIcons: [
+          {
+            icon: <AccountCircleIcon />,
+            ariaLabel: 'Profile',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <DashboardIcon />,
+            ariaLabel: 'Admin dashboard',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <BorderColorIcon />,
+            ariaLabel: 'Workspace',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <HelpOutlineIcon />,
+            ariaLabel: 'Help',
+            onOptionClick: handleClose,
+          },
+          {
+            icon: <LogoutIcon />,
+            ariaLabel: 'Logout',
+            onOptionClick: handleLogout,
+          },
+        ],
+        onMenuClose: handleClose,
+      }}
+      showSearch={{
+        placeholder: 'Search content..',
+        rightIcon: <SearchIcon />,
+        inputValue: searchValue,
+        onInputChange: handleSearchChange,
+        onRightIconClick: handleSearchClick,
+        sx: {
+          backgroundColor: '#f0f0f0',
+          padding: '4px',
+          borderRadius: '50px',
+          width: '100%',
+          marginLeft: '10px',
+        },
       }}
       drawerItems={drawerItems}
+      categorieItems={categoriesItems}
+      showFilter={true}
+      // filter={filter}
+      frameworkFilter={frameworkFilter}
       onItemClick={handleItemClick}
       isFooter={false}
-      isBottom={true}
       showLogo={true}
       showBack={true}
       //@ts-ignore
@@ -398,8 +524,133 @@ export default function Content() {
           marginTop: '20px',
         }}
       >
-        <Box>{renderTabContent()}</Box>
+        <CommonTabs
+          tabs={tabs}
+          value={tabValue}
+          onChange={handleTabChange}
+          ariaLabel="Custom icon label tabs"
+        />
       </Box>
+      <Fab
+        color="primary"
+        aria-label="help"
+        sx={{
+          position: 'fixed',
+          bottom: 16,
+          right: 16,
+          bgcolor: theme.palette.primary.main,
+          color: theme.palette.primary.contrastText,
+          '&:hover': {
+            bgcolor: theme.palette.primary.dark,
+          },
+        }}
+        onClick={handleHelpClick}
+      >
+        <HelpIcon />
+      </Fab>
+      {showBackToTop && (
+        <Fab
+          color="secondary"
+          aria-label="back to top"
+          sx={{
+            position: 'fixed',
+            display: 'table-column',
+            bottom: 80,
+            right: 16,
+            height: '75px',
+            borderRadius: '100px',
+            bgcolor: theme.palette.primary.main,
+            color: theme.palette.primary.contrastText,
+            '&:hover': {
+              bgcolor: theme.palette.primary.dark,
+            },
+          }}
+          onClick={handleBackToTop}
+        >
+          <ArrowUpwardIcon />
+          <Typography fontSize={'10px'}>Back to Top</Typography>
+        </Fab>
+      )}
+      <CommonDialog
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+        header="Help desk"
+        content={
+          <Grid container spacing={2}>
+            <Typography>We’ve sent an your issue to help desk</Typography>
+            <Grid
+              size={{ xs: 12, sm: 6, md: 12, lg: 12 }}
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+                borderRadius: '20px 20px 0 0',
+                padding: '15px',
+                backgroundColor: '#FFFFFF',
+              }}
+            >
+              <CommonTextField
+                label="Subject"
+                value={issueData.subject}
+                type="text"
+                variant="outlined"
+                onChange={handleChange('subject')}
+              />
+              <CommonTextField
+                label="Description"
+                type="text"
+                variant="outlined"
+                multiline
+                rows={4}
+                value={issueData.description}
+                onChange={handleChange('description')}
+              />
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Status</InputLabel>
+                <Select
+                  fullWidth
+                  value={issueData.status}
+                  onChange={handleChange('status')}
+                >
+                  <MenuItem value="Open">Open</MenuItem>
+                  <MenuItem value="Closed">Closed</MenuItem>
+                  <MenuItem value="In Progress">In Progress</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Priority</InputLabel>
+
+                <Select
+                  fullWidth
+                  value={issueData.priority}
+                  onChange={handleChange('priority')}
+                  sx={{ mt: 2 }}
+                >
+                  <MenuItem value="High">High</MenuItem>
+                  <MenuItem value="Medium">Medium</MenuItem>
+                  <MenuItem value="Low">Low</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        }
+        actions={
+          <Button
+            onClick={handleOtpSubmit}
+            sx={{
+              color: '#FFFFFF',
+              width: '20%',
+              height: '40px',
+              bgcolor: '#6750A4',
+              borderRadius: '50px',
+              fontSize: '14px',
+              fontWeight: 500,
+            }}
+          >
+            Submit
+          </Button>
+        }
+      />
     </Layout>
   );
 }

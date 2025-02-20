@@ -28,7 +28,7 @@ export const CommonSelect: React.FC<DropdownProps> = ({
   fullWidth = true,
   minWidth = 120,
   width = '100%',
-  height,
+  height = '40px',
   borderRadius = '4px',
 }) => {
   return (
