@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
-interface ContentSearchResponse {
+export interface ContentSearchResponse {
   ownershipType?: string[];
   publish_type?: string;
   copyright?: string;
@@ -107,18 +107,33 @@ interface ContentSearchResponse {
 }
 // Define the payload
 
-export const ContentSearch = async (
-  type: string,
-  searchText?: string,
-  filterValues?: object,
-  limit: number = 5,
-  offset: number = 0
-): Promise<ContentSearchResponse[]> => {
+export const ContentSearch = async ({
+  type,
+  query,
+  filters,
+  limit = 5,
+  offset = 0,
+  channel,
+}: {
+  type: string;
+  channel: string;
+  query?: string;
+  filters?: object;
+  limit?: number;
+  offset?: number;
+}): Promise<ContentSearchResponse[]> => {
   try {
     // Ensure the environment variable is defined
     const searchApiUrl = process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL;
-    if (!searchApiUrl) {
-      throw new Error('Search API URL environment variable is not configured');
+    const hierarchyPath = process.env.NEXT_PUBLIC_SSUNBIRD_HIERARCHY_PATH;
+    if (!searchApiUrl || !hierarchyPath) {
+      throw new Error(
+        !searchApiUrl
+          ? 'Search API URL environment variable is not configured'
+          : !hierarchyPath
+          ? 'Hierarchy path environment variable is not configured'
+          : ''
+      );
     }
     // Axios request configuration
 
@@ -127,11 +142,11 @@ export const ContentSearch = async (
         filters: {
           // identifier: 'do_114228944942358528173',
           // identifier: 'do_1141652605790289921389',
-          ...filterValues,
           //need below after login user channel for dynamic load content
           // channel: '0135656861912678406',
-
+          channel,
           primaryCategory: [type],
+          ...filters,
         },
         fields: [
           'name',
@@ -147,15 +162,15 @@ export const ContentSearch = async (
           'children',
           'leafNodes',
         ],
-        query: searchText,
-        limit: limit,
-        offset: offset,
+        query,
+        limit,
+        offset,
       },
     };
     const config: AxiosRequestConfig = {
       method: 'post',
       maxBodyLength: Infinity,
-      url: `${searchApiUrl}/api/content/v1/search`,
+      url: `${searchApiUrl}${process.env.NEXT_PUBLIC_SSUNBIRD_HIERARCHY_PATH}/search`,
       data: data,
     };
 
