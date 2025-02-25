@@ -176,7 +176,7 @@ export const ContentSearch = async ({
 
     // Execute the request
     const response = await axios.request(config);
-    const res = response?.data?.result?.content;
+    const res = response?.data;
 
     return res;
   } catch (error) {

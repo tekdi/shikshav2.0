@@ -1,7 +1,14 @@
-import { Box, Button, Tab, Tabs, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Tab,
+  Tabs,
+  Typography,
+} from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { CommonCard } from '@shared-lib';
-import React, { memo, useCallback } from 'react';
+import React, { memo } from 'react';
 import { ContentSearchResponse } from '../services/Search';
 
 const RenderTabContent = memo(
@@ -17,6 +24,7 @@ const RenderTabContent = memo(
     value,
     onChange,
     ariaLabel,
+    isLodingMoreData,
   }: {
     contentData: ContentSearchResponse[];
     _grid: any;
@@ -29,10 +37,8 @@ const RenderTabContent = memo(
     value?: number;
     onChange?: (event: React.SyntheticEvent, newValue: number) => void;
     ariaLabel?: string;
+    isLodingMoreData: boolean;
   }) => {
-    const handleLoadMoreCallback = useCallback(handleLoadMore, []);
-    const handleCardClickCallback = useCallback(handleCardClick, []);
-
     return (
       <Box sx={{ width: '100%' }}>
         {tabs?.length !== undefined && tabs?.length > 1 && (
@@ -110,13 +116,19 @@ const RenderTabContent = memo(
           </Grid>
           <Box sx={{ textAlign: 'center', mt: 4 }}>
             {hasMoreData ? (
-              <Button variant="contained" onClick={handleLoadMore}>
-                {'Load More'}
+              <Button
+                variant="contained"
+                onClick={handleLoadMore}
+                disabled={isLodingMoreData}
+              >
+                {isLodingMoreData ? (
+                  <CircularProgress size={20} />
+                ) : (
+                  'Load More'
+                )}
               </Button>
             ) : (
-              <Typography variant="body1" color="textSecondary">
-                No more data available
-              </Typography>
+              <Typography variant="body1">No more data available</Typography>
             )}
           </Box>
         </Box>

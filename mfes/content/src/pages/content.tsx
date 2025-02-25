@@ -76,22 +76,23 @@ export default function Content({
       const newData = await getData('mfes_content_pages_content');
       setPropData(newData);
       setTabValue(0);
-      setIsLoading(true);
     };
     init();
   }, []);
 
   const fetchContent = useCallback(async (filters: any) => {
     try {
-      let result: any;
+      let data: any;
       if (filters.identifier) {
-        result = await hierarchyAPI(filters.identifier);
-        return [result];
+        const result = await hierarchyAPI(filters.identifier);
+        data = [result];
       } else {
-        return await ContentSearch(filters);
+        data = await ContentSearch(filters);
       }
+      return data;
     } catch (error) {
       console.error('Failed to fetch content:', error);
+      return [];
     }
   }, []);
 
@@ -106,14 +107,10 @@ export default function Content({
 
   const handleLoadMore = (event: any) => {
     event.preventDefault();
-    // const newOffset = offset + limit;
-    // setOffset(newOffset);
-    const currentScrollPosition = window.scrollY;
-    fetchContent(localFilters).then(() => {
-      setTimeout(() => {
-        window.scrollTo({ top: currentScrollPosition, behavior: 'auto' });
-      }, 0);
-    });
+    setFilters((prevFilters: any) => ({
+      ...prevFilters,
+      offset: prevFilters.offset + prevFilters.limit,
+    }));
   };
 
   const handleSearchClick = async () => {
@@ -206,13 +203,30 @@ export default function Content({
 
   useEffect(() => {
     const init = async () => {
-      if (
-        localFilters.type &&
-        localFilters.limit &&
-        localFilters.offset !== undefined
-      ) {
-        const data = await fetchContent(localFilters);
-        setContentData(data || []);
+      setIsLoading(true);
+      try {
+        if (
+          localFilters.type &&
+          localFilters.limit &&
+          localFilters.offset !== undefined
+        ) {
+          const { result } = await fetchContent(localFilters);
+          if (localFilters.offset === 0) {
+            setContentData(result?.content || []);
+          } else {
+            setContentData((prevState: any) => [
+              ...prevState,
+              ...(result?.content || []),
+            ]);
+          }
+          setHasMoreData(
+            result?.count > localFilters.offset + result?.content?.length
+          );
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     };
     init();
@@ -438,6 +452,7 @@ export default function Content({
         handleCardClick={handleCardClick}
         hasMoreData={hasMoreData}
         handleLoadMore={handleLoadMore}
+        isLodingMoreData={isLoading}
         tabs={tabs}
       />
       <HelpDesk onClick={handleHelpClick} theme={theme} />
