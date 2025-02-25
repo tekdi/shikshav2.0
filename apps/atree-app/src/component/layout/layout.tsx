@@ -1,32 +1,10 @@
-//@ts-nocheck
-import React, { use, useEffect, useState } from 'react';
-import Box from '@mui/material/Box';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
-import {
-  Button,
-  Checkbox,
-  CircularProgress,
-  debounce,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
-  ListItemText,
-  MenuItem,
-  OutlinedInput,
-  Radio,
-  RadioGroup,
-  Select,
-  SelectChangeEvent,
-  Typography,
-} from '@mui/material';
-import { CommonDrawer, CommonSearch, Footer, TopAppBar } from '@shared-lib';
+import { Button, CircularProgress, debounce, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import { CommonDrawer, Footer } from '@shared-lib';
+import React, { useEffect, useState } from 'react';
+import atreeLogo from '../../../assets/images/atreeLogo.png';
+import TopAppBar from './TopToolBar';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -34,7 +12,6 @@ interface LayoutProps {
   isFooter?: boolean;
   showBack?: boolean;
   backTitle?: string;
-  showLogo?: boolean;
   sx?: object;
   categorieItems?: {
     text: string;
@@ -46,8 +23,8 @@ interface LayoutProps {
     to: string;
     icon?: React.ReactNode;
   }[];
-  onItemClick?: (to: string) => void;
-  backIconClick?: () => void;
+  onItemClick?: (to: string) => void | undefined;
+  onBackIconClick?: () => void;
   showTopAppBar?: {
     title?: string;
     showMenuIcon?: boolean;
@@ -87,6 +64,7 @@ interface LayoutProps {
     ariaLabel: string;
     onClick: () => void;
   }[];
+  backIconClick?: () => void;
 }
 
 export default function Layout({
@@ -95,7 +73,6 @@ export default function Layout({
   isFooter = true,
   showBack = false,
   backTitle = '',
-  showLogo = false,
   showTopAppBar = {},
   topAppBarIcons = [],
   drawerItems = [],
@@ -103,10 +80,11 @@ export default function Layout({
   onItemClick,
   backIconClick,
   sx = {},
-}): JSX.Element {
+}): LayoutProps {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [refs, setRefs] = useState({});
-  const [layoutHeight, setLayoutHeight] = useState(0);
+  const [layoutHeight, setLayoutHeight] = useState();
+  console.log(atreeLogo);
 
   useEffect(() => {
     const handleResize = debounce(() => {
@@ -147,7 +125,7 @@ export default function Layout({
       {showTopAppBar && (
         <Box
           ref={(refAppBar) => {
-            if (refs.topAppBar !== refAppBar) {
+            if (refs?.topAppBar !== refAppBar) {
               setRefs((e) => ({ ...e, topAppBar: refAppBar }));
             }
           }}
@@ -166,9 +144,32 @@ export default function Layout({
             minHeight={'64px'}
           >
             <TopAppBar
-              title="Dashboard"
-              bgcolor="#FDF7FF"
-              profileIcon={showTopAppBar?.profileIcon}
+              logoUrl={atreeLogo}
+              _appBar={{
+                py: '8.5px',
+                backgroundColor: '#fff',
+              }}
+              title="Jal-Jungle-Jameen"
+              _title={{
+                fontSize: '14px',
+                lineHeight: '16px',
+                color: 'text.secondary',
+                fontWeight: 400,
+              }}
+              subTitle="In Classrooms"
+              _subTitle={{
+                fontSize: '14px',
+                lineHeight: '16px',
+                color: 'text.primary',
+                fontWeight: 700,
+              }}
+              actionButtonColor="secondary"
+              // profileIcon={[
+              //   {
+              //     icon: <>hi</>,
+              //     ariaLabel: 'Help',
+              //   },
+              // ]}
               actionIcons={topAppBarIcons}
               menuIconClick={() => setIsDrawerOpen(true)}
               onLogoutClick={(event) => action.onLogoutClick(event)}
@@ -179,13 +180,13 @@ export default function Layout({
       )}
 
       <CommonDrawer
-        anchor="left"
+        anchor="right"
         open={isDrawerOpen}
         onDrawerClose={() => setIsDrawerOpen(false)}
         items={drawerItems}
         categories={categorieItems}
         onItemClick={(to) => {
-          onItemClick?.(to);
+          onItemClick?.(to || '');
           setIsDrawerOpen(false);
         }}
       />
@@ -223,12 +224,13 @@ export default function Layout({
           </Button>
         </Box>
       )}
-      <Box>
+      <Box position={'ralative'}>
         {isLoadingChildren && (
           <Box
+            position={'absolute'}
             sx={{
               width: '100%',
-              height: `calc(100vh - ${layoutHeight}px)`,
+              height: `calc(100vh - ${layoutHeight || 100}px)`,
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',

@@ -293,7 +293,7 @@ export default function Content({
   };
 
   return (
-    <React.Fragment>
+    <Box sx={{ p: 2 }}>
       {showSearch && (
         <Box
           sx={{
@@ -457,7 +457,7 @@ export default function Content({
       />
       <HelpDesk onClick={handleHelpClick} theme={theme} />
       {showBackToTop && <BackToTop onClick={handleBackToTop} theme={theme} />}
-    </React.Fragment>
+    </Box>
   );
 }
 

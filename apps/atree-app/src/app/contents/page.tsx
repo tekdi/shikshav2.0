@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import { setData } from '@shared-lib';
 import Layout from '../../component/layout/layout';
+import { Box } from '@mui/material';
 
 interface ListProps {}
 
@@ -37,16 +38,16 @@ const List: React.FC<ListProps> = () => {
       showLogo={true}
       showTopAppBar={{
         showSearch: true,
-        title: 'Jal-Jungle-Jameen ',
+        title: 'Jal-Jungle-Jameen',
         subtitle: 'In Classrooms ',
         showMenuIcon: true,
         actionButtonLabel: 'Action',
       }}
     >
-      <div
-        style={{
+      <Box
+        sx={{
           padding: 0,
-          height: 'calc(100vh - 64px)',
+          height: 'calc(100vh - 100px)',
           width: '100vw',
           overflow: 'hidden',
         }}
@@ -58,12 +59,12 @@ const List: React.FC<ListProps> = () => {
             margin: 0,
             padding: 0,
             width: '100vw',
-            height: 'calc(100vh - 64px)',
+            height: 'calc(100vh - 100px)',
             border: 'none',
           }}
           title="Embedded Localhost"
         />
-      </div>
+      </Box>
     </Layout>
   );
 };

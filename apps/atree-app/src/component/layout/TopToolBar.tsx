@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Menu, MenuItem } from '@mui/material';
+import { Container, Menu, MenuItem } from '@mui/material';
 import Image from 'next/image';
 interface ActionIcon {
   icon: React.ReactNode;
@@ -21,14 +21,17 @@ interface ActionIcon {
 }
 interface ProfileIcon {
   icon: React.ReactNode;
-  ariaLabel: string;
+  ariaLabel?: string;
   anchorEl?: HTMLElement | null;
-  onLogoutClick: (
+  onLogoutClick?: (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
 }
 interface CommonAppBarProps {
   title?: string;
+  _title?: object;
+  subTitle?: string;
+  _subTitle?: object;
   showMenuIcon?: boolean;
   showBackIcon?: boolean;
   menuIconClick?: () => void;
@@ -40,90 +43,94 @@ interface CommonAppBarProps {
   bgcolor?: string;
   onMenuClose?: () => void;
   logoUrl?: string;
+  _appBar?: object;
 }
 
-export const TopAppBar: React.FC<CommonAppBarProps> = ({
+const TopAppBar: React.FC<CommonAppBarProps> = ({
   title = 'Title',
-  showMenuIcon = true,
+  _title,
+  subTitle,
+  _subTitle,
   showBackIcon = false,
   menuIconClick,
   backIconClick,
   actionButtonColor = 'inherit',
-  color = 'transparent',
   actionIcons = [],
   profileIcon = [],
-  bgcolor = '#FDF7FF',
   onMenuClose,
   logoUrl,
+  _appBar,
 }) => {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar
-        component="nav"
-        color={color}
-        sx={{
-          boxShadow: 'none',
-          bgcolor,
-        }}
-      >
-        <Toolbar>
-          {showMenuIcon && (
-            <>
-              {logoUrl && (
-                <Image src={logoUrl} alt="logo" width={50} height={50} />
+      <AppBar position="static" component="nav" sx={_appBar}>
+        <Container maxWidth="xl" sx={{ paddingLeft: 0 }}>
+          <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
+            <Box display={'flex'}>
+              {showBackIcon && (
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="text.secondary"
+                  aria-label="back"
+                  onClick={backIconClick}
+                >
+                  <ArrowBackIcon />
+                </IconButton>
               )}
-              <Typography
-                component="div"
-                sx={{
-                  flexGrow: 1,
-                  textAlign: 'center',
-                  fontSize: '22px',
-                  fontWeight: 400,
-                }}
-              >
-                {title}
-              </Typography>
+              <Box>
+                {logoUrl && (
+                  <Image src={logoUrl} alt="logo" width={45} height={45} />
+                )}
+                <Typography
+                  component="div"
+                  sx={{
+                    flexGrow: 1,
+                    fontSize: '14px',
+                    fontWeight: 400,
+                    ..._title,
+                  }}
+                >
+                  {title}
+                </Typography>
+                {subTitle && (
+                  <Typography
+                    component="div"
+                    sx={{
+                      flexGrow: 1,
+                      fontSize: '14px',
+                      fontWeight: 400,
+                      ..._subTitle,
+                    }}
+                  >
+                    {subTitle}
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+            <Box>
               <IconButton
                 size="large"
                 edge="start"
-                color="inherit"
+                color="text.secondary"
                 aria-label="menu"
                 onClick={menuIconClick}
               >
                 <MenuIcon />
               </IconButton>
-            </>
-          )}
-          {showBackIcon && (
-            <>
-              <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="back"
-                onClick={backIconClick}
-              >
-                <ArrowBackIcon />
-              </IconButton>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{ flexGrow: 1, textAlign: 'left' }}
-              >
-                {title}
-              </Typography>
-            </>
-          )}
-          {profileIcon && profileIcon.length > 0 && (
-            <IconButton
-              color={actionButtonColor}
-              aria-label={profileIcon[0]?.ariaLabel}
-              onClick={profileIcon[0]?.onLogoutClick}
-            >
-              {profileIcon[0].icon}
-            </IconButton>
-          )}
-        </Toolbar>
+
+              {profileIcon && profileIcon.length > 0 && (
+                <IconButton
+                  color={actionButtonColor}
+                  aria-label={profileIcon[0]?.ariaLabel}
+                  onClick={profileIcon[0]?.onLogoutClick}
+                >
+                  {profileIcon[0].icon}
+                </IconButton>
+              )}
+            </Box>
+          </Toolbar>
+        </Container>
       </AppBar>
       {profileIcon[0]?.anchorEl && (
         <Menu
@@ -154,3 +161,5 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
     </Box>
   );
 };
+
+export default React.memo(TopAppBar);
