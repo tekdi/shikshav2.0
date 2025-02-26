@@ -9,6 +9,14 @@ interface Login {
   username: string;
   password: string;
 }
+interface CreateUserParams {
+  username: string;
+  password: string;
+  gender: string;
+  firstName: string;
+  lastName: string;
+  mobile: string;
+}
 
 interface RefreshParams {
   refresh_token: string;
@@ -19,20 +27,6 @@ export const login = async ({ username, password }: Login): Promise<any> => {
 
   try {
     const response = await post(apiUrl, { username, password });
-    return response?.data;
-  } catch (error) {
-    console.error('error in login', error);
-    throw error;
-  }
-};
-
-// Atree login API
-
-export const signin = async ({ email, otp }: LoginParams): Promise<any> => {
-  const apiUrl: string = `${process.env.NEXT_PUBLIC_ATREE_LOGIN_URL}/interface/v1/account/login`;
-
-  try {
-    const response = await post(apiUrl, { email, otp });
     return response?.data;
   } catch (error) {
     console.error('error in login', error);
@@ -122,6 +116,42 @@ export const getUserId = async (): Promise<any> => {
     return response?.data?.result;
   } catch (error) {
     console.error('Error in fetching user details', error);
+    throw error;
+  }
+};
+
+// Atree login API
+
+export const signin = async ({ email, otp }: LoginParams): Promise<any> => {
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_ATREE_LOGIN_URL}/interface/v1/account/login`;
+
+  try {
+    const response = await post(apiUrl, { username: email, password: otp });
+    return response?.data;
+  } catch (error) {
+    console.error('error in login', error);
+    throw error;
+  }
+};
+
+export const createUser = async (payload: CreateUserParams): Promise<any> => {
+  const apiUrl: string = `${process.env.NEXT_PUBLIC_ATREE_LOGIN_URL}/interface/v1/account/create`;
+
+  const { firstName, lastName, username, password } = payload; // Extract values from payload
+
+  try {
+    const response = await post(apiUrl, {
+      username: username, // Ensure correct field name
+      password: password,
+      gender: 'male',
+      firstName: firstName,
+      lastName: lastName,
+      mobile: '9877297629',
+    });
+
+    return response?.data;
+  } catch (error) {
+    console.error('Error in login:', error);
     throw error;
   }
 };

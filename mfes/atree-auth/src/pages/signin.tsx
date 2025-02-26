@@ -114,7 +114,7 @@ export default function Signin() {
           }}
         >
           <FormLabel component="legend" sx={{ color: '#4D4639' }}>
-            Unlock with Your Email
+            Username
           </FormLabel>
 
           <CommonTextField
@@ -132,7 +132,7 @@ export default function Signin() {
             separator={<span></span>}
             value={otp}
             onChange={setOtp}
-            length={6}
+            length={5}
           />
           <Typography>Request to Resend OTP in 4:59</Typography>
           <Button

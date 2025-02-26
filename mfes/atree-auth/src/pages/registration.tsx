@@ -8,6 +8,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { GoogleLogin } from '@react-oauth/google';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import Otp from './otp';
+import { createUser } from '../services/LoginService';
+import { Password } from '@mui/icons-material';
 const languageData = [
   { id: 1, name: 'Educator' },
   { id: 2, name: 'Mentor' },
@@ -18,6 +21,7 @@ export default function Registration() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    password: '',
   });
   const [error, setError] = useState({
     name: false,
@@ -25,6 +29,8 @@ export default function Registration() {
   });
   const [selectedValue, setSelectedValue] = useState('Educator');
   const [user, setUser] = useState<any>(null);
+  const [otpShow, setOtpShow] = useState(false);
+  const [otp, setOtp] = React.useState('');
   const router = useRouter();
   const handleChange =
     (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,8 +47,39 @@ export default function Registration() {
 
   const handleSigninClick = async () => {
     // router.push('/verifyOTP');
+    setOtpShow(true);
+    console.log(formData);
   };
+  const handleCreateUser = async () => {
+    try {
+      const [firstName, ...lastNameArr] = formData.name.trim().split(' '); // Split name into first and last
+      const lastName = lastNameArr.join(' '); // Handle cases where last name has multiple parts
 
+      const payload = {
+        firstName,
+        lastName,
+        username: formData.email,
+        password: otp,
+        mobile: '',
+        gender: '',
+      };
+      const response = await createUser(payload);
+
+      if (response?.result?.access_token) {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          const token = response.result.access_token;
+          const refreshToken = response?.result?.refresh_token;
+
+          if (token) {
+            localStorage.setItem('token', token);
+            localStorage.setItem('refreshToken', refreshToken);
+          }
+        }
+      }
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
   const handleSelectChange = (event: SelectChangeEvent) => {
     setSelectedValue(event.target.value);
   };
@@ -100,15 +137,20 @@ export default function Registration() {
             backgroundColor: '#FFFFFF',
           }}
         >
-          <FormLabel component="legend">Full Name</FormLabel>
-          <CommonTextField
-            value={formData.name}
-            onChange={handleChange('name')}
-            type="text"
-            variant="outlined"
-            helperText={error.name ? `Enter full name ` : ''}
-            error={error.name}
-          />
+          {!otpShow && (
+            <>
+              <FormLabel component="legend">Full Name</FormLabel>
+              <CommonTextField
+                value={formData.name}
+                onChange={handleChange('name')}
+                type="text"
+                variant="outlined"
+                helperText={error.name ? `Enter full name ` : ''}
+                error={error.name}
+              />
+            </>
+          )}
+
           <FormLabel component="legend">Email ID</FormLabel>
 
           <CommonTextField
@@ -119,6 +161,19 @@ export default function Registration() {
             helperText={error.email ? `Enter Email ID ` : ''}
             error={error.email}
           />
+          {otpShow && (
+            <>
+              <FormLabel component="legend" sx={{ color: '#4D4639' }}>
+                Enter the 6-digit code sent to your email
+              </FormLabel>
+              <Otp
+                separator={<span></span>}
+                value={otp}
+                onChange={setOtp}
+                length={5}
+              />
+            </>
+          )}
           <FormLabel component="legend">Select Role</FormLabel>
           <CommonSelect
             value={selectedValue}
@@ -130,22 +185,46 @@ export default function Registration() {
             // borderRadius="8px"
           />
 
-          <Button
-            onClick={handleSigninClick}
-            sx={{
-              color: '#2B3133',
-              width: '100%',
-              height: '40px',
-              background:
-                'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
-              borderRadius: '50px',
-              fontSize: '16px',
-              fontWeight: 500,
-              textTransform: 'none',
-            }}
-          >
-            Proceed
-          </Button>
+          {otpShow ? (
+            <Button
+              onClick={handleCreateUser}
+              sx={{
+                color: '#2B3133',
+                width: '100%',
+                height: '40px',
+                background:
+                  'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                borderRadius: '50px',
+                fontSize: '16px',
+                fontWeight: 500,
+                textTransform: 'none',
+              }}
+            >
+              Verify & Proceed
+            </Button>
+          ) : (
+            <Button
+              onClick={handleSigninClick}
+              sx={{
+                color: '#2B3133',
+                width: '100%',
+                height: '40px',
+                background:
+                  'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                borderRadius: '50px',
+                fontSize: '16px',
+                fontWeight: 500,
+                textTransform: 'none',
+              }}
+              disabled={
+                formData.name === '' &&
+                formData.email === '' &&
+                selectedValue === ''
+              }
+            >
+              Proceed
+            </Button>
+          )}
           <GoogleOAuthProvider clientId="467709515234-qu171h5np0rae7vrl23uv1audjht7fsa.apps.googleusercontent.com">
             <GoogleLogin
               onSuccess={handleLoginSuccess}
