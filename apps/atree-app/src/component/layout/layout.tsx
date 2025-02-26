@@ -84,7 +84,6 @@ export default function Layout({
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [refs, setRefs] = useState({});
   const [layoutHeight, setLayoutHeight] = useState();
-  console.log(atreeLogo);
 
   useEffect(() => {
     const handleResize = debounce(() => {
@@ -224,28 +223,40 @@ export default function Layout({
           </Button>
         </Box>
       )}
-      <Box position={'ralative'}>
+      <Box>
         {isLoadingChildren && (
           <Box
-            position={'absolute'}
             sx={{
               width: '100%',
               height: `calc(100vh - ${layoutHeight || 100}px)`,
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
+              position: 'absolute',
+              zIndex: 9999,
+              backgroundColor: 'white',
             }}
           >
             <CircularProgress />
           </Box>
         )}
-        {children}
+
+        <Box
+          style={{
+            width: '100%',
+            overflowY: 'auto',
+            display: isLoadingChildren ? 'none' : 'block',
+            height: `calc(100vh - ${layoutHeight || 100}px)`,
+          }}
+        >
+          {children}
+        </Box>
       </Box>
 
       {isFooter && (
         <Box
           ref={(refFoot) => {
-            if (refs.footer !== refFoot) {
+            if (refs?.footer !== refFoot) {
               setRefs((e) => ({ ...e, footer: refFoot }));
             }
           }}
