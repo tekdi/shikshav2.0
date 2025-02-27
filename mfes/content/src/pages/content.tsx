@@ -22,6 +22,7 @@ import {
   CommonSearch,
   CommonTextField,
   getData,
+  Loader,
 } from '@shared-lib';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { ChangeEvent } from 'react';
@@ -46,6 +47,7 @@ export default function Content({
   const [tabValue, setTabValue] = useState<number>();
   const [tabs, setTabs] = useState<any>([]);
   const [contentData, setContentData] = useState<ContentSearchResponse[]>([]);
+  const [isPageLoading, setPageIsLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
   const [localFilters, setFilters] = useState<any>({ limit: 5, offset: 0 });
@@ -65,10 +67,12 @@ export default function Content({
     _grid: object;
     filters: object;
     contentTabs: string[];
+    cardName?: string;
   }>({
     _grid: {},
     filters: {},
     contentTabs: [],
+    cardName: '',
   });
 
   useEffect(() => {
@@ -76,6 +80,7 @@ export default function Content({
       const newData = await getData('mfes_content_pages_content');
       setPropData(newData);
       setTabValue(0);
+      setPageIsLoading(false);
     };
     init();
   }, []);
@@ -114,12 +119,10 @@ export default function Content({
   };
 
   const handleSearchClick = async () => {
-    if (searchValue.trim()) {
-      setFilters((prevFilters: any) => ({
-        ...prevFilters,
-        query: searchValue.trim(),
-      }));
-    }
+    setFilters((prevFilters: any) => ({
+      ...prevFilters,
+      query: searchValue.trim(),
+    }));
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -293,171 +296,179 @@ export default function Content({
   };
 
   return (
-    <Box sx={{ p: 2 }}>
-      {showSearch && (
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <CommonSearch
-            placeholder={'Search content..'}
-            rightIcon={<SearchIcon />}
-            onRightIconClick={handleSearchClick}
-            inputValue={searchValue || ''}
-            onInputChange={handleSearchChange}
+    <Loader isLoading={isPageLoading}>
+      <Box sx={{ p: 2 }}>
+        {showSearch && (
+          <Box
             sx={{
-              backgroundColor: '#f0f0f0',
-              padding: '4px',
-              borderRadius: '50px',
               width: '100%',
-              marginLeft: '10px',
+              display: 'flex',
+              justifyContent: 'space-between',
             }}
-          />
-          {showFilter && (
-            <Box>
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  backgroundColor: '#ECE6F0',
-                  borderRadius: '12px',
-                  // padding: '8px',
-                  width: '56px',
-                  height: '46px',
-                  '&:hover': {
-                    backgroundColor: '#E0E0E0',
-                    boxShadow: '0px 4px 8px 3px #00000026',
-                  },
-                  marginLeft: '4px',
-                  marginRight: '7px',
+          >
+            <CommonSearch
+              placeholder={'Search content..'}
+              rightIcon={<SearchIcon />}
+              onRightIconClick={handleSearchClick}
+              inputValue={searchValue || ''}
+              onInputChange={handleSearchChange}
+              onKeyPress={(ev: any) => {
+                if (ev.key === 'Enter') {
+                  handleSearchClick();
+                }
+              }}
+              sx={{
+                backgroundColor: '#f0f0f0',
+                padding: '4px',
+                borderRadius: '50px',
+                width: '100%',
+                marginLeft: '10px',
+              }}
+            />
+            {showFilter && (
+              <Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    backgroundColor: '#ECE6F0',
+                    borderRadius: '12px',
+                    // padding: '8px',
+                    width: '56px',
+                    height: '46px',
+                    '&:hover': {
+                      backgroundColor: '#E0E0E0',
+                      boxShadow: '0px 4px 8px 3px #00000026',
+                    },
+                    marginLeft: '4px',
+                    marginRight: '7px',
 
-                  boxShadow: '0px 1px 3px 0px #0000004D',
-                }}
-                onClick={() => setFilterShow(true)}
-              >
-                <FilterAltOutlinedIcon
-                  sx={{ color: '#6750A4', fontSize: '25px' }}
+                    boxShadow: '0px 1px 3px 0px #0000004D',
+                  }}
+                  onClick={() => setFilterShow(true)}
+                >
+                  <FilterAltOutlinedIcon
+                    sx={{ color: '#6750A4', fontSize: '25px' }}
+                  />
+                </Box>
+                <FilterDialog
+                  open={filterShow}
+                  onClose={() => setFilterShow(false)}
+                  frameworkFilter={frameworkFilter}
+                  filterValues={localFilters}
+                  onApply={handleApplyFilters}
                 />
-              </Box>
-              <FilterDialog
-                open={filterShow}
-                onClose={() => setFilterShow(false)}
-                frameworkFilter={frameworkFilter}
-                filterValues={localFilters}
-                onApply={handleApplyFilters}
-              />
 
-              <CommonDialog
-                isOpen={isDialogOpen}
-                onClose={handleDialogClose}
-                header="Help desk"
-                content={
-                  <Grid container spacing={2}>
-                    <Typography>
-                      We’ve sent an your issue to help desk
-                    </Typography>
-                    <Grid
-                      size={{ xs: 12, sm: 6, md: 12, lg: 12 }}
+                <CommonDialog
+                  isOpen={isDialogOpen}
+                  onClose={handleDialogClose}
+                  header="Help desk"
+                  content={
+                    <Grid container spacing={2}>
+                      <Typography>
+                        We’ve sent an your issue to help desk
+                      </Typography>
+                      <Grid
+                        size={{ xs: 12, sm: 6, md: 12, lg: 12 }}
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 2,
+                          borderRadius: '20px 20px 0 0',
+                          padding: '15px',
+                          backgroundColor: '#FFFFFF',
+                        }}
+                      >
+                        <CommonTextField
+                          label="Subject"
+                          value={issueData.subject}
+                          type="text"
+                          variant="outlined"
+                          onChange={handleChange('subject')}
+                        />
+                        <CommonTextField
+                          label="Description"
+                          type="text"
+                          variant="outlined"
+                          multiline
+                          rows={4}
+                          value={issueData.description}
+                          onChange={handleChange('description')}
+                        />
+                        <FormControl fullWidth>
+                          <InputLabel id="demo-simple-select-label">
+                            Status
+                          </InputLabel>
+                          <Select
+                            fullWidth
+                            value={issueData.status}
+                            onChange={handleChange('status')}
+                          >
+                            <MenuItem value="Open">Open</MenuItem>
+                            <MenuItem value="Closed">Closed</MenuItem>
+                            <MenuItem value="In Progress">In Progress</MenuItem>
+                          </Select>
+                        </FormControl>
+                        <FormControl fullWidth>
+                          <InputLabel id="demo-simple-select-label">
+                            Priority
+                          </InputLabel>
+
+                          <Select
+                            fullWidth
+                            value={issueData.priority}
+                            onChange={handleChange('priority')}
+                            sx={{ mt: 2 }}
+                          >
+                            <MenuItem value="High">High</MenuItem>
+                            <MenuItem value="Medium">Medium</MenuItem>
+                            <MenuItem value="Low">Low</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                    </Grid>
+                  }
+                  actions={
+                    <Button
+                      onClick={handleOtpSubmit}
                       sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 2,
-                        borderRadius: '20px 20px 0 0',
-                        padding: '15px',
-                        backgroundColor: '#FFFFFF',
+                        color: '#FFFFFF',
+                        width: '20%',
+                        height: '40px',
+                        bgcolor: '#6750A4',
+                        borderRadius: '50px',
+                        fontSize: '14px',
+                        fontWeight: 500,
                       }}
                     >
-                      <CommonTextField
-                        label="Subject"
-                        value={issueData.subject}
-                        type="text"
-                        variant="outlined"
-                        onChange={handleChange('subject')}
-                      />
-                      <CommonTextField
-                        label="Description"
-                        type="text"
-                        variant="outlined"
-                        multiline
-                        rows={4}
-                        value={issueData.description}
-                        onChange={handleChange('description')}
-                      />
-                      <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">
-                          Status
-                        </InputLabel>
-                        <Select
-                          fullWidth
-                          value={issueData.status}
-                          onChange={handleChange('status')}
-                        >
-                          <MenuItem value="Open">Open</MenuItem>
-                          <MenuItem value="Closed">Closed</MenuItem>
-                          <MenuItem value="In Progress">In Progress</MenuItem>
-                        </Select>
-                      </FormControl>
-                      <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">
-                          Priority
-                        </InputLabel>
-
-                        <Select
-                          fullWidth
-                          value={issueData.priority}
-                          onChange={handleChange('priority')}
-                          sx={{ mt: 2 }}
-                        >
-                          <MenuItem value="High">High</MenuItem>
-                          <MenuItem value="Medium">Medium</MenuItem>
-                          <MenuItem value="Low">Low</MenuItem>
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                  </Grid>
-                }
-                actions={
-                  <Button
-                    onClick={handleOtpSubmit}
-                    sx={{
-                      color: '#FFFFFF',
-                      width: '20%',
-                      height: '40px',
-                      bgcolor: '#6750A4',
-                      borderRadius: '50px',
-                      fontSize: '14px',
-                      fontWeight: 500,
-                    }}
-                  >
-                    Submit
-                  </Button>
-                }
-              />
-            </Box>
-          )}
-        </Box>
-      )}
-      <RenderTabContent
-        value={tabValue}
-        onChange={handleTabChange}
-        contentData={contentData}
-        _grid={{ ..._grid, ...propData?._grid }}
-        trackData={trackData || []}
-        type={localFilters?.type || ''}
-        handleCardClick={handleCardClick}
-        hasMoreData={hasMoreData}
-        handleLoadMore={handleLoadMore}
-        isLodingMoreData={isLoading}
-        tabs={tabs}
-      />
-      <HelpDesk onClick={handleHelpClick} theme={theme} />
-      {showBackToTop && <BackToTop onClick={handleBackToTop} theme={theme} />}
-    </Box>
+                      Submit
+                    </Button>
+                  }
+                />
+              </Box>
+            )}
+          </Box>
+        )}
+        <RenderTabContent
+          {...propData}
+          value={tabValue}
+          onChange={handleTabChange}
+          contentData={contentData}
+          _grid={{ ..._grid, ...propData?._grid }}
+          trackData={trackData || []}
+          type={localFilters?.type || ''}
+          handleCardClick={handleCardClick}
+          hasMoreData={hasMoreData}
+          handleLoadMore={handleLoadMore}
+          isLodingMoreData={isLoading}
+          tabs={tabs}
+        />
+        <HelpDesk onClick={handleHelpClick} theme={theme} />
+        {showBackToTop && <BackToTop onClick={handleBackToTop} theme={theme} />}
+      </Box>
+    </Loader>
   );
 }
 

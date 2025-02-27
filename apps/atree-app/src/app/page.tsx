@@ -1,11 +1,10 @@
 'use client';
 
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {
   Box,
   Button,
-  Card,
-  CardContent,
-  CardMedia,
   Dialog,
   DialogActions,
   DialogContent,
@@ -13,14 +12,12 @@ import {
   IconButton,
   Typography,
 } from '@mui/material';
-import { ContentSearch } from '@shared-lib';
+import Grid from '@mui/material/Grid2';
+import { AtreeCard, ContentSearch } from '@shared-lib';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import Layout from '../component/layout/layout';
-import Grid from '@mui/material/Grid2';
 import atreeLogo from '../../assets/images/atreeLogo.png';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Layout from '../component/layout/layout';
 
 const buttonColors = {
   water: '#0E28AE',
@@ -117,11 +114,14 @@ export default function Index() {
             flexDirection: 'column',
           }}
         >
-          <Title>Read, Watch, Listen</Title>
-          <ContentCard
+          <Title onClick={() => router.push('/contents')}>
+            Read, Watch, Listen
+          </Title>
+          <AtreeCard
             contents={contentData}
             handleCardClick={handleCardClick}
             _grid={{ size: { xs: 6, sm: 6, md: 12, lg: 12 } }}
+            _card={{ image: atreeLogo.src }}
           />
         </Box>
         <Box
@@ -149,87 +149,20 @@ export default function Index() {
             flexDirection: 'column',
           }}
         >
-          <Title>Related Content</Title>
-          <ContentCard
+          <Title onClick={() => router.push('/contents')}>
+            Related Content
+          </Title>
+          <AtreeCard
             contents={relatedContent}
             handleCardClick={handleCardClick}
             _grid={{ size: { xs: 6, sm: 6, md: 12, lg: 12 } }}
+            _card={{ image: atreeLogo.src }}
           />
         </Box>
       </Box>
     </Layout>
   );
 }
-
-const ContentCard = React.memo<{
-  contents: Array<{
-    identifier: string;
-    mimeType: string;
-    image?: string;
-    name: string;
-    description: string;
-  }>;
-  _grid: object;
-  handleCardClick: (id: string, mimeType: string) => void;
-}>(function ContentCard({ contents, handleCardClick, _grid }) {
-  return (
-    <Grid container spacing={2} width="100%">
-      {contents.map((content) => (
-        <Grid
-          size={{ xs: 6, sm: 6, md: 6, lg: 6 }}
-          key={content.identifier}
-          {..._grid}
-        >
-          <Card
-            sx={{ height: '100%', boxShadow: 'none' }}
-            onClick={() =>
-              handleCardClick(content.identifier, content.mimeType)
-            }
-          >
-            <CardMedia
-              component="img"
-              height="140"
-              image={content?.image || atreeLogo.src}
-              alt={content.name}
-              sx={{
-                borderRadius: '16px',
-                border: '1px solid rgba(0,0,0,0.1)',
-              }}
-            />
-            <CardContent
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  fontWeight: 700,
-                  fontSize: '16px',
-                  lineHeight: '20px',
-                  color: '#171D1E',
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-              >
-                {content.name}
-              </Typography>
-              <Typography color="text.secondary">
-                {`Year: ${content?.year || 'N/A'}`}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      ))}
-    </Grid>
-  );
-});
 
 const FrameworkFilter = React.memo<{
   frameworkFilter: Array<{ identifier: string; name: string }>;
@@ -353,8 +286,6 @@ const Title: React.FC<{
   children: React.ReactNode | string;
   onClick?: () => void;
 }> = ({ children, onClick }) => {
-  const router = useRouter();
-
   return (
     <Box
       display="flex"

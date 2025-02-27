@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import { setData } from '@shared-lib';
 import Layout from '../../component/layout/layout';
 import { Box } from '@mui/material';
+import atreeLogo from '../../../assets/images/atreeLogo.png';
 
 interface ListProps {}
 
@@ -15,7 +16,7 @@ const List: React.FC<ListProps> = () => {
     const init = async () => {
       await setData('mfes_content_pages_content', {
         _grid: {
-          size: { xs: 12, sm: 12, md: 12, lg: 12 },
+          size: { xs: 6, sm: 6, md: 6, lg: 6 },
         },
         contentTabs: ['content'],
         filters: {
@@ -23,6 +24,10 @@ const List: React.FC<ListProps> = () => {
             channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
             status: ['Live'],
           },
+        },
+        _card: {
+          cardName: 'AtreeCard',
+          image: atreeLogo.src,
         },
       });
       setIsLoadingChildren(false);

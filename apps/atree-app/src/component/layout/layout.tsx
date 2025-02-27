@@ -1,7 +1,7 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Button, CircularProgress, debounce, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
-import { CommonDrawer, Footer } from '@shared-lib';
+import { CommonDrawer, Footer, Loader } from '@shared-lib';
 import React, { useEffect, useState } from 'react';
 import atreeLogo from '../../../assets/images/atreeLogo.png';
 import TopAppBar from './TopToolBar';
@@ -223,35 +223,9 @@ export default function Layout({
           </Button>
         </Box>
       )}
-      <Box>
-        {isLoadingChildren && (
-          <Box
-            sx={{
-              width: '100%',
-              height: `calc(100vh - ${layoutHeight || 100}px)`,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              position: 'absolute',
-              zIndex: 9999,
-              backgroundColor: 'white',
-            }}
-          >
-            <CircularProgress />
-          </Box>
-        )}
-
-        <Box
-          style={{
-            width: '100%',
-            overflowY: 'auto',
-            display: isLoadingChildren ? 'none' : 'block',
-            height: `calc(100vh - ${layoutHeight || 100}px)`,
-          }}
-        >
-          {children}
-        </Box>
-      </Box>
+      <Loader isLoading={isLoadingChildren} layoutHeight={layoutHeight || 100}>
+        {children}
+      </Loader>
 
       {isFooter && (
         <Box

@@ -7,7 +7,7 @@ import {
   Typography,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { CommonCard } from '@shared-lib';
+import { CommonCard, AtreeCard } from '@shared-lib';
 import React, { memo } from 'react';
 import { ContentSearchResponse } from '../services/Search';
 
@@ -25,6 +25,7 @@ const RenderTabContent = memo(
     onChange,
     ariaLabel,
     isLodingMoreData,
+    _card,
   }: {
     contentData: ContentSearchResponse[];
     _grid: any;
@@ -38,6 +39,7 @@ const RenderTabContent = memo(
     onChange?: (event: React.SyntheticEvent, newValue: number) => void;
     ariaLabel?: string;
     isLodingMoreData: boolean;
+    _card?: any;
   }) => {
     return (
       <Box sx={{ width: '100%' }}>
@@ -82,55 +84,67 @@ const RenderTabContent = memo(
           </Box>
         )}
         <Box sx={{ flexGrow: 1, mt: 2 }}>
-          <Grid container spacing={2}>
-            {contentData?.map((item: any) => (
-              <Grid
-                key={item?.identifier}
-                size={{ xs: 6, sm: 6, md: 3, lg: 3 }}
-                {..._grid}
-                // {...(propData?._grid || {})}
-              >
-                <CommonCard
-                  title={(item?.name || '').trim()}
-                  image={
-                    item?.posterImage && item?.posterImage !== 'undefined'
-                      ? item?.posterImage
-                      : '/assests/images/image_ver.png'
-                  }
-                  content={item?.description || '-'}
-                  actions={item?.contentType}
-                  // subheader={item?.contentType}
-                  orientation="horizontal"
-                  item={[item]}
-                  TrackData={trackData}
-                  type={type}
-                  onClick={() =>
-                    handleCardClick(
-                      item?.identifier || '',
-                      item?.mimeType || ''
-                    )
-                  }
-                />
+          {_card?.cardName === 'AtreeCard' ? (
+            <AtreeCard
+              _card={_card}
+              contents={contentData}
+              _grid={{ ..._grid }}
+              handleCardClick={handleCardClick}
+            />
+          ) : (
+            <Box>
+              <Grid container spacing={2}>
+                {contentData?.map((item: any) => (
+                  <Grid
+                    key={item?.identifier}
+                    size={{ xs: 6, sm: 6, md: 3, lg: 3 }}
+                    {..._grid}
+                  >
+                    <CommonCard
+                      title={(item?.name || '').trim()}
+                      image={
+                        item?.posterImage && item?.posterImage !== 'undefined'
+                          ? item?.posterImage
+                          : '/assests/images/image_ver.png'
+                      }
+                      content={item?.description || '-'}
+                      actions={item?.contentType}
+                      // subheader={item?.contentType}
+                      orientation="horizontal"
+                      item={[item]}
+                      TrackData={trackData}
+                      type={type}
+                      onClick={() =>
+                        handleCardClick(
+                          item?.identifier || '',
+                          item?.mimeType || ''
+                        )
+                      }
+                    />
+                  </Grid>
+                ))}
               </Grid>
-            ))}
-          </Grid>
-          <Box sx={{ textAlign: 'center', mt: 4 }}>
-            {hasMoreData ? (
-              <Button
-                variant="contained"
-                onClick={handleLoadMore}
-                disabled={isLodingMoreData}
-              >
-                {isLodingMoreData ? (
-                  <CircularProgress size={20} />
+              <Box sx={{ textAlign: 'center', mt: 4 }}>
+                {hasMoreData ? (
+                  <Button
+                    variant="contained"
+                    onClick={handleLoadMore}
+                    disabled={isLodingMoreData}
+                  >
+                    {isLodingMoreData ? (
+                      <CircularProgress size={20} />
+                    ) : (
+                      'Load More'
+                    )}
+                  </Button>
                 ) : (
-                  'Load More'
+                  <Typography variant="body1">
+                    No more data available
+                  </Typography>
                 )}
-              </Button>
-            ) : (
-              <Typography variant="body1">No more data available</Typography>
-            )}
-          </Box>
+              </Box>
+            </Box>
+          )}
         </Box>
       </Box>
     );

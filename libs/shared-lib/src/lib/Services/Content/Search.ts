@@ -5,7 +5,7 @@ interface ContentProps {
     content: ContentSearchResponse[];
   };
 }
-interface ContentSearchResponse {
+export interface ContentSearchResponse {
   ownershipType?: string[];
   publish_type?: string;
   copyright?: string;

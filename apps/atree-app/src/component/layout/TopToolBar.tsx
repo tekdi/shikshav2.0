@@ -80,7 +80,9 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
               )}
               <Box>
                 {logoUrl && (
-                  <Image src={logoUrl} alt="logo" width={45} height={45} />
+                  <Box onClick={() => (window.location.href = '/')}>
+                    <Image src={logoUrl} alt="logo" width={45} height={45} />
+                  </Box>
                 )}
                 <Typography
                   component="div"
