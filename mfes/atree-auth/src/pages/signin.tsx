@@ -98,7 +98,7 @@ export default function Signin() {
           bgcolor: '#FFFFFF',
           justifyContent: 'center',
 
-          padding: 2,
+          //   padding: 2,
           mx: 'auto',
         }}
       >
