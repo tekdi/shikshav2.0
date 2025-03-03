@@ -2,17 +2,17 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Button, debounce, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import { CommonDrawer, Footer, Loader } from '@shared-lib';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import atreeLogo from '../../../assets/images/atreeLogo.png';
 import TopAppBar from './TopToolBar';
 
 interface LayoutProps {
-  children: React.ReactNode;
-  footerComponent: React.ReactNode | string;
+  children?: React.ReactNode;
+  footerComponent?: React.ReactNode | string;
   isLoadingChildren?: boolean;
   isFooter?: boolean;
   showBack?: boolean;
-  backTitle?: string;
+  backTitle?: React.ReactNode | string;
   sx?: object;
   categorieItems?: {
     text: string;
@@ -84,17 +84,18 @@ export default function Layout({
   sx = {},
   footerComponent,
   _footer,
-}): LayoutProps {
+}: LayoutProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [refs, setRefs] = useState({});
-  const [layoutHeight, setLayoutHeight] = useState();
+  const [layoutHeight, setLayoutHeight] = useState(0);
+  const refs = useRef({});
 
   useEffect(() => {
     const handleResize = debounce(() => {
-      const totalHeight = Object.keys(refs).reduce((acc, key) => {
-        const ref = refs[key];
+      const totalHeight = Object.keys(refs.current).reduce((acc, key) => {
+        const ref: HTMLElement | undefined =
+          refs.current[key as keyof typeof refs.current];
         if (ref) {
-          return acc + ref.offsetHeight;
+          return acc + (ref as HTMLElement).offsetHeight;
         }
         return acc;
       }, 0);
@@ -103,14 +104,14 @@ export default function Layout({
 
     window.addEventListener('resize', handleResize);
 
-    if (Object.keys(refs).length) {
+    if (Object.keys(refs.current).length) {
       handleResize();
     }
 
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [Object.keys(refs).length]);
+  }, [Object.keys(refs.current).length]);
 
   const handleButtonClick = () => {
     console.log('Footer button clicked!');
@@ -125,63 +126,86 @@ export default function Layout({
         ...sx,
       }}
     >
-      {showTopAppBar && (
-        <Box
-          ref={(refAppBar) => {
-            if (refs?.topAppBar !== refAppBar) {
-              setRefs((e) => ({ ...e, topAppBar: refAppBar }));
-            }
-          }}
-          sx={{
-            display: 'center',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'column',
-          }}
-        >
+      <Box
+        ref={(refAppBar) => {
+          if (
+            !Object.prototype.hasOwnProperty.call(refs.current, 'topAppBar')
+          ) {
+            refs.current = { ...refs.current, topAppBar: refAppBar };
+          }
+        }}
+      >
+        {showTopAppBar && (
+          <Box
+            sx={{
+              display: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+            }}
+          >
+            <Box
+              sx={{
+                width: '100%',
+                bgcolor: '#FFFFFF',
+              }}
+              minHeight={'64px'}
+            >
+              <TopAppBar
+                logoUrl={atreeLogo?.src || ''}
+                _appBar={{
+                  py: '8.5px',
+                  backgroundColor: '#fff',
+                }}
+                title="Jal-Jungle-Jameen"
+                _title={{
+                  fontSize: '14px',
+                  lineHeight: '16px',
+                  color: 'text.secondary',
+                  fontWeight: 400,
+                }}
+                subTitle="In Classrooms"
+                _subTitle={{
+                  fontSize: '14px',
+                  lineHeight: '16px',
+                  color: 'text.primary',
+                  fontWeight: 700,
+                }}
+                actionButtonColor="secondary"
+                actionIcons={topAppBarIcons}
+                menuIconClick={() => setIsDrawerOpen(true)}
+                // profileIcon={[
+                //   {
+                //     icon: <>hi</>,
+                //     ariaLabel: 'Help',
+                //   },
+                // ]}
+                // onLogoutClick={(event) => action.onLogoutClick(event)}
+                {...showTopAppBar}
+              />
+            </Box>
+          </Box>
+        )}
+
+        {showBack && backIconClick && (
           <Box
             sx={{
               width: '100%',
+              display: 'flex',
+              alignItems: 'flex-start',
+              padding: '12px 16px',
               bgcolor: '#FFFFFF',
+              gap: 2,
             }}
-            minHeight={'64px'}
+            onClick={backIconClick}
           >
-            <TopAppBar
-              logoUrl={atreeLogo?.src || ''}
-              _appBar={{
-                py: '8.5px',
-                backgroundColor: '#fff',
-              }}
-              title="Jal-Jungle-Jameen"
-              _title={{
-                fontSize: '14px',
-                lineHeight: '16px',
-                color: 'text.secondary',
-                fontWeight: 400,
-              }}
-              subTitle="In Classrooms"
-              _subTitle={{
-                fontSize: '14px',
-                lineHeight: '16px',
-                color: 'text.primary',
-                fontWeight: 700,
-              }}
-              actionButtonColor="secondary"
-              actionIcons={topAppBarIcons}
-              menuIconClick={() => setIsDrawerOpen(true)}
-              // profileIcon={[
-              //   {
-              //     icon: <>hi</>,
-              //     ariaLabel: 'Help',
-              //   },
-              // ]}
-              // onLogoutClick={(event) => action.onLogoutClick(event)}
-              {...showTopAppBar}
-            />
+            <ArrowBackIcon />
+            <Typography fontSize={'22px'} fontWeight={400}>
+              {backTitle}
+            </Typography>
           </Box>
-        </Box>
-      )}
-
+        )}
+      </Box>
       <CommonDrawer
         anchor="right"
         open={isDrawerOpen}
@@ -193,49 +217,15 @@ export default function Layout({
           setIsDrawerOpen(false);
         }}
       />
-
-      {showBack && backIconClick && (
-        <Box
-          ref={(refBack) => {
-            if (refs.backButton !== refBack) {
-              setRefs((e) => ({ ...e, backButton: refBack }));
-            }
-          }}
-          sx={{
-            width: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            padding: '8px 16px',
-            bgcolor: '#FFFFFF',
-            position: 'fixed',
-            top: '55px',
-            zIndex: 1100,
-          }}
-        >
-          <Button
-            startIcon={<ArrowBackIcon />}
-            onClick={backIconClick}
-            sx={{
-              textTransform: 'none',
-              color: '#1E1B16',
-              fontSize: '16px',
-            }}
-          >
-            <Typography fontSize={'22px'} fontWeight={400}>
-              {backTitle}
-            </Typography>
-          </Button>
-        </Box>
-      )}
-      <Loader isLoading={isLoadingChildren} layoutHeight={layoutHeight || 100}>
+      <Loader isLoading={isLoadingChildren} layoutHeight={layoutHeight}>
         {children}
       </Loader>
 
       {isFooter && (
         <Box
           ref={(refFoot) => {
-            if (refs?.footer !== refFoot) {
-              setRefs((e) => ({ ...e, footer: refFoot }));
+            if (!Object.prototype.hasOwnProperty.call(refs.current, 'footer')) {
+              refs.current = { ...refs.current, footer: refFoot };
             }
           }}
           sx={{

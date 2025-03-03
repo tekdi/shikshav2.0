@@ -1,6 +1,5 @@
 'use client';
 import {
-  Box,
   Card,
   CardActionArea,
   CardContent,
@@ -9,17 +8,17 @@ import {
 } from '@mui/material';
 // import { useTranslation } from 'react-i18next';
 import Grid from '@mui/material/Grid2';
-import Layout from '../../component/layout/layout';
-import landingBanner from '../../../assets/images/landingBanner.png';
-import instagram_logo from '../../../assets/images/instagram_logo.png';
+import Image from 'next/image';
 import ActivityBooks from '../../../assets/images/ActivityBooks.png';
 import Climatechangebookcover from '../../../assets/images/Climatechangebookcover.png';
 import Forests from '../../../assets/images/Forests.png';
+import instagram_logo from '../../../assets/images/instagram_logo.png';
 import Land from '../../../assets/images/Land.png';
+import landingBanner from '../../../assets/images/landingBanner.png';
 import ReferenceBooks from '../../../assets/images/LetsTalkAboutTreesCover.png';
 import Water from '../../../assets/images/WatercoverTekdi.png';
-import Image from 'next/image';
 import Insta from '../../component/Insta';
+import Layout from '../../component/layout/layout';
 
 const catImages = {
   Water,
@@ -185,7 +184,7 @@ const LandingPage = () => {
 
 export default LandingPage;
 
-const CardComponent = ({
+export const CardComponent = ({
   image,
   name,
   _image,

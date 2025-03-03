@@ -84,7 +84,7 @@ export default function Index() {
 
   const handleCardClick = (id: string, mimeType: string) => {
     if (consumedContent.length < 3) {
-      router.push(`/player/${id}`);
+      router.push(`/contents/${id}`);
       setConsumedContent((prev) => [...prev, id]);
     } else {
       alert('Please log in to continue');
