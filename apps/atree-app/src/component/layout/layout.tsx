@@ -1,5 +1,5 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Button, CircularProgress, debounce, Typography } from '@mui/material';
+import { Button, debounce, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import { CommonDrawer, Footer, Loader } from '@shared-lib';
 import React, { useEffect, useState } from 'react';
@@ -8,6 +8,7 @@ import TopAppBar from './TopToolBar';
 
 interface LayoutProps {
   children: React.ReactNode;
+  footerComponent: React.ReactNode | string;
   isLoadingChildren?: boolean;
   isFooter?: boolean;
   showBack?: boolean;
@@ -65,6 +66,7 @@ interface LayoutProps {
     onClick: () => void;
   }[];
   backIconClick?: () => void;
+  _footer?: object;
 }
 
 export default function Layout({
@@ -80,6 +82,8 @@ export default function Layout({
   onItemClick,
   backIconClick,
   sx = {},
+  footerComponent,
+  _footer,
 }): LayoutProps {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [refs, setRefs] = useState({});
@@ -143,7 +147,7 @@ export default function Layout({
             minHeight={'64px'}
           >
             <TopAppBar
-              logoUrl={atreeLogo}
+              logoUrl={atreeLogo?.src || ''}
               _appBar={{
                 py: '8.5px',
                 backgroundColor: '#fff',
@@ -163,15 +167,15 @@ export default function Layout({
                 fontWeight: 700,
               }}
               actionButtonColor="secondary"
+              actionIcons={topAppBarIcons}
+              menuIconClick={() => setIsDrawerOpen(true)}
               // profileIcon={[
               //   {
               //     icon: <>hi</>,
               //     ariaLabel: 'Help',
               //   },
               // ]}
-              actionIcons={topAppBarIcons}
-              menuIconClick={() => setIsDrawerOpen(true)}
-              onLogoutClick={(event) => action.onLogoutClick(event)}
+              // onLogoutClick={(event) => action.onLogoutClick(event)}
               {...showTopAppBar}
             />
           </Box>
@@ -237,20 +241,23 @@ export default function Layout({
           sx={{
             width: '100%',
             bgcolor: 'white',
+            ..._footer,
           }}
         >
-          <Footer
-            buttonLabel="Continue"
-            buttonHeight="40px"
-            buttonBorderRadius="50px"
-            buttonBackgroundColor="#FDBE16"
-            buttonColor="#1E1B16"
-            buttonFontSize="14px"
-            buttonFontWeight={500}
-            buttonSupportingText=""
-            bottompx={0}
-            onButtonClick={handleButtonClick}
-          />
+          {footerComponent || (
+            <Footer
+              buttonLabel="Continue"
+              buttonHeight="40px"
+              buttonBorderRadius="50px"
+              buttonBackgroundColor="#FDBE16"
+              buttonColor="#1E1B16"
+              buttonFontSize="14px"
+              buttonFontWeight={500}
+              buttonSupportingText=""
+              bottompx={0}
+              onButtonClick={handleButtonClick}
+            />
+          )}
         </Box>
       )}
     </Box>

@@ -64,7 +64,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" component="nav" sx={_appBar}>
-        <Container maxWidth="xl" sx={{ paddingLeft: 0 }}>
+        <Container maxWidth="xl">
           <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
             <Box display={'flex'}>
               {showBackIcon && (
@@ -80,7 +80,10 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
               )}
               <Box>
                 {logoUrl && (
-                  <Box onClick={() => (window.location.href = '/')}>
+                  <Box
+                    onClick={() => (window.location.href = '/')}
+                    sx={{ cursor: 'pointer' }}
+                  >
                     <Image src={logoUrl} alt="logo" width={45} height={45} />
                   </Box>
                 )}

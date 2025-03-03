@@ -18,6 +18,7 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import atreeLogo from '../../assets/images/atreeLogo.png';
 import Layout from '../component/layout/layout';
+import { useTranslation } from 'react-i18next';
 
 const buttonColors = {
   water: '#0E28AE',
@@ -38,6 +39,17 @@ export default function Index() {
   const [subFrameworkFilter, setSubFrameworkFilter] = useState();
   const [subFramework, setSubFramework] = useState('');
   const [isLoadingChildren, setIsLoadingChildren] = useState(true);
+  const { t } = useTranslation();
+  useEffect(() => {
+    if (framework) {
+      if (frameworkFilter) {
+        const subFrameworkData = (frameworkFilter as any).find(
+          (item: any) => item.identifier === framework
+        );
+        setSubFrameworkFilter(subFrameworkData?.associations || []);
+      }
+    }
+  }, [framework, frameworkFilter]);
 
   useEffect(() => {
     const init = async () => {
@@ -45,12 +57,11 @@ export default function Index() {
         const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
         const frameworkData = await fetch(url).then((res) => res.json());
         const frameworks = frameworkData?.result?.framework?.categories;
-        setFrameworkFilter(
-          frameworks.find((item: any) => item.code === 'topic')?.terms || []
-        );
-        setSubFrameworkFilter(
-          frameworks.find((item: any) => item.code === 'sub-topic')?.terms || []
-        );
+        const fdata =
+          frameworks.find((item: any) => item.code === 'topic')?.terms || [];
+        console.log(fdata[0]?.name);
+        setFramework(fdata[0]?.identifier || '');
+        setFrameworkFilter(fdata);
 
         const data = await ContentSearch({
           type: 'Learning Resource',
@@ -73,7 +84,7 @@ export default function Index() {
 
   const handleCardClick = (id: string, mimeType: string) => {
     if (consumedContent.length < 3) {
-      router.push(`/content/${id}/${mimeType}`);
+      router.push(`/player/${id}`);
       setConsumedContent((prev) => [...prev, id]);
     } else {
       alert('Please log in to continue');
@@ -115,12 +126,12 @@ export default function Index() {
           }}
         >
           <Title onClick={() => router.push('/contents')}>
-            Read, Watch, Listen
+            {t('HOME_PAGE.READ_WATCH_LISTEN')}
           </Title>
           <AtreeCard
             contents={contentData}
             handleCardClick={handleCardClick}
-            _grid={{ size: { xs: 6, sm: 6, md: 12, lg: 12 } }}
+            _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 4 } }}
             _card={{ image: atreeLogo.src }}
           />
         </Box>
@@ -132,7 +143,7 @@ export default function Index() {
             flexDirection: 'column',
           }}
         >
-          <Title>Browse by Sub Categories</Title>
+          <Title>{t('HOME_PAGE.BROWSE_BY_SUB_CATEGORIES')}</Title>
 
           <SubFrameworkFilter
             subFrameworkFilter={subFrameworkFilter || []}
@@ -150,12 +161,12 @@ export default function Index() {
           }}
         >
           <Title onClick={() => router.push('/contents')}>
-            Related Content
+            {t('HOME_PAGE.RELATED_CONTENT')}
           </Title>
           <AtreeCard
             contents={relatedContent}
             handleCardClick={handleCardClick}
-            _grid={{ size: { xs: 6, sm: 6, md: 12, lg: 12 } }}
+            _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 4 } }}
             _card={{ image: atreeLogo.src }}
           />
         </Box>
@@ -207,6 +218,7 @@ const SubFrameworkFilter = React.memo<{
   subFramework,
   setSubFramework,
 }) {
+  const { t } = useTranslation();
   const [openPopup, setOpenPopup] = useState<boolean>(false);
   const [filterItems, setFilterItems] = useState<
     Array<{ identifier: string; name: string }>
@@ -273,7 +285,7 @@ const SubFrameworkFilter = React.memo<{
               onClick={() => setOpenPopup(false)}
               sx={{ borderRadius: '50px', height: '40px', width: '100%' }}
             >
-              Close
+              {t('HOME_PAGE.CLOSE')}
             </Button>
           </DialogActions>
         </Dialog>

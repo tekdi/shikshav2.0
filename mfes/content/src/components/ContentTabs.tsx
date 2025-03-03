@@ -46,7 +46,7 @@ const RenderTabContent = memo(
         {tabs?.length !== undefined && tabs?.length > 1 && (
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs
-              value={value}
+              value={value ?? 0}
               onChange={onChange}
               aria-label={ariaLabel}
               TabIndicatorProps={{

@@ -3,6 +3,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme } from '@mui/material/styles';
 import './global.css';
+import type { AppProps } from 'next/app';
 import { Poppins } from 'next/font/google';
 
 const poppins = Poppins({
@@ -38,19 +39,12 @@ const theme = createTheme({
   },
 });
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ Component, pageProps }: AppProps) {
+  console.log('hello');
   return (
-    <html lang="en" className={poppins.variable}>
-      <body>
-        <ThemeProvider theme={theme}>
-          <CssBaseline /> {/* Normalize styles */}
-          {children}
-        </ThemeProvider>
-      </body>
-    </html>
+    <ThemeProvider theme={theme}>
+      <CssBaseline /> {/* Normalize styles */}
+      <Component {...pageProps} />
+    </ThemeProvider>
   );
 }
