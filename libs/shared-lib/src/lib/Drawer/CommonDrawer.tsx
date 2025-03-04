@@ -30,6 +30,7 @@ interface CommonDrawerProps {
   items: DrawerItem[];
   categories: CategoryItem[];
   onItemClick: (to: string) => void;
+  anchor?: 'left' | 'right' | 'top' | 'bottom';
 }
 
 export const CommonDrawer: React.FC<CommonDrawerProps> = ({
@@ -38,6 +39,7 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
   items,
   onItemClick,
   categories,
+  ...props
 }) => {
   const [openDrawer, setOpenDrawer] = useState<
     'main' | 'category' | 'subcategory'
@@ -77,7 +79,7 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
   };
 
   return (
-    <Drawer anchor="left" open={open} onClose={onDrawerClose}>
+    <Drawer anchor="left" open={open} onClose={onDrawerClose} {...props}>
       <List>
         {/* Main Menu */}
         <Typography

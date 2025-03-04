@@ -10,6 +10,7 @@ export * from './lib/Select/CommonSelect';
 export * from './lib/Search/CommonSearch';
 export * from './lib/Tabs/CommonTabs';
 export * from './lib/Card/CommonCard';
+export * from './lib/Card/AtreeCard';
 export * from './lib/Collapse/CommonAccordian';
 export * from './lib/Drawer/CommonDrawer';
 export * from './lib/Services/LoginService';
@@ -20,6 +21,7 @@ export * from './lib/SunbirdPlayer/SunbirdPlayer';
 export * from './lib/QuestionSetEditor/QuestionSet';
 export * from './lib/CollectionEditor/Collection';
 export * from './lib/Dialog/CommonDialog';
+export * from './lib/Loader/Loader';
 
 export * from './lib/Progress/Circular';
 export * from './lib/Progress/Progress';

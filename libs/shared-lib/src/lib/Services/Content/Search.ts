@@ -1,7 +1,11 @@
-// @ts-nocheck
-
 import axios, { AxiosRequestConfig } from 'axios';
-interface ContentSearchResponse {
+
+interface ContentProps {
+  result: {
+    content: ContentSearchResponse[];
+  };
+}
+export interface ContentSearchResponse {
   ownershipType?: string[];
   publish_type?: string;
   copyright?: string;
@@ -142,24 +146,72 @@ const data = {
   },
 };
 
-export const ContentSearch = async (): Promise<ContentSearchResponse[]> => {
+export const ContentSearch = async ({
+  type,
+  query,
+  filters,
+  limit = 5,
+  offset = 0,
+  channel,
+}: {
+  type: string;
+  channel: string;
+  query?: string;
+  filters?: object;
+  limit?: number;
+  offset?: number;
+}): Promise<ContentProps> => {
   try {
     // Ensure the environment variable is defined
-    const searchApiUrl = import.meta.env.VITE_PUBLIC_SSUNBIRD_BASE_URL;
-    if (!searchApiUrl) {
-      throw new Error('Search API URL environment variable is not configured');
+    const searchApiUrl = process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL;
+    const hierarchyPath = process.env.NEXT_PUBLIC_SSUNBIRD_HIERARCHY_PATH;
+    if (!searchApiUrl || !hierarchyPath) {
+      throw new Error(
+        !searchApiUrl
+          ? 'Search API URL environment variable is not configured'
+          : !hierarchyPath
+          ? 'Hierarchy path environment variable is not configured'
+          : ''
+      );
     }
     // Axios request configuration
+
+    const data = {
+      request: {
+        filters: {
+          channel,
+          primaryCategory: [type],
+          ...filters,
+        },
+        fields: [
+          'name',
+          'appIcon',
+          'description',
+          'posterImage',
+          'mimeType',
+          'identifier',
+          'resourceType',
+          'primaryCategory',
+          'contentType',
+          'trackable',
+          'children',
+          'leafNodes',
+        ],
+        query,
+        limit,
+        offset,
+      },
+    };
     const config: AxiosRequestConfig = {
       method: 'post',
       maxBodyLength: Infinity,
-      url: `${searchApiUrl}/api/content/v1/search`,
+      url: `${searchApiUrl}${process.env.NEXT_PUBLIC_SSUNBIRD_HIERARCHY_PATH}/search`,
       data: data,
     };
 
     // Execute the request
     const response = await axios.request(config);
-    const res = response?.data?.result?.content;
+    const res = response?.data;
 
     return res;
   } catch (error) {

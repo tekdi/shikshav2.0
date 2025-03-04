@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 
 interface DropdownProps {
-  label: string;
+  label?: string;
   value: string | number;
   onChange: (event: SelectChangeEvent) => void;
   options: { label: string; value: string | number }[];
@@ -28,7 +28,7 @@ export const CommonSelect: React.FC<DropdownProps> = ({
   fullWidth = true,
   minWidth = 120,
   width = '100%',
-  height = '40px',
+  height,
   borderRadius = '4px',
 }) => {
   return (

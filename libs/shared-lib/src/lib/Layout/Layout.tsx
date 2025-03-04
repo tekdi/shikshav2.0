@@ -488,6 +488,7 @@ export const Layout: React.FC<LayoutProps> = ({
               actionIcons={topAppBarIcons}
               menuIconClick={() => setIsDrawerOpen(true)}
               onLogoutClick={(event) => action.onLogoutClick(event)}
+              showSearch={showTopAppBar.showSearch}
               {...showTopAppBar}
             />
           </Box>

@@ -1,159 +1,112 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Menu, MenuItem } from '@mui/material';
-interface ActionIcon {
-  icon: React.ReactNode;
-  ariaLabel: string;
-  anchorEl?: HTMLElement | null;
-  onLogoutClick: (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => void;
-  onOptionClick?: (
-    event: React.MouseEvent<HTMLAnchorElement | HTMLLIElement, MouseEvent>
-  ) => void;
-}
-interface ProfileIcon {
-  icon: React.ReactNode;
-  ariaLabel: string;
-  anchorEl?: HTMLElement | null;
-  onLogoutClick: (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => void;
-}
+import SearchIcon from '@mui/icons-material/Search';
+import Image from 'next/image';
+import { InputBase, Stack, Typography } from '@mui/material';
+
 interface CommonAppBarProps {
   title?: string;
+  subtitle?: string;
+  logoUrl?: string;
+  showSearch?: boolean;
   showMenuIcon?: boolean;
-  showBackIcon?: boolean;
   menuIconClick?: () => void;
-  backIconClick?: () => void;
-  actionButtonLabel?: string;
-  actionButtonClick?: () => void;
-  actionButtonColor?: 'inherit' | 'primary' | 'secondary' | 'default';
-  position?: 'fixed' | 'absolute' | 'sticky' | 'static' | 'relative';
-  color?: 'primary' | 'secondary' | 'default' | 'transparent' | 'inherit';
-  actionIcons?: ActionIcon[];
-  profileIcon?: ProfileIcon[];
-  bgcolor?: string;
-  onMenuClose?: () => void;
-  onOptionClick?: () => void;
 }
 
 export const TopAppBar: React.FC<CommonAppBarProps> = ({
-  title = 'Title',
+  title = 'Jal-Jungle-Jameen',
+  subtitle = 'In Classrooms',
+  logoUrl = '/logo.png', // Replace with your actual logo path
+  showSearch = true,
   showMenuIcon = true,
-  showBackIcon = false,
   menuIconClick,
-  backIconClick,
-  onMenuClose,
-  onOptionClick,
-  actionButtonLabel = 'Action',
-  actionButtonClick,
-  actionButtonColor = 'inherit',
-  position = 'static',
-  color = 'transparent',
-  actionIcons = [],
-  profileIcon = [],
-  bgcolor = '#FDF7FF',
 }) => {
-  const accountIcon = actionIcons.find((icon) => icon.ariaLabel === 'Account');
+  const [searchOpen, setSearchOpen] = useState(false);
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
-        component="nav"
-        color={color}
+        position="static"
         sx={{
-          boxShadow: 'none',
-          bgcolor,
+          bgcolor: 'white',
+          boxShadow: '0px 2px 2px 0px #00000040',
+          // padding: '8px 16px',
         }}
       >
-        <Toolbar>
-          {showMenuIcon && (
-            <>
-              <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-                onClick={menuIconClick}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography
-                component="div"
+        <Toolbar
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          {/* Logo + Title Stack */}
+          <Stack alignItems="normal">
+            <Image src={logoUrl} alt="logo" width={50} height={50} />
+            {!searchOpen && (
+              <>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontSize: '16px',
+                    fontWeight: 600,
+                    color: '#E69933',
+                    fontStyle: 'italic',
+                    textAlign: 'left',
+                  }}
+                >
+                  {title}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{ fontSize: '14px', color: '#4D4D4D', textAlign: 'left' }}
+                >
+                  {subtitle}
+                </Typography>
+              </>
+            )}
+          </Stack>
+
+          {searchOpen && (
+            <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
+              <InputBase
+                placeholder="Search..."
                 sx={{
                   flexGrow: 1,
-                  textAlign: 'center',
-                  fontSize: '22px',
-                  fontWeight: 400,
+                  marginLeft: 2,
+                  bgcolor: '#fff',
+                  padding: 1,
+                  borderRadius: 1,
                 }}
-              >
-                {title}
-              </Typography>
-            </>
+              />
+              <IconButton onClick={() => setSearchOpen(false)}>
+                <SearchIcon />
+              </IconButton>
+            </Box>
           )}
-          {showBackIcon && (
-            <>
+          {/* Left Icons (Search + Menu) */}
+          <Box>
+            {showSearch && (
               <IconButton
                 size="large"
-                edge="start"
                 color="inherit"
-                aria-label="back"
-                onClick={backIconClick}
+                onClick={() => setSearchOpen(!searchOpen)}
               >
-                <ArrowBackIcon />
+                <SearchIcon sx={{ color: 'black' }} />
               </IconButton>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{ flexGrow: 1, textAlign: 'left' }}
-              >
-                {title}
-              </Typography>
-            </>
-          )}
-          {profileIcon && profileIcon.length > 0 && (
-            <IconButton
-              color={actionButtonColor}
-              aria-label={profileIcon[0]?.ariaLabel}
-              onClick={profileIcon[0]?.onLogoutClick}
-            >
-              {profileIcon[0].icon}
-            </IconButton>
-          )}
+            )}
+            {showMenuIcon && (
+              <IconButton size="large" color="inherit" onClick={menuIconClick}>
+                <MenuIcon sx={{ color: 'black' }} />
+              </IconButton>
+            )}
+          </Box>
         </Toolbar>
       </AppBar>
-      {profileIcon[0]?.anchorEl && (
-        <Menu
-          id="menu-appbar"
-          anchorEl={profileIcon[0].anchorEl}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          keepMounted
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          open={Boolean(profileIcon[0].anchorEl)}
-          onClose={onMenuClose}
-        >
-          {actionIcons?.map((action, index) => (
-            <MenuItem key={index} onClick={action?.onOptionClick}>
-              <IconButton size="small" color="inherit">
-                {action.icon}
-              </IconButton>
-              {action.ariaLabel}
-            </MenuItem>
-          ))}
-        </Menu>
-      )}
     </Box>
   );
 };
