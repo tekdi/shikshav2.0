@@ -2,7 +2,11 @@ import React from 'react';
 
 const Insta: React.FC = () => {
   const handleClick = () => {
-    window.open('https://www.instagram.com/env_edu_india', '_blank');
+    window.open(
+      'https://www.instagram.com/env_edu_india',
+      '_blank',
+      'noopener noreferrer'
+    );
   };
 
   return (
