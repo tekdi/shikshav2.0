@@ -10,6 +10,7 @@ import {
   CardActionArea,
   CardContent,
   CardMedia,
+  Chip,
   Typography,
 } from '@mui/material';
 import { Circular } from '@shared-lib';
@@ -32,17 +33,18 @@ interface ContentItem {
 export default function Content() {
   const router = useRouter();
   const { identifier } = router.query; // Access dynamic parameter 'identifier'
-  const [contentData, setContentData] = useState<ContentItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [contentData, setContentData] = useState<ContentItem>({});
+  const [isLoading, setIsLoading] = useState(true);
   const handleOnCLick = () => {
     router.push(`/player/${identifier}`);
   };
   const fetchContent = useCallback(async () => {
     setIsLoading(true);
     try {
-      const result = await getContentDetails(identifier as string);
-      //@ts-ignore
-      if (result) setContentData([result]);
+      const {
+        result: { content: result },
+      } = await getContentDetails(identifier as string);
+      if (result) setContentData(result);
     } catch (error) {
       console.error('Failed to fetch content:', error);
     } finally {
@@ -55,7 +57,6 @@ export default function Content() {
   }, [identifier]);
 
   if (isLoading) return <Circular />;
-  if (!contentData.length) return <div>No Content Found</div>;
 
   return (
     <Layout
@@ -73,7 +74,7 @@ export default function Content() {
             }}
             gutterBottom
           >
-            My Friend, The Sea
+            {contentData?.name || ''}
           </Typography>
           <Typography
             variant="subtitle1"
@@ -95,41 +96,40 @@ export default function Content() {
     >
       <Box
         sx={{
-          padding: 3,
-          maxWidth: 600,
+          padding: 2,
           margin: '0 auto',
           textAlign: 'center',
-          border: '1px solid #ccc',
           borderRadius: 2,
           gap: 2.5,
           display: 'flex',
           flexDirection: 'column',
         }}
       >
-        <Carousel
-          navButtonsAlwaysVisible
-          indicators={false}
-          animation="slide"
-          cycleNavigation={false}
-        >
-          {[...Array(4)].map((_, i) => (
-            <ImageCard
-              key={i}
-              image={landingBanner?.src || ''}
-              name={
-                <Box>
-                  <Typography variant="body2" gutterBottom>
-                    My Friend, The Sea
-                  </Typography>
-                  <Typography variant="body2" gutterBottom>
-                    Published by PrathamBooks {i + 1}
-                  </Typography>
-                </Box>
-              }
-            />
-          ))}
-        </Carousel>
-
+        <Box sx={{ px: 2 }}>
+          <Carousel
+            navButtonsAlwaysVisible
+            indicators={false}
+            animation="slide"
+            cycleNavigation={false}
+          >
+            {[...Array(4)].map((_, i) => (
+              <ImageCard
+                key={i}
+                image={landingBanner?.src || ''}
+                name={
+                  <Box>
+                    <Typography variant="body2" gutterBottom>
+                      {contentData?.name || ''}
+                    </Typography>
+                    <Typography variant="body2" gutterBottom>
+                      Published by PrathamBooks {i + 1}
+                    </Typography>
+                  </Box>
+                }
+              />
+            ))}
+          </Carousel>
+        </Box>
         <Button
           variant="contained"
           color="secondary"
@@ -142,23 +142,38 @@ export default function Content() {
         >
           Know More
         </Button>
-        <Typography variant="body2" sx={{ mt: 0 }}>
-          Sandhya Rao, Tulika Books, naturewriting, naturejournal
-        </Typography>
-        <Typography variant="body1" sx={{ mt: 0 }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+          {[
+            'Sandhya Rao',
+            'Tulika Books',
+            'naturewriting',
+            'naturejournal',
+          ].map((label, index) => (
+            <Chip
+              key={index}
+              label={label}
+              variant="outlined"
+              sx={{ mr: 0.5 }}
+            />
+          ))}
+        </Box>
+        <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
           Based on real accounts, this is an imagined story of a boy in the
           aftermath of the 2004 Tsunami that hit several countries. It could
           also be the story of any child whose life is closely linked with
           nature. The narrative follows the feelings of the boy as he tries to
           comprehend the horror and bewilderment of the experience.
         </Typography>
-        <Typography variant="body1" sx={{ mt: 0 }}>
+        <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
           Photographs, not of the devastation but of warmth, present positive
           images that lift the spirit and reinforce the bond between water, sand
           and child.
         </Typography>
-        <Typography variant="caption" color="textSecondary" sx={{ mt: 0 }}>
-          Year: 2008 | License: ----
+        <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
+          <b>Year:</b> 2008
+        </Typography>
+        <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
+          <b>License:</b> ----
         </Typography>
       </Box>
     </Layout>

@@ -5,9 +5,13 @@ import { setData } from '@shared-lib';
 import Layout from '../../component/layout/layout';
 import { Box } from '@mui/material';
 import atreeLogo from '../../../assets/images/atreeLogo.png';
+import dynamic from 'next/dynamic';
 
 interface ListProps {}
 
+const Content = dynamic(() => import('@Content'), {
+  ssr: false,
+});
 const List: React.FC<ListProps> = () => {
   const mfe_content = process.env.NEXT_PUBLIC_CONTENT;
   const [isLoadingChildren, setIsLoadingChildren] = React.useState(true);
@@ -16,7 +20,7 @@ const List: React.FC<ListProps> = () => {
     const init = async () => {
       await setData('mfes_content_pages_content', {
         _grid: {
-          size: { xs: 6, sm: 6, md: 6, lg: 6 },
+          size: { xs: 6, sm: 6, md: 4, lg: 3 },
         },
         contentTabs: ['content'],
         filters: {
@@ -38,8 +42,6 @@ const List: React.FC<ListProps> = () => {
   return (
     <Layout
       isLoadingChildren={isLoadingChildren}
-      backTitle={'Content'}
-      isFooter={false}
       showLogo={true}
       showTopAppBar={{
         showSearch: true,
@@ -57,18 +59,7 @@ const List: React.FC<ListProps> = () => {
           overflow: 'hidden',
         }}
       >
-        <iframe
-          src={mfe_content}
-          style={{
-            display: 'block',
-            margin: 0,
-            padding: 0,
-            width: '100vw',
-            height: 'calc(100vh - 100px)',
-            border: 'none',
-          }}
-          title="Embedded Localhost"
-        />
+        <Content />
       </Box>
     </Layout>
   );

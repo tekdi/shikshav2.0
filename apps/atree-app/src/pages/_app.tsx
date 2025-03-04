@@ -40,7 +40,6 @@ const theme = createTheme({
 });
 
 export default function RootLayout({ Component, pageProps }: AppProps) {
-  console.log('hello');
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline /> {/* Normalize styles */}

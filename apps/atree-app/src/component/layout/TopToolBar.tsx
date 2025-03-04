@@ -63,7 +63,14 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
 }) => {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" component="nav" sx={_appBar}>
+      <AppBar
+        position="static"
+        component="nav"
+        sx={{
+          boxShadow: '0px 2px 2px 0px #00000040',
+          ..._appBar,
+        }}
+      >
         <Container maxWidth="xl">
           <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
             <Box display={'flex'}>

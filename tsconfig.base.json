@@ -31,7 +31,8 @@
       "@test-next-route": ["mfes/test-next-route/src/pages/index.tsx"],
       "@test-react-vite": ["mfes/mfes/test-react-vite"],
       "@youthNet": ["mfes/youthNet/src/pages/index.tsx"],
-      "@loginAtree":["mfes/registration/src/app/signin/page.tsx"]
+      "@loginAtree": ["mfes/registration/src/app/signin/page.tsx"],
+      "@Content": ["mfes/content/src/pages/content.tsx"]
     }
   },
   "exclude": ["node_modules", "tmp"]

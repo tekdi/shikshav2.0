@@ -1,10 +1,11 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Button, debounce, Typography } from '@mui/material';
+import { debounce, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
-import { CommonDrawer, Footer, Loader } from '@shared-lib';
+import { CommonDrawer, Loader } from '@shared-lib';
 import React, { useEffect, useRef, useState } from 'react';
 import atreeLogo from '../../../assets/images/atreeLogo.png';
 import TopAppBar from './TopToolBar';
+import Footer from './Footer';
 
 interface LayoutProps {
   children?: React.ReactNode;
@@ -66,6 +67,7 @@ interface LayoutProps {
     onClick: () => void;
   }[];
   backIconClick?: () => void;
+  _backButton?: object;
   _footer?: object;
 }
 
@@ -81,6 +83,7 @@ export default function Layout({
   categorieItems = [],
   onItemClick,
   backIconClick,
+  _backButton,
   sx = {},
   footerComponent,
   _footer,
@@ -187,22 +190,28 @@ export default function Layout({
           </Box>
         )}
 
-        {showBack && backIconClick && (
+        {(showBack || backTitle) && (
           <Box
             sx={{
               width: '100%',
               display: 'flex',
               alignItems: 'flex-start',
-              padding: '12px 16px',
+              p: 2,
               bgcolor: '#FFFFFF',
               gap: 2,
+              ...(_backButton || {}),
             }}
-            onClick={backIconClick}
           >
-            <ArrowBackIcon />
-            <Typography fontSize={'22px'} fontWeight={400}>
-              {backTitle}
-            </Typography>
+            {showBack && (
+              <ArrowBackIcon onClick={backIconClick || console.log} />
+            )}
+            {typeof backTitle === 'string' ? (
+              <Typography fontSize={'22px'} fontWeight={400}>
+                {backTitle}
+              </Typography>
+            ) : (
+              backTitle
+            )}
           </Box>
         )}
       </Box>
@@ -234,20 +243,7 @@ export default function Layout({
             ..._footer,
           }}
         >
-          {footerComponent || (
-            <Footer
-              buttonLabel="Continue"
-              buttonHeight="40px"
-              buttonBorderRadius="50px"
-              buttonBackgroundColor="#FDBE16"
-              buttonColor="#1E1B16"
-              buttonFontSize="14px"
-              buttonFontWeight={500}
-              buttonSupportingText=""
-              bottompx={0}
-              onButtonClick={handleButtonClick}
-            />
-          )}
+          {footerComponent || <Footer />}
         </Box>
       )}
     </Box>

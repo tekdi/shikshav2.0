@@ -18,6 +18,7 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import atreeLogo from '../../assets/images/atreeLogo.png';
 import Layout from '../component/layout/layout';
+// import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 
 const buttonColors = {
@@ -94,8 +95,6 @@ export default function Index() {
   return (
     <Layout
       isLoadingChildren={isLoadingChildren}
-      backTitle={'Content'}
-      isFooter={false}
       showTopAppBar={{
         showSearch: true,
         title: 'Jal-Jungle-Jameen',
@@ -104,14 +103,7 @@ export default function Index() {
         actionButtonLabel: 'Action',
       }}
     >
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        gap="3rem"
-        py="3rem"
-        px="14px"
-      >
+      <Box display="flex" flexDirection="column" gap="3rem" py="3rem" px="14px">
         <FrameworkFilter
           frameworkFilter={frameworkFilter || []}
           framework={framework}
@@ -131,7 +123,7 @@ export default function Index() {
           <AtreeCard
             contents={contentData}
             handleCardClick={handleCardClick}
-            _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 4 } }}
+            _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
             _card={{ image: atreeLogo.src }}
           />
         </Box>
@@ -166,7 +158,7 @@ export default function Index() {
           <AtreeCard
             contents={relatedContent}
             handleCardClick={handleCardClick}
-            _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 4 } }}
+            _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
             _card={{ image: atreeLogo.src }}
           />
         </Box>
@@ -181,7 +173,7 @@ const FrameworkFilter = React.memo<{
   setFramework: (framework: string) => void;
 }>(function FrameworkFilter({ frameworkFilter, framework, setFramework }) {
   return (
-    <Grid container justifyContent="center" spacing={1}>
+    <Grid container spacing={1}>
       {frameworkFilter?.map((frameworkItem: any) => (
         <Grid key={frameworkItem.identifier}>
           <Button
@@ -219,6 +211,7 @@ const SubFrameworkFilter = React.memo<{
   setSubFramework,
 }) {
   const { t } = useTranslation();
+  // const theme = useTheme();
   const [openPopup, setOpenPopup] = useState<boolean>(false);
   const [filterItems, setFilterItems] = useState<
     Array<{ identifier: string; name: string }>
@@ -226,12 +219,15 @@ const SubFrameworkFilter = React.memo<{
 
   useEffect(() => {
     if (subFrameworkFilter) {
+      // const deviceName = Object.keys(theme.breakpoints.values).find((key) => {
+      //   return window.innerWidth <= theme.breakpoints.values?.[key];
+      // });
       setFilterItems(subFrameworkFilter.slice(0, 3));
     }
   }, [subFrameworkFilter]);
 
   return (
-    <Grid container justifyContent="center" spacing={1}>
+    <Grid container spacing={1}>
       {filterItems?.map((subFrameworkItem: any) => (
         <Grid key={subFrameworkItem.identifier}>
           <Button
