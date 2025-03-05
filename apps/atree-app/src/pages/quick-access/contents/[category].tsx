@@ -51,12 +51,6 @@ const MyComponent: React.FC = () => {
       }
       showBack
       backIconClick={() => router.push('/quick-access')}
-      showTopAppBar={{
-        title: 'Jal-Jungle-Jameen',
-        subtitle: 'In Classrooms ',
-        showMenuIcon: true,
-        actionButtonLabel: 'Action',
-      }}
     >
       <FolderComponent
         categories={[{ name: category }]}

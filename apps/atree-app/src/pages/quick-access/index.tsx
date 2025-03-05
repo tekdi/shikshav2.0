@@ -27,16 +27,7 @@ const MyComponent: React.FC = () => {
   };
 
   return (
-    <Layout
-      isLoadingChildren={isLoadingChildren}
-      backTitle={'Quick Access'}
-      showTopAppBar={{
-        title: 'Jal-Jungle-Jameen',
-        subtitle: 'In Classrooms ',
-        showMenuIcon: true,
-        actionButtonLabel: 'Action',
-      }}
-    >
+    <Layout isLoadingChildren={isLoadingChildren} backTitle={'Quick Access'}>
       <FolderComponent categories={categories} onClick={handleClick} />
     </Layout>
   );

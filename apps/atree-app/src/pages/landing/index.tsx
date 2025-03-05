@@ -35,15 +35,6 @@ const LandingPage = () => {
 
   return (
     <Layout
-      isLoadingChildren={false}
-      backTitle={'Content'}
-      showTopAppBar={{
-        showSearch: true,
-        title: 'Jal-Jungle-Jameen',
-        subtitle: 'In Classrooms ',
-        showMenuIcon: true,
-        actionButtonLabel: 'Action',
-      }}
       footerComponent={
         <Grid sx={{ px: 4, py: 2, backgroundColor: 'secondary.main' }}>
           <Typography variant="body1" align="center" gutterBottom>

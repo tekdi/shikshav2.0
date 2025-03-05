@@ -31,7 +31,7 @@ const RenderTabContent = memo(
     _grid: any;
     trackData?: [] | undefined;
     type: string;
-    handleCardClick: (id: string, mimeType: string) => void;
+    handleCardClick: (content: ContentSearchResponse) => void;
     hasMoreData: boolean;
     handleLoadMore: (e: any) => void;
     tabs?: any[];
@@ -114,12 +114,7 @@ const RenderTabContent = memo(
                       item={[item]}
                       TrackData={trackData}
                       type={type}
-                      onClick={() =>
-                        handleCardClick(
-                          item?.identifier || '',
-                          item?.mimeType || ''
-                        )
-                      }
+                      onClick={() => handleCardClick(item)}
                     />
                   </Grid>
                 ))}

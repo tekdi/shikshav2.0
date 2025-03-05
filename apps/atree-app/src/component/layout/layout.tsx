@@ -160,14 +160,14 @@ export default function Layout({
                   py: '8.5px',
                   backgroundColor: '#fff',
                 }}
-                title="Jal-Jungle-Jameen"
+                // title="Jal-Jungle-Jameen"
                 _title={{
                   fontSize: '14px',
                   lineHeight: '16px',
                   color: 'text.secondary',
                   fontWeight: 400,
                 }}
-                subTitle="In Classrooms"
+                // subTitle="In Classrooms"
                 _subTitle={{
                   fontSize: '14px',
                   lineHeight: '16px',

@@ -40,17 +40,7 @@ const List: React.FC<ListProps> = () => {
   }, [mfe_content]);
 
   return (
-    <Layout
-      isLoadingChildren={isLoadingChildren}
-      showLogo={true}
-      showTopAppBar={{
-        showSearch: true,
-        title: 'Jal-Jungle-Jameen',
-        subtitle: 'In Classrooms ',
-        showMenuIcon: true,
-        actionButtonLabel: 'Action',
-      }}
-    >
+    <Layout isLoadingChildren={isLoadingChildren}>
       <Box
         sx={{
           padding: 0,

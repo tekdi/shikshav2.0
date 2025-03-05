@@ -47,7 +47,7 @@ interface CommonAppBarProps {
 }
 
 const TopAppBar: React.FC<CommonAppBarProps> = ({
-  title = 'Title',
+  title,
   _title,
   subTitle,
   _subTitle,
@@ -89,9 +89,14 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                 {logoUrl && (
                   <Box
                     onClick={() => (window.location.href = '/')}
-                    sx={{ cursor: 'pointer' }}
+                    sx={{
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
                   >
-                    <Image src={logoUrl} alt="logo" width={45} height={45} />
+                    <Image src={logoUrl} alt="logo" width={64} height={64} />
                   </Box>
                 )}
                 <Typography

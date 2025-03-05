@@ -93,16 +93,7 @@ export default function Index() {
   };
 
   return (
-    <Layout
-      isLoadingChildren={isLoadingChildren}
-      showTopAppBar={{
-        showSearch: true,
-        title: 'Jal-Jungle-Jameen',
-        subtitle: 'In Classrooms ',
-        showMenuIcon: true,
-        actionButtonLabel: 'Action',
-      }}
-    >
+    <Layout isLoadingChildren={isLoadingChildren}>
       <Box display="flex" flexDirection="column" gap="3rem" py="3rem" px="14px">
         <FrameworkFilter
           frameworkFilter={frameworkFilter || []}
@@ -118,7 +109,7 @@ export default function Index() {
           }}
         >
           <Title onClick={() => router.push('/contents')}>
-            {t('HOME_PAGE.READ_WATCH_LISTEN')}
+            {t('Read, Watch, Listen')}
           </Title>
           <AtreeCard
             contents={contentData}
@@ -135,7 +126,7 @@ export default function Index() {
             flexDirection: 'column',
           }}
         >
-          <Title>{t('HOME_PAGE.BROWSE_BY_SUB_CATEGORIES')}</Title>
+          <Title>{t('Browse by Sub Categories')}</Title>
 
           <SubFrameworkFilter
             subFrameworkFilter={subFrameworkFilter || []}
@@ -153,7 +144,7 @@ export default function Index() {
           }}
         >
           <Title onClick={() => router.push('/contents')}>
-            {t('HOME_PAGE.RELATED_CONTENT')}
+            {t('Related Content')}
           </Title>
           <AtreeCard
             contents={relatedContent}
@@ -281,7 +272,7 @@ const SubFrameworkFilter = React.memo<{
               onClick={() => setOpenPopup(false)}
               sx={{ borderRadius: '50px', height: '40px', width: '100%' }}
             >
-              {t('HOME_PAGE.CLOSE')}
+              {t('Close')}
             </Button>
           </DialogActions>
         </Dialog>

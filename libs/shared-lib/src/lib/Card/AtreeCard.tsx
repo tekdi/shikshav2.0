@@ -7,7 +7,7 @@ import { ContentSearchResponse } from '../Services/Content/Search';
 export const AtreeCard: React.FC<{
   contents: ContentSearchResponse[];
   _grid: object;
-  handleCardClick: (id: string, mimeType: string) => void;
+  handleCardClick: (content: ContentSearchResponse) => void;
   _card?: any;
 }> = React.memo(function AtreeCard({
   contents,
@@ -19,7 +19,10 @@ export const AtreeCard: React.FC<{
     <Grid container spacing={2} width="100%">
       {contents.map((content) => (
         <Grid
-          size={{ xs: 6, sm: 6, md: 6, lg: 6 }}
+          size={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 4 }}
+          sx={{
+            cursor: 'pointer',
+          }}
           key={content.identifier}
           {..._grid}
         >
@@ -29,25 +32,32 @@ export const AtreeCard: React.FC<{
               boxShadow: 'none',
               background: 'transparent',
             }}
-            onClick={() =>
-              handleCardClick(content?.identifier, content?.mimeType)
-            }
+            onClick={() => handleCardClick(content)}
           >
             <CardMedia
               component="img"
-              height="140"
               image={content?.image || _card?.image}
               alt={content.name}
               sx={{
+                objectFit: 'contain',
+                objectPosition: 'center',
                 borderRadius: '16px',
                 border: '1px solid rgba(0,0,0,0.1)',
+                aspectRatio: '176 / 118',
+                overflow: 'hidden',
+                mb: 2,
+                '& > img': {
+                  width: '100%',
+                  height: '100%',
+                  background: 'white',
+                },
               }}
             />
             <CardContent
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'space-between',
+                padding: '0 0 10px 0 !important',
               }}
             >
               <Typography

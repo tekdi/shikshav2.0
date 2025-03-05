@@ -24,13 +24,12 @@ import {
   getData,
   Loader,
 } from '@shared-lib';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import type { ChangeEvent } from 'react';
 import React, { useCallback, useEffect, useState } from 'react';
 import FilterDialog from '../components/contentFilter';
 import RenderTabContent from '../components/ContentTabs';
 import { hierarchyAPI } from '../services/Hierarchy';
-import { contentReadAPI } from '../services/Read';
 import { ContentSearch, ContentSearchResponse } from '../services/Search';
 
 export default function Content({
@@ -38,11 +37,10 @@ export default function Content({
   showSearch = true,
   limit = 5,
   filters = {},
+  handleCardClick,
   _grid = {},
 }: any) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const identifier = searchParams.get('identifier');
   const [searchValue, setSearchValue] = useState('');
   const [tabValue, setTabValue] = useState<number>();
   const [tabs, setTabs] = useState<any>([]);
@@ -133,10 +131,7 @@ export default function Content({
     setTabValue(newValue);
   };
 
-  const handleCardClick = async (
-    identifier: string,
-    contentMimeType: string
-  ) => {
+  const handleCardClickLocal = async (content: ContentSearchResponse) => {
     try {
       if (
         [
@@ -149,12 +144,15 @@ export default function Content({
           'application/epub',
           'video/x-youtube',
           'application/vnd.sunbird.questionset',
-        ].includes(contentMimeType)
+        ].includes(content?.mimeType as string)
       ) {
-        await contentReadAPI(identifier);
-        router.push(`/player/${identifier}`);
+        if (handleCardClick) {
+          handleCardClick(content);
+        } else {
+          router.push(`/player/${content?.identifier}`);
+        }
       } else {
-        router.push(`/content-details/${identifier}`);
+        router.push(`/content-details/${content?.identifier}`);
       }
     } catch (error) {
       console.error('Failed to fetch content:', error);
@@ -459,7 +457,7 @@ export default function Content({
           _grid={{ ..._grid, ...propData?._grid }}
           trackData={trackData || []}
           type={localFilters?.type || ''}
-          handleCardClick={handleCardClick}
+          handleCardClick={handleCardClickLocal}
           hasMoreData={hasMoreData}
           handleLoadMore={handleLoadMore}
           isLodingMoreData={isLoading}
