@@ -1,14 +1,20 @@
 import * as React from 'react';
 import Grid from '@mui/material/Grid2';
-import { Typography, Box } from '@mui/material';
 import Image from 'next/image';
-import Banner from '../../assets/images/landingBanner.png';
+import landingBanner from '../../assets/images/landingBanner.png';
 
 import LocalPhoneOutlinedIcon from '@mui/icons-material/LocalPhoneOutlined';
 import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import Layout from '../component/layout/layout';
-
+import {
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
+  Typography,
+  Box,
+} from '@mui/material';
 export default function Contactus() {
   return (
     <Layout isFooter={true}>
@@ -19,32 +25,13 @@ export default function Contactus() {
         alignItems="center"
         justifyContent="center"
       >
-        {/* Image Banner */}
-        <Box sx={{ position: 'relative', width: '100%', textAlign: 'center' }}>
-          <Image
-            src={Banner}
-            alt="About Us Banner"
-            style={{ borderRadius: '8px', width: '100%' }}
-          />
-          <Typography
-            sx={{
-              position: 'absolute',
-              top: '80%',
-              left: '48%',
-              transform: 'translate(-50%, -50%)',
-              color: 'white',
-              fontWeight: 'bold',
-              padding: '10px 20px',
-              borderRadius: '8px',
-              textAlign: 'left',
-              width: '90%',
-            }}
-          >
-            Amplifying Change: Empowering environment educators one resource at
-            a time
-          </Typography>
-        </Box>
-
+        <CardComponent
+          name={
+            'A digital hub of Environment Education resources contextual to India'
+          }
+          image={landingBanner?.src}
+          _image={{ height: '181px' }}
+        />
         {/* Contact Us Title */}
         <Typography
           variant="h4"
@@ -97,3 +84,51 @@ export default function Contactus() {
     </Layout>
   );
 }
+
+export const CardComponent = ({
+  image,
+  name,
+  _image,
+  _text,
+}: {
+  image: string;
+  name: string;
+  _image?: object;
+  _text?: object;
+}) => {
+  return (
+    <Card sx={{ width: '100%' }}>
+      <CardActionArea>
+        <CardMedia component="img" alt={name} sx={_image} image={image} />
+        <CardContent
+          sx={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '100px',
+            background:
+              'linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5) , rgba(0, 0, 0, 0))',
+            zIndex: 1,
+            ..._text,
+          }}
+        >
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{
+              color: 'white',
+              zIndex: 2,
+              mb: 0,
+              fontWeight: 700,
+              fontSize: '18px',
+              lineHeight: '24px',
+            }}
+          >
+            {name}
+          </Typography>
+        </CardContent>
+      </CardActionArea>
+    </Card>
+  );
+};
