@@ -77,99 +77,87 @@ export default function Signin() {
   };
 
   return (
-    <Layout
-      isFooter={false}
-      showLogo={true}
-      showBack={true}
-      showTopAppBar={{
-        title: 'Jal-Jungle-Jameen ',
-        showMenuIcon: true,
-        actionButtonLabel: 'Action',
+    <Grid
+      container
+      spacing={2}
+      sx={{
+        flex: 1,
+        width: '100%',
+        borderRadius: 1,
+        bgcolor: '#FFFFFF',
+        justifyContent: 'center',
+
+        //   padding: 2,
+        mx: 'auto',
       }}
-      // sx={{ height: '100vh' }}
     >
       <Grid
-        container
-        spacing={2}
+        size={{ xs: 12, sm: 6, md: 6, lg: 6 }}
         sx={{
-          flex: 1,
-          width: '100%',
-          borderRadius: 1,
-          bgcolor: '#FFFFFF',
-          justifyContent: 'center',
-
-          //   padding: 2,
-          mx: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+          borderRadius: '20px 20px 0 0',
+          padding: '15px',
+          backgroundColor: '#FFFFFF',
         }}
       >
-        <Grid
-          size={{ xs: 12, sm: 6, md: 6, lg: 6 }}
+        <FormLabel component="legend" sx={{ color: '#4D4639' }}>
+          Username
+        </FormLabel>
+
+        <CommonTextField
+          value={email}
+          onChange={handleChange('email')}
+          type={'text'}
+          variant="outlined"
+          helperText={emailError ? `Enter Email ID ` : ''}
+          error={emailError}
+        />
+        <FormLabel component="legend" sx={{ color: '#4D4639' }}>
+          Enter the 6-digit code sent to your email
+        </FormLabel>
+        <Otp
+          separator={<span></span>}
+          value={otp}
+          onChange={setOtp}
+          length={5}
+        />
+        <Typography>Request to Resend OTP in 4:59</Typography>
+        <Button
+          onClick={handleSigninClick}
           sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-            borderRadius: '20px 20px 0 0',
-            padding: '15px',
-            backgroundColor: '#FFFFFF',
+            color: '#2B3133',
+            width: '100%',
+            height: '40px',
+            background:
+              'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+            borderRadius: '50px',
+            fontSize: '16px',
+            fontWeight: 500,
+            textTransform: 'none',
           }}
         >
-          <FormLabel component="legend" sx={{ color: '#4D4639' }}>
-            Username
-          </FormLabel>
-
-          <CommonTextField
-            value={email}
-            onChange={handleChange('email')}
-            type={'text'}
-            variant="outlined"
-            helperText={emailError ? `Enter Email ID ` : ''}
-            error={emailError}
+          Proceed
+        </Button>
+        <GoogleOAuthProvider clientId="467709515234-qu171h5np0rae7vrl23uv1audjht7fsa.apps.googleusercontent.com">
+          <GoogleLogin
+            onSuccess={handleLoginSuccess}
+            onError={handleLoginFailure}
+            useOneTap
+            theme="outline"
           />
-          <FormLabel component="legend" sx={{ color: '#4D4639' }}>
-            Enter the 6-digit code sent to your email
-          </FormLabel>
-          <Otp
-            separator={<span></span>}
-            value={otp}
-            onChange={setOtp}
-            length={5}
-          />
-          <Typography>Request to Resend OTP in 4:59</Typography>
-          <Button
-            onClick={handleSigninClick}
-            sx={{
-              color: '#2B3133',
-              width: '100%',
-              height: '40px',
-              background:
-                'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
-              borderRadius: '50px',
-              fontSize: '16px',
-              fontWeight: 500,
-              textTransform: 'none',
-            }}
-          >
-            Proceed
-          </Button>
-          <GoogleOAuthProvider clientId="467709515234-qu171h5np0rae7vrl23uv1audjht7fsa.apps.googleusercontent.com">
-            <GoogleLogin
-              onSuccess={handleLoginSuccess}
-              onError={handleLoginFailure}
-              useOneTap
-              theme="outline"
-            />
-          </GoogleOAuthProvider>
-          <Typography
-            textAlign={'center'}
-            variant="h1"
-            fontSize={'16px'}
-            color="#3B383E"
-            fontWeight={500}
-          >
-            Already Have An Account? <Link href="/newUser">Log In </Link>
-          </Typography>
-        </Grid>
+        </GoogleOAuthProvider>
+        <Typography
+          textAlign={'center'}
+          variant="h1"
+          fontSize={'16px'}
+          color="#3B383E"
+          fontWeight={500}
+        >
+          Already Have An Account? <Link href="/newUser">Log In </Link>
+        </Typography>
       </Grid>
-    </Layout>
+    </Grid>
   );
 }

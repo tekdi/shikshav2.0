@@ -25,6 +25,7 @@ import customTheme from '../styles/customTheme';
 import rtlPlugin from 'stylis-plugin-rtl';
 import { Box, IconButton } from '@mui/material';
 import { ToastContainer } from 'react-toastify';
+import { Layout } from '@shared-lib';
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 const poppins = Poppins({
@@ -131,7 +132,18 @@ function CustomApp({ Component, pageProps }: AppProps) {
             }}
           >
             <QueryClientProvider client={client}>
-              <Component {...pageProps} />
+              <Layout
+                isFooter={false}
+                showLogo={true}
+                showBack={true}
+                showTopAppBar={{
+                  title: 'Jal-Jungle-Jameen ',
+                  showMenuIcon: true,
+                  actionButtonLabel: 'Action',
+                }}
+              >
+                <Component {...pageProps} />
+              </Layout>
             </QueryClientProvider>
             <ToastContainer
               position="bottom-left"
