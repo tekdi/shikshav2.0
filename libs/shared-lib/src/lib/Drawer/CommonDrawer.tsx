@@ -30,6 +30,7 @@ interface CommonDrawerProps {
   items: DrawerItem[];
   categories: CategoryItem[];
   onItemClick: (to: string) => void;
+  anchor?: 'left' | 'right' | 'top' | 'bottom';
 }
 
 export const CommonDrawer: React.FC<CommonDrawerProps> = ({
