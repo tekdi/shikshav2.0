@@ -49,6 +49,8 @@ export default function Signin() {
               localStorage.setItem('refreshToken', refreshToken);
             }
           }
+        } else if (response?.status === 404) {
+          console.log('error', response?.response?.data?.params?.errmsg);
         }
       } catch (error: any) {
         setLoading(false);
@@ -155,7 +157,7 @@ export default function Signin() {
           color="#3B383E"
           fontWeight={500}
         >
-          Already Have An Account? <Link href="/newUser">Log In </Link>
+          Already Have An Account? <Link href="/register">Sign up </Link>
         </Typography>
       </Grid>
     </Grid>

@@ -296,7 +296,7 @@ export default function Registration() {
           color="#3B383E"
           fontWeight={500}
         >
-          Already Have An Account? <Link href="/signin">Log In</Link>
+          Don’t Have An Account? <Link href="/signin">Log In</Link>
         </Typography>
       </Grid>
 

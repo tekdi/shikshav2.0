@@ -28,7 +28,8 @@ export const signin = async ({ email, otp }: LoginParams): Promise<any> => {
     return response?.data;
   } catch (error) {
     console.error('error in login', error);
-    throw error;
+    // throw error;
+    return error;
   }
 };
 
