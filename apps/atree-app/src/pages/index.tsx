@@ -83,10 +83,10 @@ export default function Index() {
     init();
   }, []);
 
-  const handleCardClick = (id: string, mimeType: string) => {
+  const handleCardClick = (content: any) => {
     if (consumedContent.length < 3) {
-      router.push(`/contents/${id}`);
-      setConsumedContent((prev) => [...prev, id]);
+      router.push(`/contents/${content?.identifier}`);
+      setConsumedContent((prev) => [...prev, content?.identifier]);
     } else {
       alert('Please log in to continue');
     }

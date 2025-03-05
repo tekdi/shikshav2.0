@@ -61,7 +61,7 @@ export default function Content() {
   return (
     <Layout
       showBack
-      backIconClick={() => router.push('/contents')}
+      backIconClick={() => router.back()}
       backTitle={
         <Box>
           <Typography
