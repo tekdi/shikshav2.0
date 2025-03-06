@@ -24,6 +24,7 @@ import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlin
 import FilterDramaOutlinedIcon from '@mui/icons-material/FilterDramaOutlined';
 import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
 import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import { useRouter } from 'next/router';
 const catImages = {
   Water,
@@ -43,7 +44,7 @@ const LandingPage = () => {
 
     {
       text: 'Login',
-      icon: <HomeOutlinedIcon fontSize="small" />,
+      icon: <AccountCircleOutlinedIcon fontSize="small" />,
       to: '/signin',
     },
     {

@@ -23,6 +23,7 @@ import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlin
 import FilterDramaOutlinedIcon from '@mui/icons-material/FilterDramaOutlined';
 import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
 import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 // import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'next/navigation';
@@ -112,7 +113,7 @@ export default function Index() {
 
     {
       text: 'Login',
-      icon: <HomeOutlinedIcon fontSize="small" />,
+      icon: <AccountCircleOutlinedIcon fontSize="small" />,
       to: '/signin',
     },
     {
@@ -229,7 +230,11 @@ const FrameworkFilter = React.memo<{
               color: framework !== frameworkItem.identifier ? '#171D1E' : '',
               backgroundColor:
                 framework === frameworkItem.identifier
-                  ? buttonColors[frameworkItem?.name?.toLowerCase() || '']
+                  ? frameworkItem?.name?.toLowerCase() in buttonColors
+                    ? buttonColors[
+                        frameworkItem?.name?.toLowerCase() as keyof typeof buttonColors
+                      ]
+                    : ''
                   : '',
             }}
             onClick={() => setFramework(frameworkItem.identifier)}

@@ -18,7 +18,12 @@ import { getContentDetails } from '../../service/content';
 import Layout from '../../component/layout/layout';
 import landingBanner from '../../../assets/images/landingBanner.png';
 import Carousel from 'react-material-ui-carousel';
-
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlined';
+import FilterDramaOutlinedIcon from '@mui/icons-material/FilterDramaOutlined';
+import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
+import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 interface ContentItem {
   name: string;
   gradeLevel: string[];
@@ -33,7 +38,7 @@ interface ContentItem {
 export default function Content() {
   const router = useRouter();
   const { identifier } = router.query; // Access dynamic parameter 'identifier'
-  const [contentData, setContentData] = useState<ContentItem>({});
+  const [contentData, setContentData] = useState<ContentItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const handleOnCLick = () => {
     router.push(`/player/${identifier}`);
@@ -57,9 +62,42 @@ export default function Content() {
   }, [identifier]);
 
   if (isLoading) return <Circular />;
+  const drawerItems = [
+    { text: 'Home', icon: <HomeOutlinedIcon fontSize="small" />, to: '/' },
 
+    {
+      text: 'Login',
+      icon: <AccountCircleOutlinedIcon fontSize="small" />,
+      to: '/signin',
+    },
+    {
+      text: 'About Us',
+      icon: <FilterDramaOutlinedIcon fontSize="small" />,
+      to: '/aboutus',
+    },
+    {
+      text: 'Contact Us',
+      icon: <AlternateEmailOutlinedIcon fontSize="small" />,
+      to: '/contactus',
+    },
+    {
+      text: 'Recommend Resources',
+      icon: <PostAddOutlinedIcon fontSize="small" />,
+      to: '/content',
+    },
+    {
+      text: 'Terms & Conditions',
+      icon: <ContactSupportOutlinedIcon fontSize="small" />,
+      to: '/terms-and-conditions',
+    },
+  ];
+  const handleItemClick = (to: string) => {
+    router.push(to);
+  };
   return (
     <Layout
+      drawerItems={drawerItems}
+      onItemClick={handleItemClick}
       showBack
       backIconClick={() => router.back()}
       backTitle={
