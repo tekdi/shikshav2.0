@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { BottomNavigation, BottomNavigationAction } from '@mui/material';
+import { BottomNavigation, BottomNavigationAction, Box } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 // import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import ShareIcon from '@mui/icons-material/Share';
@@ -28,12 +28,7 @@ export default function Footer() {
         break;
       case 2:
         setOpen(true);
-        // navigator.clipboard.writeText(window.location.href);
-        // router.push('/bookmarked');
         break;
-      // case 3:
-      //   setOpen(true);
-      //   break;
     }
   };
 
@@ -46,7 +41,7 @@ export default function Footer() {
   }, [router.asPath]);
 
   return (
-    <>
+    <Box>
       <BottomNavigation
         showLabels
         value={value}
@@ -70,6 +65,6 @@ export default function Footer() {
         ))}
       </BottomNavigation>
       <ShareDialog open={open} handleClose={() => setOpen(false)} />
-    </>
+    </Box>
   );
 }

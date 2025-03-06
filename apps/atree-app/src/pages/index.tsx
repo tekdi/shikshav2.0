@@ -1,11 +1,5 @@
 'use client';
-import {
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  Typography,
-} from '@mui/material';
+import { Typography } from '@mui/material';
 // import { useTranslation } from 'react-i18next';
 import Grid from '@mui/material/Grid2';
 import Image from 'next/image';
@@ -26,6 +20,8 @@ import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlin
 import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import { useRouter } from 'next/router';
+import { ImageBanner } from '../component/layout/ImageBanner';
+
 const catImages = {
   Water,
   Forest: Forests,
@@ -87,7 +83,7 @@ const LandingPage = () => {
     >
       <Grid container spacing={4} sx={{ mb: 3 }}>
         <Grid width={'100%'}>
-          <CardComponent
+          <ImageBanner
             name={
               'A digital hub of Environment Education resources contextual to India'
             }
@@ -166,7 +162,7 @@ const LandingPage = () => {
               'Reference Books',
             ].map((category, index) => (
               <Grid key={index} size={{ xs: 6, sm: 6, md: 3, lg: 3 }}>
-                <CardComponent
+                <ImageBanner
                   key={index}
                   name={category}
                   _text={{ textAline: 'center' }}
@@ -214,56 +210,3 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
-
-export const CardComponent = ({
-  image,
-  name,
-  _image,
-  _text,
-}: {
-  image: string;
-  name: string;
-  _image?: object;
-  _text?: object;
-}) => {
-  const router = useRouter();
-
-  const handleClick = () => {
-    router.push(`/home?category=${encodeURIComponent(name)}`);
-  };
-  return (
-    <Card sx={{ width: '100%' }} onClick={handleClick}>
-      <CardActionArea>
-        <CardMedia component="img" alt={name} sx={_image} image={image} />
-        <CardContent
-          sx={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: '100px',
-            background:
-              'linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5) , rgba(0, 0, 0, 0))',
-            zIndex: 1,
-            ..._text,
-          }}
-        >
-          <Typography
-            variant="h5"
-            gutterBottom
-            sx={{
-              color: 'white',
-              zIndex: 2,
-              mb: 0,
-              fontWeight: 700,
-              fontSize: '18px',
-              lineHeight: '24px',
-            }}
-          >
-            {name}
-          </Typography>
-        </CardContent>
-      </CardActionArea>
-    </Card>
-  );
-};

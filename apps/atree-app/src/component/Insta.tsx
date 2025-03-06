@@ -1,6 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const Insta: React.FC = () => {
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+
+    // Load Instagram embed script dynamically
+    const script = document.createElement('script');
+    script.src = 'https://www.instagram.com/embed.js';
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
   const handleClick = () => {
     window.open(
       'https://www.instagram.com/env_edu_india',
@@ -8,7 +18,7 @@ const Insta: React.FC = () => {
       'noopener noreferrer'
     );
   };
-
+  if (!isClient) return null;
   return (
     <div className="boxes3">
       <blockquote
