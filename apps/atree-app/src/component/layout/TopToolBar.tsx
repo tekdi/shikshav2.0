@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -7,7 +7,10 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Container, Menu, MenuItem } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import Image from 'next/image';
+import { InputBase } from '@mui/material';
+import SearchTypeModal from '../SearchTypeModal';
 interface ActionIcon {
   icon: React.ReactNode;
   ariaLabel: string;
@@ -34,6 +37,7 @@ interface CommonAppBarProps {
   _subTitle?: object;
   showMenuIcon?: boolean;
   showBackIcon?: boolean;
+  searchIconClick?: () => void;
   menuIconClick?: () => void;
   backIconClick?: () => void;
   actionButtonColor?: 'inherit' | 'primary' | 'secondary' | 'default';
@@ -44,6 +48,8 @@ interface CommonAppBarProps {
   onMenuClose?: () => void;
   logoUrl?: string;
   _appBar?: object;
+  searchQuery?: string;
+  onSearchChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const TopAppBar: React.FC<CommonAppBarProps> = ({
@@ -54,13 +60,24 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
   showBackIcon = false,
   menuIconClick,
   backIconClick,
+  searchIconClick,
   actionButtonColor = 'inherit',
   actionIcons = [],
   profileIcon = [],
   onMenuClose,
   logoUrl,
   _appBar,
+  searchQuery,
+  onSearchChange,
 }) => {
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const handleSearchOpen = () => {
+    setIsSearchOpen(true);
+  };
+
+  const handleSearchClose = () => {
+    setIsSearchOpen(false);
+  };
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -125,7 +142,28 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                 )}
               </Box>
             </Box>
-            <Box>
+            <Box display="flex" alignItems="center">
+              {/* <InputBase
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={onSearchChange}
+                sx={{ ml: 1, flex: 1 }}
+              /> */}
+              <IconButton
+                size="large"
+                edge="start"
+                color="text.secondary"
+                aria-label="search"
+                onClick={handleSearchOpen}
+              >
+                <SearchIcon />
+              </IconButton>
+              <SearchTypeModal
+                open={isSearchOpen}
+                onClose={handleSearchClose}
+                onSelect={(type) => console.log(type)}
+              />
+
               <IconButton
                 size="large"
                 edge="start"

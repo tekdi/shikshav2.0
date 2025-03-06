@@ -12,6 +12,7 @@ import FilterDramaOutlinedIcon from '@mui/icons-material/FilterDramaOutlined';
 import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
 import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import SearchTypeModal from '../SearchTypeModal';
 interface LayoutProps {
   children?: React.ReactNode;
   footerComponent?: React.ReactNode | string;
@@ -91,7 +92,10 @@ export default function Layout({
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [layoutHeight, setLayoutHeight] = useState(0);
   const refs = useRef({});
-
+  const [searchQuery, setSearchQuery] = useState('');
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
   useEffect(() => {
     const handleResize = debounce(() => {
       const totalHeight = Object.keys(refs.current).reduce((acc, key) => {
@@ -206,6 +210,8 @@ export default function Layout({
                 actionButtonColor="secondary"
                 actionIcons={topAppBarIcons}
                 menuIconClick={() => setIsDrawerOpen(true)}
+                searchQuery={searchQuery} // Pass the search value
+                onSearchChange={handleSearchChange}
                 // profileIcon={[
                 //   {
                 //     icon: <>hi</>,
@@ -218,7 +224,6 @@ export default function Layout({
             </Box>
           </Box>
         )}
-
         {(showBack || backTitle) && (
           <Box
             sx={{

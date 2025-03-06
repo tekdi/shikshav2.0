@@ -31,25 +31,25 @@ const ShareDialog: React.FC<ShareDialogProps> = ({ open, handleClose }) => {
         <Stack direction="row" spacing={2} justifyContent="center">
           <FacebookShareButton url={shareUrl}>
             <IconButton color="primary">
-              <Facebook />
+              <Facebook fontSize="large" />
             </IconButton>
           </FacebookShareButton>
 
           <TwitterShareButton url={shareUrl}>
             <IconButton color="primary">
-              <Twitter />
+              <Twitter fontSize="large" />
             </IconButton>
           </TwitterShareButton>
 
           <WhatsappShareButton url={shareUrl}>
             <IconButton color="primary">
-              <WhatsApp />
+              <WhatsApp fontSize="large" />
             </IconButton>
           </WhatsappShareButton>
 
           <LinkedinShareButton url={shareUrl}>
             <IconButton color="primary">
-              <LinkedIn />
+              <LinkedIn fontSize="large" />
             </IconButton>
           </LinkedinShareButton>
         </Stack>
