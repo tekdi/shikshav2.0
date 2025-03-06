@@ -3,7 +3,10 @@ import Layout from '../../component/layout/layout';
 import FolderComponent from '../../component/FolderComponent';
 import { useRouter } from 'next/router';
 import { Typography } from '@mui/material';
-
+interface Term {
+  name: string;
+  associations: any[];
+}
 const MyComponent: React.FC = () => {
   const [categories, setCategories] = useState<Array<any>>([]);
   const [isLoadingChildren, setIsLoadingChildren] = useState(true);
@@ -18,7 +21,7 @@ const MyComponent: React.FC = () => {
       const fdata =
         frameworks
           .find((item: any) => item.code === 'topic')
-          ?.terms?.find((e) => e.name === category)?.associations || [];
+          ?.terms?.find((e: Term) => e.name === category)?.associations || [];
       console.log(fdata);
       setCategories(fdata || []);
       setIsLoadingChildren(false);

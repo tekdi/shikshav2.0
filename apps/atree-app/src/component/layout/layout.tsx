@@ -6,7 +6,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import atreeLogo from '../../../assets/images/atreeLogo.png';
 import TopAppBar from './TopToolBar';
 import Footer from './Footer';
-
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlined';
+import FilterDramaOutlinedIcon from '@mui/icons-material/FilterDramaOutlined';
+import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
+import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 interface LayoutProps {
   children?: React.ReactNode;
   footerComponent?: React.ReactNode | string;
@@ -20,11 +25,7 @@ interface LayoutProps {
     to: string;
     icon?: React.ReactNode;
   }[];
-  drawerItems?: {
-    text: string;
-    to: string;
-    icon?: React.ReactNode;
-  }[];
+
   onItemClick?: (to: string) => void | undefined;
   onBackIconClick?: () => void;
   showTopAppBar?: {
@@ -79,7 +80,6 @@ export default function Layout({
   backTitle = '',
   showTopAppBar = {},
   topAppBarIcons = [],
-  drawerItems = [],
   categorieItems = [],
   onItemClick,
   backIconClick,
@@ -119,6 +119,35 @@ export default function Layout({
   const handleButtonClick = () => {
     console.log('Footer button clicked!');
   };
+  const drawerItems = [
+    { text: 'Home', icon: <HomeOutlinedIcon fontSize="small" />, to: '/' },
+
+    {
+      text: 'Login',
+      icon: <AccountCircleOutlinedIcon fontSize="small" />,
+      to: '/signin',
+    },
+    {
+      text: 'About Us',
+      icon: <FilterDramaOutlinedIcon fontSize="small" />,
+      to: '/aboutus',
+    },
+    {
+      text: 'Contact Us',
+      icon: <AlternateEmailOutlinedIcon fontSize="small" />,
+      to: '/contactus',
+    },
+    {
+      text: 'Recommend Resources',
+      icon: <PostAddOutlinedIcon fontSize="small" />,
+      to: '/content',
+    },
+    {
+      text: 'Terms & Conditions',
+      icon: <ContactSupportOutlinedIcon fontSize="small" />,
+      to: '/termsAndCondition',
+    },
+  ];
 
   return (
     <Box

@@ -225,7 +225,11 @@ export default function Registration() {
               label={
                 <Typography fontSize="14px">
                   I have read and accepted the{' '}
-                  <Link href="/terms-and-conditions" color="#2B3133">
+                  <Link
+                    href="#"
+                    onClick={handleChangeOPenTermsAndCondition}
+                    style={{ color: '#0047D4', textDecoration: 'underline' }}
+                  >
                     Terms and Conditions
                   </Link>
                   .

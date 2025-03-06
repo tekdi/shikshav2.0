@@ -18,12 +18,7 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import atreeLogo from '../../../assets/images/atreeLogo.png';
 import Layout from '../../component/layout/layout';
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlined';
-import FilterDramaOutlinedIcon from '@mui/icons-material/FilterDramaOutlined';
-import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
-import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
-import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+
 // import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'next/navigation';
@@ -108,44 +103,12 @@ export default function Index() {
       alert('Please log in to continue');
     }
   };
-  const drawerItems = [
-    { text: 'Home', icon: <HomeOutlinedIcon fontSize="small" />, to: '/' },
 
-    {
-      text: 'Login',
-      icon: <AccountCircleOutlinedIcon fontSize="small" />,
-      to: '/signin',
-    },
-    {
-      text: 'About Us',
-      icon: <FilterDramaOutlinedIcon fontSize="small" />,
-      to: '/aboutus',
-    },
-    {
-      text: 'Contact Us',
-      icon: <AlternateEmailOutlinedIcon fontSize="small" />,
-      to: '/contactus',
-    },
-    {
-      text: 'Recommend Resources',
-      icon: <PostAddOutlinedIcon fontSize="small" />,
-      to: '/content',
-    },
-    {
-      text: 'Terms & Conditions',
-      icon: <ContactSupportOutlinedIcon fontSize="small" />,
-      to: '/terms-and-conditions',
-    },
-  ];
   const handleItemClick = (to: string) => {
     router.push(to);
   };
   return (
-    <Layout
-      isLoadingChildren={isLoadingChildren}
-      drawerItems={drawerItems}
-      onItemClick={handleItemClick}
-    >
+    <Layout isLoadingChildren={isLoadingChildren} onItemClick={handleItemClick}>
       <Box display="flex" flexDirection="column" gap="3rem" py="3rem" px="14px">
         <FrameworkFilter
           frameworkFilter={frameworkFilter || []}

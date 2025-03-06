@@ -4,7 +4,10 @@ import FolderComponent from '../../../component/FolderComponent';
 import { useRouter } from 'next/router';
 import { Typography } from '@mui/material';
 import dynamic from 'next/dynamic';
-
+interface Term {
+  name: string;
+  associations: any[];
+}
 const Content = dynamic(() => import('@Content'), {
   ssr: false,
 });
@@ -22,7 +25,7 @@ const MyComponent: React.FC = () => {
       const fdata =
         frameworks
           .find((item: any) => item.code === 'topic')
-          ?.terms?.find((e) => e.name === category)?.associations || [];
+          ?.terms?.find((e: Term) => e.name === category)?.associations || [];
       console.log(fdata);
       setCategories(fdata || []);
       setIsLoadingChildren(false);

@@ -13,12 +13,7 @@ import ReferenceBooks from '../../assets/images/LetsTalkAboutTreesCover.png';
 import Water from '../../assets/images/WatercoverTekdi.png';
 import Insta from '../component/Insta';
 import Layout from '../component/layout/layout';
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlined';
-import FilterDramaOutlinedIcon from '@mui/icons-material/FilterDramaOutlined';
-import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
-import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
-import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+
 import { useRouter } from 'next/router';
 import { ImageBanner } from '../component/layout/ImageBanner';
 
@@ -35,41 +30,11 @@ const LandingPage = () => {
   // const { t } = useTranslation();
   const t = (data: string) => data;
   const router = useRouter();
-  const drawerItems = [
-    { text: 'Home', icon: <HomeOutlinedIcon fontSize="small" />, to: '/' },
-
-    {
-      text: 'Login',
-      icon: <AccountCircleOutlinedIcon fontSize="small" />,
-      to: '/signin',
-    },
-    {
-      text: 'About Us',
-      icon: <FilterDramaOutlinedIcon fontSize="small" />,
-      to: '/aboutus',
-    },
-    {
-      text: 'Contact Us',
-      icon: <AlternateEmailOutlinedIcon fontSize="small" />,
-      to: '/contactus',
-    },
-    {
-      text: 'Recommend Resources',
-      icon: <PostAddOutlinedIcon fontSize="small" />,
-      to: '/content',
-    },
-    {
-      text: 'Terms & Conditions',
-      icon: <ContactSupportOutlinedIcon fontSize="small" />,
-      to: '/terms-and-conditions',
-    },
-  ];
   const handleItemClick = (to: string) => {
     router.push(to);
   };
   return (
     <Layout
-      drawerItems={drawerItems}
       onItemClick={handleItemClick}
       footerComponent={
         <Grid sx={{ px: 4, py: 2, backgroundColor: 'secondary.main' }}>
@@ -81,75 +46,94 @@ const LandingPage = () => {
         </Grid>
       }
     >
-      <Grid container spacing={4} sx={{ mb: 3 }}>
+      <Grid container spacing={4} sx={{ mb: 3 }} justifyContent={'center'}>
         <Grid width={'100%'}>
           <ImageBanner
             name={
               'A digital hub of Environment Education resources contextual to India'
             }
             image={landingBanner?.src}
-            _image={{ height: '181px' }}
+            // _image={{ height: '181px' }}
           />
         </Grid>
-        <Grid sx={{ px: 4 }} container spacing={3}>
-          <Typography
-            variant="body1"
-            align="center"
-            gutterBottom
-            sx={{
-              fontWeight: 400,
-              fontSize: '14px',
-              lineHeight: '24px',
-              textAlign: 'center',
-              color: '#000000',
-            }}
+        <Grid
+          sx={{ px: 4, textAlign: 'center' }}
+          container
+          spacing={2}
+          justifyContent={'center'}
+        >
+          <Grid
+            size={{ xs: 12, sm: 10, md: 12, lg: 12 }}
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
           >
-            {t(
-              'Change stems from local action. Hope stems from children’s empowerment to act upon local environmental problems.'
-            )}
-          </Typography>
-          <Typography
-            variant="body1"
-            align="center"
-            gutterBottom
-            sx={{
-              fontWeight: 400,
-              fontSize: '14px',
-              lineHeight: '24px',
-              textAlign: 'center',
-              color: '#000000',
-            }}
-          >
-            {t(
-              'Our mission is to empower environment educators with both hope and action in times of climate change.'
-            )}
-          </Typography>
+            <Typography
+              variant="body1"
+              align="center"
+              gutterBottom
+              sx={{
+                fontWeight: 400,
+                fontSize: '14px',
+                lineHeight: '24px',
+                textAlign: 'center',
+                color: '#000000',
+              }}
+            >
+              {t(
+                'Change stems from local action. Hope stems from children’s empowerment to act upon local environmental problems.'
+              )}
+            </Typography>
+            <Typography
+              variant="body1"
+              align="center"
+              gutterBottom
+              sx={{
+                fontWeight: 400,
+                fontSize: '14px',
+                lineHeight: '24px',
+                textAlign: 'center',
+                color: '#000000',
+              }}
+            >
+              {t(
+                'Our mission is to empower environment educators with both hope and action in times of climate change.'
+              )}
+            </Typography>
+          </Grid>
         </Grid>
         <Grid sx={{ px: 2 }} container spacing={1}>
-          <Typography
-            variant="h5"
-            align="center"
-            gutterBottom
-            sx={{
-              fontWeight: 500,
-              fontSize: '24px',
-              textAlign: 'center',
-            }}
+          <Grid
+            size={{ xs: 12, sm: 10, md: 12, lg: 12 }}
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
           >
-            1000 BOOKS IN 15 CATEGORIES
-          </Typography>
-          <Typography
-            variant="body1"
-            align="center"
-            gutterBottom
-            sx={{
-              fontWeight: 400,
-              fontSize: '14px',
-              textAlign: 'center',
-            }}
-          >
-            {t('Choose what best fits your interests and needs')}
-          </Typography>
+            <Typography
+              variant="h5"
+              align="center"
+              gutterBottom
+              sx={{
+                fontWeight: 500,
+                fontSize: '24px',
+                textAlign: 'center',
+              }}
+            >
+              1000 BOOKS IN 15 CATEGORIES
+            </Typography>
+            <Typography
+              variant="body1"
+              align="center"
+              gutterBottom
+              sx={{
+                fontWeight: 400,
+                fontSize: '14px',
+                textAlign: 'center',
+              }}
+            >
+              {t('Choose what best fits your interests and needs')}
+            </Typography>
+          </Grid>
         </Grid>
         <Grid sx={{ px: 1 }}>
           <Grid container spacing={1}>
@@ -161,10 +145,11 @@ const LandingPage = () => {
               'Activity Books',
               'Reference Books',
             ].map((category, index) => (
-              <Grid key={index} size={{ xs: 6, sm: 6, md: 3, lg: 3 }}>
+              <Grid key={index} size={{ xs: 6, sm: 6, md: 4, lg: 4 }}>
                 <ImageBanner
                   key={index}
                   name={category}
+                  _showAvatar={true}
                   _text={{ textAline: 'center' }}
                   image={
                     (
