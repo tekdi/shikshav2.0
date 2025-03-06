@@ -21,6 +21,6 @@
     ],
     "types": ["jest", "node"]
   },
-  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "next-env.d.ts", "next.config.mjs", "next.config.mjs"],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "next-env.d.ts", "next.config.mjs", "next.config.mjs", "../../apps/atree-app/src/pages/aboutus.tsx", "../../apps/atree-app/src/pages/contactus.tsx"],
   "exclude": ["node_modules", "jest.config.ts", "**/*.spec.ts", "**/*.test.ts"]
 }

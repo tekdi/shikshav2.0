@@ -25,7 +25,12 @@ import customTheme from '../styles/customTheme';
 import rtlPlugin from 'stylis-plugin-rtl';
 import { Box, IconButton } from '@mui/material';
 import { ToastContainer } from 'react-toastify';
-
+import { Layout } from '@shared-lib';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlined';
+import FilterDramaOutlinedIcon from '@mui/icons-material/FilterDramaOutlined';
+import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
+import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 const poppins = Poppins({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -105,7 +110,35 @@ function CustomApp({ Component, pageProps }: AppProps) {
     key: 'mui',
   });
   const login = router.pathname === '/login';
+  const drawerItems = [
+    { text: 'Home', icon: <HomeOutlinedIcon fontSize="small" />, to: '/' },
 
+    {
+      text: 'Login',
+      icon: <HomeOutlinedIcon fontSize="small" />,
+      to: '/signin',
+    },
+    {
+      text: 'About Us',
+      icon: <FilterDramaOutlinedIcon fontSize="small" />,
+      to: '/aboutus',
+    },
+    {
+      text: 'Contact Us',
+      icon: <AlternateEmailOutlinedIcon fontSize="small" />,
+      to: '/contactus',
+    },
+    {
+      text: 'Recommend Resources',
+      icon: <PostAddOutlinedIcon fontSize="small" />,
+      to: '/content',
+    },
+    {
+      text: 'Terms & Conditions',
+      icon: <ContactSupportOutlinedIcon fontSize="small" />,
+      to: '/terms-and-conditions',
+    },
+  ];
   return (
     <>
       <style jsx global>{`
@@ -126,21 +159,24 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <CssVarsProvider theme={customTheme}>
           <Box
             sx={{
-              padding: '0',
-              '@media (min-width: 900px)': {
-                width: !isFullWidthPage ? 'calc(100% - 22rem)' : '100%',
-                marginLeft: !isFullWidthPage ? '351px' : '0',
-              },
-              '@media (min-width: 2000px)': {
-                width: '100%',
-                marginLeft: !isFullWidthPage ? '351px' : '0',
-              },
               background: theme.palette.warning['A400'],
               overflowX: 'hidden',
             }}
           >
             <QueryClientProvider client={client}>
-              <Component {...pageProps} />
+              <Layout
+                isFooter={false}
+                showLogo={true}
+                showBack={true}
+                showTopAppBar={{
+                  title: 'Jal-Jungle-Jameen ',
+                  showMenuIcon: true,
+                  actionButtonLabel: 'Action',
+                }}
+                drawerItems={drawerItems}
+              >
+                <Component {...pageProps} />
+              </Layout>
             </QueryClientProvider>
             <ToastContainer
               position="bottom-left"

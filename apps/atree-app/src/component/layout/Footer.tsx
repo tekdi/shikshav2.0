@@ -1,10 +1,11 @@
 import { useRouter } from 'next/router';
-import { BottomNavigation, BottomNavigationAction } from '@mui/material';
+import { BottomNavigation, BottomNavigationAction, Box } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 // import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import ShareIcon from '@mui/icons-material/Share';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import { useEffect, useState } from 'react';
+import ShareDialog from '../ShareDialog';
 
 const items = [
   { label: 'Home', icon: <HomeIcon /> },
@@ -16,7 +17,7 @@ const items = [
 export default function Footer() {
   const router = useRouter();
   const [value, setValue] = useState(0);
-
+  const [open, setOpen] = useState(false);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     switch (newValue) {
       case 0:
@@ -26,12 +27,8 @@ export default function Footer() {
         router.push('/quick-access');
         break;
       case 2:
-        navigator.clipboard.writeText(window.location.href);
-        // router.push('/bookmarked');
+        setOpen(true);
         break;
-      //   case 3:
-      //     router.push('/share');
-      //     break;
     }
   };
 
@@ -44,27 +41,30 @@ export default function Footer() {
   }, [router.asPath]);
 
   return (
-    <BottomNavigation
-      showLabels
-      value={value}
-      onChange={handleChange}
-      sx={{
-        bgcolor: 'secondary.main',
-      }}
-    >
-      {items.map(({ label, icon }, index) => (
-        <BottomNavigationAction
-          key={index}
-          label={label}
-          icon={icon}
-          sx={{
-            '&.Mui-selected': {
-              color: '#1C1B1F',
-            },
-            color: 'white',
-          }}
-        />
-      ))}
-    </BottomNavigation>
+    <Box>
+      <BottomNavigation
+        showLabels
+        value={value}
+        onChange={handleChange}
+        sx={{
+          bgcolor: 'secondary.main',
+        }}
+      >
+        {items.map(({ label, icon }, index) => (
+          <BottomNavigationAction
+            key={index}
+            label={label}
+            icon={icon}
+            sx={{
+              '&.Mui-selected': {
+                color: '#1C1B1F',
+              },
+              color: 'white',
+            }}
+          />
+        ))}
+      </BottomNavigation>
+      <ShareDialog open={open} handleClose={() => setOpen(false)} />
+    </Box>
   );
 }

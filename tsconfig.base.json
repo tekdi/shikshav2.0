@@ -32,7 +32,9 @@
       "@test-react-vite": ["mfes/mfes/test-react-vite"],
       "@youthNet": ["mfes/youthNet/src/pages/index.tsx"],
       "@loginAtree": ["mfes/registration/src/app/signin/page.tsx"],
-      "@Content": ["mfes/content/src/pages/content.tsx"]
+      "@Content": ["mfes/content/src/pages/content.tsx"],
+      "@Atreelogin": ["mfes/atree-auth/src/pages/signin.tsx"],
+      "@Atreeregister": ["mfes/atree-auth/src/pages/registration.tsx"]
     }
   },
   "exclude": ["node_modules", "tmp"]
