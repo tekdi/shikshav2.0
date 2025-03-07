@@ -8,6 +8,8 @@ interface Term {
   name: string;
   associations: any[];
 }
+import atreeLogo from '../../../../assets/images/atreeLogo.png';
+
 const Content = dynamic(() => import('@Content'), {
   ssr: false,
 });
@@ -74,7 +76,24 @@ const MyComponent: React.FC = () => {
           cursor: 'auto',
         }}
       />
-      <Content />
+      <Content
+        {...{
+          _grid: {
+            size: { xs: 6, sm: 6, md: 4, lg: 3 },
+          },
+          contentTabs: ['content'],
+          filters: {
+            filters: {
+              channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
+              status: ['Live'],
+            },
+          },
+          _card: {
+            cardName: 'AtreeCard',
+            image: atreeLogo.src,
+          },
+        }}
+      />
     </Layout>
   );
 };

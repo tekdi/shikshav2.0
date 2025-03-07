@@ -1,45 +1,30 @@
 'use client';
 
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
-import HelpIcon from '@mui/icons-material/Help';
-import SearchIcon from '@mui/icons-material/Search';
-import {
-  Box,
-  Button,
-  Fab,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  Typography,
-} from '@mui/material';
-import Grid from '@mui/material/Grid2';
-import { useTheme } from '@mui/material/styles';
-import {
-  CommonDialog,
-  CommonSearch,
-  CommonTextField,
-  getData,
-  Loader,
-} from '@shared-lib';
-import { useRouter } from 'next/navigation';
-import type { ChangeEvent } from 'react';
 import React, { useCallback, useEffect, useState } from 'react';
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
+import SearchIcon from '@mui/icons-material/Search';
+import { Box } from '@mui/material';
+import { CommonSearch, getData, Loader } from '@shared-lib';
+import { useRouter } from 'next/navigation';
+import BackToTop from '../components/BackToTop';
 import FilterDialog from '../components/contentFilter';
 import RenderTabContent from '../components/ContentTabs';
+import HelpDesk from '../components/HelpDesk';
 import { hierarchyAPI } from '../services/Hierarchy';
 import { ContentSearch, ContentSearchResponse } from '../services/Search';
 
-export default function Content({
-  showFilter = true,
-  showSearch = true,
-  limit = 5,
-  filters = {},
-  handleCardClick,
-  _grid = {},
-}: any) {
+export interface ContentProps {
+  _grid?: object;
+  filters?: object;
+  contentTabs?: string[];
+  cardName?: string;
+  handleCardClick?: (content: ContentSearchResponse) => void | undefined;
+  showFilter?: boolean;
+  showSearch?: boolean;
+  showBackToTop?: boolean;
+  showHelpDesk?: boolean;
+}
+export default function Content(props: ContentProps) {
   const router = useRouter();
   const [searchValue, setSearchValue] = useState('');
   const [tabValue, setTabValue] = useState<number>();
@@ -49,39 +34,25 @@ export default function Content({
   const [isLoading, setIsLoading] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
   const [localFilters, setFilters] = useState<any>({ limit: 5, offset: 0 });
-  const theme = useTheme();
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [frameworkFilter, setFrameworkFilter] = useState(false);
   const [trackData, setTrackData] = useState<[]>([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [issueData, setIssueData] = useState({
-    subject: '',
-    description: '',
-    status: '',
-    priority: '',
-  });
   const [filterShow, setFilterShow] = useState(false);
-  const [propData, setPropData] = useState<{
-    _grid: object;
-    filters: object;
-    contentTabs: string[];
-    cardName?: string;
-  }>({
-    _grid: {},
-    filters: {},
-    contentTabs: [],
-    cardName: '',
-  });
+  const [propData, setPropData] = useState<ContentProps>();
 
   useEffect(() => {
     const init = async () => {
       const newData = await getData('mfes_content_pages_content');
-      setPropData(newData);
+      setPropData({
+        showSearch: true,
+        showFilter: true,
+        ...(props || newData),
+      });
       setTabValue(0);
       setPageIsLoading(false);
     };
     init();
-  }, []);
+  }, [props]);
 
   const fetchContent = useCallback(async (filters: any) => {
     try {
@@ -146,8 +117,8 @@ export default function Content({
           'application/vnd.sunbird.questionset',
         ].includes(content?.mimeType as string)
       ) {
-        if (handleCardClick) {
-          handleCardClick(content);
+        if (propData?.handleCardClick) {
+          propData.handleCardClick(content);
         } else {
           router.push(`/player/${content?.identifier}`);
         }
@@ -167,10 +138,6 @@ export default function Content({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleBackToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   useEffect(() => {
     const init = () => {
       const cookies = document.cookie.split('; ');
@@ -189,7 +156,7 @@ export default function Content({
           type: 'Learning Resource',
         },
       ].filter((tab) =>
-        propData?.contentTabs?.length > 0
+        Array.isArray(propData?.contentTabs) && propData.contentTabs.length > 0
           ? propData?.contentTabs?.includes(tab.label?.toLowerCase())
           : true
       );
@@ -267,36 +234,10 @@ export default function Content({
     fetchFramework();
   }, [router]);
 
-  const handleHelpClick = () => {
-    // alert('Contact Help Desk at help@shiksha.com');
-    setIsDialogOpen(true);
-  };
-  const handleDialogClose = () => {
-    setIsDialogOpen(false);
-  };
-  const handleChange =
-    (field: string) =>
-    (
-      event:
-        | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-        | SelectChangeEvent<string>
-    ) => {
-      const value = event.target.value;
-      setIssueData({
-        ...issueData,
-        [field]: value,
-      });
-    };
-  const handleOtpSubmit = async () => {
-    const queryString = new URLSearchParams(issueData).toString();
-    const frappeDeskUrl = `http://localhost:8000/helpdesk/tickets/new?${queryString}`;
-    router.push(frappeDeskUrl);
-  };
-
   return (
     <Loader isLoading={isPageLoading}>
       <Box sx={{ p: 2 }}>
-        {showSearch && (
+        {(propData?.showSearch || propData?.showFilter) && (
           <Box
             sx={{
               width: '100%',
@@ -304,26 +245,28 @@ export default function Content({
               justifyContent: 'space-between',
             }}
           >
-            <CommonSearch
-              placeholder={'Search content..'}
-              rightIcon={<SearchIcon />}
-              onRightIconClick={handleSearchClick}
-              inputValue={searchValue || ''}
-              onInputChange={handleSearchChange}
-              onKeyPress={(ev: any) => {
-                if (ev.key === 'Enter') {
-                  handleSearchClick();
-                }
-              }}
-              sx={{
-                backgroundColor: '#f0f0f0',
-                padding: '4px',
-                borderRadius: '50px',
-                width: '100%',
-                marginLeft: '10px',
-              }}
-            />
-            {showFilter && (
+            {propData?.showSearch && (
+              <CommonSearch
+                placeholder={'Search content..'}
+                rightIcon={<SearchIcon />}
+                onRightIconClick={handleSearchClick}
+                inputValue={searchValue || ''}
+                onInputChange={handleSearchChange}
+                onKeyPress={(ev: any) => {
+                  if (ev.key === 'Enter') {
+                    handleSearchClick();
+                  }
+                }}
+                sx={{
+                  backgroundColor: '#f0f0f0',
+                  padding: '4px',
+                  borderRadius: '50px',
+                  width: '100%',
+                  marginLeft: '10px',
+                }}
+              />
+            )}
+            {propData?.showFilter && (
               <Box>
                 <Box
                   sx={{
@@ -358,93 +301,6 @@ export default function Content({
                   filterValues={localFilters}
                   onApply={handleApplyFilters}
                 />
-
-                <CommonDialog
-                  isOpen={isDialogOpen}
-                  onClose={handleDialogClose}
-                  header="Help desk"
-                  content={
-                    <Grid container spacing={2}>
-                      <Typography>
-                        We’ve sent an your issue to help desk
-                      </Typography>
-                      <Grid
-                        size={{ xs: 12, sm: 6, md: 12, lg: 12 }}
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: 2,
-                          borderRadius: '20px 20px 0 0',
-                          padding: '15px',
-                          backgroundColor: '#FFFFFF',
-                        }}
-                      >
-                        <CommonTextField
-                          label="Subject"
-                          value={issueData.subject}
-                          type="text"
-                          variant="outlined"
-                          onChange={handleChange('subject')}
-                        />
-                        <CommonTextField
-                          label="Description"
-                          type="text"
-                          variant="outlined"
-                          multiline
-                          rows={4}
-                          value={issueData.description}
-                          onChange={handleChange('description')}
-                        />
-                        <FormControl fullWidth>
-                          <InputLabel id="demo-simple-select-label">
-                            Status
-                          </InputLabel>
-                          <Select
-                            fullWidth
-                            value={issueData.status}
-                            onChange={handleChange('status')}
-                          >
-                            <MenuItem value="Open">Open</MenuItem>
-                            <MenuItem value="Closed">Closed</MenuItem>
-                            <MenuItem value="In Progress">In Progress</MenuItem>
-                          </Select>
-                        </FormControl>
-                        <FormControl fullWidth>
-                          <InputLabel id="demo-simple-select-label">
-                            Priority
-                          </InputLabel>
-
-                          <Select
-                            fullWidth
-                            value={issueData.priority}
-                            onChange={handleChange('priority')}
-                            sx={{ mt: 2 }}
-                          >
-                            <MenuItem value="High">High</MenuItem>
-                            <MenuItem value="Medium">Medium</MenuItem>
-                            <MenuItem value="Low">Low</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                    </Grid>
-                  }
-                  actions={
-                    <Button
-                      onClick={handleOtpSubmit}
-                      sx={{
-                        color: '#FFFFFF',
-                        width: '20%',
-                        height: '40px',
-                        bgcolor: '#6750A4',
-                        borderRadius: '50px',
-                        fontSize: '14px',
-                        fontWeight: 500,
-                      }}
-                    >
-                      Submit
-                    </Button>
-                  }
-                />
               </Box>
             )}
           </Box>
@@ -454,7 +310,7 @@ export default function Content({
           value={tabValue}
           onChange={handleTabChange}
           contentData={contentData}
-          _grid={{ ..._grid, ...propData?._grid }}
+          _grid={propData?._grid || {}}
           trackData={trackData || []}
           type={localFilters?.type || ''}
           handleCardClick={handleCardClickLocal}
@@ -463,57 +319,9 @@ export default function Content({
           isLodingMoreData={isLoading}
           tabs={tabs}
         />
-        <HelpDesk onClick={handleHelpClick} theme={theme} />
-        {showBackToTop && <BackToTop onClick={handleBackToTop} theme={theme} />}
+        {propData?.showHelpDesk && <HelpDesk />}
+        {propData?.showBackToTop && showBackToTop && <BackToTop />}
       </Box>
     </Loader>
   );
 }
-
-const HelpDesk = ({ onClick, theme }: any) => {
-  return (
-    <Fab
-      color="primary"
-      aria-label="help"
-      sx={{
-        position: 'fixed',
-        bottom: 16,
-        right: 16,
-        bgcolor: theme.palette.primary.main,
-        color: theme.palette.primary.contrastText,
-        '&:hover': {
-          bgcolor: theme.palette.primary.dark,
-        },
-      }}
-      onClick={onClick}
-    >
-      <HelpIcon />
-    </Fab>
-  );
-};
-
-const BackToTop = ({ onClick, theme }: any) => {
-  return (
-    <Fab
-      color="secondary"
-      aria-label="back to top"
-      sx={{
-        position: 'fixed',
-        display: 'table-column',
-        bottom: 80,
-        right: 16,
-        height: '75px',
-        borderRadius: '100px',
-        bgcolor: theme.palette.primary.main,
-        color: theme.palette.primary.contrastText,
-        '&:hover': {
-          bgcolor: theme.palette.primary.dark,
-        },
-      }}
-      onClick={onClick}
-    >
-      <ArrowUpwardIcon />
-      <Typography fontSize={'10px'}>Back to Top</Typography>
-    </Fab>
-  );
-};

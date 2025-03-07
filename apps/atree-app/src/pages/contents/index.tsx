@@ -18,22 +18,6 @@ const List: React.FC<ListProps> = () => {
 
   useEffect(() => {
     const init = async () => {
-      await setData('mfes_content_pages_content', {
-        _grid: {
-          size: { xs: 6, sm: 6, md: 4, lg: 3 },
-        },
-        contentTabs: ['content'],
-        filters: {
-          filters: {
-            channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
-            status: ['Live'],
-          },
-        },
-        _card: {
-          cardName: 'AtreeCard',
-          image: atreeLogo.src,
-        },
-      });
       setIsLoadingChildren(false);
     };
     init();
@@ -49,7 +33,24 @@ const List: React.FC<ListProps> = () => {
           overflow: 'hidden',
         }}
       >
-        <Content />
+        <Content
+          {...{
+            _grid: {
+              size: { xs: 6, sm: 6, md: 4, lg: 3 },
+            },
+            contentTabs: ['content'],
+            filters: {
+              filters: {
+                channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
+                status: ['Live'],
+              },
+            },
+            _card: {
+              cardName: 'AtreeCard',
+              image: atreeLogo.src,
+            },
+          }}
+        />
       </Box>
     </Layout>
   );
