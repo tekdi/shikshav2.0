@@ -412,7 +412,11 @@ export default function Content() {
   }, [router]);
   const fetchFramework = async () => {
     try {
-      const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/interface/v1/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
+      const url = `${
+        process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL
+      }/interface/v1/api/framework/v1/read/${
+        localStorage.getItem('framework') || process.env.NEXT_PUBLIC_FRAMEWORK
+      }`;
       const frameworkData = await fetch(url).then((res) => res.json());
       const frameworks = frameworkData?.result?.framework;
       setFrameworkFilter(frameworks);

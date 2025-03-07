@@ -132,6 +132,7 @@ export const ContentSearch = async (
           // channel: '0135656861912678406',
 
           primaryCategory: [type],
+          channel: localStorage.getItem('tenant-code'),
         },
         fields: [
           'name',
