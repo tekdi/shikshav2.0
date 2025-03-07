@@ -4,6 +4,7 @@
 const { composePlugins, withNx } = require('@nx/next');
 
 const PORTAL_BASE_URL = 'https://sunbird-editor.tekdinext.com';
+const basePath = process.env.NEXT_PUBLIC_ASSETS_CONTENT || '/mfe_content';
 
 const routes = {
   API: {
@@ -25,7 +26,7 @@ const nextConfig = {
     svgr: false,
   },
 
-  basePath: '/mfe_content', // This should match the path set in Nginx
+  basePath, // This should match the path set in Nginx
 
   async rewrites() {
     return [

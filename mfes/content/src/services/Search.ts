@@ -155,7 +155,7 @@ export const ContentSearch = async (
     const config: AxiosRequestConfig = {
       method: 'post',
       maxBodyLength: Infinity,
-      url: `${searchApiUrl}/api/content/v1/search`,
+      url: `${searchApiUrl}/interface/v1/action/composite/v3/search`,
       data: data,
     };
 

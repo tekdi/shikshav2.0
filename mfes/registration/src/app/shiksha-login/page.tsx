@@ -1,7 +1,7 @@
 'use client';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { AlertTitle, Button } from '@mui/material';
+import { Button } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid2';
@@ -10,7 +10,7 @@ import { CommonTextField, Layout } from '@shared-lib';
 import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
-import { login } from '../../services/LoginService';
+import { getToken } from '../../services/LoginService';
 import AppConst from '../../utils/AppConst/AppConst';
 
 export default function Login() {
@@ -25,7 +25,8 @@ export default function Login() {
   // const [selectedValue, setSelectedValue] = useState('english');
   // const [checked, setChecked] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string[]>([]);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const handleChange =
@@ -62,15 +63,14 @@ export default function Login() {
     }
     setLoading(true);
     try {
-      const { result: response, authUser } = await login({
+      const response = await getToken({
         username: formData.userName,
         password: formData.password,
       });
 
-      if (response?.access_token && authUser?.tenantData?.[0]?.tenantId) {
+      if (response?.access_token) {
         localStorage.setItem('accToken', response?.access_token);
         localStorage.setItem('refToken', response?.refresh_token);
-        localStorage.setItem('tenantId', authUser?.tenantData?.[0]?.tenantId);
         const decoded = jwtDecode(response?.access_token);
         const subId = decoded?.sub?.split(':')[2];
         document.cookie = `subid=${subId}; path=/;`;
@@ -79,15 +79,13 @@ export default function Login() {
           router.push(redirectUrl);
         }
       } else {
-        if (!response?.access_token) {
-          setErrorMessage(['Invalid tenantId or access token']);
-        } else if (!authUser?.tenantData?.[0]?.tenantId) {
-          setErrorMessage(['Invalid tenantId']);
-        }
+        setShowError(true);
+        setErrorMessage(response);
       }
     } catch (error: any) {
       console.error('Login failed:', error);
-      setErrorMessage([error.message, error?.response?.data?.params?.errmsg]);
+      setShowError(true);
+      setErrorMessage(error);
     } finally {
       setLoading(false);
     }
@@ -232,14 +230,9 @@ export default function Login() {
           </Typography> */}
         </Grid>
       </Grid>
-      {Array.isArray(errorMessage) && errorMessage.length > 0 && (
+      {showError && (
         <Alert variant="filled" severity="error">
-          <AlertTitle>Error</AlertTitle>
-          <ul style={{ margin: 0, paddingInlineStart: '15px' }}>
-            {errorMessage.map((error) => (
-              <li key={error}>{error}</li>
-            ))}
-          </ul>
+          {errorMessage}
         </Alert>
       )}
     </Layout>
