@@ -73,10 +73,7 @@ export default function Index() {
           frameworks.find((item: any) => item.code === 'topic')?.terms || [];
         setFramework(fdata[0]?.identifier || '');
         setFrameworkFilter(fdata);
-        // let filterCategory = fdata.find(
-        //   (item: any) =>
-        //     item.name.toLowerCase() === framework.toLocaleUpperCase()
-        // );
+
         if (frameworkName) {
           const selectedFramework = fdata.find(
             (item: any) =>
@@ -85,13 +82,10 @@ export default function Index() {
 
           if (selectedFramework) {
             setFramework(selectedFramework.identifier);
-            // filterCategory = selectedFramework.name.toUpperCase();
           }
         }
 
-        // SetFilterCategory(filterCategory);
         const filters: any = {
-          // status: ['Live'],
           topic: filterCategory ? [filterCategory] : ['Water'],
         };
 
@@ -104,18 +98,28 @@ export default function Index() {
         const relatedData = Array.isArray(data?.result?.content)
           ? data.result.content
               .filter((item) => {
-                // Ensure item.topic is an array and check if it includes filterCategory
                 const normalizedTopics = Array.isArray(item.topic)
                   ? item.topic.map((t) => t.trim().toLowerCase())
                   : [];
 
-                return normalizedTopics.includes(
-                  filterCategory.trim().toLowerCase()
+                return (
+                  filterCategory?.trim().toLowerCase() &&
+                  normalizedTopics.includes(filterCategory.trim().toLowerCase())
                 );
               })
-              .map((item) => item.subTopic ?? 'Unknown') // Handle undefined subTopic
+              .flatMap((item) =>
+                Array.isArray(item.subTopic)
+                  ? item.subTopic
+                  : [item.subTopic ?? 'Unknown']
+              )
           : [];
-        const flattenedContents = relatedData.flat().map((name) => ({
+        const filteredItems = data?.result?.content?.filter((item) =>
+          item?.topic?.some?.(
+            (topic) => topic.toLowerCase() === filterCategory.toLowerCase()
+          )
+        );
+        console.log('Filtered Items:', filteredItems);
+        const flattenedContents = relatedData.map((name) => ({
           identifier: name.toLowerCase().replace(/\s+/g, '-'),
           name,
           image: atreeLogo.src,
@@ -137,14 +141,11 @@ export default function Index() {
       try {
         setIsLoadingChildren(true);
         const filters: any = {
-          // status: ['Live'],
           topic: [filterCategory],
         };
 
         const data = await ContentSearch({
-          // type: 'Learning Resource',
           channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
-          // limit: 4,
           filters,
         });
 
@@ -154,21 +155,28 @@ export default function Index() {
         const relatedData = Array.isArray(data?.result?.content)
           ? data.result.content
               .filter((item) => {
-                // Ensure item.topic is an array and check if it includes filterCategory
+                const normalizedTopics = Array.isArray(item.topic)
+                  ? item.topic.map((t) => t.trim().toLowerCase())
+                  : [];
+
                 return (
-                  Array.isArray(item.topic) &&
-                  item.topic.includes(filterCategory)
+                  filterCategory?.trim().toLowerCase() &&
+                  normalizedTopics.includes(filterCategory.trim().toLowerCase())
                 );
               })
-              .map((item) => item.subTopic ?? 'Unknown') // Handle undefined subTopic
+              .flatMap((item) =>
+                Array.isArray(item.subTopic)
+                  ? item.subTopic
+                  : [item.subTopic ?? 'Unknown']
+              )
           : [];
-        const flattenedContents = relatedData.flat().map((name) => ({
+
+        const flattenedContents = relatedData.map((name) => ({
           identifier: name.toLowerCase().replace(/\s+/g, '-'),
           name,
           image: atreeLogo.src,
           year: 'N/A',
         }));
-
         setRelatedContent(flattenedContents);
       } catch (error) {
         console.error('Error fetching content data:', error);

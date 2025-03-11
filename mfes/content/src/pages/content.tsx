@@ -147,10 +147,10 @@ export default function Content(props: ContentProps) {
 
       localStorage.setItem('subId', `${subid}`);
       const filteredTabs = [
-        {
-          label: 'Courses',
-          type: 'Course',
-        },
+        // {
+        //   label: 'Courses',
+        //   type: 'Course',
+        // },
         {
           label: 'Content',
           type: 'Learning Resource',

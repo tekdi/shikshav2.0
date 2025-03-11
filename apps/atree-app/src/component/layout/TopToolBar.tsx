@@ -99,7 +99,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                 <IconButton
                   size="large"
                   edge="start"
-                  color="text.secondary"
+                  sx={{ color: 'text.secondary' }}
                   aria-label="back"
                   onClick={backIconClick}
                 >
@@ -156,7 +156,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
               <IconButton
                 size="large"
                 edge="start"
-                color="text.secondary"
+                sx={{ color: 'text.secondary' }}
                 aria-label="search"
                 onClick={handleSearchOpen}
               >
@@ -165,13 +165,13 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
               <SearchTypeModal
                 open={isSearchOpen}
                 onClose={handleSearchClose}
-                // onSelect={(type) => router.push(`/searchpage?type=${type}`)}
+                onSelect={(type) => router.push(`/searchpage?type=${type}`)}
               />
 
               <IconButton
                 size="large"
                 edge="start"
-                color="text.secondary"
+                sx={{ color: 'text.secondary' }}
                 aria-label="menu"
                 onClick={menuIconClick}
               >

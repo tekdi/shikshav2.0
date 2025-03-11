@@ -54,7 +54,7 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
         ? `/searchpage?type=${searchType}&query=${searchQuery}`
         : `/searchpage?query=${searchQuery}`;
 
-      router.push(url); 
+      router.push(url);
     }
   };
 
@@ -102,7 +102,6 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
         {filteredSearchTypes.length > 0 ? (
           filteredSearchTypes.map((item, index) => (
             <ListItem
-              button
               key={item.type}
               onClick={() => {
                 setSearchType(item.type);

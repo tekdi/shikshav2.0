@@ -35,7 +35,10 @@ interface ContentItem {
   appIcon: string;
   contentType: string;
   mimeType: string;
-  auther: string;
+  author: string;
+  keywords: string[];
+  year: string;
+  license: string;
 }
 
 export default function Content() {

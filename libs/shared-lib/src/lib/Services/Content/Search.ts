@@ -112,6 +112,7 @@ export interface ContentSearchResponse {
   node_id?: number;
   topic?: string[];
   subTopic?: string[];
+  reader?: string;
 }
 // Define the payload
 const data = {

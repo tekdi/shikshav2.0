@@ -60,9 +60,9 @@ export default function Searchpage() {
               filters: {
                 filters: {
                   channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
-                  ...(selectedType ? { type: framework } : {}), // Pass selected framework type
+
                   // query: selectedquery,
-                  query: `${selectedType} ${selectedquery}`,
+                  query: `${selectedquery}`,
                 },
               },
               _card: {
@@ -143,7 +143,7 @@ const FrameworkFilter = React.memo<{
                 filters: {
                   filters: {
                     channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
-                    query: `${selectedType} ${queryFromUrl}`,
+                    query: `${queryFromUrl}`,
                   },
                 },
                 _card: {

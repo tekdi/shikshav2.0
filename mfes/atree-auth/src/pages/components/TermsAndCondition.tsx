@@ -2,7 +2,7 @@ import * as React from 'react';
 import Grid from '@mui/material/Grid2';
 import { Button, Typography } from '@mui/material';
 
-export const TermsAndCondition = () => {
+const TermsAndCondition = () => {
   const handleOtpSubmit = () => {
     console.log('Close');
   };
@@ -55,3 +55,4 @@ export const TermsAndCondition = () => {
     </Grid>
   );
 };
+export default TermsAndCondition;

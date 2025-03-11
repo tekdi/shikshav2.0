@@ -208,6 +208,7 @@ export default function Layout({
                   fontWeight: 700,
                 }}
                 actionButtonColor="secondary"
+                //@ts-ignore
                 actionIcons={topAppBarIcons}
                 menuIconClick={() => setIsDrawerOpen(true)}
                 searchQuery={searchQuery} // Pass the search value

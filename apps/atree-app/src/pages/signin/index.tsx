@@ -14,7 +14,7 @@ const Signin = dynamic(() => import('@Atreelogin'), {
 });
 const Login: React.FC<ListProps> = () => {
   return (
-    <Layout>
+    <Layout isFooter={false}>
       <Signin />
     </Layout>
   );

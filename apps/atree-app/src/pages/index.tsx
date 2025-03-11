@@ -59,7 +59,9 @@ const LandingPage = () => {
       setLanguageCount(uniqueLanguages?.length);
       const uniqueReaders = [
         ...new Set(
-          content.map((item) => item.reader).filter((reader) => reader !== null)
+          content
+            .map((item) => item?.reader)
+            .filter((reader) => reader !== null)
         ),
       ];
       setReaderCount(uniqueReaders?.length);
