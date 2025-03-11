@@ -11,19 +11,6 @@ import { Box } from '@mui/material';
 import { Progress } from '../Progress/Progress';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
-interface ContentItem {
-  name: string;
-  gradeLevel: string[];
-  language: string[];
-  artifactUrl: string;
-  identifier: string;
-  appIcon: string;
-  contentType: string;
-  mimeType: string;
-  description: string;
-  posterImage: string;
-  children: [{}];
-}
 interface CommonCardProps {
   title: string;
   avatarLetter?: string;
@@ -36,9 +23,8 @@ interface CommonCardProps {
   children?: React.ReactNode;
   orientation?: 'vertical' | 'horizontal';
   minheight?: string;
-
   TrackData?: never[];
-  item: ContentItem[];
+  item: any[];
   type: string;
   onClick?: () => void;
 }
@@ -55,7 +41,6 @@ export const CommonCard: React.FC<CommonCardProps> = ({
   children,
   orientation,
   minheight,
-
   TrackData,
   item,
   type,

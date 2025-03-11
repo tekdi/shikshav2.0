@@ -30,7 +30,11 @@
       "@shikshav2.0/shared": ["libs/shared/src/index.ts"],
       "@test-next-route": ["mfes/test-next-route/src/pages/index.tsx"],
       "@test-react-vite": ["mfes/mfes/test-react-vite"],
-      "@youthNet": ["mfes/youthNet/src/pages/index.tsx"]
+      "@youthNet": ["mfes/youthNet/src/pages/index.tsx"],
+      "@LoginAtree": ["mfes/atree-auth/src/pages/signin.tsx"],
+      "@Content": ["mfes/content/src/pages/content.tsx"],
+      "@Atreelogin": ["mfes/atree-auth/src/pages/signin.tsx"],
+      "@Atreeregister": ["mfes/atree-auth/src/pages/registration.tsx"]
     }
   },
   "exclude": ["node_modules", "tmp"]

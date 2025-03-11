@@ -51,6 +51,16 @@ export const CommonTabs: React.FC<CommonTabsProps> = ({
   onChange,
   ariaLabel = 'common tabs example',
 }) => {
+  if (tabs.length === 1) {
+    return (
+      <Box sx={{ width: '100%' }}>
+        <CustomTabPanel value={value} index={0}>
+          {tabs[0].content}
+        </CustomTabPanel>
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>

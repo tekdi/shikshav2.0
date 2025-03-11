@@ -30,6 +30,7 @@ interface CommonDrawerProps {
   items: DrawerItem[];
   categories: CategoryItem[];
   onItemClick: (to: string) => void;
+  anchor?: 'left' | 'right' | 'top' | 'bottom';
 }
 
 export const CommonDrawer: React.FC<CommonDrawerProps> = ({
@@ -38,6 +39,7 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
   items,
   onItemClick,
   categories,
+  ...props
 }) => {
   const [openDrawer, setOpenDrawer] = useState<
     'main' | 'category' | 'subcategory'
@@ -77,22 +79,8 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
   };
 
   return (
-    <Drawer anchor="left" open={open} onClose={onDrawerClose}>
+    <Drawer anchor="left" open={open} onClose={onDrawerClose} {...props}>
       <List>
-        {/* Main Menu */}
-        <Typography
-          fontSize={'14px'}
-          color="#49454F"
-          sx={{ padding: '8px 16px', display: 'flex', alignItems: 'center' }}
-        >
-          {openDrawer !== 'main' && (
-            <ListItemIcon sx={{ cursor: 'pointer' }} onClick={handleBack}>
-              <ArrowBackIcon />
-            </ListItemIcon>
-          )}
-          Main menu
-        </Typography>
-
         {/* Render Main Menu Items */}
         {openDrawer === 'main' &&
           items.map((item) => (
@@ -104,22 +92,6 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
               <ListItemText primary={item.text} />
             </ListItemButton>
           ))}
-
-        <Divider />
-
-        {/* All Categories */}
-        <Typography
-          fontSize={'14px'}
-          color="#6750A4"
-          sx={{ padding: '8px 16px', display: 'flex', alignItems: 'center' }}
-        >
-          {openDrawer !== 'main' && (
-            <ListItemIcon sx={{ cursor: 'pointer' }} onClick={handleBack}>
-              <ArrowBackIcon />
-            </ListItemIcon>
-          )}
-          All Categories
-        </Typography>
 
         {/* Render Main Categories */}
         {openDrawer === 'main' &&
