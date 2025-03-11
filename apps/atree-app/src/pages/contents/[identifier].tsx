@@ -11,6 +11,10 @@ import {
   CardContent,
   CardMedia,
   Chip,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
   Typography,
 } from '@mui/material';
 import { Circular } from '@shared-lib';
@@ -18,6 +22,9 @@ import { getContentDetails } from '../../service/content';
 import Layout from '../../component/layout/layout';
 import landingBanner from '../../../assets/images/landingBanner.png';
 import Carousel from 'react-material-ui-carousel';
+import ShareIcon from '@mui/icons-material/Share';
+import ShareDialog from '../../component/ShareDialog';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 interface ContentItem {
   name: string;
@@ -28,6 +35,7 @@ interface ContentItem {
   appIcon: string;
   contentType: string;
   mimeType: string;
+  auther: string;
 }
 
 export default function Content() {
@@ -35,6 +43,9 @@ export default function Content() {
   const { identifier } = router.query; // Access dynamic parameter 'identifier'
   const [contentData, setContentData] = useState<ContentItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [openShareDialog, setOpenShareDialog] = useState(false);
+  const [openPopup, setOpenPopup] = useState<boolean>(false);
+
   const handleOnCLick = () => {
     router.push(`/player/${identifier}`);
   };
@@ -44,14 +55,19 @@ export default function Content() {
       const {
         result: { content: result },
       } = await getContentDetails(identifier as string);
-      if (result) setContentData(result);
+      if (result) {
+        setContentData(result);
+      }
     } catch (error) {
       console.error('Failed to fetch content:', error);
     } finally {
       setIsLoading(false);
     }
   }, [identifier]);
-
+  const keywords = contentData?.keywords || [];
+  const showMoreIcon = keywords.length > 3;
+  const displayedKeywords = showMoreIcon ? keywords.slice(0, 3) : keywords;
+  const remainingKeywords = keywords.slice(3);
   useEffect(() => {
     if (identifier) fetchContent();
   }, [identifier]);
@@ -60,6 +76,11 @@ export default function Content() {
 
   const handleItemClick = (to: string) => {
     router.push(to);
+  };
+  const handleShareClick = (event: React.MouseEvent) => {
+    // event.stopPropagation(); // Prevent Card click event
+    console.log('click');
+    setOpenShareDialog(true);
   };
   return (
     <Layout
@@ -93,7 +114,7 @@ export default function Content() {
               textAlign: 'left',
             }}
           >
-            By Sandhya Rao
+            {contentData?.author || ''}
           </Typography>
         </Box>
       }
@@ -121,13 +142,34 @@ export default function Content() {
                 key={i}
                 image={landingBanner?.src || ''}
                 name={
-                  <Box>
-                    <Typography variant="body2" gutterBottom>
-                      {contentData?.name || ''}
-                    </Typography>
-                    <Typography variant="body2" gutterBottom>
-                      Published by PrathamBooks {i + 1}
-                    </Typography>
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <Box>
+                      <Typography variant="body2" gutterBottom>
+                        {contentData?.name || ''}
+                      </Typography>
+                      <Typography variant="body2" gutterBottom>
+                        Published by PrathamBooks {i + 1}
+                      </Typography>
+                    </Box>
+                    <IconButton
+                      size="small"
+                      onClick={() => console.log('Share button clicked!')}
+                      sx={{
+                        zIndex: 9999,
+                        backgroundColor: 'white',
+                        borderRadius: '50%',
+                        padding: '6px',
+                        boxShadow: 1,
+                        '&:hover': {
+                          backgroundColor: '#f0f0f0', // Light gray on hover
+                        },
+                      }}
+                    >
+                      <ShareIcon
+                        fontSize="small"
+                        onClick={() => console.log('Share button clicked!')}
+                      />
+                    </IconButton>
                   </Box>
                 }
               />
@@ -147,12 +189,7 @@ export default function Content() {
           Know More
         </Button>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-          {[
-            'Sandhya Rao',
-            'Tulika Books',
-            'naturewriting',
-            'naturejournal',
-          ].map((label, index) => (
+          {displayedKeywords?.map((label: any, index: any) => (
             <Chip
               key={index}
               label={label}
@@ -160,7 +197,22 @@ export default function Content() {
               sx={{ mr: 0.5 }}
             />
           ))}
+          {showMoreIcon && (
+            <IconButton onClick={() => setOpenPopup(true)} size="small">
+              <MoreVertIcon />
+            </IconButton>
+          )}
         </Box>
+        <Dialog open={openPopup} onClose={() => setOpenPopup(false)}>
+          <DialogTitle>More Keywords</DialogTitle>
+          <DialogContent>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {remainingKeywords.map((label: any, index: any) => (
+                <Chip key={index} label={label} variant="outlined" />
+              ))}
+            </Box>
+          </DialogContent>
+        </Dialog>
         <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
           Based on real accounts, this is an imagined story of a boy in the
           aftermath of the 2004 Tsunami that hit several countries. It could
@@ -174,12 +226,16 @@ export default function Content() {
           and child.
         </Typography>
         <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-          <b>Year:</b> 2008
+          <b>Year:</b> {contentData?.year || ''}
         </Typography>
         <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-          <b>License:</b> ----
+          <b>License:</b> {contentData?.license || ''}
         </Typography>
       </Box>
+      <ShareDialog
+        open={openShareDialog}
+        handleClose={() => setOpenShareDialog(false)}
+      />
     </Layout>
   );
 }

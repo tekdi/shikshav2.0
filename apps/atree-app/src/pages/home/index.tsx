@@ -40,6 +40,7 @@ export default function Index() {
   const [framework, setFramework] = useState('');
   const [subFrameworkFilter, setSubFrameworkFilter] = useState();
   const [subFramework, setSubFramework] = useState('');
+  const [filterCategory, SetFilterCategory] = useState<string>('');
   const [isLoadingChildren, setIsLoadingChildren] = useState(true);
   const { t } = useTranslation();
   const searchParams = useSearchParams();
@@ -50,12 +51,18 @@ export default function Index() {
         const subFrameworkData = (frameworkFilter as any).find(
           (item: any) => item.identifier === framework
         );
-        console.log('Sub Framework Data:', subFrameworkData);
+
+        SetFilterCategory(
+          subFrameworkData?.name
+            ? subFrameworkData.name.charAt(0).toUpperCase() +
+                subFrameworkData.name.slice(1).toLowerCase()
+            : ''
+        );
+
         setSubFrameworkFilter(subFrameworkData?.associations || []);
       }
     }
-  }, [framework, frameworkFilter]);
-
+  }, [framework, frameworkFilter, filterCategory]);
   useEffect(() => {
     const init = async () => {
       try {
@@ -64,28 +71,58 @@ export default function Index() {
         const frameworks = frameworkData?.result?.framework?.categories;
         const fdata =
           frameworks.find((item: any) => item.code === 'topic')?.terms || [];
-        console.log(fdata[0]?.name);
         setFramework(fdata[0]?.identifier || '');
         setFrameworkFilter(fdata);
+        // let filterCategory = fdata.find(
+        //   (item: any) =>
+        //     item.name.toLowerCase() === framework.toLocaleUpperCase()
+        // );
         if (frameworkName) {
           const selectedFramework = fdata.find(
             (item: any) =>
               item.name.toLowerCase() === frameworkName.toLowerCase()
           );
+
           if (selectedFramework) {
             setFramework(selectedFramework.identifier);
+            // filterCategory = selectedFramework.name.toUpperCase();
           }
         }
+
+        // SetFilterCategory(filterCategory);
+        const filters: any = {
+          // status: ['Live'],
+          topic: filterCategory ? [filterCategory] : ['Water'],
+        };
+
         const data = await ContentSearch({
-          type: 'Learning Resource',
           channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
-          limit: 4,
-          filters: {
-            status: ['Live'],
-          },
+          filters,
         });
         setContentData(data?.result?.content || []);
-        setRelatedContent(data?.result?.content || []);
+
+        const relatedData = Array.isArray(data?.result?.content)
+          ? data.result.content
+              .filter((item) => {
+                // Ensure item.topic is an array and check if it includes filterCategory
+                const normalizedTopics = Array.isArray(item.topic)
+                  ? item.topic.map((t) => t.trim().toLowerCase())
+                  : [];
+
+                return normalizedTopics.includes(
+                  filterCategory.trim().toLowerCase()
+                );
+              })
+              .map((item) => item.subTopic ?? 'Unknown') // Handle undefined subTopic
+          : [];
+        const flattenedContents = relatedData.flat().map((name) => ({
+          identifier: name.toLowerCase().replace(/\s+/g, '-'),
+          name,
+          image: atreeLogo.src,
+          year: 'N/A',
+        }));
+
+        setRelatedContent(flattenedContents);
       } catch (error) {
         console.error('Error fetching board data:', error);
       } finally {
@@ -95,6 +132,59 @@ export default function Index() {
     init();
   }, [frameworkName]);
 
+  useEffect(() => {
+    const fetchContentData = async () => {
+      try {
+        setIsLoadingChildren(true);
+        const filters: any = {
+          // status: ['Live'],
+          topic: [filterCategory],
+        };
+
+        const data = await ContentSearch({
+          // type: 'Learning Resource',
+          channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+          // limit: 4,
+          filters,
+        });
+
+        setContentData(data?.result?.content || []);
+        console.log('Filter Category:', filterCategory);
+
+        const relatedData = Array.isArray(data?.result?.content)
+          ? data.result.content
+              .filter((item) => {
+                // Ensure item.topic is an array and check if it includes filterCategory
+                return (
+                  Array.isArray(item.topic) &&
+                  item.topic.includes(filterCategory)
+                );
+              })
+              .map((item) => item.subTopic ?? 'Unknown') // Handle undefined subTopic
+          : [];
+        const flattenedContents = relatedData.flat().map((name) => ({
+          identifier: name.toLowerCase().replace(/\s+/g, '-'),
+          name,
+          image: atreeLogo.src,
+          year: 'N/A',
+        }));
+
+        setRelatedContent(flattenedContents);
+      } catch (error) {
+        console.error('Error fetching content data:', error);
+      } finally {
+        setIsLoadingChildren(false);
+      }
+    };
+
+    // if (filterCategory) {
+    fetchContentData();
+    // }
+  }, [filterCategory]);
+  useEffect(() => {
+    console.log('Content Data:', contentData);
+    console.log('Content Data:', relatedContent);
+  }, [contentData, relatedContent]);
   const handleCardClick = (content: any) => {
     if (consumedContent.length < 3) {
       router.push(`/contents/${content?.identifier}`);

@@ -13,6 +13,8 @@ import {
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CloseIcon from '@mui/icons-material/Close';
+import { useRouter } from 'next/router';
+
 interface SearchTypeModalProps {
   open: boolean;
   onClose: () => void;
@@ -31,13 +33,30 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
   onSelect,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchType, setSearchType] = useState('');
+
+  const router = useRouter();
+
   const handleClearSearch = () => {
     setSearchQuery('');
   };
-  // Filter the search types based on user input
+
+  // Filter search types
   const filteredSearchTypes = searchTypes.filter((item) =>
     item.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Handle Enter Key Press
+  const handleKeyPress = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' && searchQuery.trim()) {
+      event.preventDefault();
+      const url = searchType
+        ? `/searchpage?type=${searchType}&query=${searchQuery}`
+        : `/searchpage?query=${searchQuery}`;
+
+      router.push(url); 
+    }
+  };
 
   return (
     <Dialog
@@ -46,7 +65,7 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
       fullWidth
       maxWidth="sm"
       PaperProps={{
-        sx: { borderRadius: '28px', backgroundColor: '#E9E7EF' }, // Apply border radius here
+        sx: { borderRadius: '28px', backgroundColor: '#E9E7EF' },
       }}
     >
       <DialogTitle>
@@ -65,9 +84,10 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
             placeholder="Search by..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={handleKeyPress} // Detect Enter key press
             sx={{
               flex: 1,
-              width: '100%', // Ensure full width
+              width: '100%',
             }}
           />
           {searchQuery && (
@@ -80,11 +100,14 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
 
       <List>
         {filteredSearchTypes.length > 0 ? (
-          filteredSearchTypes.map((item) => (
+          filteredSearchTypes.map((item, index) => (
             <ListItem
               button
               key={item.type}
-              onClick={() => onSelect(item.type)}
+              onClick={() => {
+                setSearchType(item.type);
+                // router.push(`/searchpage?type=${item.type}`);
+              }}
             >
               <ListItemAvatar>
                 <Avatar sx={{ backgroundColor: '#CEE5FF', color: '#06164B' }}>

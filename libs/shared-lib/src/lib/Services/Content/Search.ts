@@ -110,6 +110,8 @@ export interface ContentSearchResponse {
   userConsent?: string;
   resourceType?: string;
   node_id?: number;
+  topic?: string[];
+  subTopic?: string[];
 }
 // Define the payload
 const data = {
@@ -154,7 +156,7 @@ export const ContentSearch = async ({
   offset = 0,
   channel,
 }: {
-  type: string;
+  type?: string;
   channel: string;
   query?: string;
   filters?: object;
@@ -180,23 +182,23 @@ export const ContentSearch = async ({
       request: {
         filters: {
           channel,
-          primaryCategory: [type],
+          // primaryCategory: [type],
           ...filters,
         },
-        fields: [
-          'name',
-          'appIcon',
-          'description',
-          'posterImage',
-          'mimeType',
-          'identifier',
-          'resourceType',
-          'primaryCategory',
-          'contentType',
-          'trackable',
-          'children',
-          'leafNodes',
-        ],
+        // fields: [
+        //   'name',
+        //   'appIcon',
+        //   'description',
+        //   'posterImage',
+        //   'mimeType',
+        //   'identifier',
+        //   'resourceType',
+        //   'primaryCategory',
+        //   'contentType',
+        //   'trackable',
+        //   'children',
+        //   'leafNodes',
+        // ],
         query,
         limit,
         offset,

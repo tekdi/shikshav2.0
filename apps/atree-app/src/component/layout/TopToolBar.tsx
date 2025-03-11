@@ -11,6 +11,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import Image from 'next/image';
 import { InputBase } from '@mui/material';
 import SearchTypeModal from '../SearchTypeModal';
+import { useRouter } from 'next/router';
+
 interface ActionIcon {
   icon: React.ReactNode;
   ariaLabel: string;
@@ -71,6 +73,8 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
   onSearchChange,
 }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const router = useRouter();
+
   const handleSearchOpen = () => {
     setIsSearchOpen(true);
   };
@@ -161,7 +165,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
               <SearchTypeModal
                 open={isSearchOpen}
                 onClose={handleSearchClose}
-                onSelect={(type) => console.log(type)}
+                // onSelect={(type) => router.push(`/searchpage?type=${type}`)}
               />
 
               <IconButton

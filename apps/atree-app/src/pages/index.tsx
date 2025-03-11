@@ -1,5 +1,5 @@
 'use client';
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 // import { useTranslation } from 'react-i18next';
 import Grid from '@mui/material/Grid2';
 import Image from 'next/image';
@@ -16,6 +16,8 @@ import Layout from '../component/layout/layout';
 
 import { useRouter } from 'next/router';
 import { ImageBanner } from '../component/layout/ImageBanner';
+import { useEffect, useState } from 'react';
+import { ContentSearch } from '@shared-lib';
 
 const catImages = {
   Water,
@@ -23,22 +25,55 @@ const catImages = {
   Land,
   'Climate Change': Climatechangebookcover,
   'Activity Books': ActivityBooks,
-  'Reference Books': ReferenceBooks,
+  Potpourri: ReferenceBooks,
 };
 
 const LandingPage = () => {
   // const { t } = useTranslation();
   const t = (data: string) => data;
+  const [categories, setCategories] = useState<Array<any>>([]);
+  const [languageCount, setLanguageCount] = useState(0);
+  const [readerCount, setReaderCount] = useState(0);
   const router = useRouter();
   const handleItemClick = (to: string) => {
     router.push(to);
   };
+  useEffect(() => {
+    const init = async () => {
+      const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
+      const frameworkData = await fetch(url).then((res) => res.json());
+      const frameworks = frameworkData?.result?.framework?.categories;
+      const fdata =
+        frameworks.find((item: any) => item.code === 'topic')?.terms || [];
+
+      const data = await ContentSearch({
+        channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+      });
+      console.log('ContentSearch---', data);
+      const content = data?.result?.content || [];
+      const uniqueLanguages = [
+        ...new Set(
+          content.map((item) => item.language).filter((lang) => lang !== null)
+        ),
+      ];
+      setLanguageCount(uniqueLanguages?.length);
+      const uniqueReaders = [
+        ...new Set(
+          content.map((item) => item.reader).filter((reader) => reader !== null)
+        ),
+      ];
+      setReaderCount(uniqueReaders?.length);
+      setCategories(fdata || []);
+    };
+    init();
+  }, []);
+
   return (
     <Layout
       onItemClick={handleItemClick}
       footerComponent={
-        <Grid sx={{ px: 4, py: 2, backgroundColor: 'secondary.main' }}>
-          <Typography variant="body1" align="center" gutterBottom>
+        <Grid sx={{ px: 4, py: 1, backgroundColor: 'secondary.main' }}>
+          <Typography align="center" gutterBottom sx={{ fontSize: '10px' }}>
             {t(
               'Curated by ATREE: For, Of, and By Environment Educators of India'
             )}
@@ -109,18 +144,35 @@ const LandingPage = () => {
             flexDirection="column"
             alignItems="center"
           >
-            <Typography
-              variant="h5"
-              align="center"
-              gutterBottom
+            <Box
               sx={{
-                fontWeight: 500,
-                fontSize: '24px',
+                backgroundColor: '#E68907',
+                padding: '16px',
+                borderRadius: '8px',
+                width: '100%',
+                maxWidth: '600px',
+                display: 'flex',
+                justifyContent: 'space-around',
+                alignItems: 'center',
+                color: '#fff',
                 textAlign: 'center',
               }}
             >
-              1000 BOOKS IN 15 CATEGORIES
-            </Typography>
+              {[
+                { label: 'Books', value: '1000' },
+                { label: 'Categories', value: '15' },
+                { label: 'Language', value: languageCount },
+                { label: 'Reader', value: readerCount },
+              ].map((item, index) => (
+                <Box key={index}>
+                  <Typography variant="h5" fontWeight="bold">
+                    {item.value}
+                  </Typography>
+                  <Typography variant="body2">{item.label}</Typography>
+                </Box>
+              ))}
+            </Box>
+
             <Typography
               variant="body1"
               align="center"
@@ -137,29 +189,24 @@ const LandingPage = () => {
         </Grid>
         <Grid sx={{ px: 1 }}>
           <Grid container spacing={1}>
-            {[
-              'Water',
-              'Forest',
-              'Land',
-              'Climate Change',
-              'Activity Books',
-              'Reference Books',
-            ].map((category, index) => (
-              <Grid key={index} size={{ xs: 6, sm: 6, md: 4, lg: 4 }}>
-                <ImageBanner
-                  key={index}
-                  name={category}
-                  _showAvatar={true}
-                  _text={{ textAline: 'center' }}
-                  image={
-                    (
-                      catImages?.[category as keyof typeof catImages] ||
-                      landingBanner
-                    )?.src
-                  }
-                />
-              </Grid>
-            ))}
+            {categories
+              ?.filter((category) => category.name !== 'General')
+              ?.map((category, index) => (
+                <Grid key={index} size={{ xs: 6, sm: 6, md: 4, lg: 4 }}>
+                  <ImageBanner
+                    key={index}
+                    name={category?.name}
+                    _showAvatar={true}
+                    _text={{ textAline: 'center' }}
+                    image={
+                      (
+                        catImages?.[category?.name as keyof typeof catImages] ||
+                        landingBanner
+                      )?.src
+                    }
+                  />
+                </Grid>
+              ))}
           </Grid>
         </Grid>
         <Grid

@@ -135,8 +135,8 @@ export const ContentSearch = async ({
           : ''
       );
     }
+    console.log('filters---', filters);
     // Axios request configuration
-
     const data = {
       request: {
         filters: {
@@ -148,21 +148,21 @@ export const ContentSearch = async ({
           primaryCategory: [type],
           ...filters,
         },
-        fields: [
-          'name',
-          'appIcon',
-          'description',
-          'posterImage',
-          'mimeType',
-          'identifier',
-          'resourceType',
-          'primaryCategory',
-          'contentType',
-          'trackable',
-          'children',
-          'leafNodes',
-        ],
-        query,
+        // fields: [
+        //   'name',
+        //   'appIcon',
+        //   'description',
+        //   'posterImage',
+        //   'mimeType',
+        //   'identifier',
+        //   'resourceType',
+        //   'primaryCategory',
+        //   'contentType',
+        //   'trackable',
+        //   'children',
+        //   'leafNodes',
+        // ],
+        query: filters?.query,
         limit,
         offset,
       },

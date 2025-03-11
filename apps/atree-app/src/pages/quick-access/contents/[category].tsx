@@ -92,6 +92,8 @@ const MyComponent: React.FC = () => {
             cardName: 'AtreeCard',
             image: atreeLogo.src,
           },
+          showSearch: false,
+          showFilter: false,
         }}
       />
     </Layout>
