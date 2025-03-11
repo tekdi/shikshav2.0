@@ -106,19 +106,19 @@ export interface ContentSearchResponse {
   node_id?: number;
 }
 // Define the payload
-
+interface Filters {
+  query?: string;
+}
 export const ContentSearch = async ({
   type,
-  query,
   filters,
-  limit = 5,
+  limit = 8,
   offset = 0,
   channel,
 }: {
   type: string;
   channel: string;
-  query?: string;
-  filters?: object;
+  filters?: Filters;
   limit?: number;
   offset?: number;
 }): Promise<ContentSearchResponse[]> => {
@@ -135,33 +135,15 @@ export const ContentSearch = async ({
           : ''
       );
     }
+    const { query, ...filteredFilters } = filters || {};
     // Axios request configuration
-
     const data = {
       request: {
         filters: {
-          // identifier: 'do_114228944942358528173',
-          // identifier: 'do_1141652605790289921389',
-          //need below after login user channel for dynamic load content
-          // channel: '0135656861912678406',
           channel,
-          primaryCategory: [type],
-          ...filters,
+          ...filteredFilters,
         },
-        fields: [
-          'name',
-          'appIcon',
-          'description',
-          'posterImage',
-          'mimeType',
-          'identifier',
-          'resourceType',
-          'primaryCategory',
-          'contentType',
-          'trackable',
-          'children',
-          'leafNodes',
-        ],
+
         query,
         limit,
         offset,

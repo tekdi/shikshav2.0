@@ -3,7 +3,6 @@ import { Layout, CommonTextField, CommonDialog } from '@shared-lib';
 import React, { useState } from 'react';
 import { Button, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-//import Otp from '../otp/page';
 
 const NewUser = () => {
   const [formData, setFormData] = useState({
@@ -188,7 +187,7 @@ const NewUser = () => {
               onChange={setOtp}
               length={6}
             /> */}
-            {otpError && (
+            {/* {otpError && (
               <Typography
                 variant="body2"
                 color="error"
@@ -196,7 +195,7 @@ const NewUser = () => {
               >
                 {otpError}
               </Typography>
-            )}
+            )} */}
           </Grid>
         }
         actions={

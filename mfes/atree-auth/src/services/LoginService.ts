@@ -3,7 +3,7 @@ import { post } from '@shared-lib';
 
 interface LoginParams {
   email: string;
-  otp: string;
+  password: string;
 }
 interface Login {
   username: string;
@@ -20,11 +20,17 @@ interface CreateUserParams {
 
 // Atree login API
 
-export const signin = async ({ email, otp }: LoginParams): Promise<any> => {
+export const signin = async ({
+  email,
+  password,
+}: LoginParams): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_ATREE_LOGIN_URL}/interface/v1/account/login`;
 
   try {
-    const response = await post(apiUrl, { username: email, password: otp });
+    const response = await post(apiUrl, {
+      username: email,
+      password: password,
+    });
     return response?.data;
   } catch (error) {
     console.error('error in login', error);

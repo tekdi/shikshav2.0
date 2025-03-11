@@ -36,7 +36,7 @@ export const AtreeCard: React.FC<{
           >
             <CardMedia
               component="img"
-              image={content?.image || _card?.image}
+              image={(content as any)?.image || _card?.image}
               alt={content.name}
               sx={{
                 objectFit: 'contain',
@@ -78,7 +78,7 @@ export const AtreeCard: React.FC<{
                 {content.name}
               </Typography>
               <Typography color="text.secondary">
-                {`Year: ${content?.year || 'N/A'}`}
+                {`Year: ${(content as any)?.year || 'N/A'}`}
               </Typography>
             </CardContent>
           </Card>

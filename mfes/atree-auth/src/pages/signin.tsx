@@ -1,43 +1,49 @@
 'use client';
 import React, { useState } from 'react';
-import { Button, FormLabel, Typography } from '@mui/material';
+import { Button, FormLabel, IconButton, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { CommonSelect, CommonTextField, Layout } from '@shared-lib';
-import { SelectChangeEvent } from '@mui/material/Select';
+import { CommonTextField } from '@shared-lib';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { GoogleLogin } from '@react-oauth/google';
-import { GoogleOAuthProvider } from '@react-oauth/google';
-import Otp from './otp';
-import { signin } from '../services/LoginService';
-const languageData = [
-  { id: 1, name: 'Educator' },
-  { id: 2, name: 'Mentor' },
-  { id: 3, name: 'Student' },
-];
 
+// import Otp from './otp';
+import { signin } from '../services/LoginService';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 export default function Signin() {
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState(false);
-  const [selectedValue, setSelectedValue] = useState('Educator');
-  const [otp, setOtp] = React.useState('');
+  const [password, setPassword] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const handleChange =
-    (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    (field: 'email' | 'password') =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value;
-      setEmail(value);
-      setEmailError(value.trim() === '');
+      if (field === 'email') {
+        setEmail(value);
+        setEmailError(value.trim() === '');
+      } else {
+        setPassword(value);
+        setPasswordError(value.trim() === '');
+      }
     };
 
   const handleSigninClick = async (event: React.FormEvent) => {
     // router.push('/verifyOTP');
     event.preventDefault();
-    if (!emailError) {
+    if (!email.trim()) {
+      setEmailError(true);
+    }
+    if (!password.trim()) {
+      setPasswordError(true);
+    }
+    if (!emailError && !passwordError) {
       setLoading(true);
 
       try {
-        const response = await signin({ email, otp });
+        const response = await signin({ email, password });
 
         if (response?.result?.access_token) {
           if (typeof window !== 'undefined' && window.localStorage) {
@@ -58,20 +64,12 @@ export default function Signin() {
     }
   };
 
-  const handleSelectChange = (event: SelectChangeEvent) => {
-    setSelectedValue(event.target.value);
-  };
   const handleLoginSuccess = (response: any) => {
     // Get the token and process it
     const token = response.credential;
     console.log('Google Login Success:', token);
 
-    // Fetch user info using token if needed (optional)
-    // For example, you can make an API call to validate the token and retrieve user info
-
-    // Assuming the login is successful, you can set user data and navigate
-    // setUser(token);
-    router.push('/dashboard'); // Redirect to the dashboard or the desired route
+    router.push('/dashboard');
   };
 
   const handleLoginFailure = () => {
@@ -117,6 +115,26 @@ export default function Signin() {
           error={emailError}
         />
         <FormLabel component="legend" sx={{ color: '#4D4639' }}>
+          Password
+        </FormLabel>
+
+        <CommonTextField
+          value={password}
+          onChange={handleChange('password')}
+          type={showPassword ? 'text' : 'password'}
+          variant="outlined"
+          helperText={passwordError ? `Enter password ` : ''}
+          error={passwordError}
+          endIcon={
+            <IconButton
+              onClick={() => setShowPassword(!showPassword)}
+              edge="end"
+            >
+              {showPassword ? <Visibility /> : <VisibilityOff />}
+            </IconButton>
+          }
+        />
+        {/* <FormLabel component="legend" sx={{ color: '#4D4639' }}>
           Enter the 6-digit code sent to your email
         </FormLabel>
         <Otp
@@ -125,7 +143,7 @@ export default function Signin() {
           onChange={setOtp}
           length={5}
         />
-        <Typography>Request to Resend OTP in 4:59</Typography>
+        <Typography>Request to Resend OTP in 4:59</Typography> */}
         <Button
           onClick={handleSigninClick}
           sx={{
@@ -142,14 +160,14 @@ export default function Signin() {
         >
           Proceed
         </Button>
-        <GoogleOAuthProvider clientId="467709515234-qu171h5np0rae7vrl23uv1audjht7fsa.apps.googleusercontent.com">
+        {/* <GoogleOAuthProvider clientId="467709515234-qu171h5np0rae7vrl23uv1audjht7fsa.apps.googleusercontent.com">
           <GoogleLogin
             onSuccess={handleLoginSuccess}
             onError={handleLoginFailure}
             useOneTap
             theme="outline"
           />
-        </GoogleOAuthProvider>
+        </GoogleOAuthProvider> */}
         <Typography
           textAlign={'center'}
           variant="h1"

@@ -18,12 +18,7 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import atreeLogo from '../../../assets/images/atreeLogo.png';
 import Layout from '../../component/layout/layout';
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlined';
-import FilterDramaOutlinedIcon from '@mui/icons-material/FilterDramaOutlined';
-import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
-import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
-import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+
 // import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'next/navigation';
@@ -45,6 +40,7 @@ export default function Index() {
   const [framework, setFramework] = useState('');
   const [subFrameworkFilter, setSubFrameworkFilter] = useState();
   const [subFramework, setSubFramework] = useState('');
+  const [filterCategory, SetFilterCategory] = useState<string>('');
   const [isLoadingChildren, setIsLoadingChildren] = useState(true);
   const { t } = useTranslation();
   const searchParams = useSearchParams();
@@ -55,12 +51,18 @@ export default function Index() {
         const subFrameworkData = (frameworkFilter as any).find(
           (item: any) => item.identifier === framework
         );
-        console.log('Sub Framework Data:', subFrameworkData);
+
+        SetFilterCategory(
+          subFrameworkData?.name
+            ? subFrameworkData.name.charAt(0).toUpperCase() +
+                subFrameworkData.name.slice(1).toLowerCase()
+            : ''
+        );
+
         setSubFrameworkFilter(subFrameworkData?.associations || []);
       }
     }
-  }, [framework, frameworkFilter]);
-
+  }, [framework, frameworkFilter, filterCategory]);
   useEffect(() => {
     const init = async () => {
       try {
@@ -69,28 +71,62 @@ export default function Index() {
         const frameworks = frameworkData?.result?.framework?.categories;
         const fdata =
           frameworks.find((item: any) => item.code === 'topic')?.terms || [];
-        console.log(fdata[0]?.name);
         setFramework(fdata[0]?.identifier || '');
         setFrameworkFilter(fdata);
+
         if (frameworkName) {
           const selectedFramework = fdata.find(
             (item: any) =>
               item.name.toLowerCase() === frameworkName.toLowerCase()
           );
+
           if (selectedFramework) {
             setFramework(selectedFramework.identifier);
           }
         }
+
+        const filters: any = {
+          topic: filterCategory ? [filterCategory] : ['Water'],
+        };
+
         const data = await ContentSearch({
-          type: 'Learning Resource',
           channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
-          limit: 4,
-          filters: {
-            status: ['Live'],
-          },
+          filters,
         });
         setContentData(data?.result?.content || []);
-        setRelatedContent(data?.result?.content || []);
+
+        const relatedData = Array.isArray(data?.result?.content)
+          ? data.result.content
+              .filter((item) => {
+                const normalizedTopics = Array.isArray(item.topic)
+                  ? item.topic.map((t) => t.trim().toLowerCase())
+                  : [];
+
+                return (
+                  filterCategory?.trim().toLowerCase() &&
+                  normalizedTopics.includes(filterCategory.trim().toLowerCase())
+                );
+              })
+              .flatMap((item) =>
+                Array.isArray(item.subTopic)
+                  ? item.subTopic
+                  : [item.subTopic ?? 'Unknown']
+              )
+          : [];
+        const filteredItems = data?.result?.content?.filter((item) =>
+          item?.topic?.some?.(
+            (topic) => topic.toLowerCase() === filterCategory.toLowerCase()
+          )
+        );
+        console.log('Filtered Items:', filteredItems);
+        const flattenedContents = relatedData.map((name) => ({
+          identifier: name.toLowerCase().replace(/\s+/g, '-'),
+          name,
+          image: atreeLogo.src,
+          year: 'N/A',
+        }));
+
+        setRelatedContent(flattenedContents);
       } catch (error) {
         console.error('Error fetching board data:', error);
       } finally {
@@ -100,6 +136,63 @@ export default function Index() {
     init();
   }, [frameworkName]);
 
+  useEffect(() => {
+    const fetchContentData = async () => {
+      try {
+        setIsLoadingChildren(true);
+        const filters: any = {
+          topic: [filterCategory],
+        };
+
+        const data = await ContentSearch({
+          channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+          filters,
+        });
+
+        setContentData(data?.result?.content || []);
+        console.log('Filter Category:', filterCategory);
+
+        const relatedData = Array.isArray(data?.result?.content)
+          ? data.result.content
+              .filter((item) => {
+                const normalizedTopics = Array.isArray(item.topic)
+                  ? item.topic.map((t) => t.trim().toLowerCase())
+                  : [];
+
+                return (
+                  filterCategory?.trim().toLowerCase() &&
+                  normalizedTopics.includes(filterCategory.trim().toLowerCase())
+                );
+              })
+              .flatMap((item) =>
+                Array.isArray(item.subTopic)
+                  ? item.subTopic
+                  : [item.subTopic ?? 'Unknown']
+              )
+          : [];
+
+        const flattenedContents = relatedData.map((name) => ({
+          identifier: name.toLowerCase().replace(/\s+/g, '-'),
+          name,
+          image: atreeLogo.src,
+          year: 'N/A',
+        }));
+        setRelatedContent(flattenedContents);
+      } catch (error) {
+        console.error('Error fetching content data:', error);
+      } finally {
+        setIsLoadingChildren(false);
+      }
+    };
+
+    // if (filterCategory) {
+    fetchContentData();
+    // }
+  }, [filterCategory]);
+  useEffect(() => {
+    console.log('Content Data:', contentData);
+    console.log('Content Data:', relatedContent);
+  }, [contentData, relatedContent]);
   const handleCardClick = (content: any) => {
     if (consumedContent.length < 3) {
       router.push(`/contents/${content?.identifier}`);
@@ -108,44 +201,12 @@ export default function Index() {
       alert('Please log in to continue');
     }
   };
-  const drawerItems = [
-    { text: 'Home', icon: <HomeOutlinedIcon fontSize="small" />, to: '/' },
 
-    {
-      text: 'Login',
-      icon: <AccountCircleOutlinedIcon fontSize="small" />,
-      to: '/signin',
-    },
-    {
-      text: 'About Us',
-      icon: <FilterDramaOutlinedIcon fontSize="small" />,
-      to: '/aboutus',
-    },
-    {
-      text: 'Contact Us',
-      icon: <AlternateEmailOutlinedIcon fontSize="small" />,
-      to: '/contactus',
-    },
-    {
-      text: 'Recommend Resources',
-      icon: <PostAddOutlinedIcon fontSize="small" />,
-      to: '/content',
-    },
-    {
-      text: 'Terms & Conditions',
-      icon: <ContactSupportOutlinedIcon fontSize="small" />,
-      to: '/terms-and-conditions',
-    },
-  ];
   const handleItemClick = (to: string) => {
     router.push(to);
   };
   return (
-    <Layout
-      isLoadingChildren={isLoadingChildren}
-      drawerItems={drawerItems}
-      onItemClick={handleItemClick}
-    >
+    <Layout isLoadingChildren={isLoadingChildren} onItemClick={handleItemClick}>
       <Box display="flex" flexDirection="column" gap="3rem" py="3rem" px="14px">
         <FrameworkFilter
           frameworkFilter={frameworkFilter || []}

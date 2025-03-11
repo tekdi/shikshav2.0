@@ -1,0 +1,11 @@
+version: '3'
+services:
+  atree-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.atree
+    ports:
+      - '3003:3003'
+
+    environment:
+      - NODE_ENV=production

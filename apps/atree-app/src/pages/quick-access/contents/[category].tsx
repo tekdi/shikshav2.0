@@ -4,6 +4,10 @@ import FolderComponent from '../../../component/FolderComponent';
 import { useRouter } from 'next/router';
 import { Typography } from '@mui/material';
 import dynamic from 'next/dynamic';
+interface Term {
+  name: string;
+  associations: any[];
+}
 import atreeLogo from '../../../../assets/images/atreeLogo.png';
 
 const Content = dynamic(() => import('@Content'), {
@@ -23,7 +27,7 @@ const MyComponent: React.FC = () => {
       const fdata =
         frameworks
           .find((item: any) => item.code === 'topic')
-          ?.terms?.find((e) => e.name === category)?.associations || [];
+          ?.terms?.find((e: Term) => e.name === category)?.associations || [];
       console.log(fdata);
       setCategories(fdata || []);
       setIsLoadingChildren(false);
@@ -88,6 +92,8 @@ const MyComponent: React.FC = () => {
             cardName: 'AtreeCard',
             image: atreeLogo.src,
           },
+          showSearch: false,
+          showFilter: false,
         }}
       />
     </Layout>

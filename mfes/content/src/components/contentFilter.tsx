@@ -246,7 +246,8 @@ const FilterDialog = ({
               multiple
               value={selectedSubjects || []}
               onChange={(e) => {
-                const value = e.target.value as string[];
+                const value = e.target.value as string[]; // Ensure TypeScript recognizes it as an array
+                //@ts-ignore
                 onSubjectsChange?.(value);
               }}
               renderValue={(selected) => (selected as string[]).join(', ')} // Join array values for display
@@ -272,6 +273,7 @@ const FilterDialog = ({
               value={selectedContentTypes || []}
               onChange={(e) => {
                 const value = e.target.value as string[];
+                //@ts-ignore
                 onContentTypeChange?.(value);
               }}
               renderValue={(selected) => (selected as string[]).join(', ')}

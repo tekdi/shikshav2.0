@@ -6,7 +6,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import atreeLogo from '../../../assets/images/atreeLogo.png';
 import TopAppBar from './TopToolBar';
 import Footer from './Footer';
-
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlined';
+import FilterDramaOutlinedIcon from '@mui/icons-material/FilterDramaOutlined';
+import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
+import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import SearchTypeModal from '../SearchTypeModal';
 interface LayoutProps {
   children?: React.ReactNode;
   footerComponent?: React.ReactNode | string;
@@ -20,11 +26,7 @@ interface LayoutProps {
     to: string;
     icon?: React.ReactNode;
   }[];
-  drawerItems?: {
-    text: string;
-    to: string;
-    icon?: React.ReactNode;
-  }[];
+
   onItemClick?: (to: string) => void | undefined;
   onBackIconClick?: () => void;
   showTopAppBar?: {
@@ -79,7 +81,6 @@ export default function Layout({
   backTitle = '',
   showTopAppBar = {},
   topAppBarIcons = [],
-  drawerItems = [],
   categorieItems = [],
   onItemClick,
   backIconClick,
@@ -91,7 +92,10 @@ export default function Layout({
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [layoutHeight, setLayoutHeight] = useState(0);
   const refs = useRef({});
-
+  const [searchQuery, setSearchQuery] = useState('');
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
   useEffect(() => {
     const handleResize = debounce(() => {
       const totalHeight = Object.keys(refs.current).reduce((acc, key) => {
@@ -119,6 +123,35 @@ export default function Layout({
   const handleButtonClick = () => {
     console.log('Footer button clicked!');
   };
+  const drawerItems = [
+    { text: 'Home', icon: <HomeOutlinedIcon fontSize="small" />, to: '/' },
+
+    {
+      text: 'Login',
+      icon: <AccountCircleOutlinedIcon fontSize="small" />,
+      to: '/signin',
+    },
+    {
+      text: 'About Us',
+      icon: <FilterDramaOutlinedIcon fontSize="small" />,
+      to: '/aboutus',
+    },
+    {
+      text: 'Contact Us',
+      icon: <AlternateEmailOutlinedIcon fontSize="small" />,
+      to: '/contactus',
+    },
+    {
+      text: 'Recommend Resources',
+      icon: <PostAddOutlinedIcon fontSize="small" />,
+      to: '/content',
+    },
+    {
+      text: 'Terms & Conditions',
+      icon: <ContactSupportOutlinedIcon fontSize="small" />,
+      to: '/termsAndCondition',
+    },
+  ];
 
   return (
     <Box
@@ -175,8 +208,11 @@ export default function Layout({
                   fontWeight: 700,
                 }}
                 actionButtonColor="secondary"
+                //@ts-ignore
                 actionIcons={topAppBarIcons}
                 menuIconClick={() => setIsDrawerOpen(true)}
+                searchQuery={searchQuery} // Pass the search value
+                onSearchChange={handleSearchChange}
                 // profileIcon={[
                 //   {
                 //     icon: <>hi</>,
@@ -189,7 +225,6 @@ export default function Layout({
             </Box>
           </Box>
         )}
-
         {(showBack || backTitle) && (
           <Box
             sx={{

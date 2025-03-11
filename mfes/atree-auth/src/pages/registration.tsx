@@ -18,9 +18,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { GoogleLogin } from '@react-oauth/google';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import Otp from './otp';
+// import Otp from './otp';
 import { createUser } from '../services/LoginService';
-import { TermsAndCondition } from './components/TermsAndCondition';
+import TermsAndCondition from './components/TermsAndCondition';
 
 const languageData = [
   { id: 1, name: 'Educator' },
@@ -172,7 +172,7 @@ export default function Registration() {
           error={error.email}
         />
 
-        {otpShow && (
+        {/* {otpShow && (
           <>
             <FormLabel component="legend">
               Enter the 6-digit OTP sent to your email
@@ -190,7 +190,7 @@ export default function Registration() {
             )}
             <Typography>Request to Resend OTP in 4:59</Typography>
           </>
-        )}
+        )} */}
 
         <FormLabel component="legend">Select Role</FormLabel>
         <CommonSelect
@@ -204,64 +204,69 @@ export default function Registration() {
           }))}
         />
 
-        {otpShow ? (
-          <>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={termsAccepted}
-                  onChange={handleChangeOPenTermsAndCondition}
-                  sx={{
-                    '&.Mui-checked': {
-                      color: '#2B3133',
-                    },
-                    '& .MuiSvgIcon-root': {
-                      backgroundColor: '#FFBD0D',
-                      borderRadius: '4px',
-                    },
-                  }}
-                />
-              }
-              label={
-                <Typography fontSize="14px">
-                  I have read and accepted the{' '}
-                  <Link href="/terms-and-conditions" color="#2B3133">
-                    Terms and Conditions
-                  </Link>
-                  .
-                </Typography>
-              }
-            />
+        {/* {otpShow ? ( */}
+        <>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={termsAccepted}
+                onChange={handleChangeOPenTermsAndCondition}
+                sx={{
+                  '&.Mui-checked': {
+                    color: '#2B3133',
+                  },
+                  '& .MuiSvgIcon-root': {
+                    backgroundColor: '#FFBD0D',
+                    borderRadius: '4px',
+                  },
+                }}
+              />
+            }
+            label={
+              <Typography fontSize="14px">
+                I have read and accepted the{' '}
+                <Link
+                  href="#"
+                  onClick={handleChangeOPenTermsAndCondition}
+                  style={{ color: '#0047D4', textDecoration: 'underline' }}
+                >
+                  Terms and Conditions
+                </Link>
+                .
+              </Typography>
+            }
+          />
 
-            {/* Additional Text */}
-            <Typography fontSize="14px" color="#3B383E">
-              Lorem ipsum dolor sit amet consectetur. Purus pretium leo semper
-              eget mi. Convallis nunc sed dis amet tristique sed. Ullamcorper
-              risus. Lorem ipsum dolor sit amet consectetur. Purus pretium leo
-              semper eget mi. Convallis nunc sed dis amet tristique sed.
-              Ullamcorper risus.
-            </Typography>
-            <Button
-              onClick={handleCreateUser}
-              sx={{
-                color: '#2B3133',
-                width: '100%',
-                height: '40px',
-                background:
-                  'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
-                borderRadius: '50px',
-                fontSize: '16px',
-                fontWeight: 500,
-                textTransform: 'none',
-              }}
-              disabled={
-                otp.length !== 5 || (isNaN(Number(otp)) && !termsAccepted)
-              }
-            >
-              Verify & Proceed
-            </Button>
-          </>
-        ) : (
+          {/* Additional Text */}
+          <Typography fontSize="14px" color="#3B383E">
+            Lorem ipsum dolor sit amet consectetur. Purus pretium leo semper
+            eget mi. Convallis nunc sed dis amet tristique sed. Ullamcorper
+            risus. Lorem ipsum dolor sit amet consectetur. Purus pretium leo
+            semper eget mi. Convallis nunc sed dis amet tristique sed.
+            Ullamcorper risus.
+          </Typography>
+          <Button
+            onClick={handleCreateUser}
+            sx={{
+              color: '#2B3133',
+              width: '100%',
+              height: '40px',
+              background:
+                'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+              borderRadius: '50px',
+              fontSize: '16px',
+              fontWeight: 500,
+              textTransform: 'none',
+            }}
+            disabled={
+              // otp.length !== 5 || (isNaN(Number(otp)) && !termsAccepted)
+              !formData.name || !formData.email
+            }
+          >
+            Verify & Proceed
+          </Button>
+        </>
+        {/* ) : (
           <Button
             onClick={handleSigninClick}
             sx={{
@@ -279,7 +284,7 @@ export default function Registration() {
           >
             Proceed
           </Button>
-        )}
+        )} */}
 
         <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
           <GoogleLogin
