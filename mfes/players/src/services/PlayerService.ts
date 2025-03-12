@@ -17,7 +17,7 @@ export const fetchContent = async (identifier: any) => {
         },
       }
     );
-    console.log('response =====>', response);
+    // console.log('response =====>', response);
     return response?.data?.result?.content;
   } catch (error) {
     console.error('Error fetching content:', error);
@@ -48,7 +48,7 @@ export const fetchBulkContents = async (identifiers: string[]) => {
       },
     };
     const response = await axios.post(URL_CONFIG.API.COMPOSITE_SEARCH, options);
-    console.log('response =====>', response);
+    // console.log('response =====>', response);
     const result = response?.data?.result;
     if (response?.data?.result?.QuestionSet?.length) {
       const contents = result?.content

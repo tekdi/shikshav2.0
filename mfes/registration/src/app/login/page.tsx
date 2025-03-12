@@ -18,7 +18,7 @@ const info = [
     tenantId: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
     tenantName: 'atree',
     channel: 'atree-channel',
-    framework: 'atree framework',
+    framework: 'atree-framework',
   },
   {
     tenantId: '6c386899-7a00-4733-8447-5ef925bbf700',

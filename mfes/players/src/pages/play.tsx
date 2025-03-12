@@ -60,7 +60,6 @@ const Players: React.FC<SunbirdPlayerProps> = ({
           //@ts-ignore
           config.context['contentId'] = identifier;
         }
-
         setPlayerConfig(config);
       } catch (error) {
         console.error('Error loading content:', error);
