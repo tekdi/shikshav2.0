@@ -35,7 +35,7 @@ export const playerConfig = {
       webLink: '',
     },
     apislug: '',
-    repos: ['/sunbird-plugins/renderer'],
+    repos: ['/mfe_content/sunbird-plugins/renderer'],
     plugins: [
       { id: 'org.sunbird.iframeEvent', ver: 1, type: 'plugin' },
       { id: 'org.sunbird.player.endpage', ver: 1.1, type: 'plugin' },
@@ -83,7 +83,7 @@ export const V1PlayerConfig = {
       webLink: '',
     },
     apislug: '',
-    repos: ['/sunbird-plugins/renderer'],
+    repos: ['/mfe_content/sunbird-plugins/renderer'],
     plugins: [
       {
         id: 'org.sunbird.iframeEvent',
