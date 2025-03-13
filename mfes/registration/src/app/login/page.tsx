@@ -81,6 +81,7 @@ export default function Login() {
       ) {
         localStorage.setItem('accToken', response?.access_token);
         localStorage.setItem('refToken', response?.refresh_token);
+        localStorage.setItem('userId', authUser?.userId);
         const { contentFramework: framework, channelId: channel } = tenantInfo;
         localStorage.setItem('framework', framework);
         localStorage.setItem('tenant-code', channel);

@@ -9,7 +9,7 @@ export const URL_CONFIG = {
     CONTENT_READ: `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}${process.env.NEXT_PUBLIC_SSUNBIRD_READ_URL}`,
     HIERARCHY_API: `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/action/questionset/v2/hierarchy/`,
     QUESTIONSET_READ: `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/action/questionset/v2/read/`,
-    COMPOSITE_SEARCH: `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/action/composite/v3/search`,
+    COMPOSITE_SEARCH: `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/interface/v1/action/composite/v3/search`,
     CONTENT_HIERARCHY: `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/action/content/v3/hierarchy`,
   },
 };
@@ -136,14 +136,14 @@ export const V2PlayerConfig: PlayerConfig = {
     contextRollup: { l1: process.env.NEXT_PUBLIC_CHANNEL_ID || '' },
     objectRollup: {},
     userData: { firstName: userName, lastName: '' },
-    host: '',
+    host: process.env.NEXT_PUBLIC_TELEMETRY_URL,
     endpoint: '/v1/telemetry',
   },
   config: {
     showEndPage: false,
     endPage: [{ template: 'assessment', contentType: ['SelfAssess'] }],
     showStartPage: true,
-    host: '',
+    host: process.env.NEXT_PUBLIC_TELEMETRY_URL,
     overlay: { showUser: false },
     splash: {
       text: '',
@@ -179,7 +179,8 @@ export const V1PlayerConfig: PlayerConfig = {
       },
     ],
     showStartPage: true,
-    host: '',
+    host: process.env.NEXT_PUBLIC_TELEMETRY_URL,
+    endpoint: '/v1/telemetry',
     overlay: {
       enableUserSwitcher: true,
       showOverlay: true,
