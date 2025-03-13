@@ -1,11 +1,16 @@
 'use client';
-import React, { useState } from 'react';
-import { Button, FormLabel, IconButton, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import {
+  Button,
+  FormLabel,
+  IconButton,
+  Typography,
+  Alert,
+} from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { CommonTextField } from '@shared-lib';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
 // import Otp from './otp';
 import { signin } from '../services/LoginService';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -15,11 +20,19 @@ export default function Signin() {
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showAlertMsg, setShowAlertMsg] = useState('');
+
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  useEffect(() => {
+    // Clear localStorage when the Sign-in page loads
+    localStorage.clear();
+  }, []);
   const handleChange =
     (field: 'email' | 'password') =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
+      setShowAlertMsg('');
+
       const value = event.target.value;
       if (field === 'email') {
         setEmail(value);
@@ -51,11 +64,15 @@ export default function Signin() {
             const refreshToken = response?.result?.refresh_token;
 
             if (token) {
+              setShowAlertMsg('Login successfully!');
               localStorage.setItem('token', token);
               localStorage.setItem('refreshToken', refreshToken);
+              router.push('/home');
             }
           }
         } else if (response?.status === 404) {
+          setShowAlertMsg(response?.response?.data?.params?.errmsg);
+
           console.log('error', response?.response?.data?.params?.errmsg);
         }
       } catch (error: any) {
@@ -103,7 +120,7 @@ export default function Signin() {
         }}
       >
         <FormLabel component="legend" sx={{ color: '#4D4639' }}>
-          Username
+          Username<span style={{ color: 'red' }}>*</span>
         </FormLabel>
 
         <CommonTextField
@@ -111,11 +128,11 @@ export default function Signin() {
           onChange={handleChange('email')}
           type={'text'}
           variant="outlined"
-          helperText={emailError ? `Enter Email ID ` : ''}
+          helperText={emailError ? `Enter valid Email ID ` : ''}
           error={emailError}
         />
         <FormLabel component="legend" sx={{ color: '#4D4639' }}>
-          Password
+          Password<span style={{ color: 'red' }}>*</span>
         </FormLabel>
 
         <CommonTextField
@@ -123,7 +140,7 @@ export default function Signin() {
           onChange={handleChange('password')}
           type={showPassword ? 'text' : 'password'}
           variant="outlined"
-          helperText={passwordError ? `Enter password ` : ''}
+          helperText={passwordError ? `Enter valid password ` : ''}
           error={passwordError}
           endIcon={
             <IconButton
@@ -181,6 +198,11 @@ export default function Signin() {
           </Link>
         </Typography>
       </Grid>
+      {showAlertMsg && (
+        <Alert variant="filled" severity="success">
+          {showAlertMsg}
+        </Alert>
+      )}
     </Grid>
   );
 }

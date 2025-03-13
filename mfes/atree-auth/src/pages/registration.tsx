@@ -7,14 +7,14 @@ import {
   Typography,
   RadioGroup,
   Radio,
+  Alert,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { CommonDialog, CommonSelect, CommonTextField } from '@shared-lib';
 import { SelectChangeEvent } from '@mui/material/Select';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { GoogleLogin } from '@react-oauth/google';
-import { GoogleOAuthProvider } from '@react-oauth/google';
+
 // import Otp from './otp';
 import { createUser } from '../services/LoginService';
 import TermsAndCondition from './components/TermsAndCondition';
@@ -57,8 +57,10 @@ export default function Registration() {
   });
 
   const [selectedValue, setSelectedValue] = useState('Educator');
-  const [otpShow, setOtpShow] = useState(false);
-  const [otp, setOtp] = useState('');
+  const [showAlertMsg, setShowAlertMsg] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState<
+    'success' | 'error' | 'warning' | 'info'
+  >('success');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [openTermsDialog, setOpenTermsDialog] = useState(false);
@@ -85,6 +87,7 @@ export default function Registration() {
   const handleChange =
     (field: keyof typeof formData) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
+      setShowAlertMsg('');
       const value = event.target.value;
       setFormData({ ...formData, [field]: value });
       setError({
@@ -130,12 +133,14 @@ export default function Registration() {
         tenantCohortRoleMapping: tenantCohortRoleMapping,
       };
       const response = await createUser(payload);
-
-      if (response?.result?.access_token) {
-        if (typeof window !== 'undefined' && window.localStorage) {
-          localStorage.setItem('token', response.result.access_token);
-          localStorage.setItem('refreshToken', response.result.refresh_token);
-        }
+      if (response?.responseCode === 201) {
+        setShowAlertMsg('User registered successfully!');
+        setAlertSeverity('success');
+        router.push('/signin');
+      } else if (response?.response?.data?.responseCode === 400) {
+        setShowAlertMsg(response?.response?.data?.params?.err);
+        setAlertSeverity('error');
+        console.log('error', response?.response?.data?.params?.err);
       }
     } catch (error: any) {
       console.log(error);
@@ -182,7 +187,9 @@ export default function Registration() {
           backgroundColor: '#FFFFFF',
         }}
       >
-        <FormLabel component="legend">Full Name</FormLabel>
+        <FormLabel component="legend">
+          Full Name<span style={{ color: 'red' }}>*</span>
+        </FormLabel>
         <CommonTextField
           value={formData.name}
           onChange={handleChange('name')}
@@ -192,7 +199,9 @@ export default function Registration() {
           error={error.name}
         />
 
-        <FormLabel component="legend">Email ID</FormLabel>
+        <FormLabel component="legend">
+          Email ID<span style={{ color: 'red' }}>*</span>
+        </FormLabel>
         <CommonTextField
           value={formData.email}
           onChange={handleChange('email')}
@@ -201,7 +210,9 @@ export default function Registration() {
           helperText={error.email ? 'Enter a valid Email ID' : ''}
           error={error.email}
         />
-        <FormLabel component="legend">Password</FormLabel>
+        <FormLabel component="legend">
+          Password<span style={{ color: 'red' }}>*</span>
+        </FormLabel>
         <CommonTextField
           value={formData.password}
           onChange={handleChange('password')}
@@ -220,7 +231,9 @@ export default function Registration() {
             </IconButton>
           }
         />
-        <FormLabel component="legend">Gender</FormLabel>
+        <FormLabel component="legend">
+          Gender<span style={{ color: 'red' }}>*</span>
+        </FormLabel>
         <RadioGroup
           row
           value={formData.gender}
@@ -255,7 +268,9 @@ export default function Registration() {
           </>
         )} */}
 
-        <FormLabel component="legend">Select Role</FormLabel>
+        <FormLabel component="legend">
+          Select Role<span style={{ color: 'red' }}>*</span>
+        </FormLabel>
         <CommonSelect
           value={selectedValue}
           onChange={handleRoleChange}
@@ -273,12 +288,23 @@ export default function Registration() {
                 checked={termsAccepted}
                 onChange={handleChangeOPenTermsAndCondition}
                 sx={{
+                  color: '#2B3133',
                   '&.Mui-checked': {
                     color: '#2B3133',
+                    backgroundColor: 'transparent', // Avoids overlapping color
                   },
-                  '& .MuiSvgIcon-root': {
+                  '&.Mui-checked::after': {
+                    content: '""',
+                    width: '100%',
+                    height: '100%',
+                    position: 'absolute',
                     backgroundColor: '#FFBD0D',
                     borderRadius: '4px',
+                    zIndex: -1,
+                  },
+                  '& .MuiSvgIcon-root': {
+                    borderRadius: '4px',
+                    backgroundColor: termsAccepted ? '#FFBD0D' : 'transparent',
                   },
                 }}
               />
@@ -329,6 +355,11 @@ export default function Registration() {
             Verify & Proceed
           </Button>
         </>
+        {showAlertMsg && (
+          <Alert variant="filled" severity={alertSeverity}>
+            {showAlertMsg}
+          </Alert>
+        )}
         {/* ) : (
           <Button
             onClick={handleSigninClick}
