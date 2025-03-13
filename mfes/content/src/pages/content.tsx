@@ -366,14 +366,47 @@ export default function Content(props: ContentProps) {
                     checked={filterValue} // Controlled state for switch
                     onChange={(e) => setFilterValue(e.target.checked)}
                     sx={{
-                      '& .MuiSwitch-switchBase.Mui-checked': {
-                        color: '#E68907',
-                      },
-                      '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track':
-                        {
-                          background:
-                            'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                      width: 42,
+                      height: 26,
+                      padding: 0,
+                      '& .MuiSwitch-switchBase': {
+                        padding: 0,
+                        transitionDuration: '300ms',
+                        '&.Mui-checked': {
+                          transform: 'translateX(16px)',
+                          color: '#fff',
+                          '& + .MuiSwitch-track': {
+                            background:
+                              'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                            opacity: 1,
+                            border: 0,
+                          },
+                          '&.Mui-disabled + .MuiSwitch-track': {
+                            opacity: 0.5,
+                          },
                         },
+                        '&.Mui-focusVisible .MuiSwitch-thumb': {
+                          color: '#33cf4d',
+                          border: '6px solid #fff',
+                        },
+                        '&.Mui-disabled .MuiSwitch-thumb': {
+                          color: '#33cf4d',
+                        },
+                        '&.Mui-disabled + .MuiSwitch-track': {
+                          opacity: 0.7,
+                        },
+                      },
+                      '& .MuiSwitch-thumb': {
+                        boxSizing: 'border-box',
+                        width: 25,
+                        height: 25,
+                      },
+                      '& .MuiSwitch-track': {
+                        borderRadius: 26 / 2,
+                        background:
+                          'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                        opacity: 1,
+                      },
                     }}
                   />
 
