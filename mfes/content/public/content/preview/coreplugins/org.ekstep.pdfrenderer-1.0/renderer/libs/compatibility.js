@@ -116,7 +116,7 @@ if (typeof PDFJS === 'undefined') {
       Object.defineProperty(new Image(), 'id', { value: 'test' });
       // ... another test for android gb browser for non-DOM objects
       var Test = function Test() {};
-      Test.prototype = { get id() { } };
+      Test.prototype = { get id() { return 'test'; } };
       Object.defineProperty(new Test(), 'id',
         { value: '', configurable: true, enumerable: true, writable: false });
     } catch (e) {
@@ -233,7 +233,9 @@ if (typeof PDFJS === 'undefined') {
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
   window.atob = function (input) {
     // eslint-disable-next-line no-undef
-    input = input.replace(/=+$/, '');
+    while (input.endsWith('=')) {
+      input = input.slice(0, -1);
+    }
     if (input.length % 4 == 1) {
       throw new Error('bad atob input');
     }

@@ -4226,7 +4226,7 @@ body,
 .ionic-body {
     -webkit-touch-callout: none;
     -webkit-font-smoothing: antialiased;
-    font-smoothing: antialiased;
+    /* font-smoothing: antialiased; */
     -webkit-text-size-adjust: none;
     -moz-text-size-adjust: none;
     text-size-adjust: none;
@@ -12312,7 +12312,7 @@ a.dark {
 }
 
 .panel_slider a,
-visited {
+a:visited {
     color: #777;
     text-decoration: none;
 }
@@ -14749,7 +14749,9 @@ ion-popover-view.fit ion-content {
     border-bottom: 1px solid #aaaaaa;
     overflow: hidden;
     padding-top: 2.5%;
-    padding: 2.6% 3%;
+    padding-top: 2.6%;
+    padding-left: 3%;
+    padding-right: 3%;
     font-family: lato-regular;
 }
 
@@ -14959,7 +14961,7 @@ ion-popover-view.fit ion-content {
     opacity: 0.4;
 }
 
-.overlay-html>assess {
+.overlay-html .assess {
     position: absolute;
     bottom: 1%;
     right: 1%;
@@ -15671,7 +15673,7 @@ ion-popover-view.fit ion-content {
     width: 31%;
 }
 
-.gc-ep-footer-icons>collection>a>img {
+.gc-ep-footer-icons>a>img {
     border-radius: 25px;
 }
 
@@ -15785,7 +15787,8 @@ ion-popover-view.fit ion-content {
     padding-top: 2%;
     font-size: 0.8em;
     font-weight: normal;
-    padding: 0% 12%;
+    padding-left: 12%;
+    padding-right: 12%;
 }
 
 .gc-mute-bg {
