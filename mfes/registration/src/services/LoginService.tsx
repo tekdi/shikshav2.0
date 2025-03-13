@@ -49,10 +49,20 @@ export const login = async ({
         headers: {
           Authorization: `Bearer ${response?.data?.result?.access_token}`,
         },
-        withCredentials: true,
       }
     );
-    return { ...response?.data, authUser: response2?.data?.result };
+    const response3 = await get(
+      `${process.env.NEXT_PUBLIC_MIDDLEWARE_URL}/tenant/read`,
+      {
+        Authorization: `Bearer ${response?.data?.result?.access_token}`,
+      }
+    );
+
+    return {
+      ...response?.data,
+      authUser: response2?.data?.result,
+      tenantInfo: response3?.data?.result,
+    };
   } catch (error) {
     console.error('error in login', error);
     throw error;

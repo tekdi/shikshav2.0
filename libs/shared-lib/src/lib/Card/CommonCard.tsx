@@ -388,6 +388,7 @@ export const CommonCard: React.FC<CommonCardProps> = ({
               fontSize: '14px',
               fontWeight: 500,
               color: '#6750A4',
+              wordBreak: 'break-word',
             }}
           >
             {actions}

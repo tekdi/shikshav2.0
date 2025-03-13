@@ -13,20 +13,6 @@ import React, { useState } from 'react';
 import { login } from '../../services/LoginService';
 import AppConst from '../../utils/AppConst/AppConst';
 
-const info = [
-  {
-    tenantId: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
-    tenantName: 'atree',
-    channel: 'atree-channel',
-    framework: 'atree-framework',
-  },
-  {
-    tenantId: '6c386899-7a00-4733-8447-5ef925bbf700',
-    tenantName: 'Key Education Foundation',
-    channel: 'kef-channel',
-    framework: 'kef-framework',
-  },
-];
 export default function Login() {
   const [formData, setFormData] = useState({
     userName: '',
@@ -76,12 +62,16 @@ export default function Login() {
     }
     setLoading(true);
     try {
-      const { result: response, authUser } = await login({
+      const {
+        result: response,
+        authUser,
+        tenantInfo: info,
+      } = await login({
         username: formData.userName,
         password: formData.password,
       });
       const tenantInfo = info.find(
-        (tenant) => tenant.tenantId === authUser?.tenantData?.[0]?.tenantId
+        (tenant: any) => tenant.tenantId === authUser?.tenantData?.[0]?.tenantId
       );
 
       if (
@@ -91,11 +81,10 @@ export default function Login() {
       ) {
         localStorage.setItem('accToken', response?.access_token);
         localStorage.setItem('refToken', response?.refresh_token);
-        const { framework, channel } = tenantInfo;
+        const { contentFramework: framework, channelId: channel } = tenantInfo;
         localStorage.setItem('framework', framework);
         localStorage.setItem('tenant-code', channel);
         localStorage.setItem('tenantId', authUser?.tenantData?.[0]?.tenantId);
-
         const decoded = jwtDecode(response?.access_token);
         const subId = decoded?.sub?.split(':')[2];
         document.cookie = `subid=${subId}; path=/;`;

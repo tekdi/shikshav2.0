@@ -6,7 +6,7 @@ export const URL_CONFIG = {
     HIERARCHY_FEILDS: 'instructions,outcomeDeclaration',
   },
   API: {
-    CONTENT_READ: `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/interface/v1/action/content/v3/read/`,
+    CONTENT_READ: `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}${process.env.NEXT_PUBLIC_SSUNBIRD_READ_URL}`,
     HIERARCHY_API: `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/action/questionset/v2/hierarchy/`,
     QUESTIONSET_READ: `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/action/questionset/v2/read/`,
     COMPOSITE_SEARCH: `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/action/composite/v3/search`,
@@ -152,7 +152,7 @@ export const V2PlayerConfig: PlayerConfig = {
       webLink: '',
     },
     apislug: '',
-    repos: ['/sunbird-plugins/renderer'],
+    repos: ['/mfe_content/sunbird-plugins/renderer'],
     plugins: [
       { id: 'org.sunbird.iframeEvent', ver: 1, type: 'plugin' },
       { id: 'org.sunbird.player.endpage', ver: 1.1, type: 'plugin' },
@@ -200,7 +200,7 @@ export const V1PlayerConfig: PlayerConfig = {
       webLink: '',
     },
     apislug: '',
-    repos: ['/sunbird-plugins/renderer'],
+    repos: ['/mfe_content/sunbird-plugins/renderer'],
     plugins: [
       {
         id: 'org.sunbird.iframeEvent',
