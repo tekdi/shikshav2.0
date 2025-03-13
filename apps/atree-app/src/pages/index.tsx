@@ -34,10 +34,9 @@ const LandingPage = () => {
   const [categories, setCategories] = useState<Array<any>>([]);
   const [languageCount, setLanguageCount] = useState(0);
   const [readerCount, setReaderCount] = useState(0);
+  const [bookCount, setBookCount] = useState(0);
   const router = useRouter();
-  const handleItemClick = (to: string) => {
-    router.push(to);
-  };
+
   useEffect(() => {
     const init = async () => {
       const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
@@ -49,13 +48,15 @@ const LandingPage = () => {
       const data = await ContentSearch({
         channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
       });
-      console.log('ContentSearch---', data);
       const content = data?.result?.content || [];
       const uniqueLanguages = [
         ...new Set(
-          content.map((item) => item.language).filter((lang) => lang !== null)
+          content
+            .map((item) => (Array.isArray(item) ? item[0] : item)) // Extract value if inside an array
+            .filter((lang) => typeof lang === 'string' && lang.trim() !== '') // Remove null, undefined, and empty strings
         ),
       ];
+      setBookCount(content?.length);
       setLanguageCount(uniqueLanguages?.length);
       const uniqueReaders = [
         ...new Set(
@@ -72,7 +73,6 @@ const LandingPage = () => {
 
   return (
     <Layout
-      onItemClick={handleItemClick}
       footerComponent={
         <Grid sx={{ px: 4, py: 1, backgroundColor: 'secondary.main' }}>
           <Typography align="center" gutterBottom sx={{ fontSize: '10px' }}>
@@ -96,7 +96,7 @@ const LandingPage = () => {
         <Grid
           sx={{ px: 4, textAlign: 'center' }}
           container
-          spacing={2}
+          spacing={1}
           justifyContent={'center'}
         >
           <Grid
@@ -124,7 +124,6 @@ const LandingPage = () => {
             <Typography
               variant="body1"
               align="center"
-              gutterBottom
               sx={{
                 fontWeight: 400,
                 fontSize: '14px',
@@ -139,38 +138,43 @@ const LandingPage = () => {
             </Typography>
           </Grid>
         </Grid>
-        <Grid sx={{ px: 2 }} container spacing={1}>
+        <Grid container spacing={1}>
           <Grid
-            size={{ xs: 12, sm: 10, md: 12, lg: 12 }}
+            size={{ xs: 12, sm: 12, md: 12, lg: 12 }}
             display="flex"
             flexDirection="column"
             alignItems="center"
+            justifyContent={'center'}
           >
             <Box
               sx={{
-                backgroundColor: '#E68907',
-                padding: '16px',
-                borderRadius: '8px',
-                width: '100%',
-                maxWidth: '600px',
+                backgroundColor: '#FCD905',
+
+                // borderRadius: '8px',
+                // width: '100%',
+                width: '1200px',
                 display: 'flex',
-                justifyContent: 'space-around',
+                justifyContent: 'center',
+                flexWrap: 'wrap',
+                gap: 8,
                 alignItems: 'center',
-                color: '#fff',
+                color: '#2B3133',
                 textAlign: 'center',
               }}
             >
               {[
-                { label: 'Books', value: '1000' },
+                { label: 'Books', value: bookCount },
                 { label: 'Categories', value: '15' },
                 { label: 'Language', value: languageCount },
-                { label: 'Reader', value: readerCount },
+                // { label: 'Reader', value: readerCount },
               ].map((item, index) => (
                 <Box key={index}>
-                  <Typography variant="h5" fontWeight="bold">
+                  <Typography fontWeight="400" sx={{ fontSize: '24px' }}>
                     {item.value}
                   </Typography>
-                  <Typography variant="body2">{item.label}</Typography>
+                  <Typography fontWeight="400" sx={{ fontSize: '10px' }}>
+                    {item.label}
+                  </Typography>
                 </Box>
               ))}
             </Box>

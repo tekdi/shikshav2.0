@@ -9,13 +9,17 @@ interface Login {
   username: string;
   password: string;
 }
+interface TenantCohortRoleMapping {
+  tenantId: string;
+  roleId: string;
+}
 interface CreateUserParams {
   username: string;
   password: string;
   gender: string;
   firstName: string;
   lastName: string;
-  mobile: string;
+  tenantCohortRoleMapping: TenantCohortRoleMapping[];
 }
 
 // Atree login API
@@ -42,16 +46,23 @@ export const signin = async ({
 export const createUser = async (payload: CreateUserParams): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_ATREE_LOGIN_URL}/interface/v1/account/create`;
 
-  const { firstName, lastName, username, password } = payload; // Extract values from payload
+  const {
+    firstName,
+    lastName,
+    username,
+    password,
+    gender,
+    tenantCohortRoleMapping,
+  } = payload; // Extract values from payload
 
   try {
     const response = await post(apiUrl, {
       username: username, // Ensure correct field name
       password: password,
-      gender: 'male',
+      gender: gender,
       firstName: firstName,
       lastName: lastName,
-      mobile: '9877297629',
+      tenantCohortRoleMapping,
     });
 
     return response?.data;

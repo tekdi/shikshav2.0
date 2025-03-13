@@ -153,7 +153,7 @@ export const ContentSearch = async ({
   type,
   query,
   filters,
-  limit = 5,
+  limit,
   offset = 0,
   channel,
 }: {

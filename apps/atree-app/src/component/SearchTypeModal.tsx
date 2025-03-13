@@ -107,6 +107,16 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
                 setSearchType(item.type);
                 // router.push(`/searchpage?type=${item.type}`);
               }}
+              sx={{
+                cursor: 'pointer',
+                backgroundColor:
+                  searchType === item.type ? '#B3D4FC' : 'transparent',
+                borderRadius: '8px',
+                '&:hover': {
+                  backgroundColor:
+                    searchType === item.type ? '#A1C9F9' : '#F0F0F0',
+                },
+              }}
             >
               <ListItemAvatar>
                 <Avatar sx={{ backgroundColor: '#CEE5FF', color: '#06164B' }}>

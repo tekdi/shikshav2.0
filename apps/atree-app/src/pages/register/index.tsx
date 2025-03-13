@@ -14,7 +14,7 @@ const Signup = dynamic(() => import('@Atreeregister'), {
 });
 const Register: React.FC<ListProps> = () => {
   return (
-    <Layout>
+    <Layout isFooter={false}>
       <Signup />
     </Layout>
   );

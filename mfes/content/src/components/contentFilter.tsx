@@ -71,7 +71,6 @@ const FilterDialog = ({
       [filterCode]: typeof value === 'string' ? value.split(',') : value,
     }));
   };
-
   return (
     <Dialog
       open={open}

@@ -42,13 +42,15 @@ const List: React.FC<ListProps> = () => {
             filters: {
               filters: {
                 channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
-                status: ['Live'],
+                // status: ['Live'],
               },
             },
             _card: {
               cardName: 'AtreeCard',
               image: atreeLogo.src,
             },
+            showSearch: false,
+            filterBy: true,
           }}
         />
       </Box>
