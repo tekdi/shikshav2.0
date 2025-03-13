@@ -121,9 +121,10 @@ export const contentReadAPI = async (doId: string) => {
     const config: AxiosRequestConfig = {
       method: 'get',
       maxBodyLength: Infinity,
-      url: `${searchApiUrl}/api/content/v1/read/` + doId,
+      url: `${searchApiUrl}/interface/v1/action/content/v3/read/` + doId,
       headers: {
-        Authorization: `'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0WEZYTWFVOWFBanpUbk5aSXNySEpyV0hwVW94bzY3NyJ9.WSWVtVh5MCH_yymFEM_qpVzXGdDO5mukrqmIii1C5Ww'`,
+        tenantId: localStorage.getItem('tenantId') || '',
+        Authorization: `Bearer ${localStorage.getItem('accToken') || ''}`,
       },
     };
     console.log('config', config);

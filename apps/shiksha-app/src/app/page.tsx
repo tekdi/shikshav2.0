@@ -1,12 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { CircularProgress, Box } from '@mui/material';
 
 export default function AuthCheck() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
   const URL_CONTENT = process.env.NEXT_PUBLIC_CONTENT;
   const URL_LOGIN = process.env.NEXT_PUBLIC_LOGIN;
 

@@ -9,9 +9,15 @@ export const fetchContent = async (identifier: any) => {
     const LICENSE_DETAILS = URL_CONFIG.PARAMS.LICENSE_DETAILS;
     const MODE = 'edit';
     const response = await axios.get(
-      `${API_URL}?fields=${FIELDS}&mode=${MODE}&licenseDetails=${LICENSE_DETAILS}`
+      `${API_URL}?fields=${FIELDS}&mode=${MODE}&licenseDetails=${LICENSE_DETAILS}`,
+      {
+        headers: {
+          tenantId: localStorage.getItem('tenantId') || '',
+          Authorization: `Bearer ${localStorage.getItem('accToken') || ''}`,
+        },
+      }
     );
-    console.log('response =====>', response);
+    // console.log('response =====>', response);
     return response?.data?.result?.content;
   } catch (error) {
     console.error('Error fetching content:', error);
@@ -42,7 +48,7 @@ export const fetchBulkContents = async (identifiers: string[]) => {
       },
     };
     const response = await axios.post(URL_CONFIG.API.COMPOSITE_SEARCH, options);
-    console.log('response =====>', response);
+    // console.log('response =====>', response);
     const result = response?.data?.result;
     if (response?.data?.result?.QuestionSet?.length) {
       const contents = result?.content

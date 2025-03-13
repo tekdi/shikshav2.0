@@ -38,6 +38,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import HelpIcon from '@mui/icons-material/Help';
 import { SelectChangeEvent } from '@mui/material';
 import { trackingData } from '../services/TrackingService';
+import AppConst from '../utils/AppConst/AppConst';
 interface ContentItem {
   name: string;
   gradeLevel: string[];
@@ -248,7 +249,7 @@ export default function Content() {
           'application/vnd.sunbird.questionset',
         ].includes(contentMimeType)
       ) {
-        await contentReadAPI(identifier);
+        // await contentReadAPI(identifier);
         router.push(`/player/${identifier}`);
       } else {
         const result = await hierarchyAPI(identifier);
@@ -264,7 +265,7 @@ export default function Content() {
       setIsLoading(false);
     }
   };
-  ``;
+
   useEffect(() => {
     const handleScroll = () => {
       setShowBackToTop(window.scrollY > 300);
@@ -294,7 +295,7 @@ export default function Content() {
                   image={
                     item?.posterImage && item?.posterImage !== 'undefined'
                       ? item?.posterImage
-                      : '/assests/images/image_ver.png'
+                      : `${AppConst.BASEPATH}/assests/images/image_ver.png`
                   }
                   content={item?.description || '-'}
                   // subheader={item?.contentType}
@@ -320,7 +321,7 @@ export default function Content() {
                 {isLoading ? 'Loading...' : 'Load More'}
               </Button>
             ) : (
-              <Typography variant="body1" color="textSecondary">
+              <Typography variant="body1" color="black">
                 No more data available
               </Typography>
             )}
@@ -411,7 +412,11 @@ export default function Content() {
   }, [router]);
   const fetchFramework = async () => {
     try {
-      const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
+      const url = `${
+        process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL
+      }/interface/v1/api/framework/v1/read/${
+        localStorage.getItem('framework') || process.env.NEXT_PUBLIC_FRAMEWORK
+      }`;
       const frameworkData = await fetch(url).then((res) => res.json());
       const frameworks = frameworkData?.result?.framework;
       setFrameworkFilter(frameworks);

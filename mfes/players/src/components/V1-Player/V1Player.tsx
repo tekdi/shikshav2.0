@@ -5,6 +5,8 @@ interface PlayerProps {
   playerConfig: any;
 }
 
+const basePath = process.env.NEXT_PUBLIC_ASSETS_CONTENT || '/mfe_content';
+
 const V1Player = ({ playerConfig }: PlayerProps) => {
   const previewRef = useRef<HTMLIFrameElement | null>(null);
 
@@ -69,7 +71,7 @@ const V1Player = ({ playerConfig }: PlayerProps) => {
         ref={previewRef}
         id="contentPlayer"
         title="Content Player"
-        src="/content/preview/preview.html?webview=true"
+        src={`${basePath}/content/preview/preview.html?webview=true`}
         aria-label="Content Player"
         style={{ width: '100%', height: '600px', border: 'none' }}
       ></iframe>

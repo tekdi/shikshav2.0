@@ -25,10 +25,10 @@ interface PlayerProps {
 }
 
 const SunbirdPlayers = ({ 'player-config': playerConfig }: PlayerProps) => {
-  console.log('workspace playerconfig', playerConfig);
+  // console.log('workspace playerconfig', playerConfig);
 
   const mimeType = playerConfig?.metadata?.mimeType;
-  localStorage.setItem('mimeType', mimeType);
+  // localStorage.setItem('mimeType', mimeType);
   switch (mimeType) {
     case 'application/pdf':
       return <SunbirdPdfPlayer playerConfig={playerConfig} />;
@@ -43,7 +43,7 @@ const SunbirdPlayers = ({ 'player-config': playerConfig }: PlayerProps) => {
     case 'application/vnd.ekstep.html-archive':
     case 'video/youtube':
     case 'video/x-youtube':
-    //case 'application/vnd.ekstep.ecml-archive':
+    case 'application/vnd.ekstep.ecml-archive':
       return <SunbirdV1Player playerConfig={playerConfig} />;
     default:
       return <div>Unsupported media type</div>;

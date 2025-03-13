@@ -1,30 +1,17 @@
 'use client';
-import React, { useState } from 'react';
-import { Button, Typography } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { AlertTitle, Button } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid2';
-import {
-  CommonCheckbox,
-  CommonSelect,
-  CommonTextField,
-  Layout,
-  // login,
-} from '@shared-lib';
-import { SelectChangeEvent } from '@mui/material/Select';
-import Link from 'next/link';
-import { getToken } from '../../services/LoginService';
-import { useRouter } from 'next/navigation';
+// import { SelectChangeEvent } from '@mui/material/Select';
+import { CommonTextField, Layout } from '@shared-lib';
 import { jwtDecode } from 'jwt-decode';
-const languageData = [
-  { id: 1, name: 'English' },
-  { id: 2, name: 'Marathi' },
-  { id: 3, name: 'Hindi' },
-];
-
-const checkboxData = [{ label: 'Remember Me' }];
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
+import { login } from '../../services/LoginService';
+import AppConst from '../../utils/AppConst/AppConst';
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -35,11 +22,10 @@ export default function Login() {
     userName: false,
     password: false,
   });
-  const [selectedValue, setSelectedValue] = useState('english');
-  const [checked, setChecked] = useState(false);
+  // const [selectedValue, setSelectedValue] = useState('english');
+  // const [checked, setChecked] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const handleChange =
@@ -55,16 +41,16 @@ export default function Login() {
       });
     };
 
-  const handleCheckboxChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    checked: boolean,
-    label: string
-  ) => {
-    setChecked(checked);
-    console.log(
-      `Checkbox '${label}' is now ${checked ? 'checked' : 'unchecked'}`
-    );
-  };
+  // const handleCheckboxChange = (
+  //   event: React.ChangeEvent<HTMLInputElement>,
+  //   checked: boolean,
+  //   label: string
+  // ) => {
+  //   setChecked(checked);
+  //   console.log(
+  //     `Checkbox '${label}' is now ${checked ? 'checked' : 'unchecked'}`
+  //   );
+  // };
 
   const handleButtonClick = async () => {
     if (!formData.userName || !formData.password) {
@@ -76,14 +62,29 @@ export default function Login() {
     }
     setLoading(true);
     try {
-      const response = await getToken({
+      const {
+        result: response,
+        authUser,
+        tenantInfo: info,
+      } = await login({
         username: formData.userName,
         password: formData.password,
       });
+      const tenantInfo = info.find(
+        (tenant: any) => tenant.tenantId === authUser?.tenantData?.[0]?.tenantId
+      );
 
-      if (response?.access_token) {
+      if (
+        response?.access_token &&
+        authUser?.tenantData?.[0]?.tenantId &&
+        tenantInfo
+      ) {
         localStorage.setItem('accToken', response?.access_token);
         localStorage.setItem('refToken', response?.refresh_token);
+        const { contentFramework: framework, channelId: channel } = tenantInfo;
+        localStorage.setItem('framework', framework);
+        localStorage.setItem('tenant-code', channel);
+        localStorage.setItem('tenantId', authUser?.tenantData?.[0]?.tenantId);
         const decoded = jwtDecode(response?.access_token);
         const subId = decoded?.sub?.split(':')[2];
         document.cookie = `subid=${subId}; path=/;`;
@@ -92,21 +93,25 @@ export default function Login() {
           router.push(redirectUrl);
         }
       } else {
-        setShowError(true);
-        setErrorMessage(response);
+        if (!response?.access_token) {
+          setErrorMessage(['Invalid tenantId or access token']);
+        } else if (!authUser?.tenantData?.[0]?.tenantId) {
+          setErrorMessage(['Invalid tenantId']);
+        } else if (!tenantInfo) {
+          setErrorMessage(['not found tenant config']);
+        }
       }
     } catch (error: any) {
       console.error('Login failed:', error);
-      setShowError(true);
-      setErrorMessage(error);
+      setErrorMessage([error.message, error?.response?.data?.params?.errmsg]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSelectChange = (event: SelectChangeEvent) => {
-    setSelectedValue(event.target.value);
-  };
+  // const handleSelectChange = (event: SelectChangeEvent) => {
+  //   setSelectedValue(event.target.value);
+  // };
 
   return (
     <Layout
@@ -140,7 +145,7 @@ export default function Login() {
             }}
           >
             <img
-              src="/assets/images/logo-tekdi.png"
+              src={`${AppConst.BASEPATH}/assets/images/logo-tekdi.png`}
               alt="Company Logo"
               style={{ maxWidth: '100%', height: 'auto' }}
             />
@@ -157,6 +162,7 @@ export default function Login() {
             padding: '15px',
             backgroundColor: '#FFFFFF',
           }}
+          justifyContent={{ sm: 'center', md: 'center' }}
         >
           {/* <CommonSelect
             label=""
@@ -242,9 +248,14 @@ export default function Login() {
           </Typography> */}
         </Grid>
       </Grid>
-      {showError && (
+      {Array.isArray(errorMessage) && errorMessage.length > 0 && (
         <Alert variant="filled" severity="error">
-          {errorMessage}
+          <AlertTitle>Error</AlertTitle>
+          <ul style={{ margin: 0, paddingInlineStart: '15px' }}>
+            {errorMessage.map((error) => (
+              <li key={error}>{error}</li>
+            ))}
+          </ul>
         </Alert>
       )}
     </Layout>
