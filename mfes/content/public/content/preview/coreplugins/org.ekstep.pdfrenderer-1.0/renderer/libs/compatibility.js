@@ -232,7 +232,8 @@ if (typeof PDFJS === 'undefined') {
   var digits =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
   window.atob = function (input) {
-    input = input.replace(/=+$/, ''); // eslint-disable-line no-useless-escape
+    // eslint-disable-next-line no-undef
+    input = input.replace(/=+$/, '');
     if (input.length % 4 == 1) {
       throw new Error('bad atob input');
     }
