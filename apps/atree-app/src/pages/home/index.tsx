@@ -71,7 +71,6 @@ export default function Index() {
         const fdata =
           frameworks.find((item: any) => item.code === 'topic')?.terms || [];
         setFramework(fdata[0]?.identifier || '');
-        console.log('setFramework===', frameworks);
         setFrameworkFilter(fdata);
 
         if (frameworkName) {
@@ -194,12 +193,29 @@ export default function Index() {
   const handleCardClick = (content: any) => {
     if (consumedContent.length < 3) {
       router.push(`/contents/${content?.identifier}`);
-      setConsumedContent((prev) => [...prev, content?.identifier]);
+      setConsumedContent((prev) => {
+        const updatedContent = [...prev, content?.identifier];
+        localStorage.setItem('consumedContent', JSON.stringify(updatedContent));
+        return updatedContent;
+      });
     } else {
+      if (consumedContent.length >= 3 && !localStorage.getItem('token')) {
+        router.push('/signin');
+        localStorage.removeItem('consumedContent');
+      } else {
+        router.push(`/contents/${content?.identifier}`);
+      }
+
       alert('Please log in to continue');
     }
   };
-  console.log('subFrameworkFilter===', subFramework);
+  useEffect(() => {
+    const storedContent = localStorage.getItem('consumedContent');
+    if (storedContent) {
+      setConsumedContent(JSON.parse(storedContent));
+    }
+  }, []);
+  console.log('consumedContent===', consumedContent);
   return (
     <Layout isLoadingChildren={isLoadingChildren}>
       <Box display="flex" flexDirection="column" gap="3rem" py="3rem" px="14px">

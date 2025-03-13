@@ -98,6 +98,8 @@ export default function Layout({
   const [searchQuery, setSearchQuery] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
   const router = useRouter();
+  const token =
+    typeof window !== 'undefined' ? localStorage.getItem('token') : null;
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
@@ -132,7 +134,7 @@ export default function Layout({
     { text: 'Home', icon: <HomeOutlinedIcon fontSize="small" />, to: '/home' },
 
     {
-      text: 'Login',
+      text: token ? 'Logout' : 'Login',
       icon: <AccountCircleOutlinedIcon fontSize="small" />,
       to: '/signin',
     },
@@ -160,6 +162,9 @@ export default function Layout({
   const handleItemClick = (to: string) => {
     if (to === '/termsAndCondition') {
       setOpenDialog(true);
+    } else if (to === '/signin') {
+      localStorage.clear();
+      router.push('/signin');
     } else {
       router.push(to);
     }
