@@ -81,7 +81,7 @@ endPage.controller("endPageController", function($scope, $rootScope, $state,$ele
         $scope.setLicense();
         if (_(TelemetryService.instance).isUndefined()) {
             var otherData = GlobalContext.config.otherData;
-            !_.isUndefined(otherData.cdata) ? correlationData.push(otherData.cdata) : correlationData.push({"id": CryptoJS.MD5(Math.random().toString()).toString(),"type": "ContentSession"});
+            !_.isUndefined(otherData.cdata) ? correlationData.push(otherData.cdata) : correlationData.push({"id": crypto.getRandomValues(new Uint32Array(1))[0].toString(16),"type": "ContentSession"});
             TelemetryService.init(tsObj._gameData, tsObj._user, correlationData, otherData);
         }
 
