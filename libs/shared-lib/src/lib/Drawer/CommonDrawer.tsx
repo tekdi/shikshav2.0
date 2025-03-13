@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import {
+  Box,
   Divider,
   Drawer,
+  IconButton,
   List,
   ListItemButton,
   ListItemIcon,
@@ -10,7 +12,7 @@ import {
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-
+import CloseIcon from '@mui/icons-material/Close';
 interface DrawerItem {
   text: string;
   icon?: React.ReactNode;
@@ -79,7 +81,26 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
   };
 
   return (
-    <Drawer anchor="left" open={open} onClose={onDrawerClose} {...props}>
+    <Drawer
+      anchor="left"
+      open={open}
+      onClose={onDrawerClose}
+      {...props}
+      PaperProps={{
+        sx: {
+          backgroundColor: '#000',
+          boxShadow: '0px 2px 6px 2px #00000026, 0px 1px 2px 0px #0000004D',
+          color: '#fff',
+          width: 300,
+        },
+      }}
+    >
+      <Box display="flex" justifyContent="center" alignItems="center" p={2}>
+        {/* <Typography variant="h6">Menu</Typography> */}
+        <IconButton sx={{ color: '#fff' }} onClick={onDrawerClose}>
+          <CloseIcon />
+        </IconButton>
+      </Box>
       <List>
         {/* Render Main Menu Items */}
         {openDrawer === 'main' &&
@@ -88,7 +109,9 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
               key={item.text}
               onClick={() => onItemClick(item.to)}
             >
-              {item.icon && <ListItemIcon>{item.icon}</ListItemIcon>}
+              {item.icon && (
+                <ListItemIcon sx={{ color: '#fff' }}>{item.icon}</ListItemIcon>
+              )}
               <ListItemText primary={item.text} />
             </ListItemButton>
           ))}

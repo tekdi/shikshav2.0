@@ -58,7 +58,6 @@ export default function Index() {
                 subFrameworkData.name.slice(1).toLowerCase()
             : ''
         );
-
         setSubFrameworkFilter(subFrameworkData?.associations || []);
       }
     }
@@ -72,6 +71,7 @@ export default function Index() {
         const fdata =
           frameworks.find((item: any) => item.code === 'topic')?.terms || [];
         setFramework(fdata[0]?.identifier || '');
+        console.log('setFramework===', frameworks);
         setFrameworkFilter(fdata);
 
         if (frameworkName) {
@@ -118,7 +118,6 @@ export default function Index() {
             (topic) => topic.toLowerCase() === filterCategory.toLowerCase()
           )
         );
-        console.log('Filtered Items:', filteredItems);
         const flattenedContents = relatedData.map((name) => ({
           identifier: name.toLowerCase().replace(/\s+/g, '-'),
           name,
@@ -150,7 +149,6 @@ export default function Index() {
         });
 
         setContentData(data?.result?.content || []);
-        console.log('Filter Category:', filterCategory);
 
         const relatedData = Array.isArray(data?.result?.content)
           ? data.result.content
@@ -201,12 +199,9 @@ export default function Index() {
       alert('Please log in to continue');
     }
   };
-
-  const handleItemClick = (to: string) => {
-    router.push(to);
-  };
+  console.log('subFrameworkFilter===', subFramework);
   return (
-    <Layout isLoadingChildren={isLoadingChildren} onItemClick={handleItemClick}>
+    <Layout isLoadingChildren={isLoadingChildren}>
       <Box display="flex" flexDirection="column" gap="3rem" py="3rem" px="14px">
         <FrameworkFilter
           frameworkFilter={frameworkFilter || []}
@@ -225,7 +220,9 @@ export default function Index() {
             {t('Read, Watch, Listen')}
           </Title>
           <AtreeCard
-            contents={contentData}
+            contents={
+              contentData.length > 4 ? contentData.slice(0, 4) : contentData
+            }
             handleCardClick={handleCardClick}
             _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
             _card={{ image: atreeLogo.src }}
@@ -260,7 +257,9 @@ export default function Index() {
             {t('Related Content')}
           </Title>
           <AtreeCard
-            contents={relatedContent}
+            contents={
+              contentData.length > 6 ? contentData.slice(4, 10) : contentData
+            }
             handleCardClick={handleCardClick}
             _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
             _card={{ image: atreeLogo.src }}
@@ -296,7 +295,7 @@ const FrameworkFilter = React.memo<{
                         frameworkItem?.name?.toLowerCase() as keyof typeof buttonColors
                       ]
                     : ''
-                  : '',
+                  : '#E3E9EA',
             }}
             onClick={() => setFramework(frameworkItem.identifier)}
           >

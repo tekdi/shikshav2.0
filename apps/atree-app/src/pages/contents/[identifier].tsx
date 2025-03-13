@@ -87,7 +87,6 @@ export default function Content() {
   };
   return (
     <Layout
-      onItemClick={handleItemClick}
       showBack
       backIconClick={() => router.back()}
       backTitle={

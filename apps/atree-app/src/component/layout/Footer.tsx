@@ -21,7 +21,7 @@ export default function Footer() {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     switch (newValue) {
       case 0:
-        router.push('/');
+        router.push('/home');
         break;
       case 1:
         router.push('/quick-access');

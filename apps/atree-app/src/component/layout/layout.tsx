@@ -1,5 +1,5 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { debounce, Typography } from '@mui/material';
+import { Button, debounce, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import { CommonDrawer, Loader } from '@shared-lib';
 import React, { useEffect, useRef, useState } from 'react';
@@ -12,7 +12,10 @@ import FilterDramaOutlinedIcon from '@mui/icons-material/FilterDramaOutlined';
 import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
 import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import { useRouter } from 'next/router';
+
 import SearchTypeModal from '../SearchTypeModal';
+import TermsAndCondition from '../TermsAndCondition';
 interface LayoutProps {
   children?: React.ReactNode;
   footerComponent?: React.ReactNode | string;
@@ -93,6 +96,8 @@ export default function Layout({
   const [layoutHeight, setLayoutHeight] = useState(0);
   const refs = useRef({});
   const [searchQuery, setSearchQuery] = useState('');
+  const [openDialog, setOpenDialog] = useState(false);
+  const router = useRouter();
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
@@ -124,7 +129,7 @@ export default function Layout({
     console.log('Footer button clicked!');
   };
   const drawerItems = [
-    { text: 'Home', icon: <HomeOutlinedIcon fontSize="small" />, to: '/' },
+    { text: 'Home', icon: <HomeOutlinedIcon fontSize="small" />, to: '/home' },
 
     {
       text: 'Login',
@@ -152,7 +157,13 @@ export default function Layout({
       to: '/termsAndCondition',
     },
   ];
-
+  const handleItemClick = (to: string) => {
+    if (to === '/termsAndCondition') {
+      setOpenDialog(true);
+    } else {
+      router.push(to);
+    }
+  };
   return (
     <Box
       sx={{
@@ -257,7 +268,7 @@ export default function Layout({
         items={drawerItems}
         categories={categorieItems}
         onItemClick={(to) => {
-          onItemClick?.(to || '');
+          handleItemClick?.(to || '');
           setIsDrawerOpen(false);
         }}
       />
@@ -280,6 +291,30 @@ export default function Layout({
         >
           {footerComponent || <Footer />}
         </Box>
+      )}
+
+      {openDialog && (
+        <TermsAndCondition
+          isOpen={openDialog}
+          onClose={() => setOpenDialog(false)}
+          actions={
+            <Button
+              onClick={() => setOpenDialog(false)}
+              sx={{
+                color: '#2B3133',
+                width: '100%',
+                height: '40px',
+                background:
+                  'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                borderRadius: '50px',
+                fontSize: '14px',
+                fontWeight: 500,
+              }}
+            >
+              Close
+            </Button>
+          }
+        />
       )}
     </Box>
   );

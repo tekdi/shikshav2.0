@@ -5,14 +5,11 @@ import {
   FormControlLabel,
   FormLabel,
   Typography,
+  RadioGroup,
+  Radio,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import {
-  CommonDialog,
-  CommonSelect,
-  CommonTextField,
-  Layout,
-} from '@shared-lib';
+import { CommonDialog, CommonSelect, CommonTextField } from '@shared-lib';
 import { SelectChangeEvent } from '@mui/material/Select';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -21,11 +18,27 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 // import Otp from './otp';
 import { createUser } from '../services/LoginService';
 import TermsAndCondition from './components/TermsAndCondition';
-
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import IconButton from '@mui/material/IconButton';
 const languageData = [
-  { id: 1, name: 'Educator' },
-  { id: 2, name: 'Mentor' },
-  { id: 3, name: 'Student' },
+  {
+    id: 1,
+    name: 'Educator',
+    tenantId: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
+    roleId: 'd5f1abf9-dd0f-43a4-aba3-3f1b70c5d425',
+  },
+  {
+    id: 2,
+    name: 'Mentor',
+    tenantId: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
+    roleId: 'd5f1abf9-dd0f-43a4-aba3-3f1b70c5d425',
+  },
+  {
+    id: 3,
+    name: 'Student',
+    tenantId: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
+    roleId: 'd5f1abf9-dd0f-43a4-aba3-3f1b70c5d425',
+  },
 ];
 
 export default function Registration() {
@@ -33,19 +46,28 @@ export default function Registration() {
     name: '',
     email: '',
     password: '',
+    gender: '',
   });
 
   const [error, setError] = useState({
     name: false,
     email: false,
-    otp: false,
+    password: false,
+    gender: false,
   });
 
   const [selectedValue, setSelectedValue] = useState('Educator');
   const [otpShow, setOtpShow] = useState(false);
   const [otp, setOtp] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [openTermsDialog, setOpenTermsDialog] = useState(false);
+  const [tenantCohortRoleMapping, setTenantCohortRoleMapping] = useState([
+    {
+      tenantId: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
+      roleId: '',
+    },
+  ]);
   const router = useRouter();
 
   // **Validation Functions**
@@ -57,55 +79,55 @@ export default function Registration() {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
-  const validateOtp = (otp: string) => {
-    return /^\d{5}$/.test(otp);
-  };
-
+  const validatePassword = (password: string) => password.length >= 6;
+  const validateGender = (gender: string) => gender !== '';
   // **Handle Change**
   const handleChange =
-    (field: 'name' | 'email') =>
+    (field: keyof typeof formData) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value;
       setFormData({ ...formData, [field]: value });
-
       setError({
         ...error,
         [field]:
-          field === 'name' ? !validateName(value) : !validateEmail(value),
+          field === 'name'
+            ? !validateName(value)
+            : field === 'email'
+            ? !validateEmail(value)
+            : field === 'password'
+            ? !validatePassword(value)
+            : field === 'gender'
+            ? !validateGender(value)
+            : false,
       });
     };
-  const handleOtpChange = (value: string) => {
-    setOtp(value);
-  };
-  const handleSigninClick = () => {
-    if (!validateName(formData.name) || !validateEmail(formData.email)) {
+
+  const handleCreateUser = async () => {
+    if (
+      !validateName(formData.name) ||
+      !validateEmail(formData.email) ||
+      !validatePassword(formData.password) ||
+      !validateGender(formData.gender)
+    ) {
       setError({
         name: !validateName(formData.name),
         email: !validateEmail(formData.email),
-        otp: false,
+        password: !validatePassword(formData.password),
+        gender: !validateGender(formData.gender),
       });
       return;
     }
-    setOtpShow(true);
-  };
-
-  const handleCreateUser = async () => {
-    if (!validateOtp(otp)) {
-      setError({ ...error, otp: true });
-      return;
-    }
-
     try {
       const [firstName, ...lastNameArr] = formData.name.trim().split(' ');
       const lastName = lastNameArr.join(' ');
-
+      const username = formData.email.split('@')[0];
       const payload = {
         firstName,
         lastName,
-        username: formData.email,
-        password: otp,
-        mobile: '',
-        gender: '',
+        username,
+        password: formData.password,
+        gender: formData.gender,
+        tenantCohortRoleMapping: tenantCohortRoleMapping,
       };
       const response = await createUser(payload);
 
@@ -122,6 +144,18 @@ export default function Registration() {
   const handleChangeOPenTermsAndCondition = () => {
     setOpenTermsDialog(true);
     setTermsAccepted(!termsAccepted);
+  };
+  const handleRoleChange = (event: SelectChangeEvent<string>) => {
+    const roleId = event.target.value;
+    setSelectedValue(roleId);
+
+    // Update the roleId in tenantCohortRoleMapping
+    setTenantCohortRoleMapping([
+      {
+        tenantId: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
+        roleId: 'd5f1abf9-dd0f-43a4-aba3-3f1b70c5d425',
+      },
+    ]);
   };
   return (
     <Grid
@@ -148,19 +182,15 @@ export default function Registration() {
           backgroundColor: '#FFFFFF',
         }}
       >
-        {!otpShow && (
-          <>
-            <FormLabel component="legend">Full Name</FormLabel>
-            <CommonTextField
-              value={formData.name}
-              onChange={handleChange('name')}
-              type="text"
-              variant="outlined"
-              helperText={error.name ? 'Enter full name (First and Last)' : ''}
-              error={error.name}
-            />
-          </>
-        )}
+        <FormLabel component="legend">Full Name</FormLabel>
+        <CommonTextField
+          value={formData.name}
+          onChange={handleChange('name')}
+          type="text"
+          variant="outlined"
+          helperText={error.name ? 'Enter full name (First and Last)' : ''}
+          error={error.name}
+        />
 
         <FormLabel component="legend">Email ID</FormLabel>
         <CommonTextField
@@ -171,7 +201,40 @@ export default function Registration() {
           helperText={error.email ? 'Enter a valid Email ID' : ''}
           error={error.email}
         />
-
+        <FormLabel component="legend">Password</FormLabel>
+        <CommonTextField
+          value={formData.password}
+          onChange={handleChange('password')}
+          type={showPassword ? 'text' : 'password'}
+          variant="outlined"
+          helperText={
+            error.password ? 'Password must be at least 6 characters' : ''
+          }
+          error={error.password}
+          endIcon={
+            <IconButton
+              onClick={() => setShowPassword(!showPassword)}
+              edge="end"
+            >
+              {showPassword ? <Visibility /> : <VisibilityOff />}
+            </IconButton>
+          }
+        />
+        <FormLabel component="legend">Gender</FormLabel>
+        <RadioGroup
+          row
+          value={formData.gender}
+          onChange={handleChange('gender')}
+        >
+          <FormControlLabel value="male" control={<Radio />} label="Male" />
+          <FormControlLabel value="female" control={<Radio />} label="Female" />
+          <FormControlLabel value="other" control={<Radio />} label="Other" />
+        </RadioGroup>
+        {error.gender && (
+          <Typography color="error" fontSize="12px">
+            Please select a gender.
+          </Typography>
+        )}
         {/* {otpShow && (
           <>
             <FormLabel component="legend">
@@ -195,9 +258,7 @@ export default function Registration() {
         <FormLabel component="legend">Select Role</FormLabel>
         <CommonSelect
           value={selectedValue}
-          onChange={(event: SelectChangeEvent) =>
-            setSelectedValue(event.target.value)
-          }
+          onChange={handleRoleChange}
           options={languageData.map(({ name }) => ({
             label: name,
             value: name.toLowerCase(),
@@ -259,8 +320,10 @@ export default function Registration() {
               textTransform: 'none',
             }}
             disabled={
-              // otp.length !== 5 || (isNaN(Number(otp)) && !termsAccepted)
-              !formData.name || !formData.email
+              !formData.name ||
+              !formData.email ||
+              !formData.password ||
+              !formData.gender
             }
           >
             Verify & Proceed
@@ -286,14 +349,14 @@ export default function Registration() {
           </Button>
         )} */}
 
-        <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
+        {/* <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
           <GoogleLogin
             onSuccess={() => {}}
             onError={() => {}}
             useOneTap
             theme="outline"
           />
-        </GoogleOAuthProvider>
+        </GoogleOAuthProvider> */}
 
         <Typography
           textAlign="center"
@@ -301,7 +364,10 @@ export default function Registration() {
           color="#3B383E"
           fontWeight={500}
         >
-          Don’t Have An Account? <Link href="/signin">Log In</Link>
+          Don’t Have An Account?{' '}
+          <Link href="/signin" style={{ color: '#0037B9' }}>
+            Sign In
+          </Link>
         </Typography>
       </Grid>
 

@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import SearchIcon from '@mui/icons-material/Search';
-import { Box } from '@mui/material';
+import { Box, Chip, Typography } from '@mui/material';
 import { CommonSearch, getData, Loader } from '@shared-lib';
 import { useRouter } from 'next/navigation';
 import BackToTop from '../components/BackToTop';
@@ -12,7 +12,8 @@ import RenderTabContent from '../components/ContentTabs';
 import HelpDesk from '../components/HelpDesk';
 import { hierarchyAPI } from '../services/Hierarchy';
 import { ContentSearch, ContentSearchResponse } from '../services/Search';
-
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { Switch, FormControlLabel } from '@mui/material';
 export interface ContentProps {
   _grid?: object;
   filters?: object;
@@ -23,6 +24,7 @@ export interface ContentProps {
   showSearch?: boolean;
   showBackToTop?: boolean;
   showHelpDesk?: boolean;
+  filterBy?: boolean;
 }
 export default function Content(props: ContentProps) {
   const router = useRouter();
@@ -39,6 +41,8 @@ export default function Content(props: ContentProps) {
   const [trackData, setTrackData] = useState<[]>([]);
   const [filterShow, setFilterShow] = useState(false);
   const [propData, setPropData] = useState<ContentProps>();
+  const [filterValue, setFilterValue] = useState(false); // or any other initial value
+  const [fullAccess, setFullAccess] = useState(false);
 
   useEffect(() => {
     const init = async () => {
@@ -233,7 +237,14 @@ export default function Content(props: ContentProps) {
     };
     fetchFramework();
   }, [router]);
-
+  const handleToggleFullAccess = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setFilters((prev: any) => ({
+      ...prev,
+      access: event.target.checked, // Save switch state
+    }));
+  };
   return (
     <Loader isLoading={isPageLoading}>
       <Box sx={{ p: 2 }}>
@@ -267,33 +278,116 @@ export default function Content(props: ContentProps) {
               />
             )}
             {propData?.showFilter && (
-              <Box>
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+                width="100%"
+              >
                 <Box
                   sx={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     cursor: 'pointer',
-                    backgroundColor: '#ECE6F0',
+                    backgroundColor: propData?.filterBy
+                      ? 'transparent'
+                      : '#ECE6F0',
                     borderRadius: '12px',
                     // padding: '8px',
-                    width: '56px',
-                    height: '46px',
+                    width: propData?.filterBy ? 'auto' : '56px', // Auto width for Filter By
+                    height: propData?.filterBy ? 'auto' : '46px', // Auto height for Filter By
+                    padding: propData?.filterBy ? '4px 8px' : '0px',
                     '&:hover': {
-                      backgroundColor: '#E0E0E0',
-                      boxShadow: '0px 4px 8px 3px #00000026',
+                      backgroundColor: propData?.filterBy
+                        ? 'transparent'
+                        : '#E0E0E0',
+                      boxShadow: propData?.filterBy
+                        ? 'none'
+                        : '0px 4px 8px 3px #00000026',
                     },
                     marginLeft: '4px',
                     marginRight: '7px',
 
-                    boxShadow: '0px 1px 3px 0px #0000004D',
+                    boxShadow: propData?.filterBy
+                      ? 'none'
+                      : '0px 1px 3px 0px #0000004D',
                   }}
                   onClick={() => setFilterShow(true)}
                 >
-                  <FilterAltOutlinedIcon
-                    sx={{ color: '#6750A4', fontSize: '25px' }}
-                  />
+                  {propData?.filterBy ? (
+                    <Box display="flex" alignItems="center">
+                      <Chip
+                        label={
+                          <Box display="flex" alignItems="center" gap={1}>
+                            <span>Filter By</span>
+                            <ArrowDropDownIcon
+                              sx={{ color: '#42474E', fontSize: '20px' }}
+                            />
+                          </Box>
+                        }
+                        onClick={() => setFilterShow(true)}
+                        sx={{
+                          color: '#000000',
+                          borderRadius: '0px',
+                          fontSize: '14px',
+                          fontWeight: '500',
+                          cursor: 'pointer',
+                          // backgroundColor: '#1E1E1E',
+                          border: '1px solid #C2C7CF',
+                          paddingX: '8px',
+                        }}
+                      />
+                    </Box>
+                  ) : (
+                    <FilterAltOutlinedIcon
+                      sx={{ color: '#6750A4', fontSize: '25px' }}
+                    />
+                  )}
                 </Box>
+
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  gap={1}
+                  marginLeft="auto"
+                >
+                  <Typography
+                    sx={{
+                      fontSize: '14px',
+                      fontWeight: fullAccess ? '400' : '600',
+                      color: fullAccess ? '#9E9E9E' : '#000000',
+                    }}
+                  >
+                    All
+                  </Typography>
+
+                  <Switch
+                    checked={filterValue} // Controlled state for switch
+                    onChange={(e) => setFilterValue(e.target.checked)}
+                    sx={{
+                      '& .MuiSwitch-switchBase.Mui-checked': {
+                        color: '#E68907',
+                      },
+                      '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track':
+                        {
+                          background:
+                            'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                        },
+                    }}
+                  />
+
+                  <Typography
+                    sx={{
+                      fontSize: '14px',
+                      fontWeight: fullAccess ? '600' : '400',
+                      color: fullAccess ? '#000000' : '#9E9E9E',
+                    }}
+                  >
+                    Only Full Access
+                  </Typography>
+                </Box>
+
                 <FilterDialog
                   open={filterShow}
                   onClose={() => setFilterShow(false)}

@@ -175,7 +175,10 @@ export default function Signin() {
           color="#3B383E"
           fontWeight={500}
         >
-          Already Have An Account? <Link href="/register">Sign up </Link>
+          Already Have An Account?{' '}
+          <Link href="/register" style={{ color: '#0037B9' }}>
+            Sign up{' '}
+          </Link>
         </Typography>
       </Grid>
     </Grid>

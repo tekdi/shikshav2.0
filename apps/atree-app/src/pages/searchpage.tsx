@@ -32,12 +32,8 @@ export default function Searchpage() {
   const selectedquery = searchParams.get('query')?.toLowerCase();
   const [framework, setFramework] = useState(selectedType || ''); // Default to selectedType if available
 
-  const handleItemClick = (to: string) => {
-    router.push(to);
-  };
-
   return (
-    <Layout onItemClick={handleItemClick}>
+    <Layout>
       <Box display="flex" flexDirection="column" gap="3rem" py="3rem" px="14px">
         {selectedType && (
           <FrameworkFilter framework={framework} setFramework={setFramework} />
