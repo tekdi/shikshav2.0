@@ -73707,7 +73707,7 @@
           _baseUrl: void 0,
           contentBasePath: "/content/v3/read/",
           languageBasePath: "/language/v3/",
-          telemetryBasePath: "/data/v3/telemetry",
+          telemetryBasePath: "/v1/telemetry",
           getAPI: function () {
             return this._baseUrl + this.contentBasePath;
           },
