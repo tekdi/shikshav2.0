@@ -99,7 +99,10 @@ const FilterDialog = ({
           {/* new filter frameworkFilter */}
           {frameworkFilter?.categories &&
             frameworkFilter.categories.map((categories: any) => {
-              const filterCode = `se_${categories?.code}s`; // A unique identifier for the category
+              const filterCode =
+                categories?.code === 'sub-topic'
+                  ? 'subTopic'
+                  : categories?.code; // Set "subTopic" explicitly
               const componentKey = `multi-checkbox-label_${categories?.identifier}`;
 
               // Transform terms into options
@@ -110,7 +113,6 @@ const FilterDialog = ({
 
               // Get the selected values for the current category
               const currentSelectedValues = selectedValues[filterCode] || [];
-
               return (
                 <FormControl
                   fullWidth
@@ -148,7 +150,7 @@ const FilterDialog = ({
                       selected
                         .map((selectedValue: any) => {
                           const selectedOption = options.find(
-                            (option: any) => option.value === selectedValue
+                            (option: any) => option.label === selectedValue
                           );
                           return selectedOption ? selectedOption.label : '';
                         })
@@ -156,7 +158,7 @@ const FilterDialog = ({
                     }
                   >
                     {options.map((option: any) => (
-                      <MenuItem key={option.value} value={option.value}>
+                      <MenuItem key={option.value} value={option.label}>
                         <Checkbox
                           sx={{
                             color: '#6750A4', // Default checkbox color
@@ -164,7 +166,7 @@ const FilterDialog = ({
                               color: '#6750A4', // Checked checkbox color
                             },
                           }}
-                          checked={currentSelectedValues.includes(option.value)}
+                          checked={currentSelectedValues.includes(option.label)}
                         />
                         <ListItemText primary={option.label} />
                       </MenuItem>

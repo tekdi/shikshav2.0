@@ -207,13 +207,13 @@ export default function Index() {
       });
     } else {
       if (consumedContent.length >= 3 && !localStorage.getItem('token')) {
+        alert('Please log in to continue');
+
         router.push('/signin');
         localStorage.removeItem('consumedContent');
       } else {
         router.push(`/contents/${content?.identifier}`);
       }
-
-      alert('Please log in to continue');
     }
   };
   useEffect(() => {
@@ -297,6 +297,8 @@ const FrameworkFilter = React.memo<{
   framework: string;
   setFramework: (framework: string) => void;
 }>(function FrameworkFilter({ frameworkFilter, framework, setFramework }) {
+  const router = useRouter();
+
   return (
     <Grid container spacing={1}>
       {frameworkFilter?.map((frameworkItem: any) => (
@@ -319,7 +321,9 @@ const FrameworkFilter = React.memo<{
                     : ''
                   : '#E3E9EA',
             }}
-            onClick={() => setFramework(frameworkItem.identifier)}
+            onClick={() =>
+              router.push(`/quick-access/contents/${frameworkItem.identifier}`)
+            }
           >
             {frameworkItem.name}
           </Button>
