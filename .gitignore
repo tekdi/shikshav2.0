@@ -47,3 +47,4 @@ out
 
 # ignore env
 .env
+.env.production

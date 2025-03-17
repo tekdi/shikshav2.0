@@ -291,6 +291,7 @@ export default function Content() {
                 size={{ xs: 6, sm: 6, md: 3, lg: 3 }}
               >
                 <CommonCard
+                  minheight="100%"
                   title={item?.name.trim()}
                   image={
                     item?.posterImage && item?.posterImage !== 'undefined'
@@ -485,11 +486,15 @@ export default function Content() {
             ariaLabel: 'Help',
             onOptionClick: handleClose,
           },
-          {
-            icon: <LogoutIcon />,
-            ariaLabel: 'Logout',
-            onOptionClick: handleLogout,
-          },
+          ...(typeof window !== 'undefined' && localStorage.getItem('accToken')
+            ? [
+                {
+                  icon: <LogoutIcon />,
+                  ariaLabel: 'Logout',
+                  onOptionClick: handleLogout,
+                },
+              ]
+            : []),
         ],
         onMenuClose: handleClose,
       }}
