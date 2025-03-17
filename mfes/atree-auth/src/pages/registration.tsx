@@ -388,7 +388,7 @@ export default function Registration() {
           color="#3B383E"
           fontWeight={500}
         >
-          Already have an Account?{' '}
+          Already have an Account?
           <Link href="/signin" style={{ color: '#0037B9' }}>
             Sign In
           </Link>
@@ -399,12 +399,16 @@ export default function Registration() {
         onClose={() => setOpenUserDetailsDialog(false)}
         header="User Details"
         content={
-          <Box>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Typography variant="body1">
               <strong>Username:</strong> {formData.email.split('@')[0]}
             </Typography>
             <Typography variant="body1">
               <strong>Password:</strong> {formData.password}
+            </Typography>
+            <Typography variant="body1">
+              <strong>Note:</strong> Please save your username and password for
+              future use.
             </Typography>
           </Box>
         }
@@ -429,8 +433,8 @@ export default function Registration() {
           </Box>
         }
         sx={{
-          width: '400px',
-          height: '250px',
+          width: '500px',
+          height: '300px',
           padding: '10px',
           borderRadius: '16px',
         }}

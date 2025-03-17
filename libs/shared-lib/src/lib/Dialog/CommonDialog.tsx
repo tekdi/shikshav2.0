@@ -32,11 +32,7 @@ export const CommonDialog: React.FC<CommonDialogProps> = ({
       onClose={disableCloseOnBackdropClick ? undefined : onClose}
       aria-labelledby="common-dialog-title"
       aria-describedby="common-dialog-description"
-      PaperProps={{
-        sx: {
-          ...sx,
-        },
-      }}
+      PaperProps={{ sx }}
     >
       {header && (
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
