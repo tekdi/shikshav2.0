@@ -58,6 +58,13 @@ export default function Index() {
                 subFrameworkData.name.slice(1).toLowerCase()
             : ''
         );
+        localStorage.setItem(
+          'category',
+          subFrameworkData?.name
+            ? subFrameworkData.name.charAt(0).toUpperCase() +
+                subFrameworkData.name.slice(1).toLowerCase()
+            : ''
+        );
         setSubFrameworkFilter(subFrameworkData?.associations || []);
       }
     }
@@ -71,7 +78,6 @@ export default function Index() {
         const fdata =
           frameworks.find((item: any) => item.code === 'topic')?.terms || [];
         setFramework(fdata[0]?.identifier || '');
-        console.log('setFramework===', frameworks);
         setFrameworkFilter(fdata);
 
         if (frameworkName) {
@@ -194,12 +200,28 @@ export default function Index() {
   const handleCardClick = (content: any) => {
     if (consumedContent.length < 3) {
       router.push(`/contents/${content?.identifier}`);
-      setConsumedContent((prev) => [...prev, content?.identifier]);
+      setConsumedContent((prev) => {
+        const updatedContent = [...prev, content?.identifier];
+        localStorage.setItem('consumedContent', JSON.stringify(updatedContent));
+        return updatedContent;
+      });
     } else {
+      if (consumedContent.length >= 3 && !localStorage.getItem('token')) {
+        router.push('/signin');
+        localStorage.removeItem('consumedContent');
+      } else {
+        router.push(`/contents/${content?.identifier}`);
+      }
+
       alert('Please log in to continue');
     }
   };
-  console.log('subFrameworkFilter===', subFramework);
+  useEffect(() => {
+    const storedContent = localStorage.getItem('consumedContent');
+    if (storedContent) {
+      setConsumedContent(JSON.parse(storedContent));
+    }
+  }, []);
   return (
     <Layout isLoadingChildren={isLoadingChildren}>
       <Box display="flex" flexDirection="column" gap="3rem" py="3rem" px="14px">
@@ -318,6 +340,7 @@ const SubFrameworkFilter = React.memo<{
   setSubFramework,
 }) {
   const { t } = useTranslation();
+  const router = useRouter();
   // const theme = useTheme();
   const [openPopup, setOpenPopup] = useState<boolean>(false);
   const [filterItems, setFilterItems] = useState<
@@ -332,13 +355,15 @@ const SubFrameworkFilter = React.memo<{
       setFilterItems(subFrameworkFilter.slice(0, 3));
     }
   }, [subFrameworkFilter]);
-
   return (
     <Grid container spacing={1}>
       {filterItems?.map((subFrameworkItem: any) => (
         <Grid key={subFrameworkItem.identifier}>
           <Button
-            onClick={() => setSubFramework(subFrameworkItem.identifier)}
+            // onClick={() => setSubFramework(subFrameworkItem.identifier)}
+            onClick={() =>
+              router.push(`/quick-access/contents/${subFrameworkItem?.name}`)
+            }
             sx={{
               borderRadius: '8px',
               color: '#001D32',
