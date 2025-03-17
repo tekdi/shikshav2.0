@@ -13,6 +13,7 @@ import HelpDesk from '../components/HelpDesk';
 import { hierarchyAPI } from '../services/Hierarchy';
 import { ContentSearch, ContentSearchResponse } from '../services/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { Switch, FormControlLabel } from '@mui/material';
 export interface ContentProps {
   _grid?: object;
@@ -248,6 +249,24 @@ export default function Content(props: ContentProps) {
   return (
     <Loader isLoading={isPageLoading}>
       <Box sx={{ p: 2 }}>
+        {propData?.filterBy && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              marginBottom: '20px',
+            }}
+          >
+            <ArrowBackIosIcon onClick={() => router.back()} />
+            <Typography
+              sx={{ color: '#1C170D', fontSize: '22px', fontWeight: 700 }}
+            >
+              {localStorage.getItem('category')
+                ? localStorage.getItem('category')
+                : ''}
+            </Typography>
+          </Box>
+        )}
         {(propData?.showSearch || propData?.showFilter) && (
           <Box
             sx={{

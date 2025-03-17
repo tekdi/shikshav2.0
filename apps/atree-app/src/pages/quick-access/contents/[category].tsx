@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react';
 import Layout from '../../../component/layout/layout';
 import FolderComponent from '../../../component/FolderComponent';
 import { useRouter } from 'next/router';
-import { Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import dynamic from 'next/dynamic';
+import Grid from '@mui/material/Grid2';
+
 interface Term {
   name: string;
   associations: any[];
 }
 import atreeLogo from '../../../../assets/images/atreeLogo.png';
-
 const Content = dynamic(() => import('@Content'), {
   ssr: false,
 });
@@ -18,6 +19,7 @@ const MyComponent: React.FC = () => {
   const [isLoadingChildren, setIsLoadingChildren] = useState(true);
   const router = useRouter();
   const { category } = router.query; // Access the identifier from the URL
+  const [subFramework, setSubFramework] = useState('');
 
   useEffect(() => {
     const init = async () => {
@@ -34,7 +36,12 @@ const MyComponent: React.FC = () => {
     };
     init();
   }, []);
-
+  const subFrameworkFilter = [
+    { identifier: '', name: 'All' },
+    { identifier: 'video/x-youtube', name: 'Videos' },
+    { identifier: 'application/pdf', name: 'PDFs' },
+    { identifier: 'video/mp4', name: 'Audiobooks' },
+  ];
   const handleClick = (category: any) => {
     router.push(`/contents/${category.name}`);
   };
@@ -76,6 +83,23 @@ const MyComponent: React.FC = () => {
           cursor: 'auto',
         }}
       />
+
+      <Grid container spacing={1} justifyContent={'center'}>
+        {subFrameworkFilter?.map((subFrameworkItem: any) => (
+          <Grid key={subFrameworkItem.identifier}>
+            <Button
+              onClick={() => setSubFramework(subFrameworkItem.identifier)}
+              sx={{
+                borderRadius: '8px',
+                color: '#001D32',
+                backgroundColor: '#E3E9EA',
+              }}
+            >
+              {subFrameworkItem.name}
+            </Button>
+          </Grid>
+        ))}
+      </Grid>
       <Content
         {...{
           _grid: {
@@ -85,7 +109,7 @@ const MyComponent: React.FC = () => {
           filters: {
             filters: {
               channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
-              status: ['Live'],
+              ...(subFramework && { mimeType: subFramework }),
             },
           },
           _card: {
