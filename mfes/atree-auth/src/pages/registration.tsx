@@ -8,6 +8,7 @@ import {
   RadioGroup,
   Radio,
   Alert,
+  Box,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { CommonDialog, CommonSelect, CommonTextField } from '@shared-lib';
@@ -64,6 +65,7 @@ export default function Registration() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [openTermsDialog, setOpenTermsDialog] = useState(false);
+  const [openUserDetailsDialog, setOpenUserDetailsDialog] = useState(false);
   const [tenantCohortRoleMapping, setTenantCohortRoleMapping] = useState([
     {
       tenantId: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
@@ -136,7 +138,8 @@ export default function Registration() {
       if (response?.responseCode === 201) {
         setShowAlertMsg('User registered successfully!');
         setAlertSeverity('success');
-        router.push('/signin');
+        setOpenUserDetailsDialog(true);
+        // router.push('/signin');
       } else if (response?.response?.data?.responseCode === 400) {
         setShowAlertMsg(response?.response?.data?.params?.err);
         setAlertSeverity('error');
@@ -161,6 +164,10 @@ export default function Registration() {
         roleId: 'd5f1abf9-dd0f-43a4-aba3-3f1b70c5d425',
       },
     ]);
+  };
+  const handleCloseUserDetailsDialog = () => {
+    setOpenUserDetailsDialog(false);
+    router.push('/signin');
   };
   return (
     <Grid
@@ -288,23 +295,9 @@ export default function Registration() {
                 checked={termsAccepted}
                 onChange={handleChangeOPenTermsAndCondition}
                 sx={{
-                  color: '#2B3133',
+                  color: '#FFBD0D',
                   '&.Mui-checked': {
-                    color: '#2B3133',
-                    backgroundColor: 'transparent', // Avoids overlapping color
-                  },
-                  '&.Mui-checked::after': {
-                    content: '""',
-                    width: '100%',
-                    height: '100%',
-                    position: 'absolute',
-                    backgroundColor: '#FFBD0D',
-                    borderRadius: '4px',
-                    zIndex: -1,
-                  },
-                  '& .MuiSvgIcon-root': {
-                    borderRadius: '4px',
-                    backgroundColor: termsAccepted ? '#FFBD0D' : 'transparent',
+                    color: '#FFBD0D',
                   },
                 }}
               />
@@ -352,7 +345,7 @@ export default function Registration() {
               !formData.gender
             }
           >
-            Verify & Proceed
+            Proceed
           </Button>
         </>
         {showAlertMsg && (
@@ -395,12 +388,57 @@ export default function Registration() {
           color="#3B383E"
           fontWeight={500}
         >
-          Don’t Have An Account?{' '}
+          Already have an Account?
           <Link href="/signin" style={{ color: '#0037B9' }}>
             Sign In
           </Link>
         </Typography>
       </Grid>
+      <CommonDialog
+        isOpen={openUserDetailsDialog}
+        onClose={() => setOpenUserDetailsDialog(false)}
+        header="User Details"
+        content={
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Typography variant="body1">
+              <strong>Username:</strong> {formData.email.split('@')[0]}
+            </Typography>
+            <Typography variant="body1">
+              <strong>Password:</strong> {formData.password}
+            </Typography>
+            <Typography variant="body1">
+              <strong>Note:</strong> Please save your username and password for
+              future use.
+            </Typography>
+          </Box>
+        }
+        actions={
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Button
+              onClick={handleCloseUserDetailsDialog}
+              sx={{
+                color: '#2B3133',
+                width: '100%',
+                height: '40px',
+
+                background:
+                  'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                borderRadius: '50px',
+                fontSize: '14px',
+                fontWeight: 500,
+              }}
+            >
+              OK
+            </Button>
+          </Box>
+        }
+        sx={{
+          width: '500px',
+          height: '300px',
+          padding: '10px',
+          borderRadius: '16px',
+        }}
+      />
 
       <CommonDialog
         isOpen={openTermsDialog}

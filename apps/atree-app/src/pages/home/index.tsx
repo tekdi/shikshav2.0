@@ -42,6 +42,7 @@ export default function Index() {
   const [subFramework, setSubFramework] = useState('');
   const [filterCategory, SetFilterCategory] = useState<string>('');
   const [isLoadingChildren, setIsLoadingChildren] = useState(true);
+  const [openMessageDialog, setOpenMessageDialog] = useState(false);
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const frameworkName = searchParams.get('category')?.toLocaleUpperCase();
@@ -207,13 +208,12 @@ export default function Index() {
       });
     } else {
       if (consumedContent.length >= 3 && !localStorage.getItem('token')) {
-        router.push('/signin');
+        // alert('Please log in to continue');
+        setOpenMessageDialog(true);
         localStorage.removeItem('consumedContent');
       } else {
         router.push(`/contents/${content?.identifier}`);
       }
-
-      alert('Please log in to continue');
     }
   };
   useEffect(() => {
@@ -222,6 +222,10 @@ export default function Index() {
       setConsumedContent(JSON.parse(storedContent));
     }
   }, []);
+  const handleCloseMessage = () => {
+    setOpenMessageDialog(false);
+    router.push('/signin');
+  };
   return (
     <Layout isLoadingChildren={isLoadingChildren}>
       <Box display="flex" flexDirection="column" gap="3rem" py="3rem" px="14px">
@@ -288,6 +292,32 @@ export default function Index() {
           />
         </Box>
       </Box>
+      <Dialog
+        open={openMessageDialog}
+        onClose={() => setOpenMessageDialog(false)}
+        PaperProps={{
+          style: {
+            maxWidth: '600px',
+            maxHeight: 'calc(100vh - 64px)',
+            overflow: 'auto',
+          },
+        }}
+      >
+        <DialogTitle>Message</DialogTitle>
+        <DialogContent>
+          <Typography>Please login to continue</Typography>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: 'center', py: 2, px: 3 }}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleCloseMessage}
+            sx={{ borderRadius: '50px', height: '40px', width: '100%' }}
+          >
+            {t('Close')}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Layout>
   );
 }
@@ -297,6 +327,8 @@ const FrameworkFilter = React.memo<{
   framework: string;
   setFramework: (framework: string) => void;
 }>(function FrameworkFilter({ frameworkFilter, framework, setFramework }) {
+  const router = useRouter();
+
   return (
     <Grid container spacing={1}>
       {frameworkFilter?.map((frameworkItem: any) => (
@@ -319,7 +351,9 @@ const FrameworkFilter = React.memo<{
                     : ''
                   : '#E3E9EA',
             }}
-            onClick={() => setFramework(frameworkItem.identifier)}
+            onClick={() =>
+              router.push(`/quick-access/contents/${frameworkItem.identifier}`)
+            }
           >
             {frameworkItem.name}
           </Button>

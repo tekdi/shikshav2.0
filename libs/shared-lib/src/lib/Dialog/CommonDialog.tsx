@@ -14,6 +14,7 @@ interface CommonDialogProps {
   content?: React.ReactNode;
   actions?: React.ReactNode;
   disableCloseOnBackdropClick?: boolean;
+  sx?: object;
 }
 
 export const CommonDialog: React.FC<CommonDialogProps> = ({
@@ -23,6 +24,7 @@ export const CommonDialog: React.FC<CommonDialogProps> = ({
   content,
   actions,
   disableCloseOnBackdropClick = false,
+  sx = {},
 }) => {
   return (
     <Dialog
@@ -30,6 +32,7 @@ export const CommonDialog: React.FC<CommonDialogProps> = ({
       onClose={disableCloseOnBackdropClick ? undefined : onClose}
       aria-labelledby="common-dialog-title"
       aria-describedby="common-dialog-description"
+      PaperProps={{ sx }}
     >
       {header && (
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
