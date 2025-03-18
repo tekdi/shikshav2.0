@@ -78,6 +78,12 @@ export default function Content() {
     status: '',
     priority: '',
   });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    setIsAuthenticated(!!localStorage.getItem('accToken'));
+  }, []);
+
   const fetchContent = useCallback(
     async (
       type?: string,
@@ -486,7 +492,7 @@ export default function Content() {
             ariaLabel: 'Help',
             onOptionClick: handleClose,
           },
-          ...(typeof window !== 'undefined' && localStorage.getItem('accToken')
+          ...(isAuthenticated
             ? [
                 {
                   icon: <LogoutIcon />,

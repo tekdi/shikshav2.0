@@ -35,8 +35,9 @@ export default function Login() {
       const accToken = localStorage.getItem('accToken');
       const refToken = localStorage.getItem('refToken');
       if (accToken && refToken) {
-        //@ts-ignore
-        router.replace(URL_CONTENT); // Redirect if tokens are present
+        if (URL_CONTENT) {
+          router.replace(URL_CONTENT); // Redirect if URL_CONTENT is defined
+        }
       }
     }
   }, []);

@@ -18,10 +18,8 @@ export default function AuthCheck() {
         if (typeof URL_CONTENT === 'string') {
           router.replace(URL_CONTENT); // Redirect if tokens are present
         }
-      } else {
-        if (typeof URL_LOGIN === 'string') {
-          router.replace(URL_LOGIN); // Redirect to login if missing
-        }
+      } else if (typeof URL_LOGIN === 'string') {
+        router.replace(URL_LOGIN); // Redirect to login if missing
       }
     }
   }, []);
