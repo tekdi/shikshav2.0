@@ -151,7 +151,7 @@ export default function Layout({
     {
       text: 'Recommend Resources',
       icon: <PostAddOutlinedIcon fontSize="small" />,
-      to: '/content',
+      to: 'https://forms.gle/j6RardUhmDN2yRfE6',
     },
     {
       text: 'Terms & Conditions',
@@ -160,9 +160,10 @@ export default function Layout({
     },
   ];
   const handleItemClick = (to: string) => {
-    if (to === '/termsAndCondition') {
-      setOpenDialog(true);
-    } else if (to === '/signin') {
+    // if (to === '/termsAndCondition') {
+    //   setOpenDialog(true);
+    // } else
+    if (to === '/signin') {
       localStorage.clear();
       router.push('/signin');
     } else {

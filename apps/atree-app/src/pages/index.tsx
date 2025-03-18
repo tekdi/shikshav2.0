@@ -151,10 +151,11 @@ const LandingPage = () => {
                 backgroundColor: '#FCD905',
 
                 // borderRadius: '8px',
-                // width: '100%',
-                width: '1200px',
+                width: '100vw',
+                maxWidth: '100%',
+                height: '63px',
                 display: 'flex',
-                justifyContent: 'center',
+                justifyContent: 'space-around',
                 flexWrap: 'wrap',
                 gap: 8,
                 alignItems: 'center',
@@ -187,6 +188,7 @@ const LandingPage = () => {
                 fontWeight: 400,
                 fontSize: '14px',
                 textAlign: 'center',
+                padding: '20px',
               }}
             >
               {t('Choose what best fits your interests and needs')}

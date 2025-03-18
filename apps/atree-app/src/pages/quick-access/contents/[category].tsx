@@ -20,7 +20,7 @@ const MyComponent: React.FC = () => {
   const router = useRouter();
   const { category } = router.query; // Access the identifier from the URL
   const [subFramework, setSubFramework] = useState('');
-
+  console.log('id', category);
   useEffect(() => {
     const init = async () => {
       const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
@@ -110,6 +110,7 @@ const MyComponent: React.FC = () => {
             filters: {
               channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
               ...(subFramework && { mimeType: subFramework }),
+              query: `${category}`,
             },
           },
           _card: {

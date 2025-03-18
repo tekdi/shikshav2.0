@@ -88,10 +88,11 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
       {...props}
       PaperProps={{
         sx: {
-          backgroundColor: '#000',
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
           boxShadow: '0px 2px 6px 2px #00000026, 0px 1px 2px 0px #0000004D',
           color: '#fff',
-          width: 300,
+          width: '100vw', // Full width
+          height: '100vh', // Full height
         },
       }}
     >

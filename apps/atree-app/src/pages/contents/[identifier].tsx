@@ -12,6 +12,7 @@ import {
   CardMedia,
   Chip,
   Dialog,
+  DialogActions,
   DialogContent,
   DialogTitle,
   IconButton,
@@ -69,7 +70,7 @@ export default function Content() {
   }, [identifier]);
   const keywords = contentData?.keywords || [];
   const showMoreIcon = keywords.length > 3;
-  const displayedKeywords = showMoreIcon ? keywords.slice(0, 3) : keywords;
+  const displayedKeywords = showMoreIcon ? keywords.slice(0, 4) : keywords;
   const remainingKeywords = keywords.slice(3);
   useEffect(() => {
     if (identifier) fetchContent();
@@ -153,25 +154,6 @@ export default function Content() {
                         Published by PrathamBooks {i + 1}
                       </Typography>
                     </Box>
-                    <IconButton
-                      size="small"
-                      onClick={() => console.log('Share button clicked!')}
-                      sx={{
-                        zIndex: 9999,
-                        backgroundColor: 'white',
-                        borderRadius: '50%',
-                        padding: '6px',
-                        boxShadow: 1,
-                        '&:hover': {
-                          backgroundColor: '#f0f0f0', // Light gray on hover
-                        },
-                      }}
-                    >
-                      <ShareIcon
-                        fontSize="small"
-                        onClick={() => console.log('Share button clicked!')}
-                      />
-                    </IconButton>
                   </Box>
                 }
               />
@@ -196,7 +178,12 @@ export default function Content() {
               key={index}
               label={label}
               variant="outlined"
-              sx={{ mr: 0.5 }}
+              sx={{
+                height: '32px',
+                gap: '2px',
+                padding: '6px 8px',
+                borderRadius: '0px',
+              }}
             />
           ))}
           {showMoreIcon && (
@@ -210,10 +197,34 @@ export default function Content() {
           <DialogContent>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {remainingKeywords.map((label: any, index: any) => (
-                <Chip key={index} label={label} variant="outlined" />
+                <Chip
+                  key={index}
+                  label={label}
+                  variant="outlined"
+                  sx={{
+                    height: '32px',
+                    gap: '8px',
+                    padding: '6px 8px',
+                    borderRadius: '0px',
+                  }}
+                />
               ))}
             </Box>
           </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => setOpenPopup(false)}
+              variant="contained"
+              color="secondary"
+              sx={{
+                borderRadius: '50px',
+                height: '40px',
+                width: '100%',
+              }}
+            >
+              Close
+            </Button>
+          </DialogActions>
         </Dialog>
         <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
           Based on real accounts, this is an imagined story of a boy in the

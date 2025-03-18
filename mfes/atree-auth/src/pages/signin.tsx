@@ -6,11 +6,14 @@ import {
   IconButton,
   Typography,
   Alert,
+  Box,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { CommonTextField } from '@shared-lib';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { GoogleLogin } from '@react-oauth/google';
+import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
 // import Otp from './otp';
 import { signin } from '../services/LoginService';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -21,7 +24,9 @@ export default function Signin() {
   const [passwordError, setPasswordError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showAlertMsg, setShowAlertMsg] = useState('');
-
+  const [alertSeverity, setAlertSeverity] = useState<
+    'success' | 'error' | 'warning' | 'info'
+  >('success');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   useEffect(() => {
@@ -65,6 +70,7 @@ export default function Signin() {
 
             if (token) {
               setShowAlertMsg('Login successfully!');
+              setAlertSeverity('success');
               localStorage.setItem('token', token);
               localStorage.setItem('refreshToken', refreshToken);
               router.push('/home');
@@ -72,7 +78,7 @@ export default function Signin() {
           }
         } else if (response?.status === 404) {
           setShowAlertMsg(response?.response?.data?.params?.errmsg);
-
+          setAlertSeverity('error');
           console.log('error', response?.response?.data?.params?.errmsg);
         }
       } catch (error: any) {
@@ -165,26 +171,22 @@ export default function Signin() {
           onClick={handleSigninClick}
           sx={{
             color: '#2B3133',
-            width: '100%',
-            height: '40px',
-            background:
-              'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+            width: { xs: '80%', sm: '60%', md: '50%' }, // Responsive width
+            height: '44px',
+            background: '#FFBD0D',
             borderRadius: '50px',
             fontSize: '16px',
             fontWeight: 500,
             textTransform: 'none',
+            alignSelf: 'center', // Centers in flex container
+            mx: 'auto',
           }}
         >
           Proceed
         </Button>
-        {/* <GoogleOAuthProvider clientId="467709515234-qu171h5np0rae7vrl23uv1audjht7fsa.apps.googleusercontent.com">
-          <GoogleLogin
-            onSuccess={handleLoginSuccess}
-            onError={handleLoginFailure}
-            useOneTap
-            theme="outline"
-          />
-        </GoogleOAuthProvider> */}
+        <GoogleOAuthProvider clientId="467709515234-qu171h5np0rae7vrl23uv1audjht7fsa.apps.googleusercontent.com">
+          <MyCustomGoogleLogin />
+        </GoogleOAuthProvider>
         <Typography
           textAlign={'center'}
           variant="h1"
@@ -192,17 +194,75 @@ export default function Signin() {
           color="#3B383E"
           fontWeight={500}
         >
-          Already Have An Account?{' '}
+          Don't Have An Account?{' '}
           <Link href="/register" style={{ color: '#0037B9' }}>
-            Sign up{' '}
+            Sign up
           </Link>
         </Typography>
       </Grid>
       {showAlertMsg && (
-        <Alert variant="filled" severity="success">
-          {showAlertMsg}
-        </Alert>
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          position="fixed"
+          top={0}
+          left={0}
+          width="100vw"
+          height="100vh"
+          sx={{ pointerEvents: 'none', bgcolor: 'rgba(0, 0, 0, 0.2)' }}
+        >
+          <Alert
+            variant="filled"
+            severity={alertSeverity}
+            sx={{ pointerEvents: 'auto' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {showAlertMsg}
+          </Alert>
+        </Box>
       )}
     </Grid>
   );
 }
+const MyCustomGoogleLogin = () => {
+  const login = useGoogleLogin({
+    onSuccess: (tokenResponse) => {
+      console.log('Google Auth Token:', tokenResponse);
+    },
+    onError: (error) => {
+      console.error('Login Failed:', error);
+    },
+  });
+
+  return (
+    <Button
+      variant="contained"
+      sx={{
+        backgroundColor: '#ffffff',
+        width: { xs: '80%', sm: '60%', md: '50%' },
+        border: '1px solid #FFBD0D',
+        height: '44px',
+        borderRadius: '40px',
+        color: '#000',
+        textTransform: 'none',
+        padding: '10px 20px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+        boxShadow: 'none',
+        alignSelf: 'center', // Centers in flex container
+        mx: 'auto',
+        '&:hover': { backgroundColor: '#f5f5f5' },
+      }}
+      onClick={() => login()} // Manually trigger login
+    >
+      <img
+        src="https://developers.google.com/identity/images/g-logo.png"
+        alt="Google logo"
+        style={{ width: 24, height: 24 }}
+      />
+      Log in with Google
+    </Button>
+  );
+};

@@ -228,11 +228,12 @@ export default function Index() {
   };
   return (
     <Layout isLoadingChildren={isLoadingChildren}>
-      <Box display="flex" flexDirection="column" gap="3rem" py="3rem" px="14px">
+      <Box display="flex" flexDirection="column" gap="3rem" py="1rem" px="8px">
         <FrameworkFilter
           frameworkFilter={frameworkFilter || []}
           framework={framework}
           setFramework={setFramework}
+          fromSubcategory={false}
         />
         <Box
           sx={{
@@ -325,12 +326,26 @@ export default function Index() {
 const FrameworkFilter = React.memo<{
   frameworkFilter: Array<{ identifier: string; name: string }>;
   framework: string;
+  fromSubcategory?: boolean;
   setFramework: (framework: string) => void;
-}>(function FrameworkFilter({ frameworkFilter, framework, setFramework }) {
+}>(function FrameworkFilter({
+  frameworkFilter,
+  framework,
+  setFramework,
+  fromSubcategory,
+}) {
   const router = useRouter();
 
+  const handleItemClick = (item: any) => {
+    if (fromSubcategory) {
+      localStorage.setItem('subcategory', item.name);
+      router.push(`/contents`);
+    } else {
+      setFramework(item.identifier);
+    }
+  };
   return (
-    <Grid container spacing={1}>
+    <Grid container spacing={1} display="flex" justifyContent="center">
       {frameworkFilter?.map((frameworkItem: any) => (
         <Grid key={frameworkItem.identifier}>
           <Button
@@ -351,9 +366,8 @@ const FrameworkFilter = React.memo<{
                     : ''
                   : '#E3E9EA',
             }}
-            onClick={() =>
-              router.push(`/quick-access/contents/${frameworkItem.identifier}`)
-            }
+            // onClick={() => setFramework(frameworkItem.identifier)}
+            onClick={() => handleItemClick(frameworkItem)}
           >
             {frameworkItem.name}
           </Button>
@@ -389,15 +403,17 @@ const SubFrameworkFilter = React.memo<{
       setFilterItems(subFrameworkFilter.slice(0, 3));
     }
   }, [subFrameworkFilter]);
+  const handleItemClick = (item: any) => {
+    localStorage.setItem('subcategory', item.name);
+    router.push(`/contents`);
+  };
   return (
     <Grid container spacing={1}>
       {filterItems?.map((subFrameworkItem: any) => (
         <Grid key={subFrameworkItem.identifier}>
           <Button
             // onClick={() => setSubFramework(subFrameworkItem.identifier)}
-            onClick={() =>
-              router.push(`/quick-access/contents/${subFrameworkItem?.name}`)
-            }
+            onClick={() => handleItemClick(subFrameworkItem)}
             sx={{
               borderRadius: '8px',
               color: '#001D32',
@@ -438,6 +454,7 @@ const SubFrameworkFilter = React.memo<{
               frameworkFilter={subFrameworkFilter}
               framework={subFramework}
               setFramework={setSubFramework}
+              fromSubcategory={true}
             />
           </DialogContent>
           <DialogActions sx={{ justifyContent: 'center', py: 2, px: 3 }}>

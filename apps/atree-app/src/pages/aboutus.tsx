@@ -6,13 +6,22 @@ import { Typography } from '@mui/material';
 import { ImageBanner } from '../component/layout/ImageBanner';
 export default function Aboutus() {
   return (
-    <Layout isFooter={true}>
+    <Layout
+      footerComponent={
+        <Grid sx={{ px: 4, py: 1, backgroundColor: 'secondary.main' }}>
+          <Typography align="center" gutterBottom sx={{ fontSize: '10px' }}>
+            Curated by ATREE: For, Of, and By Environment Educators of India
+          </Typography>
+        </Grid>
+      }
+    >
       <Grid
         container
         spacing={2}
         direction="column"
         alignItems="center"
         justifyContent="center"
+        marginBottom={'25px'}
       >
         <ImageBanner
           name={

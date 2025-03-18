@@ -34,6 +34,7 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState('');
+  const [selectedType, setSelectedType] = useState<string | null>(null);
 
   const router = useRouter();
 
@@ -104,17 +105,22 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
             <ListItem
               key={item.type}
               onClick={() => {
-                setSearchType(item.type);
+                // setSearchType(item.type);
                 // router.push(`/searchpage?type=${item.type}`);
+                // if (!selectedType) {
+                setSelectedType(item.type);
+                setSearchType(item.type);
+                // }
               }}
               sx={{
-                cursor: 'pointer',
+                cursor: selectedType ? 'not-allowed' : 'pointer',
                 backgroundColor:
-                  searchType === item.type ? '#B3D4FC' : 'transparent',
+                  selectedType === item.type ? '#B3D4FC' : 'transparent',
                 borderRadius: '8px',
+                opacity: selectedType && selectedType !== item.type ? 0.5 : 1,
                 '&:hover': {
                   backgroundColor:
-                    searchType === item.type ? '#A1C9F9' : '#F0F0F0',
+                    selectedType === item.type ? '#A1C9F9' : '#F0F0F0',
                 },
               }}
             >

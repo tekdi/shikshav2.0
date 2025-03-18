@@ -108,6 +108,7 @@ export default function Content(props: ContentProps) {
   };
 
   const handleCardClickLocal = async (content: ContentSearchResponse) => {
+    console.log('handleCardClickLocal===', content);
     try {
       if (
         [
@@ -241,11 +242,17 @@ export default function Content(props: ContentProps) {
   const handleToggleFullAccess = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
+    const accessValue = event.target.checked ? 'Full Access' : 'all'; // Set 'full' or 'all' based on switch state
+    setFullAccess(event.target.checked);
     setFilters((prev: any) => ({
       ...prev,
-      access: event.target.checked, // Save switch state
+      filters: {
+        access: accessValue, // Save switch state
+        offset: 0,
+      },
     }));
   };
+
   return (
     <Loader isLoading={isPageLoading}>
       <Box sx={{ p: 2 }}>
@@ -309,10 +316,8 @@ export default function Content(props: ContentProps) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     cursor: 'pointer',
-                    backgroundColor: propData?.filterBy
-                      ? 'transparent'
-                      : '#ECE6F0',
-                    borderRadius: '12px',
+                    backgroundColor: '#ffffff',
+                    borderRadius: propData?.filterBy ? '0px' : '12px',
                     // padding: '8px',
                     width: propData?.filterBy ? 'auto' : '56px', // Auto width for Filter By
                     height: propData?.filterBy ? 'auto' : '46px', // Auto height for Filter By
@@ -348,11 +353,11 @@ export default function Content(props: ContentProps) {
                         onClick={() => setFilterShow(true)}
                         sx={{
                           color: '#000000',
-                          borderRadius: '0px',
+                          borderRadius: '8px',
                           fontSize: '14px',
                           fontWeight: '500',
                           cursor: 'pointer',
-                          // backgroundColor: '#1E1E1E',
+                          backgroundColor: '#FFFFFF',
                           border: '1px solid #C2C7CF',
                           paddingX: '8px',
                         }}
@@ -382,8 +387,8 @@ export default function Content(props: ContentProps) {
                   </Typography>
 
                   <Switch
-                    checked={filterValue} // Controlled state for switch
-                    onChange={(e) => setFilterValue(e.target.checked)}
+                    checked={fullAccess} // Controlled state for switch
+                    onChange={handleToggleFullAccess}
                     sx={{
                       width: 42,
                       height: 26,
@@ -409,10 +414,11 @@ export default function Content(props: ContentProps) {
                           border: '6px solid #fff',
                         },
                         '&.Mui-disabled .MuiSwitch-thumb': {
-                          color: '#33cf4d',
+                          color: '#BDBDBD', // Grey thumb when disabled
                         },
                         '&.Mui-disabled + .MuiSwitch-track': {
-                          opacity: 0.7,
+                          opacity: 0.5,
+                          background: '#BDBDBD', // Grey track when disabled
                         },
                       },
                       '& .MuiSwitch-thumb': {
@@ -422,8 +428,9 @@ export default function Content(props: ContentProps) {
                       },
                       '& .MuiSwitch-track': {
                         borderRadius: 26 / 2,
-                        background:
-                          'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                        background: fullAccess
+                          ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
+                          : '#BDBDBD', // Grey when unchecked
                         opacity: 1,
                       },
                     }}
