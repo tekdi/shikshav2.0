@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material';
 // import { useTranslation } from 'react-i18next';
 import Grid from '@mui/material/Grid2';
 import Image from 'next/image';
-import ActivityBooks from '../../assets/images/ActivityBooks.png';
+import ActivityBooks from '../../assets/images/ActivityBooks.jpeg';
 import Climatechangebookcover from '../../assets/images/Climatechangebookcover.png';
 import Forests from '../../assets/images/Forests.png';
 import instagram_logo from '../../assets/images/instagram_logo.png';
@@ -36,7 +36,14 @@ const LandingPage = () => {
   const [readerCount, setReaderCount] = useState(0);
   const [bookCount, setBookCount] = useState(0);
   const router = useRouter();
-
+  const customOrder = [
+    'Water',
+    'Forest',
+    'Land',
+    'Climate Change',
+    'Activity Books',
+    'Potpourri',
+  ];
   useEffect(() => {
     const init = async () => {
       const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
@@ -198,7 +205,17 @@ const LandingPage = () => {
         <Grid sx={{ px: 1 }}>
           <Grid container spacing={1}>
             {categories
-              ?.filter((category) => category.name !== 'General')
+              ?.filter((category) => category.name !== 'General') // Remove "General"
+              ?.sort((a, b) => {
+                const indexA = customOrder.indexOf(a.name);
+                const indexB = customOrder.indexOf(b.name);
+
+                // If a category is not found in customOrder, push it to the end
+                return (
+                  (indexA === -1 ? customOrder.length : indexA) -
+                  (indexB === -1 ? customOrder.length : indexB)
+                );
+              })
               ?.map((category, index) => (
                 <Grid key={index} size={{ xs: 6, sm: 6, md: 4, lg: 4 }}>
                   <ImageBanner

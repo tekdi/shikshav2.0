@@ -156,7 +156,7 @@ export default function Layout({
     {
       text: 'Terms & Conditions',
       icon: <ContactSupportOutlinedIcon fontSize="small" />,
-      to: '/termsAndCondition',
+      to: '/termsandcondition',
     },
   ];
   const handleItemClick = (to: string) => {

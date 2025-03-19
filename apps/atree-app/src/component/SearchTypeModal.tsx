@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -14,6 +14,7 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CloseIcon from '@mui/icons-material/Close';
 import { useRouter } from 'next/router';
+import { ContentSearch } from '@shared-lib';
 
 interface SearchTypeModalProps {
   open: boolean;
@@ -35,11 +36,31 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState('');
   const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
 
   const router = useRouter();
 
   const handleClearSearch = () => {
     setSearchQuery('');
+    setSearchResults([]); // Clear results when clearing input
+  };
+  const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+
+    if (query.trim()) {
+      try {
+        const data = await ContentSearch({
+          channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+          query: query,
+        });
+        setSearchResults(data?.result?.content || []); // Store search results
+      } catch (error) {
+        console.error('Error fetching search results:', error);
+      }
+    } else {
+      setSearchResults([]);
+    }
   };
 
   // Filter search types
@@ -56,8 +77,12 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
         : `/searchpage?query=${searchQuery}`;
 
       router.push(url);
+      onClose();
     }
   };
+  useEffect(() => {
+    console.log('Updated Search Query:', searchQuery);
+  }, [searchQuery, selectedType]);
 
   return (
     <Dialog
@@ -84,7 +109,8 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
           <InputBase
             placeholder="Search by..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            // onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleChange}
             onKeyDown={handleKeyPress} // Detect Enter key press
             sx={{
               flex: 1,
@@ -100,48 +126,54 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
       </DialogTitle>
 
       <List>
-        {filteredSearchTypes.length > 0 ? (
-          filteredSearchTypes.map((item, index) => (
-            <ListItem
-              key={item.type}
-              onClick={() => {
-                // setSearchType(item.type);
-                // router.push(`/searchpage?type=${item.type}`);
-                // if (!selectedType) {
-                setSelectedType(item.type);
-                setSearchType(item.type);
-                // }
-              }}
-              sx={{
-                cursor: selectedType ? 'not-allowed' : 'pointer',
-                backgroundColor:
-                  selectedType === item.type ? '#B3D4FC' : 'transparent',
-                borderRadius: '8px',
-                opacity: selectedType && selectedType !== item.type ? 0.5 : 1,
-                '&:hover': {
-                  backgroundColor:
-                    selectedType === item.type ? '#A1C9F9' : '#F0F0F0',
-                },
-              }}
-            >
-              <ListItemAvatar>
-                <Avatar sx={{ backgroundColor: '#CEE5FF', color: '#06164B' }}>
-                  {item.icon}
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary={`Search By ${item.label}`}
-                secondary="Supporting line text lorem ipsum..."
-                primaryTypographyProps={{ fontWeight: 'bold' }}
-                secondaryTypographyProps={{ color: 'text.secondary' }}
-              />
-            </ListItem>
-          ))
-        ) : (
-          <ListItem>
-            <ListItemText primary="No results found" />
+        {/* Static Search Type List */}
+        {filteredSearchTypes.map((item) => (
+          <ListItem
+            key={item.type}
+            onClick={() => {
+              onSelect(item.type);
+              router.push(`/searchpage?type=${item.type}`);
+              onClose();
+            }}
+            sx={{
+              cursor: 'pointer',
+              backgroundColor: 'transparent',
+              borderRadius: '8px',
+              '&:hover': { backgroundColor: '#F0F0F0' },
+            }}
+          >
+            <ListItemAvatar>
+              <Avatar sx={{ backgroundColor: '#CEE5FF', color: '#06164B' }}>
+                {item.icon}
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText
+              primary={`Search By ${item.label}`}
+              secondary="Find content by this category"
+              primaryTypographyProps={{ fontWeight: 'bold' }}
+              secondaryTypographyProps={{ color: 'text.secondary' }}
+            />
           </ListItem>
-        )}
+        ))}
+
+        {/* API Search Results */}
+        {searchResults.length > 0
+          ? searchResults.map((item, index) => (
+              <ListItem key={index} sx={{ cursor: 'pointer' }}>
+                <ListItemAvatar>
+                  <Avatar sx={{ backgroundColor: '#CEE5FF', color: '#06164B' }}>
+                    {item.name ? item.name.charAt(0).toUpperCase() : 'S'}
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText primary={item.name} />
+              </ListItem>
+            ))
+          : searchQuery &&
+            filteredSearchTypes.length === 0 && (
+              <ListItem>
+                <ListItemText primary="No results found" />
+              </ListItem>
+            )}
       </List>
     </Dialog>
   );

@@ -3,6 +3,7 @@ import Layout from '../../component/layout/layout';
 import FolderComponent from '../../component/FolderComponent';
 import { useRouter } from 'next/router';
 import { Typography } from '@mui/material';
+import { ContentSearch } from '@shared-lib';
 interface Term {
   name: string;
   associations: any[];
@@ -12,6 +13,9 @@ const MyComponent: React.FC = () => {
   const [isLoadingChildren, setIsLoadingChildren] = useState(true);
   const router = useRouter();
   const { category } = router.query; // Access the identifier from the URL
+  const [searchResults, setSearchResults] = useState<
+    { subTopic: string; length: number }[]
+  >([]);
 
   useEffect(() => {
     const init = async () => {
@@ -23,7 +27,27 @@ const MyComponent: React.FC = () => {
           .find((item: any) => item.code === 'topic')
           ?.terms?.find((e: Term) => e.name === category)?.associations || [];
       console.log(fdata);
+
       setCategories(fdata || []);
+
+      const requests = fdata.map(async (subTopicItem: any) => {
+        const data = await ContentSearch({
+          channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+          filters: {
+            topic: category,
+            subTopic: subTopicItem.name, // Send each category one by one
+          },
+        });
+
+        return {
+          subTopic: subTopicItem.name,
+          length: data?.result?.content?.length,
+        };
+      });
+
+      // Execute all API requests in parallel
+      const results = await Promise.all(requests);
+      setSearchResults(results);
       setIsLoadingChildren(false);
     };
     init();
@@ -56,6 +80,7 @@ const MyComponent: React.FC = () => {
         categories={categories}
         subLabel="resources"
         onClick={handleClick}
+        length={searchResults}
       />
     </Layout>
   );

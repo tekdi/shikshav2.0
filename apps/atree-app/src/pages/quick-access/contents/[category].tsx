@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Layout from '../../../component/layout/layout';
 import FolderComponent from '../../../component/FolderComponent';
 import { useRouter } from 'next/router';
-import { Button, Typography } from '@mui/material';
-import dynamic from 'next/dynamic';
+import { Box, Button, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 
 interface Term {
@@ -11,16 +10,19 @@ interface Term {
   associations: any[];
 }
 import atreeLogo from '../../../../assets/images/atreeLogo.png';
-const Content = dynamic(() => import('@Content'), {
-  ssr: false,
-});
+import { AtreeCard, ContentSearch } from '@shared-lib';
+
 const MyComponent: React.FC = () => {
   const [categories, setCategories] = useState<Array<any>>([]);
   const [isLoadingChildren, setIsLoadingChildren] = useState(true);
   const router = useRouter();
+  const [contentData, setContentData] = useState<Array<any>>([]);
+
   const { category } = router.query; // Access the identifier from the URL
   const [subFramework, setSubFramework] = useState('');
-  console.log('id', category);
+  const [searchResults, setSearchResults] = useState<
+    { subTopic: string; length: number }[]
+  >([]);
   useEffect(() => {
     const init = async () => {
       const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
@@ -32,6 +34,22 @@ const MyComponent: React.FC = () => {
           ?.terms?.find((e: Term) => e.name === category)?.associations || [];
       console.log(fdata);
       setCategories(fdata || []);
+      const data = await ContentSearch({
+        channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+        filters: {
+          subTopic: category, // Send each category one by one
+        },
+      });
+      setContentData(data?.result?.content || []);
+      if (category) {
+        setSearchResults([
+          {
+            subTopic: Array.isArray(category) ? category[0] : category,
+            length: data?.result?.content?.length || 0, // Ensure length is a number
+          },
+        ]);
+      }
+
       setIsLoadingChildren(false);
     };
     init();
@@ -45,7 +63,9 @@ const MyComponent: React.FC = () => {
   const handleClick = (category: any) => {
     router.push(`/contents/${category.name}`);
   };
-
+  const handleCardClick = (content: any) => {
+    router.push(`/contents/${content?.identifier}`);
+  };
   return (
     <Layout
       isLoadingChildren={isLoadingChildren}
@@ -67,6 +87,7 @@ const MyComponent: React.FC = () => {
       <FolderComponent
         categories={[{ name: category }]}
         subLabel="resources"
+        length={searchResults}
         onClick={handleClick}
         _title={{
           fontWeight: 700,
@@ -100,27 +121,25 @@ const MyComponent: React.FC = () => {
           </Grid>
         ))}
       </Grid>
-      <Content
-        {...{
-          _grid: {
-            size: { xs: 6, sm: 6, md: 4, lg: 3 },
-          },
-          contentTabs: ['content'],
-          filters: {
-            filters: {
-              channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
-              ...(subFramework && { mimeType: subFramework }),
-              query: `${category}`,
-            },
-          },
-          _card: {
-            cardName: 'AtreeCard',
-            image: atreeLogo.src,
-          },
-          showSearch: false,
-          showFilter: false,
+
+      <Box
+        sx={{
+          width: '100%',
+          gap: '16px',
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '16px',
         }}
-      />
+      >
+        <AtreeCard
+          contents={
+            contentData.length > 6 ? contentData.slice(4, 10) : contentData
+          }
+          handleCardClick={handleCardClick}
+          _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
+          _card={{ image: atreeLogo.src }}
+        />
+      </Box>
     </Layout>
   );
 };
