@@ -102,23 +102,30 @@ export default function Index() {
         });
         setContentData(data?.result?.content || []);
 
+        const getNormalizedTopics = (topic: any): string[] =>
+          Array.isArray(topic)
+            ? topic.map((t: any) => t.trim().toLowerCase())
+            : [];
+
+        const filterContentByCategory = (
+          item: any,
+          filterCategory: string
+        ): boolean => {
+          if (!filterCategory) return false;
+
+          const normalizedTopics = getNormalizedTopics(item.topic);
+          return normalizedTopics.includes(filterCategory.trim().toLowerCase());
+        };
+
+        const getSubTopics = (item: any): string[] =>
+          Array.isArray(item.subTopic)
+            ? item.subTopic
+            : [item.subTopic ?? 'Unknown'];
+
         const relatedData = Array.isArray(data?.result?.content)
           ? data.result.content
-              .filter((item) => {
-                const normalizedTopics = Array.isArray(item.topic)
-                  ? item?.topic.map((t: any) => t.trim().toLowerCase())
-                  : [];
-
-                return (
-                  filterCategory?.trim().toLowerCase() &&
-                  normalizedTopics.includes(filterCategory.trim().toLowerCase())
-                );
-              })
-              .flatMap((item) =>
-                Array.isArray(item.subTopic)
-                  ? item.subTopic
-                  : [item.subTopic ?? 'Unknown']
-              )
+              .filter((item) => filterContentByCategory(item, filterCategory))
+              .flatMap(getSubTopics)
           : [];
 
         const flattenedContents = relatedData.map((name) => ({
@@ -162,7 +169,15 @@ export default function Index() {
           filterCategory: string
         ): boolean => {
           if (!filterCategory) return false;
-          const normalizedTopics = normalizeTopics(item.topic);
+
+          return isCategoryMatch(item.topic, filterCategory);
+        };
+
+        const isCategoryMatch = (
+          topic: any,
+          filterCategory: string
+        ): boolean => {
+          const normalizedTopics = normalizeTopics(topic);
           return normalizedTopics.includes(filterCategory.trim().toLowerCase());
         };
 
