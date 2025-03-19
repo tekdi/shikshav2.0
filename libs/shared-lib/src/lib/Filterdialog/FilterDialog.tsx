@@ -145,19 +145,6 @@ const FilterDialog = ({
         '& .MuiDialog-paper': { backgroundColor: '#FEF7FF' },
       }}
     >
-      {/* <DialogTitle>Filters</DialogTitle> */}
-      {/* <IconButton
-        aria-label="close"
-        onClick={onClose}
-        sx={(theme) => ({
-          position: 'absolute',
-          right: 8,
-          top: 8,
-          color: theme.palette.grey[500],
-        })}
-      >
-        <CloseIcon />
-      </IconButton> */}
       <DialogContent dividers>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {/* new filter frameworkFilter */}
@@ -221,23 +208,7 @@ const FilterDialog = ({
           })}
         </Box>
         <Divider sx={{ marginTop: 4 }} />
-        {/* <FormControl fullWidth>
-            <InputLabel id="multi-checkbox-label">Select Options</InputLabel>
-            <Select
-              labelId="multi-checkbox-label"
-              multiple
-              value={selectedOptions}
-              onChange={handleChange}
-              renderValue={(selected) => selected.join(', ')} // Display selected options
-            >
-              {options.map((option) => (
-                <MenuItem key={option} value={option}>
-                  <Checkbox checked={selectedOptions.indexOf(option) > -1} />
-                  <ListItemText primary={option} />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl> */}
+
         {/* Sort By */}
         {filter?.sort && (
           <>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Layout from '../../../component/layout/layout';
 import FolderComponent from '../../../component/FolderComponent';
 import { useRouter } from 'next/router';
@@ -6,99 +6,141 @@ import { Box, Button, Chip, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Loader from '../../../component/layout/LoaderComponent';
-interface Term {
-  name: string;
-  associations: any[];
-}
 import dynamic from 'next/dynamic';
 import atreeLogo from '../../../../assets/images/atreeLogo.png';
 import { ContentSearch, ContentSearchResponse } from '@shared-lib';
-
 import FilterDialog from 'libs/shared-lib/src/lib/Filterdialog/FilterDialog';
 
-const Content = dynamic(() => import('@Content'), {
-  ssr: false,
-});
+const Content = dynamic(() => import('@Content'), { ssr: false });
 
 const MyComponent: React.FC = () => {
-  const [categories, setCategories] = useState<Array<any>>([]);
-  const [isLoadingChildren, setIsLoadingChildren] = useState(true);
   const router = useRouter();
+  const { category } = router.query;
 
-  const { category } = router.query; // Access the identifier from the URL
+  const [categories, setCategories] = useState<Array<any>>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [subFramework, setSubFramework] = useState('');
   const [filterShow, setFilterShow] = useState(false);
   const [frameworkFilter, setFrameworkFilter] = useState(false);
-  const [localFilters, setFilters] = useState<any>({ limit: 5, offset: 0 });
-
+  const [filters, setFilters] = useState<any>({ limit: 5, offset: 0 });
   const [searchResults, setSearchResults] = useState<
     { subTopic: string; length: number }[]
   >([]);
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
-        const frameworkData = await fetch(url).then((res) => res.json());
-        const frameworks = frameworkData?.result?.framework?.categories;
-        setFrameworkFilter(frameworkData?.result?.framework);
-        const fdata =
-          frameworks
-            .find((item: any) => item.code === 'topic')
-            ?.terms?.find((e: Term) => e.name === category)?.associations || [];
-        setCategories(fdata || []);
-        const filtersToSend =
-          localFilters && Object.keys(localFilters).length > 0
-            ? localFilters
-            : { subTopic: category };
-        const data = await ContentSearch({
-          channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
-          filters: filtersToSend,
-        });
 
-        if (category) {
-          setSearchResults([
-            {
-              subTopic: Array.isArray(category) ? category[0] : category,
-              length: data?.result?.content?.length || 0,
-            },
-          ]);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setIsLoadingChildren(false);
-      }
-    };
-    init();
-  }, []);
+  /** SubFramework Filter Options */
   const subFrameworkFilter = [
     { identifier: '', name: 'All' },
     { identifier: 'video/x-youtube', name: 'Videos' },
     { identifier: 'application/pdf', name: 'PDFs' },
     { identifier: 'video/mp4', name: 'Audiobooks' },
   ];
-  const handleClick = (category: any) => {
-    router.push(`/contents/${category.name}`);
-  };
 
-  const handleApplyFilters = async (selectedValues: any) => {
-    if (Object.keys(selectedValues).length === 0) {
-      setFilters((prevFilters: any) => ({
-        ...prevFilters,
-        ...(localFilters || {}),
-      }));
-    } else {
-      const { limit, offset, ...selectedValuesWithoutLimitOffset } =
-        selectedValues;
-      setFilters((prevFilters: any) => ({
-        ...prevFilters,
-        filters: {
-          ...prevFilters.filters,
-          ...selectedValuesWithoutLimitOffset,
-        },
-      }));
+  /** Fetch Framework Data */
+  const fetchFrameworkData = async () => {
+    try {
+      const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
+      const response = await fetch(url);
+      const frameworkData = await response.json();
+      setFrameworkFilter(frameworkData?.result?.framework);
+
+      const frameworks = frameworkData?.result?.framework?.categories || [];
+      const categoryData =
+        frameworks
+          .find((item: any) => item.code === 'topic')
+          ?.terms?.find((e: any) => e.name === category)?.associations || [];
+
+      setCategories(categoryData);
+    } catch (error) {
+      console.error('Error fetching framework data:', error);
     }
   };
+
+  /** Fetch Content Search Results */
+  const fetchContentSearch = async () => {
+    try {
+      const filterParams =
+        Object.keys(filters).length > 0 ? filters : { subTopic: category };
+      const data = await ContentSearch({
+        channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+        filters: filterParams,
+      });
+
+      if (category) {
+        setSearchResults([
+          {
+            subTopic: String(category),
+            length: data?.result?.content?.length || 0,
+          },
+        ]);
+      }
+    } catch (error) {
+      console.error('Error fetching content search:', error);
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      await fetchFrameworkData();
+      await fetchContentSearch();
+      setIsLoading(false);
+    })();
+  }, []);
+
+  /** Handle Category Click */
+  const handleClick = (category: any) =>
+    router.push(`/contents/${category.name}`);
+
+  /** Handle Filter Application */
+  const handleApplyFilters = (selectedValues: any) => {
+    setFilters((prevFilters: any) => ({
+      ...prevFilters,
+      ...selectedValues,
+    }));
+  };
+
+  /** Reusable Filter Button */
+  const FilterChip = () => (
+    <Chip
+      label={
+        <Box display="flex" alignItems="center" gap={1}>
+          <span>Filter By</span>
+          <ArrowDropDownIcon sx={{ color: '#42474E', fontSize: '20px' }} />
+        </Box>
+      }
+      onClick={() => setFilterShow(true)}
+      sx={{
+        color: '#000000',
+        borderRadius: '8px',
+        fontSize: '14px',
+        fontWeight: '500',
+        cursor: 'pointer',
+        backgroundColor: '#FFFFFF',
+        border: '1px solid #C2C7CF',
+        paddingX: '8px',
+      }}
+    />
+  );
+
+  /** SubFramework Filter Buttons */
+  const SubFrameworkButtons = () => (
+    <Grid container spacing={1} justifyContent="center">
+      {subFrameworkFilter.map((item) => (
+        <Grid key={item.identifier}>
+          <Button
+            onClick={() => setSubFramework(item.identifier)}
+            sx={{
+              borderRadius: '8px',
+              color: '#001D32',
+              backgroundColor: '#E3E9EA',
+            }}
+          >
+            {item.name}
+          </Button>
+        </Grid>
+      ))}
+    </Grid>
+  );
+
   return (
     <Layout
       _backButton={{ alignItems: 'center' }}
@@ -111,70 +153,31 @@ const MyComponent: React.FC = () => {
             flexWrap: 'wrap',
           }}
         >
-          {/* Back Button Title */}
-          <Typography
-            sx={{
-              fontSize: '22px',
-              lineHeight: '28px',
-              letterSpacing: 0,
-            }}
-          >
+          <Typography sx={{ fontSize: '22px', lineHeight: '28px' }}>
             {category}
           </Typography>
-
-          {/* Filter Chips inside the same row */}
           <Box
             display="flex"
             alignItems="center"
             sx={{ justifyContent: 'flex-end' }}
           >
-            <Chip
-              label={
-                <Box display="flex" alignItems="center" gap={1}>
-                  <span>Filter By</span>
-                  <ArrowDropDownIcon
-                    sx={{ color: '#42474E', fontSize: '20px' }}
-                  />
-                </Box>
-              }
-              onClick={() => setFilterShow(true)}
-              sx={{
-                color: '#000000',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: 'pointer',
-                backgroundColor: '#FFFFFF',
-                border: '1px solid #C2C7CF',
-                paddingX: '8px',
-              }}
-            />
+            <FilterChip />
           </Box>
         </Box>
       }
       showBack
       backIconClick={() => router.push('/quick-access')}
     >
-      {isLoadingChildren ? (
+      {isLoading ? (
         <Loader />
       ) : (
         <Box>
-          <Box
-            sx={{
-              display: 'flex',
-              gap: '8px',
-              flexWrap: 'wrap',
-            }}
-          ></Box>
           <FolderComponent
             categories={[{ name: category }]}
             subLabel="resources"
             length={searchResults}
             onClick={handleClick}
-            _title={{
-              fontWeight: 700,
-              fontSize: '14px',
-            }}
+            _title={{ fontWeight: 700, fontSize: '14px' }}
             _item={{
               border: 0,
               justifyContent: 'space-between',
@@ -186,28 +189,12 @@ const MyComponent: React.FC = () => {
               cursor: 'auto',
             }}
           />
-
-          <Grid container spacing={1} justifyContent={'center'}>
-            {subFrameworkFilter?.map((subFrameworkItem: any) => (
-              <Grid key={subFrameworkItem.identifier}>
-                <Button
-                  onClick={() => setSubFramework(subFrameworkItem.identifier)}
-                  sx={{
-                    borderRadius: '8px',
-                    color: '#001D32',
-                    backgroundColor: '#E3E9EA',
-                  }}
-                >
-                  {subFrameworkItem.name}
-                </Button>
-              </Grid>
-            ))}
-          </Grid>
+          <SubFrameworkButtons />
           <FilterDialog
             open={filterShow}
             onClose={() => setFilterShow(false)}
             frameworkFilter={frameworkFilter}
-            filterValues={localFilters}
+            filterValues={filters}
             onApply={handleApplyFilters}
           />
           <Box
@@ -219,34 +206,19 @@ const MyComponent: React.FC = () => {
               padding: '16px',
             }}
           >
-            {/* <AtreeCard
-          contents={
-            contentData.length > 6 ? contentData.slice(4, 10) : contentData
-          }
-          handleCardClick={handleCardClick}
-          _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-          _card={{ image: atreeLogo.src }}
-        /> */}
             <Content
               {...{
-                _grid: {
-                  size: { xs: 6, sm: 6, md: 4, lg: 3 },
-                },
+                _grid: { size: { xs: 6, sm: 6, md: 4, lg: 3 } },
                 contentTabs: ['content'],
-                handleCardClick: (content: ContentSearchResponse) => {
-                  router.push(`/contents/${content?.identifier}`);
-                },
-
+                handleCardClick: (content: ContentSearchResponse) =>
+                  router.push(`/contents/${content?.identifier}`),
                 filters: {
                   filters: {
                     channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
                     subTopic: `${category}`,
                   },
                 },
-                _card: {
-                  cardName: 'AtreeCard',
-                  image: atreeLogo.src,
-                },
+                _card: { cardName: 'AtreeCard', image: atreeLogo.src },
                 showSearch: false,
                 showFilter: false,
                 filterBy: true,

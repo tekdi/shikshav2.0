@@ -43,7 +43,15 @@ export default function Contactus() {
         </Typography>
 
         {/* Contact Information */}
-        <Box sx={{ maxWidth: '600px', textAlign: 'left', p: 2 }}>
+        <Box
+          sx={{
+            maxWidth: { xs: '600px', md: '100%' },
+            textAlign: 'left',
+            p: 2,
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+          }}
+        >
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <LocalPhoneOutlinedIcon sx={{ color: 'goldenrod', mr: 1 }} />
             <Typography variant="body1" sx={{ color: '#333' }}>
@@ -58,7 +66,7 @@ export default function Contactus() {
             </Typography>
           </Box>
 
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <LocationOnOutlinedIcon sx={{ color: 'goldenrod', mr: 1 }} />
             <Typography variant="body1" sx={{ color: '#333' }}>
               Royal Enclave, Srirampura, Jakkur, Bengaluru, Karnataka 560064
