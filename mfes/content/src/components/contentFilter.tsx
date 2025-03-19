@@ -22,7 +22,52 @@ import {
   Typography,
 } from '@mui/material';
 import React, { useState } from 'react';
+const formControlStyles = {
+  '&.Mui-focused': { color: '#1D1B20' },
+  '& .MuiInputLabel-root.Mui-focused': { color: '#1D1B20' },
+  '& .MuiInputLabel-root': { color: '#1D1B20' },
+  '& .MuiOutlinedInput-root': {
+    color: '#1D1B20',
+    '& .MuiOutlinedInput-notchedOutline': { borderColor: '#1D1B20' },
+    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#1D1B20' },
+    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#1D1B20',
+    },
+  },
+};
 
+// Reusable Checkbox Component
+const CustomCheckbox = ({
+  option,
+  filterCode,
+  handleCheckboxChange,
+  currentSelectedValues,
+}: any) => (
+  <FormControlLabel
+    key={option.label}
+    control={
+      <Checkbox
+        checked={currentSelectedValues.includes(option.label)}
+        onChange={(event) => handleCheckboxChange(event, filterCode)}
+        value={option.label}
+        sx={{ color: '#1D1B20', '&.Mui-checked': { color: '#FFBD0D' } }}
+      />
+    }
+    label={option.label}
+  />
+);
+
+// Reusable Radio Component
+const CustomRadio = ({ option }: any) => (
+  <FormControlLabel
+    key={option.value}
+    value={option.value}
+    control={
+      <Radio sx={{ color: '#1D1B20', '&.Mui-checked': { color: '#FFBD0D' } }} />
+    }
+    label={option.label}
+  />
+);
 const FilterDialog = ({
   open,
   onClose,
@@ -139,36 +184,12 @@ const FilterDialog = ({
               const currentSelectedValues = selectedValues[filterCode] || [];
 
               return (
-                <FormControl
-                  fullWidth
-                  key={filterCode}
-                  sx={{
-                    '&.Mui-focused': {
-                      color: '#1D1B20', // Label color when focused
-                    },
-                    '& .MuiInputLabel-root.Mui-focused': {
-                      color: '#1D1B20', // Label color when focused
-                    },
-                    '& .MuiInputLabel-root': { color: '#1D1B20' }, // Label color
-                    '& .MuiOutlinedInput-root': {
-                      color: '#1D1B20', // Value color
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#1D1B20', // Outline color
-                      },
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#1D1B20', // Outline color on hover
-                      },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#1D1B20', // Outline color when focused
-                      },
-                    },
-                  }}
-                >
+                <FormControl fullWidth key={filterCode} sx={formControlStyles}>
                   <FormLabel
                     component="legend"
                     sx={{ fontSize: '18px', fontWeight: 600, color: '#181D27' }}
                   >
-                    {categories?.name === 'Sub-Topic' 
+                    {categories?.name === 'Sub-Topic'
                       ? 'Select Resource Type '
                       : `Select ${categories?.name}`}
                   </FormLabel>
@@ -178,21 +199,7 @@ const FilterDialog = ({
                       onChange={(event) => handleChange(event, filterCode)}
                     >
                       {options.map((option: any) => (
-                        <FormControlLabel
-                          key={option.value}
-                          value={option.value}
-                          control={
-                            <Radio
-                              sx={{
-                                color: '#1D1B20',
-                                '&.Mui-checked': {
-                                  color: '#FFBD0D',
-                                },
-                              }}
-                            />
-                          }
-                          label={option.label}
-                        />
+                        <CustomRadio key={option.value} option={option} />
                       ))}
                     </RadioGroup>
                   )}
@@ -203,28 +210,14 @@ const FilterDialog = ({
                       {options
                         .filter((option: any) =>
                           option.value.includes(selectedTopic)
-                        ) // Filter subtopics based on the selected topic
+                        )
                         .map((option: any) => (
-                          <FormControlLabel
+                          <CustomCheckbox
                             key={option.label}
-                            control={
-                              <Checkbox
-                                checked={currentSelectedValues.includes(
-                                  option.label
-                                )}
-                                onChange={(event) =>
-                                  handleCheckboxChange(event, filterCode)
-                                }
-                                value={option.label}
-                                sx={{
-                                  color: '#1D1B20',
-                                  '&.Mui-checked': {
-                                    color: '#FFBD0D',
-                                  },
-                                }}
-                              />
-                            }
-                            label={option.label}
+                            option={option}
+                            filterCode={filterCode}
+                            handleCheckboxChange={handleCheckboxChange}
+                            currentSelectedValues={currentSelectedValues}
                           />
                         ))}
                     </Box>

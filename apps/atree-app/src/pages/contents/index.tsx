@@ -158,7 +158,7 @@ const List: React.FC<ListProps> = () => {
             filters: {
               filters: {
                 channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
-                query: subCategory ? subCategory : '',
+                query: subCategory || '',
                 // status: ['Live'],
               },
             },
