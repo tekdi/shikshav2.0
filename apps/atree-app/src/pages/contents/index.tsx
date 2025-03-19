@@ -1,13 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { setData } from '@shared-lib';
+import { ContentSearchResponse, setData } from '@shared-lib';
 import Layout from '../../component/layout/layout';
 import { Box } from '@mui/material';
 import atreeLogo from '../../../assets/images/atreeLogo.png';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
-import { ContentSearchResponse } from '../../service/types';
 
 interface ListProps {}
 

@@ -7,7 +7,7 @@ import atreeLogo from '../../assets/images/atreeLogo.png';
 import Layout from '../component/layout/layout';
 import dynamic from 'next/dynamic';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { ContentSearchResponse } from '../service/types';
+import { ContentSearchResponse } from '@shared-lib';
 
 const Content = dynamic(() => import('@Content'), {
   ssr: false,

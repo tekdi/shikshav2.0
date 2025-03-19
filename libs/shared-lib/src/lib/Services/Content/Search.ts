@@ -110,8 +110,8 @@ export interface ContentSearchResponse {
   userConsent?: string;
   resourceType?: string;
   node_id?: number;
-  topic?: string[];
-  subTopic?: string[];
+  topic?: string | string[];
+  subTopic?: string | string[];
   reader?: string;
 }
 // Define the payload

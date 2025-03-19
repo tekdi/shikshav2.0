@@ -26,6 +26,7 @@ import Carousel from 'react-material-ui-carousel';
 import ShareIcon from '@mui/icons-material/Share';
 import ShareDialog from '../../component/ShareDialog';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Loader from '../../component/layout/LoaderComponent';
 
 interface ContentItem {
   name: string;
@@ -70,13 +71,18 @@ export default function Content() {
   }, [identifier]);
   const keywords = contentData?.keywords || [];
   const showMoreIcon = keywords.length > 3;
-  const displayedKeywords = showMoreIcon ? keywords.slice(0, 4) : keywords;
+  const capitalizeFirstLetter = (word: string) =>
+    word.charAt(0).toUpperCase() + word.slice(1);
+
+  const displayedKeywords = (
+    showMoreIcon ? keywords.slice(0, 4) : keywords
+  ).map(capitalizeFirstLetter);
   const remainingKeywords = keywords.slice(3);
   useEffect(() => {
     if (identifier) fetchContent();
   }, [identifier]);
 
-  if (isLoading) return <Circular />;
+  if (isLoading) return <Loader />;
 
   const handleItemClick = (to: string) => {
     router.push(to);
@@ -199,7 +205,7 @@ export default function Content() {
               {remainingKeywords.map((label: any, index: any) => (
                 <Chip
                   key={index}
-                  label={label}
+                  label={label.charAt(0).toUpperCase() + label.slice(1)}
                   variant="outlined"
                   sx={{
                     height: '32px',

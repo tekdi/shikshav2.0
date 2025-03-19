@@ -7,14 +7,14 @@ import { Box, Chip, Typography } from '@mui/material';
 import { CommonSearch, getData, Loader } from '@shared-lib';
 import { useRouter } from 'next/navigation';
 import BackToTop from '../components/BackToTop';
-import FilterDialog from '../components/contentFilter';
+// import FilterDialog from '../components/contentFilter';
 import RenderTabContent from '../components/ContentTabs';
 import HelpDesk from '../components/HelpDesk';
 import { hierarchyAPI } from '../services/Hierarchy';
 import { ContentSearch, ContentSearchResponse } from '../services/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import { Switch, FormControlLabel } from '@mui/material';
+import { Switch } from '@mui/material';
+import FilterDialog from 'libs/shared-lib/src/lib/Filterdialog/FilterDialog';
 export interface ContentProps {
   _grid?: object;
   filters?: object;

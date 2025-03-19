@@ -22,10 +22,12 @@ export * from './lib/QuestionSetEditor/QuestionSet';
 export * from './lib/CollectionEditor/Collection';
 export * from './lib/Dialog/CommonDialog';
 export * from './lib/Loader/Loader';
-
+export * from './lib/Filterdialog/FilterDialog';
 export * from './lib/Progress/Circular';
 export * from './lib/Progress/Progress';
+export * from './lib/Services/Content/Search';
 import Image from '../images/default.png';
+
 export const IMAGES = {
   DEFAULT_PLACEHOLDER: Image,
 };

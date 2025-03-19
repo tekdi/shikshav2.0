@@ -164,8 +164,14 @@ export default function Layout({
     //   setOpenDialog(true);
     // } else
     if (to === '/signin') {
-      localStorage.clear();
-      router.push('/signin');
+      if (token) {
+        // If logged in, clear localStorage and log out
+        localStorage.clear();
+        router.push('/'); // Redirect to home on logout
+      } else {
+        // If not logged in, go to sign-in page
+        router.push('/signin');
+      }
     } else {
       router.push(to);
     }

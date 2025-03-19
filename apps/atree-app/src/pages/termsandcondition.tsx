@@ -41,20 +41,17 @@ export default function Aboutus() {
 
         {/* About Us Description */}
         <Typography>
-          Welcome to the <span style={{ color: 'red' }}>Jal Jungle Jameen</span>{' '}
-          in classrooms digital library platform (herein after referred to as
-          “Platform”). Please read the following terms and conditions carefully
-          before accessing, using, or obtaining any materials, information, or
-          services. The Platform includes the{' '}
-          <span style={{ backgroundColor: 'yellow' }}>
-            website, and mobile application.
-          </span>
-          By accessing any component of the Platform you agree to be bound by
-          these terms and conditions. We may change, add, or remove portions of
-          these terms and conditions at any time, which shall become effective
-          immediately upon posting. If these terms are amended in such a way
-          that substantially alters the privacy or security, users will be
-          notified upon their first return to the platform.
+          Welcome to the Jal Jungle Jameen in classrooms digital library
+          platform (herein after referred to as “Platform”). Please read the
+          following terms and conditions carefully before accessing, using, or
+          obtaining any materials, information, or services. The Platform
+          includes the website, and mobile application. By accessing any
+          component of the Platform you agree to be bound by these terms and
+          conditions. We may change, add, or remove portions of these terms and
+          conditions at any time, which shall become effective immediately upon
+          posting. If these terms are amended in such a way that substantially
+          alters the privacy or security, users will be notified upon their
+          first return to the platform.
         </Typography>
         <Typography>
           Please contact our team at envedu@atree.org if you have any questions,
@@ -72,14 +69,13 @@ export default function Aboutus() {
           can be accessed through the website, or mobile application
         </Typography>
         <Typography>
-          1.2 Logged-in Readers. Logins are required to personalize the{' '}
-          <span style={{ color: 'red' }}>Jal Jungle Jameen in classrooms</span>{' '}
-          digital library experience through the creation of profile(s).
-          Creating profile(s) allows for the following to be created, saved, and
-          updated: profile name, reading history, bookmarked books, and
-          downloaded books. Logging in also allows for a seamless user
-          experience between different devices. To protect your privacy, please
-          use a nickname or username when creating a login.
+          1.2 Logged-in Readers. Logins are required to personalize the Jal
+          Jungle Jameen in classrooms digital library experience through the
+          creation of profile(s). Creating profile(s) allows for the following
+          to be created, saved, and updated: profile name, reading history,
+          bookmarked books, and downloaded books. Logging in also allows for a
+          seamless user experience between different devices. To protect your
+          privacy, please use a nickname or username when creating a login.
         </Typography>
         <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
           2. Termination
@@ -120,8 +116,8 @@ export default function Aboutus() {
           ethnicity, socioeconomic status) or exploitation towards nature or
           environment do not belong on the Platform. Resources that explore
           these topics with sensitivity and with the purpose of discouraging
-          violence or discrimination can be appropriate for{' '}
-          <span style={{ color: 'red' }}>Jal Jungle Jameen in classrooms.</span>
+          violence or discrimination can be appropriate for Jal Jungle Jameen in
+          classrooms.
         </Typography>
         <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
           4. ATREE’s Role
@@ -152,11 +148,8 @@ export default function Aboutus() {
         <Typography>
           Your privacy is very important to us. Please completely read and
           understand the following privacy policy before using the Platform. For
-          the convenience of our readers, the Platform uses
-          <span style={{ color: 'red', backgroundColor: 'yellow' }}>
-            Google, Apple, and Facebook
-          </span>{' '}
-          logins to verify credentials.
+          the convenience of our readers, the Platform uses Google, Apple, and
+          Facebook logins to verify credentials.
         </Typography>
         <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
           1. Data Collection and Storage
@@ -208,12 +201,9 @@ export default function Aboutus() {
           ATREE does not collect personal information, regardless of age. ATREE
           highly encourages parents and legal guardians to review the privacy
           policies of the companies that provide log-in services to the Platform
-          <span style={{ color: 'red', backgroundColor: 'yellow' }}>
-            before using (Google, Apple, and Facebook).
-          </span>{' '}
-          If you are a parent or legal guardian of a child under age 13 who you
-          believe has submitted personal information to the Platform, please
-          contact ATREE.
+          before using (Google, Apple, and Facebook). If you are a parent or
+          legal guardian of a child under age 13 who you believe has submitted
+          personal information to the Platform, please contact ATREE.
         </Typography>
         <Typography>
           <span style={{ fontWeight: 'bold' }}>3.2 Translator Community.</span>
@@ -237,11 +227,10 @@ export default function Aboutus() {
         </Typography>
         <Typography>
           Material on the Platform may link to independently run websites
-          outside of the{' '}
-          <span style={{ color: 'red' }}>Jal Jungle Jameen in classrooms</span>{' '}
-          domain. ATREE is not responsible for the privacy practices or content
-          of such websites. We encourage you to read the privacy policies of any
-          websites you visit from this website.
+          outside of the Jal Jungle Jameen in classrooms domain. ATREE is not
+          responsible for the privacy practices or content of such websites. We
+          encourage you to read the privacy policies of any websites you visit
+          from this website.
         </Typography>
 
         <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
@@ -253,33 +242,26 @@ export default function Aboutus() {
 
         <Typography>
           <span style={{ fontWeight: 'bold' }}>6.1 General Readers.</span>At
-          times, <span style={{ color: 'red' }}>Jal Jungle Jameen</span> in
-          classrooms may make information available for research, impact
-          reports, or to strategic partners for analysis. If this occurs, any
-          data shared is in anonymous, aggregated form that cannot be directly
-          connected to individual users.
+          times, Jal Jungle Jameen in classrooms may make information available
+          for research, impact reports, or to strategic partners for analysis.
+          If this occurs, any data shared is in anonymous, aggregated form that
+          cannot be directly connected to individual users.
         </Typography>
         <Typography>
           <span style={{ fontWeight: 'bold' }}>
             6.2 Logged-in Readers Community.
           </span>
-          <span style={{ backgroundColor: 'yellow' }}>
-            By{' '}
-            <span style={{ color: 'red' }}>
-              using Google, Apple, or Facebook
-            </span>
-          </span>{' '}
-          logins when creating a{' '}
-          <span style={{ color: 'red' }}>Jal Jungle Jameen</span> in classrooms
-          profile, readers data are subject to the terms and privacy policies of
-          these third parties. Readers and potential translator community
-          members who would like to use these login options should refer to the
-          respective terms and conditions before using these third-party logins.
+          By using Google, Apple, or Facebook logins when creating a Jal Jungle
+          Jameen in classrooms profile, readers data are subject to the terms
+          and privacy policies of these third parties. Readers and potential
+          translator community members who would like to use these login options
+          should refer to the respective terms and conditions before using these
+          third-party logins.
         </Typography>
         <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
           6. Disclosure to Third Parties
         </Typography>
-        <Typography sx={{ backgroundColor: 'yellow' }}>
+        <Typography>
           XXXX. The Platform uses xxxxx to help support an issue ticketing
           system. When submitting an issue through xxxxx for the purpose of
           reporting any feedback, issues, or problematic content, readers are

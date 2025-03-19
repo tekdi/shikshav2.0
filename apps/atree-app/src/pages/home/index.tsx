@@ -18,10 +18,10 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import atreeLogo from '../../../assets/images/atreeLogo.png';
 import Layout from '../../component/layout/layout';
-
 // import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'next/navigation';
+import Loader from '../../component/layout/LoaderComponent';
 const buttonColors = {
   water: '#0E28AE',
   land: '#8F4A50',
@@ -223,72 +223,83 @@ export default function Index() {
     router.push('/signin');
   };
   return (
-    <Layout isLoadingChildren={isLoadingChildren}>
-      <Box display="flex" flexDirection="column" gap="3rem" py="1rem" px="8px">
-        <FrameworkFilter
-          frameworkFilter={frameworkFilter || []}
-          framework={framework}
-          setFramework={setFramework}
-          fromSubcategory={false}
-        />
+    <Layout>
+      {isLoadingChildren ? (
+        <Loader />
+      ) : (
         <Box
-          sx={{
-            width: '100%',
-            gap: '16px',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
+          display="flex"
+          flexDirection="column"
+          gap="3rem"
+          py="1rem"
+          px="8px"
         >
-          <Title onClick={() => router.push('/contents')}>
-            {t('Read, Watch, Listen')}
-          </Title>
-          <AtreeCard
-            contents={
-              contentData.length > 4 ? contentData.slice(0, 4) : contentData
-            }
-            handleCardClick={handleCardClick}
-            _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-            _card={{ image: atreeLogo.src }}
+          <FrameworkFilter
+            frameworkFilter={frameworkFilter || []}
+            framework={framework}
+            setFramework={setFramework}
+            fromSubcategory={false}
           />
-        </Box>
-        <Box
-          sx={{
-            width: '100%',
-            gap: '16px',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <Title>{t('Browse by Sub Categories')}</Title>
+          <Box
+            sx={{
+              width: '100%',
+              gap: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <Title onClick={() => router.push('/contents')}>
+              {t('Read, Watch, Listen')}
+            </Title>
+            <AtreeCard
+              contents={
+                contentData.length > 4 ? contentData.slice(0, 4) : contentData
+              }
+              handleCardClick={handleCardClick}
+              _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
+              _card={{ image: atreeLogo.src }}
+            />
+          </Box>
+          <Box
+            sx={{
+              width: '100%',
+              gap: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <Title>{t('Browse by Sub Categories')}</Title>
 
-          <SubFrameworkFilter
-            subFrameworkFilter={subFrameworkFilter || []}
-            subFramework={subFramework}
-            setSubFramework={setSubFramework}
-            lastButton={true}
-          />
+            <SubFrameworkFilter
+              subFrameworkFilter={subFrameworkFilter || []}
+              subFramework={subFramework}
+              setSubFramework={setSubFramework}
+              lastButton={true}
+            />
+          </Box>
+          <Box
+            sx={{
+              width: '100%',
+              gap: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <Title onClick={() => router.push('/contents')}>
+              {t('Related Content')}
+            </Title>
+            <AtreeCard
+              contents={
+                contentData.length > 6 ? contentData.slice(4, 10) : contentData
+              }
+              handleCardClick={handleCardClick}
+              _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
+              _card={{ image: atreeLogo.src }}
+            />
+          </Box>
         </Box>
-        <Box
-          sx={{
-            width: '100%',
-            gap: '16px',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <Title onClick={() => router.push('/contents')}>
-            {t('Related Content')}
-          </Title>
-          <AtreeCard
-            contents={
-              contentData.length > 6 ? contentData.slice(4, 10) : contentData
-            }
-            handleCardClick={handleCardClick}
-            _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-            _card={{ image: atreeLogo.src }}
-          />
-        </Box>
-      </Box>
+      )}
+
       <Dialog
         open={openMessageDialog}
         onClose={() => setOpenMessageDialog(false)}
