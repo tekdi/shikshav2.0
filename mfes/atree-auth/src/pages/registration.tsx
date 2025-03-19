@@ -15,11 +15,9 @@ import { CommonDialog, CommonSelect, CommonTextField } from '@shared-lib';
 import { SelectChangeEvent } from '@mui/material/Select';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import dynamic from 'next/dynamic';
 
 // import Otp from './otp';
 import { createUser } from '../services/LoginService';
-// import TermsAndCondition from './components/TermsAndCondition';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
 

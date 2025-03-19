@@ -158,8 +158,8 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
 
         {/* API Search Results */}
         {searchResults.length > 0
-          ? searchResults.map((item, index) => (
-              <ListItem key={index} sx={{ cursor: 'pointer' }}>
+          ? searchResults.map((item) => (
+              <ListItem key={item.name} sx={{ cursor: 'pointer' }}>
                 <ListItemAvatar>
                   <Avatar sx={{ backgroundColor: '#CEE5FF', color: '#06164B' }}>
                     {item.name ? item.name.charAt(0).toUpperCase() : 'S'}

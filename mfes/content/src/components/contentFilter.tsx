@@ -167,64 +167,63 @@ const FilterDialog = ({
       <DialogContent dividers>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {/* new filter frameworkFilter */}
-          {frameworkFilter?.categories &&
-            frameworkFilter.categories.map((categories: any) => {
-              const filterCode =
-                categories?.code === 'sub-topic'
-                  ? 'subTopic'
-                  : categories?.code; // Set "subTopic" explicitly
-              const componentKey = `multi-checkbox-label_${categories?.identifier}`;
+          {frameworkFilter?.categories?.map((category: any) => {
+            const filterCode =
+              category?.code === 'sub-topic' ? 'subTopic' : category?.code;
+            const componentKey = `multi-checkbox-label_${category?.identifier}`;
 
-              // Transform terms into options
-              const options = categories?.terms.map((term: any) => ({
+            // Transform terms into options
+            const options =
+              category?.terms?.map((term: any) => ({
                 label: term.name,
                 value: term.code,
-              }));
-              // Get the selected values for the current category
-              const currentSelectedValues = selectedValues[filterCode] || [];
+              })) ?? [];
 
-              return (
-                <FormControl fullWidth key={filterCode} sx={formControlStyles}>
-                  <FormLabel
-                    component="legend"
-                    sx={{ fontSize: '18px', fontWeight: 600, color: '#181D27' }}
+            // Get the selected values for the current category
+            const currentSelectedValues = selectedValues?.[filterCode] ?? [];
+
+            return (
+              <FormControl fullWidth key={filterCode} sx={formControlStyles}>
+                <FormLabel
+                  component="legend"
+                  sx={{ fontSize: '18px', fontWeight: 600, color: '#181D27' }}
+                >
+                  {category?.name === 'Sub-Topic'
+                    ? 'Select Resource Type'
+                    : `Select ${category?.name}`}
+                </FormLabel>
+
+                {filterCode === 'topic' && (
+                  <RadioGroup
+                    value={currentSelectedValues[0] ?? ''}
+                    onChange={(event) => handleChange(event, filterCode)}
                   >
-                    {categories?.name === 'Sub-Topic'
-                      ? 'Select Resource Type '
-                      : `Select ${categories?.name}`}
-                  </FormLabel>
-                  {filterCode === 'topic' && (
-                    <RadioGroup
-                      value={currentSelectedValues[0] || ''}
-                      onChange={(event) => handleChange(event, filterCode)}
-                    >
-                      {options.map((option: any) => (
-                        <CustomRadio key={option.value} option={option} />
-                      ))}
-                    </RadioGroup>
-                  )}
+                    {options.map((option: any) => (
+                      <CustomRadio key={option.value} option={option} />
+                    ))}
+                  </RadioGroup>
+                )}
 
-                  {/* SubTopic - Checkboxes */}
-                  {filterCode === 'subTopic' && selectedTopic && (
-                    <Box>
-                      {options
-                        .filter((option: any) =>
-                          option.value.includes(selectedTopic)
-                        )
-                        .map((option: any) => (
-                          <CustomCheckbox
-                            key={option.label}
-                            option={option}
-                            filterCode={filterCode}
-                            handleCheckboxChange={handleCheckboxChange}
-                            currentSelectedValues={currentSelectedValues}
-                          />
-                        ))}
-                    </Box>
-                  )}
-                </FormControl>
-              );
-            })}
+                {filterCode === 'subTopic' && selectedTopic && (
+                  <Box>
+                    {options
+                      .filter((option: any) =>
+                        option.value.includes(selectedTopic)
+                      )
+                      .map((option: any) => (
+                        <CustomCheckbox
+                          key={option.label}
+                          option={option}
+                          filterCode={filterCode}
+                          handleCheckboxChange={handleCheckboxChange}
+                          currentSelectedValues={currentSelectedValues}
+                        />
+                      ))}
+                  </Box>
+                )}
+              </FormControl>
+            );
+          })}
         </Box>
         <Divider sx={{ marginTop: 4 }} />
         {/* <FormControl fullWidth>

@@ -202,9 +202,9 @@ export default function Content() {
           <DialogTitle>More Keywords</DialogTitle>
           <DialogContent>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-              {remainingKeywords.map((label: any, index: any) => (
+              {remainingKeywords.map((label: any) => (
                 <Chip
-                  key={index}
+                  key={label}
                   label={label.charAt(0).toUpperCase() + label.slice(1)}
                   variant="outlined"
                   sx={{

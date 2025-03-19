@@ -206,7 +206,7 @@ export default function Aboutus() {
           personal information to the Platform, please contact ATREE.
         </Typography>
         <Typography>
-          <span style={{ fontWeight: 'bold' }}>3.2 Translator Community.</span>
+          <span style={{ fontWeight: 'bold' }}>3.2 Translator Community.</span>{' '}
           The parts of the Platform that require personal information, such as
           your
         </Typography>
@@ -250,7 +250,7 @@ export default function Aboutus() {
         <Typography>
           <span style={{ fontWeight: 'bold' }}>
             6.2 Logged-in Readers Community.
-          </span>
+          </span>{' '}
           By using Google, Apple, or Facebook logins when creating a Jal Jungle
           Jameen in classrooms profile, readers data are subject to the terms
           and privacy policies of these third parties. Readers and potential

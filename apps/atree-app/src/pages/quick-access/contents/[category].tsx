@@ -12,9 +12,8 @@ interface Term {
 }
 import dynamic from 'next/dynamic';
 import atreeLogo from '../../../../assets/images/atreeLogo.png';
-import { AtreeCard, ContentSearch } from '@shared-lib';
+import { ContentSearch, ContentSearchResponse } from '@shared-lib';
 
-import { ContentSearchResponse } from '@shared-lib';
 import FilterDialog from 'libs/shared-lib/src/lib/Filterdialog/FilterDialog';
 
 const Content = dynamic(() => import('@Content'), {
@@ -25,7 +24,6 @@ const MyComponent: React.FC = () => {
   const [categories, setCategories] = useState<Array<any>>([]);
   const [isLoadingChildren, setIsLoadingChildren] = useState(true);
   const router = useRouter();
-  const [contentData, setContentData] = useState<Array<any>>([]);
 
   const { category } = router.query; // Access the identifier from the URL
   const [subFramework, setSubFramework] = useState('');
@@ -56,8 +54,6 @@ const MyComponent: React.FC = () => {
           channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
           filters: filtersToSend,
         });
-
-        setContentData(data?.result?.content || []);
 
         if (category) {
           setSearchResults([

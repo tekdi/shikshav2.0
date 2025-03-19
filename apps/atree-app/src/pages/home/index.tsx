@@ -192,7 +192,6 @@ export default function Index() {
   }, [filterCategory]);
   useEffect(() => {
     console.log('Content Data:', contentData);
-    // console.log('Content Data:', relatedContent);
   }, [contentData]);
   const handleCardClick = (content: any) => {
     if (consumedContent.length < 3) {

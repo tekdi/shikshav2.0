@@ -3,7 +3,7 @@ import * as React from 'react';
 import Head from 'next/head';
 import { Poppins } from 'next/font/google';
 import { appWithTranslation, UserConfig, useTranslation } from 'next-i18next';
-import { metaTags, Telemetry } from '../utils/app.constant';
+import { metaTags } from '../utils/app.constant';
 import {
   Experimental_CssVarsProvider as CssVarsProvider,
   useTheme,
@@ -19,9 +19,7 @@ import { fullWidthPages } from '../utils/app.config';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { telemetryFactory } from '../utils/telemetry';
 import { useEffect } from 'react';
-import { initGA, logPageView } from '../utils/googleAnalytics';
 import { prefixer } from 'stylis';
-import customTheme from '../styles/customTheme';
 import rtlPlugin from 'stylis-plugin-rtl';
 import { Box, IconButton } from '@mui/material';
 import { ToastContainer } from 'react-toastify';
@@ -31,31 +29,14 @@ import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlin
 import FilterDramaOutlinedIcon from '@mui/icons-material/FilterDramaOutlined';
 import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
 import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
+
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 const poppins = Poppins({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   fallback: ['sans-serif'],
   subsets: ['latin'],
 });
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#FFBD0D',
-    },
-    secondary: {
-      main: '#FFBD0D',
-    },
-    text: {
-      secondary: '#2B3133',
-    },
-    mode: 'light', // or "dark"
-  },
-  typography: {
-    fontFamily: 'var(--font-poppins), Arial, sans-serif',
-  },
-});
+
 const emptyInitialI18NextConfig: UserConfig = {
   i18n: {
     defaultLocale: nextI18NextConfig.i18n.defaultLocale,

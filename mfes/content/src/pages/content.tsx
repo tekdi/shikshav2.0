@@ -7,7 +7,6 @@ import { Box, Chip, Typography } from '@mui/material';
 import { CommonSearch, getData, Loader } from '@shared-lib';
 import { useRouter } from 'next/navigation';
 import BackToTop from '../components/BackToTop';
-// import FilterDialog from '../components/contentFilter';
 import RenderTabContent from '../components/ContentTabs';
 import HelpDesk from '../components/HelpDesk';
 import { hierarchyAPI } from '../services/Hierarchy';

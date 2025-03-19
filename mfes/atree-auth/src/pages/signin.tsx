@@ -184,7 +184,7 @@ export default function Signin() {
         >
           Proceed
         </Button>
-        <GoogleOAuthProvider clientId="467709515234-qu171h5np0rae7vrl23uv1audjht7fsa.apps.googleusercontent.com">
+        <GoogleOAuthProvider clientId="467709515234-1gdmvcbptpmnrr7403gu1u36i90v7vup.apps.googleusercontent.com">
           <MyCustomGoogleLogin />
         </GoogleOAuthProvider>
         <Typography
@@ -257,12 +257,14 @@ const MyCustomGoogleLogin = () => {
       }}
       onClick={() => login()} // Manually trigger login
     >
-      <img
-        src="https://developers.google.com/identity/images/g-logo.png"
-        alt="Google logo"
-        style={{ width: 24, height: 24 }}
-      />
-      Log in with Google
+      <Box display="flex" alignItems="center" gap="10px">
+        <img
+          src="https://developers.google.com/identity/images/g-logo.png"
+          alt="Google logo"
+          style={{ width: 24, height: 24 }}
+        />
+        Log in with Google
+      </Box>
     </Button>
   );
 };

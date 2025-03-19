@@ -76,8 +76,7 @@ export default function Searchpage() {
                   }}
                   // onClick={() => handleFrameworkClick(frameworkItem)}
                 >
-                  {/* {frameworkItem} */}
-                  {frameworkItem.charAt(0).toUpperCase() +
+                    {frameworkItem.charAt(0).toUpperCase() +
                     frameworkItem.slice(1)}
                 </Button>
               </Grid>
