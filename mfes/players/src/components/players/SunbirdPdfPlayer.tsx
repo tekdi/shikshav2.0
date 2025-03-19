@@ -60,7 +60,7 @@ const SunbirdPdfPlayer = ({ playerConfig }: PlayerConfigProps) => {
   }, []);
 
   return (
-    <div className="player-grid" style={{ height: '100vh' }}>
+    <div className="player-grid" style={{ height: '100%' }}>
       {/* @ts-ignore */}
       <sunbird-pdf-player
         player-config={JSON.stringify(playerConfig)}

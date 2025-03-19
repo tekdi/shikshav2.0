@@ -9,7 +9,7 @@ import Grid from '@mui/material/Grid2';
 import { CommonTextField, Layout } from '@shared-lib';
 import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { login } from '../../services/LoginService';
 import AppConst from '../../utils/AppConst/AppConst';
 
@@ -28,6 +28,20 @@ export default function Login() {
   const [errorMessage, setErrorMessage] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const URL_CONTENT = process.env.NEXT_PUBLIC_CONTENT;
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const accToken = localStorage.getItem('accToken');
+      const refToken = localStorage.getItem('refToken');
+      if (accToken && refToken) {
+        if (URL_CONTENT) {
+          router.replace(URL_CONTENT); // Redirect if URL_CONTENT is defined
+        }
+      }
+    }
+  }, []);
+
   const handleChange =
     (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value;

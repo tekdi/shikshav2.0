@@ -78,6 +78,12 @@ export default function Content() {
     status: '',
     priority: '',
   });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    setIsAuthenticated(!!localStorage.getItem('accToken'));
+  }, []);
+
   const fetchContent = useCallback(
     async (
       type?: string,
@@ -291,6 +297,7 @@ export default function Content() {
                 size={{ xs: 6, sm: 6, md: 3, lg: 3 }}
               >
                 <CommonCard
+                  minheight="100%"
                   title={item?.name.trim()}
                   image={
                     item?.posterImage && item?.posterImage !== 'undefined'
@@ -485,11 +492,15 @@ export default function Content() {
             ariaLabel: 'Help',
             onOptionClick: handleClose,
           },
-          {
-            icon: <LogoutIcon />,
-            ariaLabel: 'Logout',
-            onOptionClick: handleLogout,
-          },
+          ...(isAuthenticated
+            ? [
+                {
+                  icon: <LogoutIcon />,
+                  ariaLabel: 'Logout',
+                  onOptionClick: handleLogout,
+                },
+              ]
+            : []),
         ],
         onMenuClose: handleClose,
       }}

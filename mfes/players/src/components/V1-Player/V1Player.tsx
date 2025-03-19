@@ -59,23 +59,16 @@ const V1Player = ({ playerConfig }: PlayerProps) => {
   }, [playerConfig]);
 
   return (
-    <div
-      style={{
-        width: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <iframe
-        ref={previewRef}
-        id="contentPlayer"
-        title="Content Player"
-        src={`${basePath}/content/preview/preview.html?webview=true`}
-        aria-label="Content Player"
-        style={{ width: '100%', height: '600px', border: 'none' }}
-      ></iframe>
-    </div>
+    <iframe
+      ref={previewRef}
+      id="contentPlayer"
+      title="Content Player"
+      src={`${basePath}/content/preview/preview.html?webview=true`}
+      aria-label="Content Player"
+      style={{ border: 'none' }}
+      width={'100%'}
+      height={'100%'}
+    ></iframe>
   );
 };
 

@@ -15,10 +15,10 @@ export default function AuthCheck() {
       const refToken = localStorage.getItem('refToken');
 
       if (accToken && refToken) {
-        //@ts-ignore
-        router.replace(URL_CONTENT); // Redirect if tokens are present
-      } else {
-        //@ts-ignore
+        if (typeof URL_CONTENT === 'string') {
+          router.replace(URL_CONTENT); // Redirect if tokens are present
+        }
+      } else if (typeof URL_LOGIN === 'string') {
         router.replace(URL_LOGIN); // Redirect to login if missing
       }
     }
