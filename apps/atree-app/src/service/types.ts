@@ -1,4 +1,4 @@
-export interface ContentSearchResponse {
+export interface ContentSearchResult {
   copyright?: string;
 
   keywords?: string[];

@@ -80,9 +80,7 @@ const MyComponent: React.FC = () => {
   const handleClick = (category: any) => {
     router.push(`/contents/${category.name}`);
   };
-  const handleCardClick = (content: any) => {
-    router.push(`/contents/${content?.identifier}`);
-  };
+
   const handleApplyFilters = async (selectedValues: any) => {
     if (Object.keys(selectedValues).length === 0) {
       setFilters((prevFilters: any) => ({

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { ContentSearchResponse, setData } from '@shared-lib';
+import { ContentSearchResponse } from '@shared-lib';
 import Layout from '../../component/layout/layout';
 import { Box } from '@mui/material';
 import atreeLogo from '../../../assets/images/atreeLogo.png';

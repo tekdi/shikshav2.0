@@ -170,7 +170,6 @@ const FilterDialog = ({
           {frameworkFilter?.categories?.map((category: any) => {
             const filterCode =
               category?.code === 'sub-topic' ? 'subTopic' : category?.code;
-            const componentKey = `multi-checkbox-label_${category?.identifier}`;
 
             // Transform terms into options
             const options =

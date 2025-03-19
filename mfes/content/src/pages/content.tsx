@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import SearchIcon from '@mui/icons-material/Search';
-import { Box, Chip, Typography } from '@mui/material';
+import { Box, Chip, Typography, Switch } from '@mui/material';
 import { CommonSearch, getData, Loader } from '@shared-lib';
 import { useRouter } from 'next/navigation';
 import BackToTop from '../components/BackToTop';
@@ -12,7 +12,6 @@ import HelpDesk from '../components/HelpDesk';
 import { hierarchyAPI } from '../services/Hierarchy';
 import { ContentSearch, ContentSearchResponse } from '../services/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { Switch } from '@mui/material';
 import FilterDialog from 'libs/shared-lib/src/lib/Filterdialog/FilterDialog';
 export interface ContentProps {
   _grid?: object;

@@ -1,6 +1,5 @@
 'use client';
 import { Box, Typography } from '@mui/material';
-// import { useTranslation } from 'react-i18next';
 import Grid from '@mui/material/Grid2';
 import Image from 'next/image';
 import ActivityBooks from '../../assets/images/ActivityBooks.jpeg';
@@ -13,7 +12,6 @@ import ReferenceBooks from '../../assets/images/LetsTalkAboutTreesCover.png';
 import Water from '../../assets/images/WatercoverTekdi.png';
 import Insta from '../component/Insta';
 import Layout from '../component/layout/layout';
-import loaderGif from '../../assets/images/snail-yellow.gif';
 
 import { ImageBanner } from '../component/layout/ImageBanner';
 import { useEffect, useState } from 'react';

@@ -12,9 +12,7 @@ import Grid from '@mui/material/Grid2';
 import { CommonTextField } from '@shared-lib';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { GoogleLogin } from '@react-oauth/google';
 import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
-// import Otp from './otp';
 import { signin } from '../services/LoginService';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 export default function Signin() {
@@ -184,7 +182,7 @@ export default function Signin() {
         >
           Proceed
         </Button>
-        <GoogleOAuthProvider clientId="467709515234-1gdmvcbptpmnrr7403gu1u36i90v7vup.apps.googleusercontent.com">
+        <GoogleOAuthProvider clientId="467709515234-mcvpmvt7rhen1knmaqb6b0vbjurod76s.apps.googleusercontent.com">
           <MyCustomGoogleLogin />
         </GoogleOAuthProvider>
         <Typography
@@ -263,7 +261,7 @@ const MyCustomGoogleLogin = () => {
           alt="Google logo"
           style={{ width: 24, height: 24 }}
         />
-        Log in with Google
+        <Typography>Log in with Google</Typography>
       </Box>
     </Button>
   );
