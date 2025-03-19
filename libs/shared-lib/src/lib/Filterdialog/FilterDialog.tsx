@@ -150,7 +150,7 @@ const FilterDialog = ({
           {/* new filter frameworkFilter */}
           {frameworkFilter?.categories?.map((category: any) => {
             const filterCode =
-              category?.code === 'sub-topic' ? 'subTopic' : category?.code;
+              category?.code === 'subTopic' ? 'subTopic' : category?.code;
 
             // Transform terms into options
             const options =
@@ -159,9 +159,8 @@ const FilterDialog = ({
                 value: term?.code,
               })) ?? [];
 
-            // Get the selected values for the current category
+            // Get the selected vaalues for the current category
             const currentSelectedValues = selectedValues?.[filterCode] ?? [];
-
             return (
               <FormControl fullWidth key={filterCode} sx={formControlStyles}>
                 <FormLabel
@@ -170,7 +169,7 @@ const FilterDialog = ({
                 >
                   {category?.name === 'Sub-Topic'
                     ? 'Select Resource Type'
-                    : `Select ${category?.name}`}
+                    : category?.name}
                 </FormLabel>
 
                 {/* Topic - RadioGroup */}

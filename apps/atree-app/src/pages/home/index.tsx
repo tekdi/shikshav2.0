@@ -152,24 +152,28 @@ export default function Index() {
         });
 
         setContentData(data?.result?.content || []);
+        const normalizeTopics = (topics: any): string[] =>
+          Array.isArray(topics)
+            ? topics.map((t: any) => t.trim().toLowerCase())
+            : [];
 
+        const matchesFilterCategory = (
+          item: any,
+          filterCategory: string
+        ): boolean => {
+          if (!filterCategory) return false;
+          const normalizedTopics = normalizeTopics(item.topic);
+          return normalizedTopics.includes(filterCategory.trim().toLowerCase());
+        };
+
+        const extractSubTopics = (item: any): string[] =>
+          Array.isArray(item.subTopic)
+            ? item.subTopic
+            : [item.subTopic ?? 'Unknown'];
         const relatedData = Array.isArray(data?.result?.content)
           ? data.result.content
-              .filter((item) => {
-                const normalizedTopics = Array.isArray(item.topic)
-                  ? item.topic.map((t) => t.trim().toLowerCase())
-                  : [];
-
-                return (
-                  filterCategory?.trim().toLowerCase() &&
-                  normalizedTopics.includes(filterCategory.trim().toLowerCase())
-                );
-              })
-              .flatMap((item) =>
-                Array.isArray(item.subTopic)
-                  ? item.subTopic
-                  : [item.subTopic ?? 'Unknown']
-              )
+              .filter((item) => matchesFilterCategory(item, filterCategory))
+              .flatMap(extractSubTopics)
           : [];
 
         const flattenedContents = relatedData.map((name) => ({

@@ -169,9 +169,9 @@ const LandingPage = () => {
                   // borderRadius: '8px',
                   width: '100vw',
                   maxWidth: '100%',
-                  height: '63px',
+                  height: { xs: '63px', md: '178px' },
                   display: 'flex',
-                  justifyContent: 'space-around',
+                  justifyContent: { xs: 'space-around', md: 'center' },
                   flexWrap: 'wrap',
                   gap: 8,
                   alignItems: 'center',
@@ -186,10 +186,16 @@ const LandingPage = () => {
                   // { label: 'Reader', value: readerCount },
                 ].map((item, index) => (
                   <Box key={index}>
-                    <Typography fontWeight="400" sx={{ fontSize: '24px' }}>
+                    <Typography
+                      fontWeight="400"
+                      sx={{ fontSize: { xs: '24px', md: '64px' } }}
+                    >
                       {item.value}
                     </Typography>
-                    <Typography fontWeight="400" sx={{ fontSize: '10px' }}>
+                    <Typography
+                      fontWeight="400"
+                      sx={{ fontSize: { xs: '10px', md: '24px' } }}
+                    >
                       {item.label}
                     </Typography>
                   </Box>

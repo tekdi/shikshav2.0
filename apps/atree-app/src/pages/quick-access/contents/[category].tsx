@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from '../../../component/layout/layout';
 import FolderComponent from '../../../component/FolderComponent';
 import { useRouter } from 'next/router';
@@ -17,7 +17,6 @@ const MyComponent: React.FC = () => {
   const router = useRouter();
   const { category } = router.query;
 
-  const [categories, setCategories] = useState<Array<any>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [subFramework, setSubFramework] = useState('');
   const [filterShow, setFilterShow] = useState(false);
@@ -48,8 +47,6 @@ const MyComponent: React.FC = () => {
         frameworks
           .find((item: any) => item.code === 'topic')
           ?.terms?.find((e: any) => e.name === category)?.associations || [];
-
-      setCategories(categoryData);
     } catch (error) {
       console.error('Error fetching framework data:', error);
     }
@@ -130,8 +127,13 @@ const MyComponent: React.FC = () => {
             onClick={() => setSubFramework(item.identifier)}
             sx={{
               borderRadius: '8px',
-              color: '#001D32',
-              backgroundColor: '#E3E9EA',
+              color: subFramework === item.identifier ? '#FFFFFF' : '#001D32',
+              backgroundColor:
+                subFramework === item.identifier ? '#1976D2' : '#E3E9EA',
+              '&:hover': {
+                backgroundColor:
+                  subFramework === item.identifier ? '#1565C0' : '#D1D9DB',
+              },
             }}
           >
             {item.name}
@@ -210,8 +212,9 @@ const MyComponent: React.FC = () => {
               {...{
                 _grid: { size: { xs: 6, sm: 6, md: 4, lg: 3 } },
                 contentTabs: ['content'],
-                handleCardClick: (content: ContentSearchResponse) =>
-                  router.push(`/contents/${content?.identifier}`),
+                handleCardClick: (content: ContentSearchResponse) => {
+                  router.push(`/contents/${content?.identifier}`);
+                },
                 filters: {
                   filters: {
                     channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
