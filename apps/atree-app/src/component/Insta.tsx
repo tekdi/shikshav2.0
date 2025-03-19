@@ -13,7 +13,7 @@ const Insta: React.FC = () => {
   }, []);
   const handleClick = () => {
     window.open(
-      'https://www.instagram.com/env_edu_india',
+      'https://www.instagram.com/thesnailnetwork?utm_source=qr&igsh=ZTlieHhieGZ4MGh2',
       '_blank',
       'noopener noreferrer'
     );
@@ -23,7 +23,7 @@ const Insta: React.FC = () => {
     <div className="boxes3">
       <blockquote
         className="instagram-media"
-        data-instgrm-permalink="https://www.instagram.com/env_edu_india"
+        data-instgrm-permalink="https://www.instagram.com/thesnailnetwork?utm_source=qr&igsh=ZTlieHhieGZ4MGh2"
         data-instgrm-version="12"
         style={{
           background: '#FFF',

@@ -131,15 +131,15 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
           <ListItem
             key={item.type}
             onClick={() => {
-              onSelect(item.type);
-              router.push(`/searchpage?type=${item.type}`);
-              onClose();
+              setSelectedType(item.type);
+              setSearchType(item.type);
             }}
             sx={{
               cursor: 'pointer',
-              backgroundColor: 'transparent',
+              backgroundColor:
+                selectedType === item.type ? '#FFBD0D' : 'transparent',
               borderRadius: '8px',
-              '&:hover': { backgroundColor: '#F0F0F0' },
+              '&:hover': { backgroundColor: '#FFBD0D' },
             }}
           >
             <ListItemAvatar>

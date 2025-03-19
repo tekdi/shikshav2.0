@@ -106,7 +106,7 @@ export default function Index() {
           ? data.result.content
               .filter((item) => {
                 const normalizedTopics = Array.isArray(item.topic)
-                  ? item.topic.map((t) => t.trim().toLowerCase())
+                  ? item?.topic.map((t: any) => t.trim().toLowerCase())
                   : [];
 
                 return (
@@ -120,11 +120,7 @@ export default function Index() {
                   : [item.subTopic ?? 'Unknown']
               )
           : [];
-        const filteredItems = data?.result?.content?.filter((item) =>
-          item?.topic?.some?.(
-            (topic) => topic.toLowerCase() === filterCategory.toLowerCase()
-          )
-        );
+
         const flattenedContents = relatedData.map((name) => ({
           identifier: name.toLowerCase().replace(/\s+/g, '-'),
           name,

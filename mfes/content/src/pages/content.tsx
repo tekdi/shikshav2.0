@@ -26,6 +26,7 @@ export interface ContentProps {
   showBackToTop?: boolean;
   showHelpDesk?: boolean;
   filterBy?: boolean;
+  showArrowback?: boolean;
 }
 export default function Content(props: ContentProps) {
   const router = useRouter();
@@ -108,7 +109,6 @@ export default function Content(props: ContentProps) {
   };
 
   const handleCardClickLocal = async (content: ContentSearchResponse) => {
-    console.log('handleCardClickLocal===', content);
     try {
       if (
         [
@@ -244,36 +244,19 @@ export default function Content(props: ContentProps) {
   ) => {
     const accessValue = event.target.checked ? 'Full Access' : 'all'; // Set 'full' or 'all' based on switch state
     setFullAccess(event.target.checked);
-    setFilters((prev: any) => ({
-      ...prev,
+    setFilters((prevFilters: any) => ({
+      ...prevFilters,
       filters: {
-        access: accessValue, // Save switch state
-        offset: 0,
+        ...prevFilters.filters, // Preserve existing filters
+        access: accessValue === 'all' ? undefined : accessValue, // Remove 'access' key if 'all'
       },
+      offset: 0, // Reset pagination on filter change
     }));
   };
 
   return (
     <Loader isLoading={isPageLoading}>
       <Box sx={{ p: 2 }}>
-        {propData?.filterBy && (
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              marginBottom: '20px',
-            }}
-          >
-            <ArrowBackIosIcon onClick={() => router.back()} />
-            <Typography
-              sx={{ color: '#1C170D', fontSize: '22px', fontWeight: 700 }}
-            >
-              {localStorage.getItem('category')
-                ? localStorage.getItem('category')
-                : ''}
-            </Typography>
-          </Box>
-        )}
         {(propData?.showSearch || propData?.showFilter) && (
           <Box
             sx={{

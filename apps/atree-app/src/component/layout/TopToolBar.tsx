@@ -165,7 +165,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
               <SearchTypeModal
                 open={isSearchOpen}
                 onClose={handleSearchClose}
-                onSelect={(type) => router.push(`/searchpage?type=${type}`)}
+                onSelect={(type) => console.log(type)}
               />
 
               <IconButton

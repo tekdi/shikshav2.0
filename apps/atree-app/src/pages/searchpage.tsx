@@ -1,14 +1,13 @@
 'use client';
 
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Box, Button, Grid, Typography } from '@mui/material';
+import { Box, Button, Grid, IconButton, Typography } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useState } from 'react';
 import atreeLogo from '../../assets/images/atreeLogo.png';
 import Layout from '../component/layout/layout';
 import dynamic from 'next/dynamic';
-import { useTranslation } from 'react-i18next';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { ContentSearchResponse } from '../service/types';
 
 const Content = dynamic(() => import('@Content'), {
   ssr: false,
@@ -42,10 +41,13 @@ export default function Searchpage() {
 
   return (
     <Layout>
-      <Box display="flex" flexDirection="column" gap="3rem" py="3rem" px="14px">
-        {/* {selectedType && (
-          <FrameworkFilter framework={framework} setFramework={setFramework} />
-        )} */}
+      <Box display="flex" flexDirection="column" gap="1rem" py="1rem" px="14px">
+        <IconButton
+          onClick={() => router.back()}
+          sx={{ justifyContent: 'flex-start', padding: '0px' }}
+        >
+          <ArrowBackIcon />
+        </IconButton>
         <Grid container spacing={3} justifyContent={'center'}>
           {selectedquery && (
             <Grid item xs={12}>
@@ -95,6 +97,9 @@ export default function Searchpage() {
             {...{
               _grid: {
                 size: { xs: 6, sm: 6, md: 4, lg: 3 },
+              },
+              handleCardClick: (content: ContentSearchResponse) => {
+                router.push(`/contents/${content?.identifier}`);
               },
               contentTabs: ['content'],
               filters: {
