@@ -21,23 +21,16 @@ const Insta: React.FC = () => {
     );
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      handleClick();
-    }
-  };
-
   if (!isClient) return null;
 
   return (
     <div className="boxes3">
-      {/* Wrapper div for mouse & keyboard events */}
-      <div
-        role="button"
-        tabIndex={0}
+      {/* Button wrapper with aria-label for better accessibility */}
+      <button
         onClick={handleClick}
-        onKeyDown={handleKeyDown}
+        aria-label="View Instagram Post"
         style={{
+          all: 'unset', // Removes button default styles
           cursor: 'pointer',
           display: 'inline-block',
           outline: 'none',
@@ -45,7 +38,7 @@ const Insta: React.FC = () => {
       >
         <blockquote
           className="instagram-media"
-          data-instgrm-permalink="https://www.instagram.com/p/Cx8iF2YLY6v/"
+          data-instgrm-permalink="https://www.instagram.com/thesnailnetwork?utm_source=qr&igsh=ZTlieHhieGZ4MGh2"
           data-instgrm-version="12"
           style={{
             background: '#FFF',
@@ -158,7 +151,7 @@ const Insta: React.FC = () => {
             </p>
           </div>
         </blockquote>
-      </div>
+      </button>
     </div>
   );
 };
