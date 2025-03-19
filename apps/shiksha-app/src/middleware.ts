@@ -9,10 +9,23 @@ export function middleware(request: { nextUrl: { clone: () => any } }) {
     return NextResponse.rewrite(url);
   }
 
-  if (url.pathname.startsWith('/mfe_content')) {
+  if (
+    url.pathname.startsWith('/mfe_content') ||
+    url.pathname.startsWith('/content-plugins')
+  ) {
     url.hostname = 'localhost';
     url.port = '4105';
+    if (url.pathname.startsWith('/content-plugins')) {
+      url.pathname = '/mfe_content' + url.pathname;
+    }
     return NextResponse.rewrite(url);
+  }
+
+  if (url.pathname.startsWith('/assets')) {
+    url.protocol = 'https';
+    url.hostname = process.env.NEXT_PUBLIC_ASSETS_HOSTNAME || 'sunbirdsaas.com';
+    url.port = '';
+    return NextResponse.redirect(url);
   }
 
   return NextResponse.next();

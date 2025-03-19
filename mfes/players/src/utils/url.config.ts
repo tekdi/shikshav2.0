@@ -107,6 +107,7 @@ export const MIME_TYPE = {
   INTERACTIVE_MIME_TYPE: [
     'application/vnd.ekstep.h5p-archive',
     'application/vnd.ekstep.html-archive',
+    'application/vnd.ekstep.ecml-archive',
   ],
 };
 
@@ -179,7 +180,7 @@ export const V1PlayerConfig: PlayerConfig = {
       },
     ],
     showStartPage: true,
-    host: process.env.NEXT_PUBLIC_TELEMETRY_URL,
+    // host: process.env.NEXT_PUBLIC_TELEMETRY_URL,
     endpoint: '/v1/telemetry',
     overlay: {
       enableUserSwitcher: true,
