@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 const Insta: React.FC = () => {
   const [isClient, setIsClient] = useState(false);
+
   useEffect(() => {
     setIsClient(true);
 
@@ -11,19 +12,22 @@ const Insta: React.FC = () => {
     script.async = true;
     document.body.appendChild(script);
   }, []);
+
   const handleClick = () => {
     window.open(
-      'https://www.instagram.com/thesnailnetwork?utm_source=qr&igsh=ZTlieHhieGZ4MGh2',
+      'https://www.instagram.com/thesnailnetwork/',
       '_blank',
       'noopener noreferrer'
     );
   };
+
   if (!isClient) return null;
+
   return (
     <div className="boxes3">
       <blockquote
         className="instagram-media"
-        data-instgrm-permalink="https://www.instagram.com/thesnailnetwork?utm_source=qr&igsh=ZTlieHhieGZ4MGh2"
+        data-instgrm-permalink="https://www.instagram.com/p/Cx8iF2YLY6v/"
         data-instgrm-version="12"
         style={{
           background: '#FFF',
@@ -32,7 +36,6 @@ const Insta: React.FC = () => {
           boxShadow: '0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15)',
           margin: '1px',
           padding: '0',
-          height: undefined,
           maxHeight: '100%',
           width: 'calc(100vw - 64px)',
         }}
@@ -40,8 +43,7 @@ const Insta: React.FC = () => {
       >
         <div style={{ padding: '16px' }}>
           <a
-            id="main_link"
-            href="env_edu_india"
+            href="https://www.instagram.com/env_edu_india/"
             style={{
               background: '#FFFFFF',
               lineHeight: '0',
@@ -51,6 +53,7 @@ const Insta: React.FC = () => {
               width: '100%',
             }}
             target="_blank"
+            rel="noopener noreferrer"
           >
             <div
               style={{
@@ -63,7 +66,6 @@ const Insta: React.FC = () => {
                 style={{
                   backgroundColor: '#F4F4F4',
                   borderRadius: '50%',
-                  flex: '0',
                   height: '40px',
                   marginRight: '14px',
                   width: '40px',
@@ -73,7 +75,6 @@ const Insta: React.FC = () => {
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  flex: '1',
                   justifyContent: 'center',
                 }}
               >
@@ -81,7 +82,6 @@ const Insta: React.FC = () => {
                   style={{
                     backgroundColor: '#F4F4F4',
                     borderRadius: '4px',
-                    flex: '0',
                     height: '14px',
                     marginBottom: '6px',
                     width: '100px',
@@ -91,7 +91,6 @@ const Insta: React.FC = () => {
                   style={{
                     backgroundColor: '#F4F4F4',
                     borderRadius: '4px',
-                    flex: '0',
                     height: '14px',
                     width: '60px',
                   }}
@@ -116,17 +115,15 @@ const Insta: React.FC = () => {
             }}
           >
             <a
-              href="env_edu_india"
+              href="https://www.instagram.com/env_edu_india/"
               style={{
                 color: '#c9c8cd',
                 fontFamily: 'Arial,sans-serif',
                 fontSize: '14px',
-                fontStyle: 'normal',
-                fontWeight: 'normal',
-                lineHeight: '17px',
                 textDecoration: 'none',
               }}
               target="_blank"
+              rel="noopener noreferrer"
             >
               Shared post
             </a>{' '}
@@ -143,7 +140,6 @@ const Insta: React.FC = () => {
           </p>
         </div>
       </blockquote>
-      <script async src="https://www.instagram.com/embed.js"></script>
     </div>
   );
 };

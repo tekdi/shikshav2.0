@@ -1,28 +1,15 @@
 export interface ContentSearchResponse {
-  ownershipType?: string[];
-  publish_type?: string;
   copyright?: string;
-  se_gradeLevelIds?: string[];
+
   keywords?: string[];
   subject?: string[];
-  targetMediumIds?: string[];
   channel?: string;
   downloadUrl?: string;
   organisation?: string[];
   language?: string[];
   mimeType?: string;
-  variants?: {
-    spine?: {
-      ecarUrl?: string;
-      size?: string;
-    };
-    online?: {
-      ecarUrl?: string;
-      size?: string;
-    };
-  };
+
   leafNodes?: string[];
-  targetGradeLevelIds?: string[];
   objectType?: string;
   se_mediums?: string[];
   appIcon?: string;
@@ -48,59 +35,30 @@ export interface ContentSearchResponse {
   author?: string;
   consumerId?: string;
   childNodes?: string[];
-  discussionForum?: {
-    enabled?: string;
-  };
+
   mediaType?: string;
-  osId?: string;
-  graph_id?: string;
-  nodeType?: string;
   lastPublishedBy?: string;
   version?: number;
-  se_subjects?: string[];
   license?: string;
   size?: number;
-  lastPublishedOn?: string;
   name?: string;
   attributions?: string[];
-  targetBoardIds?: string[];
   status?: string;
   code?: string;
-  publishError?: string | null;
-  credentials?: {
-    enabled?: string;
-  };
-  prevStatus?: string;
+
   description?: string;
   posterImage?: string;
-  idealScreenSize?: string;
-  createdOn?: string;
-  se_boards?: string[];
-  targetSubjectIds?: string[];
-  se_mediumIds?: string[];
-  copyrightYear?: number;
+
   contentDisposition?: string;
   additionalCategories?: string[];
-  lastUpdatedOn?: string;
-  dialcodeRequired?: string;
   createdFor?: string[];
   creator?: string;
-  os?: string[];
-  se_subjectIds?: string[];
-  se_FWIds?: string[];
-  targetFWIds?: string[];
-  pkgVersion?: number;
-  versionKey?: string;
-  migrationVersion?: number;
-  idealScreenDensity?: string;
+
   framework?: string;
   depth?: number;
-  s3Key?: string;
-  lastSubmittedOn?: string;
-  createdBy?: string;
-  compatibilityLevel?: number;
+
   leafNodesCount?: number;
-  userConsent?: string;
+
   resourceType?: string;
   node_id?: number;
   topic: string | string[];
