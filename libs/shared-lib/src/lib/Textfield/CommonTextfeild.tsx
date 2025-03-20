@@ -19,6 +19,7 @@ interface CommonTextFieldProps {
   endIcon?: React.ReactNode;
   multiline?: boolean; // Add this line
   rows?: number; // Add this line
+  focused?: boolean;
 }
 export const CommonTextField: React.FC<CommonTextFieldProps> = ({
   label,
