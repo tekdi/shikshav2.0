@@ -1,4 +1,3 @@
-import CloseIcon from '@mui/icons-material/Close';
 import {
   Box,
   Button,
@@ -6,22 +5,65 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
   Divider,
   FormControl,
   FormControlLabel,
-  IconButton,
+  FormLabel,
   InputLabel,
   ListItemText,
   MenuItem,
-  OutlinedInput,
   Radio,
   RadioGroup,
   Select,
   Typography,
 } from '@mui/material';
 import React, { useState } from 'react';
+const formControlStyles = {
+  '&.Mui-focused': { color: '#1D1B20' },
+  '& .MuiInputLabel-root.Mui-focused': { color: '#1D1B20' },
+  '& .MuiInputLabel-root': { color: '#1D1B20' },
+  '& .MuiOutlinedInput-root': {
+    color: '#1D1B20',
+    '& .MuiOutlinedInput-notchedOutline': { borderColor: '#1D1B20' },
+    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#1D1B20' },
+    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#1D1B20',
+    },
+  },
+};
 
+// Reusable Checkbox Component
+const CustomCheckbox = ({
+  option,
+  filterCode,
+  handleCheckboxChange,
+  currentSelectedValues,
+}: any) => (
+  <FormControlLabel
+    key={option.label}
+    control={
+      <Checkbox
+        checked={currentSelectedValues.includes(option.label)}
+        onChange={(event) => handleCheckboxChange(event, filterCode)}
+        value={option.label}
+        sx={{ color: '#1D1B20', '&.Mui-checked': { color: '#FFBD0D' } }}
+      />
+    }
+    label={option.label}
+  />
+);
+
+// Reusable Radio Component
+const CustomRadio = ({ option }: any) => (
+  <FormControlLabel
+    key={option.value}
+    value={option.value}
+    control={
+      <Radio sx={{ color: '#1D1B20', '&.Mui-checked': { color: '#FFBD0D' } }} />
+    }
+    label={option.label}
+  />
+);
 const FilterDialog = ({
   open,
   onClose,
@@ -59,18 +101,40 @@ const FilterDialog = ({
   filterValues: any;
 }) => {
   // Manage the selected values for each category
-  const [selectedValues, setSelectedValues] = useState(
-    filterValues ? filterValues : {}
-  ); // Initialize as an empty object
+  const [selectedValues, setSelectedValues] = useState(filterValues ?? {}); // Initialize as an empty object
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
 
-  const handleChange = (event: any, filterCode: any) => {
+  const handleChange = (event: any, filterCode: string) => {
     const { value } = event.target;
+    const newValue = typeof value === 'string' ? value.split(',') : value;
+
+    if (filterCode === 'topic') {
+      setSelectedTopic(newValue); // Update the selected topic
+      setSelectedValues((prev: any) => ({
+        ...prev,
+        subTopic: [], // Reset subtopics when topic changes
+      }));
+    }
 
     setSelectedValues((prev: any) => ({
       ...prev,
-      [filterCode]: typeof value === 'string' ? value.split(',') : value,
+      [filterCode]: newValue,
     }));
   };
+  const handleCheckboxChange = (event: any, filterCode: string) => {
+    const { checked, value } = event.target;
+
+    setSelectedValues((prev: any) => {
+      const currentValues = prev[filterCode] || [];
+      return {
+        ...prev,
+        [filterCode]: checked
+          ? [...currentValues, value]
+          : currentValues.filter((v: string) => v !== value),
+      };
+    });
+  };
+
   return (
     <Dialog
       open={open}
@@ -81,119 +145,69 @@ const FilterDialog = ({
         '& .MuiDialog-paper': { backgroundColor: '#FEF7FF' },
       }}
     >
-      <DialogTitle>Filters</DialogTitle>
-      <IconButton
-        aria-label="close"
-        onClick={onClose}
-        sx={(theme) => ({
-          position: 'absolute',
-          right: 8,
-          top: 8,
-          color: theme.palette.grey[500],
-        })}
-      >
-        <CloseIcon />
-      </IconButton>
       <DialogContent dividers>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {/* new filter frameworkFilter */}
-          {frameworkFilter?.categories &&
-            frameworkFilter.categories.map((categories: any) => {
-              const filterCode =
-                categories?.code === 'sub-topic'
-                  ? 'subTopic'
-                  : categories?.code; // Set "subTopic" explicitly
-              const componentKey = `multi-checkbox-label_${categories?.identifier}`;
+          {frameworkFilter?.categories?.map((category: any) => {
+            const filterCode =
+              category?.code === 'subTopic' ? 'subTopic' : category?.code;
 
-              // Transform terms into options
-              const options = categories?.terms.map((term: any) => ({
-                label: term.name,
-                value: term.code,
-              }));
+            // Transform terms into options
+            const options =
+              category?.terms?.map((term: any) => ({
+                label: term?.name,
+                value: term?.code,
+              })) ?? [];
 
-              // Get the selected values for the current category
-              const currentSelectedValues = selectedValues[filterCode] || [];
-              return (
-                <FormControl
-                  fullWidth
-                  key={filterCode}
-                  sx={{
-                    '&.Mui-focused': {
-                      color: '#1D1B20', // Label color when focused
-                    },
-                    '& .MuiInputLabel-root.Mui-focused': {
-                      color: '#1D1B20', // Label color when focused
-                    },
-                    '& .MuiInputLabel-root': { color: '#1D1B20' }, // Label color
-                    '& .MuiOutlinedInput-root': {
-                      color: '#1D1B20', // Value color
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#1D1B20', // Outline color
-                      },
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#1D1B20', // Outline color on hover
-                      },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#1D1B20', // Outline color when focused
-                      },
-                    },
-                  }}
+            // Get the selected vaalues for the current category
+            const currentSelectedValues = selectedValues?.[filterCode] ?? [];
+            return (
+              <FormControl fullWidth key={filterCode} sx={formControlStyles}>
+                <FormLabel
+                  component="legend"
+                  sx={{ fontSize: '18px', fontWeight: 600, color: '#181D27' }}
                 >
-                  <InputLabel id={componentKey}>{categories?.name}</InputLabel>
-                  <Select
-                    labelId={componentKey}
-                    input={<OutlinedInput label={categories?.name} />}
-                    multiple
-                    value={currentSelectedValues}
+                  {category?.name === 'Sub-Topic'
+                    ? 'Select Resource Type'
+                    : category?.name}
+                </FormLabel>
+
+                {/* Topic - RadioGroup */}
+                {filterCode === 'topic' && (
+                  <RadioGroup
+                    value={currentSelectedValues?.[0] ?? ''}
                     onChange={(event) => handleChange(event, filterCode)}
-                    renderValue={(selected) =>
-                      selected
-                        .map((selectedValue: any) => {
-                          const selectedOption = options.find(
-                            (option: any) => option.label === selectedValue
-                          );
-                          return selectedOption ? selectedOption.label : '';
-                        })
-                        .join(', ')
-                    }
                   >
-                    {options.map((option: any) => (
-                      <MenuItem key={option.value} value={option.label}>
-                        <Checkbox
-                          sx={{
-                            color: '#6750A4', // Default checkbox color
-                            '&.Mui-checked': {
-                              color: '#6750A4', // Checked checkbox color
-                            },
-                          }}
-                          checked={currentSelectedValues.includes(option.label)}
-                        />
-                        <ListItemText primary={option.label} />
-                      </MenuItem>
+                    {options?.map((option: any) => (
+                      <CustomRadio key={option?.value} option={option} />
                     ))}
-                  </Select>
-                </FormControl>
-              );
-            })}
+                  </RadioGroup>
+                )}
+
+                {/* SubTopic - Checkboxes */}
+                {filterCode === 'subTopic' && selectedTopic && (
+                  <Box>
+                    {options
+                      ?.filter((option: any) =>
+                        option?.value?.includes(selectedTopic)
+                      )
+                      ?.map((option: any) => (
+                        <CustomCheckbox
+                          key={option?.label}
+                          option={option}
+                          filterCode={filterCode}
+                          handleCheckboxChange={handleCheckboxChange}
+                          currentSelectedValues={currentSelectedValues}
+                        />
+                      ))}
+                  </Box>
+                )}
+              </FormControl>
+            );
+          })}
         </Box>
         <Divider sx={{ marginTop: 4 }} />
-        {/* <FormControl fullWidth>
-            <InputLabel id="multi-checkbox-label">Select Options</InputLabel>
-            <Select
-              labelId="multi-checkbox-label"
-              multiple
-              value={selectedOptions}
-              onChange={handleChange}
-              renderValue={(selected) => selected.join(', ')} // Display selected options
-            >
-              {options.map((option) => (
-                <MenuItem key={option} value={option}>
-                  <Checkbox checked={selectedOptions.indexOf(option) > -1} />
-                  <ListItemText primary={option} />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl> */}
+
         {/* Sort By */}
         {filter?.sort && (
           <>
@@ -303,11 +317,13 @@ const FilterDialog = ({
               }}
               sx={{
                 borderRadius: '100px',
-                color: '#6750A4',
+                color: '#414651',
                 textTransform: 'none',
+                border: '1px solid #D5D7DA',
+                width: '132px',
               }}
             >
-              Clear All
+              Reset
             </Button>
             <Button
               variant="contained"
@@ -317,10 +333,11 @@ const FilterDialog = ({
               }}
               sx={{
                 borderRadius: '100px',
-                bgcolor: '#6750A4',
-                color: '#FFFFFF',
+                bgcolor: '#FFBD0D',
+                color: '#2B3133',
                 marginLeft: 2,
                 textTransform: 'none',
+                width: '132px',
               }}
             >
               Apply

@@ -12,6 +12,7 @@ import {
   CardMedia,
   Chip,
   Dialog,
+  DialogActions,
   DialogContent,
   DialogTitle,
   IconButton,
@@ -25,6 +26,7 @@ import Carousel from 'react-material-ui-carousel';
 import ShareIcon from '@mui/icons-material/Share';
 import ShareDialog from '../../component/ShareDialog';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Loader from '../../component/layout/LoaderComponent';
 
 interface ContentItem {
   name: string;
@@ -69,13 +71,18 @@ export default function Content() {
   }, [identifier]);
   const keywords = contentData?.keywords || [];
   const showMoreIcon = keywords.length > 3;
-  const displayedKeywords = showMoreIcon ? keywords.slice(0, 3) : keywords;
+  const capitalizeFirstLetter = (word: string) =>
+    word.charAt(0).toUpperCase() + word.slice(1);
+
+  const displayedKeywords = (
+    showMoreIcon ? keywords.slice(0, 4) : keywords
+  ).map(capitalizeFirstLetter);
   const remainingKeywords = keywords.slice(3);
   useEffect(() => {
     if (identifier) fetchContent();
   }, [identifier]);
 
-  if (isLoading) return <Circular />;
+  if (isLoading) return <Loader />;
 
   const handleItemClick = (to: string) => {
     router.push(to);
@@ -153,25 +160,6 @@ export default function Content() {
                         Published by PrathamBooks {i + 1}
                       </Typography>
                     </Box>
-                    <IconButton
-                      size="small"
-                      onClick={() => console.log('Share button clicked!')}
-                      sx={{
-                        zIndex: 9999,
-                        backgroundColor: 'white',
-                        borderRadius: '50%',
-                        padding: '6px',
-                        boxShadow: 1,
-                        '&:hover': {
-                          backgroundColor: '#f0f0f0', // Light gray on hover
-                        },
-                      }}
-                    >
-                      <ShareIcon
-                        fontSize="small"
-                        onClick={() => console.log('Share button clicked!')}
-                      />
-                    </IconButton>
                   </Box>
                 }
               />
@@ -196,7 +184,12 @@ export default function Content() {
               key={index}
               label={label}
               variant="outlined"
-              sx={{ mr: 0.5 }}
+              sx={{
+                height: '32px',
+                gap: '2px',
+                padding: '6px 8px',
+                borderRadius: '0px',
+              }}
             />
           ))}
           {showMoreIcon && (
@@ -209,11 +202,35 @@ export default function Content() {
           <DialogTitle>More Keywords</DialogTitle>
           <DialogContent>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-              {remainingKeywords.map((label: any, index: any) => (
-                <Chip key={index} label={label} variant="outlined" />
+              {remainingKeywords.map((label: any) => (
+                <Chip
+                  key={label}
+                  label={label.charAt(0).toUpperCase() + label.slice(1)}
+                  variant="outlined"
+                  sx={{
+                    height: '32px',
+                    gap: '8px',
+                    padding: '6px 8px',
+                    borderRadius: '0px',
+                  }}
+                />
               ))}
             </Box>
           </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => setOpenPopup(false)}
+              variant="contained"
+              color="secondary"
+              sx={{
+                borderRadius: '50px',
+                height: '40px',
+                width: '100%',
+              }}
+            >
+              Close
+            </Button>
+          </DialogActions>
         </Dialog>
         <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
           Based on real accounts, this is an imagined story of a boy in the

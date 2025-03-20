@@ -3,18 +3,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import SearchIcon from '@mui/icons-material/Search';
-import { Box, Chip, Typography } from '@mui/material';
+import { Box, Chip, Typography, Switch } from '@mui/material';
 import { CommonSearch, getData, Loader } from '@shared-lib';
 import { useRouter } from 'next/navigation';
 import BackToTop from '../components/BackToTop';
-import FilterDialog from '../components/contentFilter';
 import RenderTabContent from '../components/ContentTabs';
 import HelpDesk from '../components/HelpDesk';
 import { hierarchyAPI } from '../services/Hierarchy';
 import { ContentSearch, ContentSearchResponse } from '../services/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import { Switch, FormControlLabel } from '@mui/material';
+import FilterDialog from 'libs/shared-lib/src/lib/Filterdialog/FilterDialog';
 export interface ContentProps {
   _grid?: object;
   filters?: object;
@@ -26,6 +24,7 @@ export interface ContentProps {
   showBackToTop?: boolean;
   showHelpDesk?: boolean;
   filterBy?: boolean;
+  showArrowback?: boolean;
 }
 export default function Content(props: ContentProps) {
   const router = useRouter();
@@ -231,42 +230,39 @@ export default function Content(props: ContentProps) {
         const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
         const frameworkData = await fetch(url).then((res) => res.json());
         const frameworks = frameworkData?.result?.framework;
-        setFrameworkFilter(frameworks);
+        const filteredFramework = {
+          ...frameworks,
+          categories: frameworks.categories.filter(
+            (category: any) => category.status === 'Live'
+          ),
+        };
+        console.log(filteredFramework);
+        setFrameworkFilter(filteredFramework);
       } catch (error) {
         console.error('Error fetching board data:', error);
       }
     };
     fetchFramework();
   }, [router]);
+
   const handleToggleFullAccess = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setFilters((prev: any) => ({
-      ...prev,
-      access: event.target.checked, // Save switch state
+    const accessValue = event.target.checked ? 'Full Access' : 'all'; // Set 'full' or 'all' based on switch state
+    setFullAccess(event.target.checked);
+    setFilters((prevFilters: any) => ({
+      ...prevFilters,
+      filters: {
+        ...prevFilters.filters, // Preserve existing filters
+        access: accessValue === 'all' ? undefined : accessValue, // Remove 'access' key if 'all'
+      },
+      offset: 0, // Reset pagination on filter change
     }));
   };
+
   return (
     <Loader isLoading={isPageLoading}>
       <Box sx={{ p: 2 }}>
-        {propData?.filterBy && (
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              marginBottom: '20px',
-            }}
-          >
-            <ArrowBackIosIcon onClick={() => router.back()} />
-            <Typography
-              sx={{ color: '#1C170D', fontSize: '22px', fontWeight: 700 }}
-            >
-              {localStorage.getItem('category')
-                ? localStorage.getItem('category')
-                : ''}
-            </Typography>
-          </Box>
-        )}
         {(propData?.showSearch || propData?.showFilter) && (
           <Box
             sx={{
@@ -309,10 +305,8 @@ export default function Content(props: ContentProps) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     cursor: 'pointer',
-                    backgroundColor: propData?.filterBy
-                      ? 'transparent'
-                      : '#ECE6F0',
-                    borderRadius: '12px',
+                    backgroundColor: '#ffffff',
+                    borderRadius: propData?.filterBy ? '0px' : '12px',
                     // padding: '8px',
                     width: propData?.filterBy ? 'auto' : '56px', // Auto width for Filter By
                     height: propData?.filterBy ? 'auto' : '46px', // Auto height for Filter By
@@ -348,11 +342,11 @@ export default function Content(props: ContentProps) {
                         onClick={() => setFilterShow(true)}
                         sx={{
                           color: '#000000',
-                          borderRadius: '0px',
+                          borderRadius: '8px',
                           fontSize: '14px',
                           fontWeight: '500',
                           cursor: 'pointer',
-                          // backgroundColor: '#1E1E1E',
+                          backgroundColor: '#FFFFFF',
                           border: '1px solid #C2C7CF',
                           paddingX: '8px',
                         }}
@@ -382,8 +376,8 @@ export default function Content(props: ContentProps) {
                   </Typography>
 
                   <Switch
-                    checked={filterValue} // Controlled state for switch
-                    onChange={(e) => setFilterValue(e.target.checked)}
+                    checked={fullAccess} // Controlled state for switch
+                    onChange={handleToggleFullAccess}
                     sx={{
                       width: 42,
                       height: 26,
@@ -409,10 +403,11 @@ export default function Content(props: ContentProps) {
                           border: '6px solid #fff',
                         },
                         '&.Mui-disabled .MuiSwitch-thumb': {
-                          color: '#33cf4d',
+                          color: '#BDBDBD', // Grey thumb when disabled
                         },
                         '&.Mui-disabled + .MuiSwitch-track': {
-                          opacity: 0.7,
+                          opacity: 0.5,
+                          background: '#BDBDBD', // Grey track when disabled
                         },
                       },
                       '& .MuiSwitch-thumb': {
@@ -422,8 +417,9 @@ export default function Content(props: ContentProps) {
                       },
                       '& .MuiSwitch-track': {
                         borderRadius: 26 / 2,
-                        background:
-                          'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                        background: fullAccess
+                          ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
+                          : '#BDBDBD', // Grey when unchecked
                         opacity: 1,
                       },
                     }}

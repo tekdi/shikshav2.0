@@ -11,7 +11,15 @@ import { ImageBanner } from '../component/layout/ImageBanner';
 import { Typography, Box } from '@mui/material';
 export default function Contactus() {
   return (
-    <Layout isFooter={true}>
+    <Layout
+      footerComponent={
+        <Grid sx={{ px: 4, py: 1, backgroundColor: 'secondary.main' }}>
+          <Typography align="center" gutterBottom sx={{ fontSize: '10px' }}>
+            Curated by ATREE: For, Of, and By Environment Educators of India
+          </Typography>
+        </Grid>
+      }
+    >
       <Grid
         container
         spacing={2}
@@ -35,7 +43,15 @@ export default function Contactus() {
         </Typography>
 
         {/* Contact Information */}
-        <Box sx={{ maxWidth: '600px', textAlign: 'left', p: 2 }}>
+        <Box
+          sx={{
+            maxWidth: { xs: '600px', md: '100%' },
+            textAlign: 'left',
+            p: 2,
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+          }}
+        >
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <LocalPhoneOutlinedIcon sx={{ color: 'goldenrod', mr: 1 }} />
             <Typography variant="body1" sx={{ color: '#333' }}>
@@ -50,7 +66,7 @@ export default function Contactus() {
             </Typography>
           </Box>
 
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <LocationOnOutlinedIcon sx={{ color: 'goldenrod', mr: 1 }} />
             <Typography variant="body1" sx={{ color: '#333' }}>
               Royal Enclave, Srirampura, Jakkur, Bengaluru, Karnataka 560064
@@ -71,7 +87,7 @@ export default function Contactus() {
             loading="lazy"
             allowFullScreen
             referrerPolicy="no-referrer-when-downgrade"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3890.031764934963!2d77.5881258!3d13.0826805!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1902dd777cd7%3A0x508173348b3c3ec2!2sATREE%20-%20Ashoka%20Trust%20for%20Research%20in%20Ecology%20and%20the%20Environment!5e0!3m2!1sen!2sin!4v1648718055280!5m2!1sen!2sin"
+            src="https://www.google.com/maps?q=Royal+Enclave,+Srirampura,+Jakkur,+Bengaluru,+Karnataka+560064&output=embed"
           ></iframe>
         </Box>
       </Grid>

@@ -6,13 +6,22 @@ import { Typography } from '@mui/material';
 import { ImageBanner } from '../component/layout/ImageBanner';
 export default function Aboutus() {
   return (
-    <Layout isFooter={true}>
+    <Layout
+      footerComponent={
+        <Grid sx={{ px: 4, py: 1, backgroundColor: 'secondary.main' }}>
+          <Typography align="center" gutterBottom sx={{ fontSize: '10px' }}>
+            Curated by ATREE: For, Of, and By Environment Educators of India
+          </Typography>
+        </Grid>
+      }
+    >
       <Grid
         container
         spacing={2}
         direction="column"
         alignItems="center"
         justifyContent="center"
+        marginBottom={'25px'}
       >
         <ImageBanner
           name={
@@ -30,7 +39,13 @@ export default function Aboutus() {
         </Typography>
 
         {/* About Us Description */}
-        <Typography sx={{ textAlign: 'left', pl: 2, pr: 2 }}>
+        <Typography
+          sx={{
+            textAlign: { xs: 'left', md: 'center' },
+            pl: { xs: 2, md: 10 },
+            pr: { xs: 2, md: 10 },
+          }}
+        >
           Jal Jungle Jameen in classrooms is a unique digital repository of
           multi-format, multi-language environment education resources for
           middle and high school level, contextual to India that is curated by
@@ -39,7 +54,13 @@ export default function Aboutus() {
           conservation of India’s key natural resources—Water, Land, and Forests
           (Jal, Jungle, Jameen).
         </Typography>
-        <Typography sx={{ textAlign: 'left', pl: 2, pr: 2 }}>
+        <Typography
+          sx={{
+            textAlign: { xs: 'left', md: 'center' },
+            pl: { xs: 2, md: 10 },
+            pr: { xs: 2, md: 10 },
+          }}
+        >
           By collaborating with schools, teachers, conservation and environment
           NGOs, education NGOs, education government departments, NCERT, and
           environment educators across India, we offer access to a variety of

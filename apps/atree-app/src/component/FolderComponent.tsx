@@ -14,12 +14,14 @@ const FolderComponent = ({
   subLabel,
   _item,
   _title,
+  length,
 }: {
   categories: Array<any>;
   onClick?: any;
   subLabel?: string;
   _item?: any;
   _title?: any;
+  length?: Array<any>;
 }) => {
   return (
     <List sx={{ p: 2 }}>
@@ -49,9 +51,14 @@ const FolderComponent = ({
                   lineHeight: '16px',
                   letterSpacing: '0.4px',
                 }}
-              >{`${category?.associations?.length || 0} ${
-                subLabel || 'Folders'
-              }`}</Typography>
+              >
+                {length
+                  ? length?.find((len) => len.subTopic === category.name)
+                      ?.length || 0
+                  : `${category?.associations?.length || 0} ${
+                      subLabel || 'Folders'
+                    }`}
+              </Typography>
             </Box>
           </Box>
         </ListItem>

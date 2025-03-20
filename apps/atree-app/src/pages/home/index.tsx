@@ -18,10 +18,10 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import atreeLogo from '../../../assets/images/atreeLogo.png';
 import Layout from '../../component/layout/layout';
-
 // import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'next/navigation';
+import Loader from '../../component/layout/LoaderComponent';
 const buttonColors = {
   water: '#0E28AE',
   land: '#8F4A50',
@@ -102,29 +102,32 @@ export default function Index() {
         });
         setContentData(data?.result?.content || []);
 
+        const getNormalizedTopics = (topic: any): string[] =>
+          Array.isArray(topic)
+            ? topic.map((t: any) => t.trim().toLowerCase())
+            : [];
+
+        const filterContentByCategory = (
+          item: any,
+          filterCategory: string
+        ): boolean => {
+          if (!filterCategory) return false;
+
+          const normalizedTopics = getNormalizedTopics(item.topic);
+          return normalizedTopics.includes(filterCategory.trim().toLowerCase());
+        };
+
+        const getSubTopics = (item: any): string[] =>
+          Array.isArray(item.subTopic)
+            ? item.subTopic
+            : [item.subTopic ?? 'Unknown'];
+
         const relatedData = Array.isArray(data?.result?.content)
           ? data.result.content
-              .filter((item) => {
-                const normalizedTopics = Array.isArray(item.topic)
-                  ? item.topic.map((t) => t.trim().toLowerCase())
-                  : [];
-
-                return (
-                  filterCategory?.trim().toLowerCase() &&
-                  normalizedTopics.includes(filterCategory.trim().toLowerCase())
-                );
-              })
-              .flatMap((item) =>
-                Array.isArray(item.subTopic)
-                  ? item.subTopic
-                  : [item.subTopic ?? 'Unknown']
-              )
+              .filter((item) => filterContentByCategory(item, filterCategory))
+              .flatMap(getSubTopics)
           : [];
-        const filteredItems = data?.result?.content?.filter((item) =>
-          item?.topic?.some?.(
-            (topic) => topic.toLowerCase() === filterCategory.toLowerCase()
-          )
-        );
+
         const flattenedContents = relatedData.map((name) => ({
           identifier: name.toLowerCase().replace(/\s+/g, '-'),
           name,
@@ -156,24 +159,36 @@ export default function Index() {
         });
 
         setContentData(data?.result?.content || []);
+        const normalizeTopics = (topics: any): string[] =>
+          Array.isArray(topics)
+            ? topics.map((t: any) => t.trim().toLowerCase())
+            : [];
 
+        const matchesFilterCategory = (
+          item: any,
+          filterCategory: string
+        ): boolean => {
+          if (!filterCategory) return false;
+
+          return isCategoryMatch(item.topic, filterCategory);
+        };
+
+        const isCategoryMatch = (
+          topic: any,
+          filterCategory: string
+        ): boolean => {
+          const normalizedTopics = normalizeTopics(topic);
+          return normalizedTopics.includes(filterCategory.trim().toLowerCase());
+        };
+
+        const extractSubTopics = (item: any): string[] =>
+          Array.isArray(item.subTopic)
+            ? item.subTopic
+            : [item.subTopic ?? 'Unknown'];
         const relatedData = Array.isArray(data?.result?.content)
           ? data.result.content
-              .filter((item) => {
-                const normalizedTopics = Array.isArray(item.topic)
-                  ? item.topic.map((t) => t.trim().toLowerCase())
-                  : [];
-
-                return (
-                  filterCategory?.trim().toLowerCase() &&
-                  normalizedTopics.includes(filterCategory.trim().toLowerCase())
-                );
-              })
-              .flatMap((item) =>
-                Array.isArray(item.subTopic)
-                  ? item.subTopic
-                  : [item.subTopic ?? 'Unknown']
-              )
+              .filter((item) => matchesFilterCategory(item, filterCategory))
+              .flatMap(extractSubTopics)
           : [];
 
         const flattenedContents = relatedData.map((name) => ({
@@ -196,8 +211,7 @@ export default function Index() {
   }, [filterCategory]);
   useEffect(() => {
     console.log('Content Data:', contentData);
-    console.log('Content Data:', relatedContent);
-  }, [contentData, relatedContent]);
+  }, [contentData]);
   const handleCardClick = (content: any) => {
     if (consumedContent.length < 3) {
       router.push(`/contents/${content?.identifier}`);
@@ -227,71 +241,83 @@ export default function Index() {
     router.push('/signin');
   };
   return (
-    <Layout isLoadingChildren={isLoadingChildren}>
-      <Box display="flex" flexDirection="column" gap="3rem" py="3rem" px="14px">
-        <FrameworkFilter
-          frameworkFilter={frameworkFilter || []}
-          framework={framework}
-          setFramework={setFramework}
-        />
+    <Layout>
+      {isLoadingChildren ? (
+        <Loader />
+      ) : (
         <Box
-          sx={{
-            width: '100%',
-            gap: '16px',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
+          display="flex"
+          flexDirection="column"
+          gap="3rem"
+          py="1rem"
+          px="8px"
         >
-          <Title onClick={() => router.push('/contents')}>
-            {t('Read, Watch, Listen')}
-          </Title>
-          <AtreeCard
-            contents={
-              contentData.length > 4 ? contentData.slice(0, 4) : contentData
-            }
-            handleCardClick={handleCardClick}
-            _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-            _card={{ image: atreeLogo.src }}
+          <FrameworkFilter
+            frameworkFilter={frameworkFilter || []}
+            framework={framework}
+            setFramework={setFramework}
+            fromSubcategory={false}
           />
-        </Box>
-        <Box
-          sx={{
-            width: '100%',
-            gap: '16px',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <Title>{t('Browse by Sub Categories')}</Title>
+          <Box
+            sx={{
+              width: '100%',
+              gap: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <Title onClick={() => router.push('/contents')}>
+              {t('Read, Watch, Listen')}
+            </Title>
+            <AtreeCard
+              contents={
+                contentData.length > 4 ? contentData.slice(0, 4) : contentData
+              }
+              handleCardClick={handleCardClick}
+              _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
+              _card={{ image: atreeLogo.src }}
+            />
+          </Box>
+          <Box
+            sx={{
+              width: '100%',
+              gap: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <Title>{t('Browse by Sub Categories')}</Title>
 
-          <SubFrameworkFilter
-            subFrameworkFilter={subFrameworkFilter || []}
-            subFramework={subFramework}
-            setSubFramework={setSubFramework}
-            lastButton={true}
-          />
+            <SubFrameworkFilter
+              subFrameworkFilter={subFrameworkFilter || []}
+              subFramework={subFramework}
+              setSubFramework={setSubFramework}
+              lastButton={true}
+            />
+          </Box>
+          <Box
+            sx={{
+              width: '100%',
+              gap: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <Title onClick={() => router.push('/contents')}>
+              {t('Related Content')}
+            </Title>
+            <AtreeCard
+              contents={
+                contentData.length > 6 ? contentData.slice(4, 10) : contentData
+              }
+              handleCardClick={handleCardClick}
+              _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
+              _card={{ image: atreeLogo.src }}
+            />
+          </Box>
         </Box>
-        <Box
-          sx={{
-            width: '100%',
-            gap: '16px',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <Title onClick={() => router.push('/contents')}>
-            {t('Related Content')}
-          </Title>
-          <AtreeCard
-            contents={
-              contentData.length > 6 ? contentData.slice(4, 10) : contentData
-            }
-            handleCardClick={handleCardClick}
-            _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-            _card={{ image: atreeLogo.src }}
-          />
-        </Box>
-      </Box>
+      )}
+
       <Dialog
         open={openMessageDialog}
         onClose={() => setOpenMessageDialog(false)}
@@ -325,12 +351,26 @@ export default function Index() {
 const FrameworkFilter = React.memo<{
   frameworkFilter: Array<{ identifier: string; name: string }>;
   framework: string;
+  fromSubcategory?: boolean;
   setFramework: (framework: string) => void;
-}>(function FrameworkFilter({ frameworkFilter, framework, setFramework }) {
+}>(function FrameworkFilter({
+  frameworkFilter,
+  framework,
+  setFramework,
+  fromSubcategory,
+}) {
   const router = useRouter();
 
+  const handleItemClick = (item: any) => {
+    if (fromSubcategory) {
+      localStorage.setItem('subcategory', item.name);
+      router.push(`/contents`);
+    } else {
+      setFramework(item.identifier);
+    }
+  };
   return (
-    <Grid container spacing={1}>
+    <Grid container spacing={1} display="flex" justifyContent="center">
       {frameworkFilter?.map((frameworkItem: any) => (
         <Grid key={frameworkItem.identifier}>
           <Button
@@ -351,9 +391,8 @@ const FrameworkFilter = React.memo<{
                     : ''
                   : '#E3E9EA',
             }}
-            onClick={() =>
-              router.push(`/quick-access/contents/${frameworkItem.identifier}`)
-            }
+            // onClick={() => setFramework(frameworkItem.identifier)}
+            onClick={() => handleItemClick(frameworkItem)}
           >
             {frameworkItem.name}
           </Button>
@@ -389,15 +428,17 @@ const SubFrameworkFilter = React.memo<{
       setFilterItems(subFrameworkFilter.slice(0, 3));
     }
   }, [subFrameworkFilter]);
+  const handleItemClick = (item: any) => {
+    localStorage.setItem('subcategory', item.name);
+    router.push(`/contents`);
+  };
   return (
     <Grid container spacing={1}>
       {filterItems?.map((subFrameworkItem: any) => (
         <Grid key={subFrameworkItem.identifier}>
           <Button
             // onClick={() => setSubFramework(subFrameworkItem.identifier)}
-            onClick={() =>
-              router.push(`/quick-access/contents/${subFrameworkItem?.name}`)
-            }
+            onClick={() => handleItemClick(subFrameworkItem)}
             sx={{
               borderRadius: '8px',
               color: '#001D32',
@@ -438,6 +479,7 @@ const SubFrameworkFilter = React.memo<{
               frameworkFilter={subFrameworkFilter}
               framework={subFramework}
               setFramework={setSubFramework}
+              fromSubcategory={true}
             />
           </DialogContent>
           <DialogActions sx={{ justifyContent: 'center', py: 2, px: 3 }}>

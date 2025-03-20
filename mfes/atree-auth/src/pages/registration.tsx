@@ -18,9 +18,9 @@ import { useRouter } from 'next/navigation';
 
 // import Otp from './otp';
 import { createUser } from '../services/LoginService';
-import TermsAndCondition from './components/TermsAndCondition';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
+
 const languageData = [
   {
     id: 1,
@@ -149,10 +149,6 @@ export default function Registration() {
       console.log(error);
     }
   };
-  const handleChangeOPenTermsAndCondition = () => {
-    setOpenTermsDialog(true);
-    setTermsAccepted(!termsAccepted);
-  };
   const handleRoleChange = (event: SelectChangeEvent<string>) => {
     const roleId = event.target.value;
     setSelectedValue(roleId);
@@ -246,9 +242,33 @@ export default function Registration() {
           value={formData.gender}
           onChange={handleChange('gender')}
         >
-          <FormControlLabel value="male" control={<Radio />} label="Male" />
-          <FormControlLabel value="female" control={<Radio />} label="Female" />
-          <FormControlLabel value="other" control={<Radio />} label="Other" />
+          <FormControlLabel
+            value="male"
+            control={
+              <Radio
+                sx={{ color: '#FFBD0D', '&.Mui-checked': { color: '#FFBD0D' } }}
+              />
+            }
+            label="Male"
+          />
+          <FormControlLabel
+            value="female"
+            control={
+              <Radio
+                sx={{ color: '#FFBD0D', '&.Mui-checked': { color: '#FFBD0D' } }}
+              />
+            }
+            label="Female"
+          />
+          <FormControlLabel
+            value="other"
+            control={
+              <Radio
+                sx={{ color: '#FFBD0D', '&.Mui-checked': { color: '#FFBD0D' } }}
+              />
+            }
+            label="Other"
+          />
         </RadioGroup>
         {error.gender && (
           <Typography color="error" fontSize="12px">
@@ -293,7 +313,7 @@ export default function Registration() {
             control={
               <Checkbox
                 checked={termsAccepted}
-                onChange={handleChangeOPenTermsAndCondition}
+                onChange={() => setTermsAccepted(!termsAccepted)}
                 sx={{
                   color: '#FFBD0D',
                   '&.Mui-checked': {
@@ -306,8 +326,8 @@ export default function Registration() {
               <Typography fontSize="14px">
                 I have read and accepted the{' '}
                 <Link
-                  href="#"
-                  onClick={handleChangeOPenTermsAndCondition}
+                  href="/termsandcondition"
+                  // onClick={() => router.push('/termsandcondition')}
                   style={{ color: '#0047D4', textDecoration: 'underline' }}
                 >
                   Terms and Conditions
@@ -329,14 +349,15 @@ export default function Registration() {
             onClick={handleCreateUser}
             sx={{
               color: '#2B3133',
-              width: '100%',
-              height: '40px',
-              background:
-                'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+              width: { xs: '80%', sm: '60%', md: '50%' }, // Responsive width
+              height: '44px',
+              background: '#FFBD0D',
               borderRadius: '50px',
               fontSize: '16px',
               fontWeight: 500,
               textTransform: 'none',
+              alignSelf: 'center', // Centers in flex container
+              mx: 'auto',
             }}
             disabled={
               !formData.name ||
@@ -345,13 +366,30 @@ export default function Registration() {
               !formData.gender
             }
           >
-            Proceed
+            Verify & Proceed
           </Button>
         </>
         {showAlertMsg && (
-          <Alert variant="filled" severity={alertSeverity}>
-            {showAlertMsg}
-          </Alert>
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            position="fixed"
+            top={0}
+            left={0}
+            width="100vw"
+            height="100vh"
+            sx={{ pointerEvents: 'none', bgcolor: 'rgba(0, 0, 0, 0.2)' }}
+          >
+            <Alert
+              variant="filled"
+              severity={alertSeverity}
+              sx={{ pointerEvents: 'auto' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {showAlertMsg}
+            </Alert>
+          </Box>
         )}
         {/* ) : (
           <Button
@@ -388,7 +426,7 @@ export default function Registration() {
           color="#3B383E"
           fontWeight={500}
         >
-          Already have an Account?
+          Already have an Account?{' '}
           <Link href="/signin" style={{ color: '#0037B9' }}>
             Sign In
           </Link>
@@ -440,7 +478,7 @@ export default function Registration() {
         }}
       />
 
-      <CommonDialog
+      {/* <CommonDialog
         isOpen={openTermsDialog}
         onClose={() => setOpenTermsDialog(false)}
         header="Terms and Conditions"
@@ -462,7 +500,7 @@ export default function Registration() {
             Close
           </Button>
         }
-      />
+      /> */}
     </Grid>
   );
 }

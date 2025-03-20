@@ -151,20 +151,27 @@ export default function Layout({
     {
       text: 'Recommend Resources',
       icon: <PostAddOutlinedIcon fontSize="small" />,
-      to: '/content',
+      to: 'https://forms.gle/j6RardUhmDN2yRfE6',
     },
     {
       text: 'Terms & Conditions',
       icon: <ContactSupportOutlinedIcon fontSize="small" />,
-      to: '/termsAndCondition',
+      to: '/termsandcondition',
     },
   ];
   const handleItemClick = (to: string) => {
-    if (to === '/termsAndCondition') {
-      setOpenDialog(true);
-    } else if (to === '/signin') {
-      localStorage.clear();
-      router.push('/signin');
+    // if (to === '/termsAndCondition') {
+    //   setOpenDialog(true);
+    // } else
+    if (to === '/signin') {
+      if (token) {
+        // If logged in, clear localStorage and log out
+        localStorage.clear();
+        router.push('/'); // Redirect to home on logout
+      } else {
+        // If not logged in, go to sign-in page
+        router.push('/signin');
+      }
     } else {
       router.push(to);
     }
