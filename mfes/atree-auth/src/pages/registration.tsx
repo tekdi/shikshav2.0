@@ -25,20 +25,14 @@ const languageData = [
   {
     id: 1,
     name: 'Educator',
-    tenantId: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
-    roleId: 'd5f1abf9-dd0f-43a4-aba3-3f1b70c5d425',
   },
   {
     id: 2,
     name: 'Mentor',
-    tenantId: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
-    roleId: 'd5f1abf9-dd0f-43a4-aba3-3f1b70c5d425',
   },
   {
     id: 3,
     name: 'Student',
-    tenantId: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
-    roleId: 'd5f1abf9-dd0f-43a4-aba3-3f1b70c5d425',
   },
 ];
 
@@ -64,7 +58,6 @@ export default function Registration() {
   >('success');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [openTermsDialog, setOpenTermsDialog] = useState(false);
   const [openUserDetailsDialog, setOpenUserDetailsDialog] = useState(false);
   const [tenantCohortRoleMapping, setTenantCohortRoleMapping] = useState([
     {
@@ -275,25 +268,6 @@ export default function Registration() {
             Please select a gender.
           </Typography>
         )}
-        {/* {otpShow && (
-          <>
-            <FormLabel component="legend">
-              Enter the 6-digit OTP sent to your email
-            </FormLabel>
-            <Otp
-              separator={<span></span>}
-              value={otp}
-              onChange={handleOtpChange}
-              length={5}
-            />
-            {error.otp && (
-              <Typography color="error" fontSize="12px">
-                Please enter a valid 6-digit OTP.
-              </Typography>
-            )}
-            <Typography>Request to Resend OTP in 4:59</Typography>
-          </>
-        )} */}
 
         <FormLabel component="legend">
           Select Role<span style={{ color: 'red' }}>*</span>
@@ -327,7 +301,6 @@ export default function Registration() {
                 I have read and accepted the{' '}
                 <Link
                   href="/termsandcondition"
-                  // onClick={() => router.push('/termsandcondition')}
                   style={{ color: '#0047D4', textDecoration: 'underline' }}
                 >
                   Terms and Conditions
@@ -392,25 +365,6 @@ export default function Registration() {
             </Alert>
           </Box>
         )}
-        {/* ) : (
-          <Button
-            onClick={handleSigninClick}
-            sx={{
-              color: '#2B3133',
-              width: '100%',
-              height: '40px',
-              background:
-                'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
-              borderRadius: '50px',
-              fontSize: '16px',
-              fontWeight: 500,
-              textTransform: 'none',
-            }}
-            disabled={!formData.name || !formData.email}
-          >
-            Proceed
-          </Button>
-        )} */}
 
         {/* <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
           <GoogleLogin
@@ -478,30 +432,6 @@ export default function Registration() {
           borderRadius: '16px',
         }}
       />
-
-      {/* <CommonDialog
-        isOpen={openTermsDialog}
-        onClose={() => setOpenTermsDialog(false)}
-        header="Terms and Conditions"
-        content={<TermsAndCondition />}
-        actions={
-          <Button
-            onClick={() => setOpenTermsDialog(false)}
-            sx={{
-              color: '#2B3133',
-              width: '100%',
-              height: '40px',
-              background:
-                'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
-              borderRadius: '50px',
-              fontSize: '14px',
-              fontWeight: 500,
-            }}
-          >
-            Close
-          </Button>
-        }
-      /> */}
     </Grid>
   );
 }
