@@ -29,16 +29,6 @@ export function middleware(request: { nextUrl: { clone: () => any } }) {
     return NextResponse.redirect(url);
   }
 
-  // if (url.pathname.startsWith('/content/v3/read/')) {
-  //   const baseurl = process.env.NEXT_PUBLIC_ASSETS_HOSTNAME;
-  //   const [protocol, hostname] = baseurl?.split('://') || [];
-  //   url.protocol = protocol || 'https';
-  //   url.hostname = hostname || '';
-  //   url.pathname = '/interface/v1/action' + url.pathname;
-  //   url.port = '';
-  //   return NextResponse.redirect(url);
-  // }
-
   if (url.pathname.startsWith('/assets')) {
     url.protocol = 'https';
     url.hostname = process.env.NEXT_PUBLIC_ASSETS_HOSTNAME || 'sunbirdsaas.com';

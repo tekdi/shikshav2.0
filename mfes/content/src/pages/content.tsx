@@ -16,7 +16,6 @@ import {
   CommonCard,
   CommonTabs,
   Layout,
-  Circular,
   CommonDialog,
   CommonTextField,
 } from '@shared-lib';
