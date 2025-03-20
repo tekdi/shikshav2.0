@@ -182,7 +182,9 @@ export default function Signin() {
         >
           Proceed
         </Button>
-        <GoogleOAuthProvider clientId="467709515234-mcvpmvt7rhen1knmaqb6b0vbjurod76s.apps.googleusercontent.com">
+        <GoogleOAuthProvider
+          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ''}
+        >
           <MyCustomGoogleLogin />
         </GoogleOAuthProvider>
         <Typography
@@ -224,9 +226,13 @@ export default function Signin() {
   );
 }
 const MyCustomGoogleLogin = () => {
+  const router = useRouter();
   const login = useGoogleLogin({
     onSuccess: (tokenResponse) => {
       console.log('Google Auth Token:', tokenResponse);
+
+      localStorage.setItem('token', tokenResponse.access_token);
+      router.push('/home');
     },
     onError: (error) => {
       console.error('Login Failed:', error);

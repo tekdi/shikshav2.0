@@ -1,5 +1,11 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Button, debounce, Typography } from '@mui/material';
+import {
+  Button,
+  debounce,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import Box from '@mui/material/Box';
 import { CommonDrawer, Loader } from '@shared-lib';
 import React, { useEffect, useRef, useState } from 'react';
@@ -92,6 +98,9 @@ export default function Layout({
   footerComponent,
   _footer,
 }: LayoutProps) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Detect mobile screen
+
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [layoutHeight, setLayoutHeight] = useState(0);
   const refs = useRef({});
@@ -160,9 +169,6 @@ export default function Layout({
     },
   ];
   const handleItemClick = (to: string) => {
-    // if (to === '/termsAndCondition') {
-    //   setOpenDialog(true);
-    // } else
     if (to === '/signin') {
       if (token) {
         // If logged in, clear localStorage and log out
@@ -236,13 +242,6 @@ export default function Layout({
                 menuIconClick={() => setIsDrawerOpen(true)}
                 searchQuery={searchQuery} // Pass the search value
                 onSearchChange={handleSearchChange}
-                // profileIcon={[
-                //   {
-                //     icon: <>hi</>,
-                //     ariaLabel: 'Help',
-                //   },
-                // ]}
-                // onLogoutClick={(event) => action.onLogoutClick(event)}
                 {...showTopAppBar}
               />
             </Box>
@@ -288,7 +287,7 @@ export default function Layout({
         {children}
       </Loader>
 
-      {isFooter && (
+      {isMobile && isFooter && (
         <Box
           ref={(refFoot) => {
             if (!Object.prototype.hasOwnProperty.call(refs.current, 'footer')) {

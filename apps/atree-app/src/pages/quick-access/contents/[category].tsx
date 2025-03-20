@@ -2,7 +2,15 @@ import React, { useEffect, useState } from 'react';
 import Layout from '../../../component/layout/layout';
 import FolderComponent from '../../../component/FolderComponent';
 import { useRouter } from 'next/router';
-import { Box, Button, Chip, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Chip,
+  Switch,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Loader from '../../../component/layout/LoaderComponent';
@@ -14,6 +22,8 @@ import FilterDialog from 'libs/shared-lib/src/lib/Filterdialog/FilterDialog';
 const Content = dynamic(() => import('@Content'), { ssr: false });
 
 const MyComponent: React.FC = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
   const { category } = router.query;
 
@@ -25,6 +35,7 @@ const MyComponent: React.FC = () => {
   const [searchResults, setSearchResults] = useState<
     { subTopic: string; length: number }[]
   >([]);
+  const [fullAccess, setFullAccess] = useState(false);
 
   /** SubFramework Filter Options */
   const subFrameworkFilter = [
@@ -150,7 +161,7 @@ const MyComponent: React.FC = () => {
         <Box
           sx={{
             display: 'flex',
-            alignItems: 'center',
+            // alignItems: 'center',
             gap: '16px',
             flexWrap: 'wrap',
           }}
@@ -158,13 +169,87 @@ const MyComponent: React.FC = () => {
           <Typography sx={{ fontSize: '22px', lineHeight: '28px' }}>
             {category}
           </Typography>
-          <Box
-            display="flex"
-            alignItems="center"
-            sx={{ justifyContent: 'flex-end' }}
-          >
-            <FilterChip />
-          </Box>
+          {isMobile && (
+            <Box
+              display="flex"
+              alignItems="center"
+              gap={1}
+              // sx={{ justifyContent: 'flex-end' }}
+            >
+              <FilterChip />
+              <Box display="flex" alignItems="center" gap={1} marginLeft="auto">
+                <Typography
+                  sx={{
+                    fontSize: '14px',
+                    fontWeight: fullAccess ? '400' : '600',
+                    color: fullAccess ? '#9E9E9E' : '#000000',
+                  }}
+                >
+                  All
+                </Typography>
+
+                <Switch
+                  // checked={fullAccess} // Controlled state for switch
+                  // onChange={handleToggleFullAccess}
+                  sx={{
+                    width: 42,
+                    height: 26,
+                    padding: 0,
+                    '& .MuiSwitch-switchBase': {
+                      padding: 0,
+                      transitionDuration: '300ms',
+                      '&.Mui-checked': {
+                        transform: 'translateX(16px)',
+                        color: '#fff',
+                        '& + .MuiSwitch-track': {
+                          background:
+                            'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                          opacity: 1,
+                          border: 0,
+                        },
+                        '&.Mui-disabled + .MuiSwitch-track': {
+                          opacity: 0.5,
+                        },
+                      },
+                      '&.Mui-focusVisible .MuiSwitch-thumb': {
+                        color: '#33cf4d',
+                        border: '6px solid #fff',
+                      },
+                      '&.Mui-disabled .MuiSwitch-thumb': {
+                        color: '#BDBDBD', // Grey thumb when disabled
+                      },
+                      '&.Mui-disabled + .MuiSwitch-track': {
+                        opacity: 0.5,
+                        background: '#BDBDBD', // Grey track when disabled
+                      },
+                    },
+                    '& .MuiSwitch-thumb': {
+                      boxSizing: 'border-box',
+                      width: 25,
+                      height: 25,
+                    },
+                    '& .MuiSwitch-track': {
+                      borderRadius: 26 / 2,
+                      background: fullAccess
+                        ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
+                        : '#BDBDBD', // Grey when unchecked
+                      opacity: 1,
+                    },
+                  }}
+                />
+
+                <Typography
+                  sx={{
+                    fontSize: '14px',
+                    fontWeight: fullAccess ? '600' : '400',
+                    color: fullAccess ? '#000000' : '#9E9E9E',
+                  }}
+                >
+                  Only Full Access
+                </Typography>
+              </Box>
+            </Box>
+          )}
         </Box>
       }
       showBack
@@ -174,24 +259,100 @@ const MyComponent: React.FC = () => {
         <Loader />
       ) : (
         <Box>
-          <FolderComponent
-            categories={[{ name: category }]}
-            subLabel="resources"
-            length={searchResults}
-            onClick={handleClick}
-            _title={{ fontWeight: 700, fontSize: '14px' }}
-            _item={{
-              border: 0,
-              justifyContent: 'space-between',
-              py: 2,
-              px: 3,
-              borderRadius: '8px',
-              background: '#ECF2F3',
-              borderBottom: '1px solid  #2B3133',
-              cursor: 'auto',
-            }}
-          />
-          <SubFrameworkButtons />
+          <Box sx={{ display: 'flex' }}>
+            <FolderComponent
+              categories={[{ name: category }]}
+              subLabel="resources"
+              length={searchResults}
+              onClick={handleClick}
+              _title={{ fontWeight: 700, fontSize: '14px' }}
+              _item={{
+                border: 0,
+                justifyContent: 'space-between',
+                py: 2,
+                px: 3,
+                borderRadius: '8px',
+                background: '#ECF2F3',
+                borderBottom: '1px solid  #2B3133',
+                cursor: 'auto',
+              }}
+            />
+            {!isMobile && (
+              <Box display="flex" alignItems="center" gap={1}>
+                <Typography
+                  sx={{
+                    fontSize: '14px',
+                    fontWeight: fullAccess ? '400' : '600',
+                    color: fullAccess ? '#9E9E9E' : '#000000',
+                  }}
+                >
+                  All
+                </Typography>
+
+                <Switch
+                  // checked={fullAccess} // Controlled state for switch
+                  // onChange={handleToggleFullAccess}
+                  sx={{
+                    width: 42,
+                    height: 26,
+                    padding: 0,
+                    '& .MuiSwitch-switchBase': {
+                      padding: 0,
+                      transitionDuration: '300ms',
+                      '&.Mui-checked': {
+                        transform: 'translateX(16px)',
+                        color: '#fff',
+                        '& + .MuiSwitch-track': {
+                          background:
+                            'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                          opacity: 1,
+                          border: 0,
+                        },
+                        '&.Mui-disabled + .MuiSwitch-track': {
+                          opacity: 0.5,
+                        },
+                      },
+                      '&.Mui-focusVisible .MuiSwitch-thumb': {
+                        color: '#33cf4d',
+                        border: '6px solid #fff',
+                      },
+                      '&.Mui-disabled .MuiSwitch-thumb': {
+                        color: '#BDBDBD', // Grey thumb when disabled
+                      },
+                      '&.Mui-disabled + .MuiSwitch-track': {
+                        opacity: 0.5,
+                        background: '#BDBDBD', // Grey track when disabled
+                      },
+                    },
+                    '& .MuiSwitch-thumb': {
+                      boxSizing: 'border-box',
+                      width: 25,
+                      height: 25,
+                    },
+                    '& .MuiSwitch-track': {
+                      borderRadius: 26 / 2,
+                      background: fullAccess
+                        ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
+                        : '#BDBDBD', // Grey when unchecked
+                      opacity: 1,
+                    },
+                  }}
+                />
+
+                <Typography
+                  sx={{
+                    fontSize: '14px',
+                    fontWeight: fullAccess ? '600' : '400',
+                    color: fullAccess ? '#000000' : '#9E9E9E',
+                  }}
+                >
+                  Only Full Access
+                </Typography>
+              </Box>
+            )}
+          </Box>
+          {isMobile && <SubFrameworkButtons />}
+
           <FilterDialog
             open={filterShow}
             onClose={() => setFilterShow(false)}

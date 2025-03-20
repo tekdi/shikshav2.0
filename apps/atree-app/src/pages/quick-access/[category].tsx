@@ -21,7 +21,11 @@ const MyComponent: React.FC = () => {
     const init = async () => {
       const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
       const frameworkData = await fetch(url).then((res) => res.json());
-      const frameworks = frameworkData?.result?.framework?.categories;
+      const frameworks =
+        frameworkData?.result?.framework?.categories?.filter(
+          (category: any) => category.status === 'Live'
+        ) ?? [];
+
       const fdata =
         frameworks
           .find((item: any) => item.code === 'topic')
