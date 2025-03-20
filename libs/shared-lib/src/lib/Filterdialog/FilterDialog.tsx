@@ -15,7 +15,6 @@ import {
   Radio,
   RadioGroup,
   Select,
-  Typography,
 } from '@mui/material';
 import React, { useState } from 'react';
 const formControlStyles = {
@@ -64,24 +63,21 @@ const CustomRadio = ({ option }: any) => (
     label={option.label}
   />
 );
-const FilterDialog = ({
+export const FilterDialog = ({
   open,
   onClose,
   filter,
-  language,
   selectedSubjects,
   selectedContentTypes,
-  sort,
-  onLanguageChange,
   onSubjectsChange,
   onContentTypeChange,
-  onSortChange,
   onApply,
   frameworkFilter,
   filterValues,
+  isMobile,
 }: {
-  open: boolean;
-  onClose: () => void;
+  open?: boolean;
+  onClose?: () => void;
   filter?: {
     sort?: boolean;
     language?: string[];
@@ -99,11 +95,11 @@ const FilterDialog = ({
   onApply?: (data: any) => void;
   frameworkFilter: any;
   filterValues: any;
+  isMobile?: boolean;
 }) => {
   // Manage the selected values for each category
   const [selectedValues, setSelectedValues] = useState(filterValues ?? {}); // Initialize as an empty object
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
-
   const handleChange = (event: any, filterCode: string) => {
     const { value } = event.target;
     const newValue = typeof value === 'string' ? value.split(',') : value;
@@ -136,184 +132,310 @@ const FilterDialog = ({
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      fullWidth
-      sx={{
-        borderRadius: '16px',
-        '& .MuiDialog-paper': { backgroundColor: '#FEF7FF' },
-      }}
-    >
-      <DialogContent dividers>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {/* new filter frameworkFilter */}
-          {frameworkFilter?.categories?.map((category: any) => {
-            const filterCode =
-              category?.code === 'subTopic' ? 'subTopic' : category?.code;
+    <>
+      {isMobile ? (
+        <Dialog
+          open={open ?? false}
+          onClose={onClose}
+          fullWidth
+          sx={{
+            borderRadius: '16px',
+            '& .MuiDialog-paper': { backgroundColor: '#FEF7FF' },
+          }}
+        >
+          <DialogContent dividers>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {/* new filter frameworkFilter */}
+              {frameworkFilter?.categories?.map((category: any) => {
+                const filterCode =
+                  category?.code === 'subTopic' ? 'subTopic' : category?.code;
 
-            // Transform terms into options
-            const options =
-              category?.terms?.map((term: any) => ({
-                label: term?.name,
-                value: term?.code,
-              })) ?? [];
+                // Transform terms into options
+                const options =
+                  category?.terms?.map((term: any) => ({
+                    label: term?.name,
+                    value: term?.code,
+                  })) ?? [];
 
-            // Get the selected vaalues for the current category
-            const currentSelectedValues = selectedValues?.[filterCode] ?? [];
-            return (
-              <FormControl fullWidth key={filterCode} sx={formControlStyles}>
-                <FormLabel
-                  component="legend"
-                  sx={{ fontSize: '18px', fontWeight: 600, color: '#181D27' }}
-                >
-                  {category?.name === 'Sub-Topic'
-                    ? 'Select Resource Type'
-                    : category?.name}
-                </FormLabel>
-
-                {/* Topic - RadioGroup */}
-                {filterCode === 'topic' && (
-                  <RadioGroup
-                    value={currentSelectedValues?.[0] ?? ''}
-                    onChange={(event) => handleChange(event, filterCode)}
+                // Get the selected vaalues for the current category
+                const currentSelectedValues =
+                  selectedValues?.[filterCode] ?? [];
+                return (
+                  <FormControl
+                    fullWidth
+                    key={filterCode}
+                    sx={formControlStyles}
                   >
-                    {options?.map((option: any) => (
-                      <CustomRadio key={option?.value} option={option} />
-                    ))}
-                  </RadioGroup>
-                )}
+                    <FormLabel
+                      component="legend"
+                      sx={{
+                        fontSize: '18px',
+                        fontWeight: 600,
+                        color: '#181D27',
+                      }}
+                    >
+                      {category?.name === 'Sub-Topic'
+                        ? 'Select Resource Type'
+                        : category?.name}
+                    </FormLabel>
 
-                {/* SubTopic - Checkboxes */}
-                {filterCode === 'subTopic' && selectedTopic && (
-                  <Box>
-                    {options
-                      ?.filter((option: any) =>
-                        option?.value?.includes(selectedTopic)
-                      )
-                      ?.map((option: any) => (
-                        <CustomCheckbox
-                          key={option?.label}
-                          option={option}
-                          filterCode={filterCode}
-                          handleCheckboxChange={handleCheckboxChange}
-                          currentSelectedValues={currentSelectedValues}
-                        />
-                      ))}
-                  </Box>
-                )}
+                    {/* Topic - RadioGroup */}
+                    {filterCode === 'topic' && (
+                      <RadioGroup
+                        value={currentSelectedValues?.[0] ?? ''}
+                        onChange={(event) => handleChange(event, filterCode)}
+                      >
+                        {options?.map((option: any) => (
+                          <CustomRadio key={option?.value} option={option} />
+                        ))}
+                      </RadioGroup>
+                    )}
+
+                    {/* SubTopic - Checkboxes */}
+                    {filterCode === 'subTopic' && selectedTopic && (
+                      <Box>
+                        {options
+                          ?.filter((option: any) =>
+                            option?.value?.includes(selectedTopic)
+                          )
+                          ?.map((option: any) => (
+                            <CustomCheckbox
+                              key={option?.label}
+                              option={option}
+                              filterCode={filterCode}
+                              handleCheckboxChange={handleCheckboxChange}
+                              currentSelectedValues={currentSelectedValues}
+                            />
+                          ))}
+                      </Box>
+                    )}
+                  </FormControl>
+                );
+              })}
+            </Box>
+            <Divider sx={{ marginTop: 4 }} />
+
+            {/* Subject */}
+            {filter?.subject && filter.subject.length > 0 && (
+              <FormControl fullWidth margin="normal">
+                <InputLabel>Subject</InputLabel>
+                <Select
+                  multiple
+                  value={selectedSubjects || []}
+                  onChange={(e) => {
+                    const value = e.target.value as string[]; // Ensure TypeScript recognizes it as an array
+                    //@ts-ignore
+                    onSubjectsChange?.(value);
+                  }}
+                  renderValue={(selected) => (selected as string[]).join(', ')} // Join array values for display
+                  label="Subject"
+                >
+                  {filter.subject.map((subject) => (
+                    <MenuItem key={subject} value={subject}>
+                      <Checkbox
+                        checked={(selectedSubjects || []).indexOf(subject) > -1}
+                      />
+                      <ListItemText primary={subject} />
+                    </MenuItem>
+                  ))}
+                </Select>
               </FormControl>
-            );
-          })}
-        </Box>
-        <Divider sx={{ marginTop: 4 }} />
+            )}
+            {/* Content Type */}
+            {filter?.contentType && filter.contentType.length > 0 && (
+              <FormControl fullWidth margin="normal">
+                <InputLabel>Content Type</InputLabel>
+                <Select
+                  multiple
+                  value={selectedContentTypes || []}
+                  onChange={(e) => {
+                    const value = e.target.value as string[];
+                    //@ts-ignore
+                    onContentTypeChange?.(value);
+                  }}
+                  renderValue={(selected) => (selected as string[]).join(', ')}
+                  label="Content Type"
+                >
+                  {filter.contentType.map((type) => (
+                    <MenuItem key={type} value={type}>
+                      <Checkbox
+                        checked={
+                          (selectedContentTypes || []).indexOf(type) > -1
+                        }
+                      />
+                      <ListItemText primary={type} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+            {/* Buttons */}
+            <DialogActions sx={{ justifyContent: 'center' }}>
+              <Box sx={{ display: 'flex', mt: 2 }}>
+                <Button
+                  variant="outlined"
+                  onClick={() => {
+                    onApply?.({});
+                    setSelectedValues({});
+                    onClose();
+                  }}
+                  sx={{
+                    borderRadius: '100px',
+                    color: '#414651',
+                    textTransform: 'none',
+                    border: '1px solid #D5D7DA',
+                    width: '132px',
+                  }}
+                >
+                  Reset
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    onApply?.(selectedValues);
+                    onClose();
+                  }}
+                  sx={{
+                    borderRadius: '100px',
+                    bgcolor: '#FFBD0D',
+                    color: '#2B3133',
+                    marginLeft: 2,
+                    textTransform: 'none',
+                    width: '132px',
+                  }}
+                >
+                  Apply
+                </Button>
+              </Box>
+            </DialogActions>
+          </DialogContent>
+        </Dialog>
+      ) : (
+        <Box sx={{ p: 3, backgroundColor: '#FEF7FF', borderRadius: '16px' }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {/* new filter frameworkFilter */}
+            {frameworkFilter?.categories?.map((category: any) => {
+              const filterCode =
+                category?.code === 'subTopic' ? 'subTopic' : category?.code;
 
-        {/* Sort By */}
-        {filter?.sort && (
-          <>
-            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-              Sort By
-            </Typography>
-            <FormControl>
-              <RadioGroup
-                value={sort?.sortBy || 'asc'}
+              // Transform terms into options
+              const options =
+                category?.terms?.map((term: any) => ({
+                  label: term?.name,
+                  value: term?.code,
+                })) ?? [];
+
+              // Get the selected vaalues for the current category
+              const currentSelectedValues = selectedValues?.[filterCode] ?? [];
+              return (
+                <FormControl fullWidth key={filterCode} sx={formControlStyles}>
+                  <FormLabel
+                    component="legend"
+                    sx={{
+                      fontSize: '18px',
+                      fontWeight: 600,
+                      color: '#181D27',
+                    }}
+                  >
+                    {category?.name === 'Sub-Topic'
+                      ? 'Select Resource Type'
+                      : category?.name}
+                  </FormLabel>
+
+                  {/* Topic - RadioGroup */}
+                  {filterCode === 'topic' && (
+                    <RadioGroup
+                      value={currentSelectedValues?.[0] ?? ''}
+                      onChange={(event) => handleChange(event, filterCode)}
+                    >
+                      {options?.map((option: any) => (
+                        <CustomRadio key={option?.value} option={option} />
+                      ))}
+                    </RadioGroup>
+                  )}
+
+                  {/* SubTopic - Checkboxes */}
+                  {filterCode === 'subTopic' && selectedTopic && (
+                    <Box>
+                      {options
+                        ?.filter((option: any) =>
+                          option?.value?.includes(selectedTopic)
+                        )
+                        ?.map((option: any) => (
+                          <CustomCheckbox
+                            key={option?.label}
+                            option={option}
+                            filterCode={filterCode}
+                            handleCheckboxChange={handleCheckboxChange}
+                            currentSelectedValues={currentSelectedValues}
+                          />
+                        ))}
+                    </Box>
+                  )}
+                </FormControl>
+              );
+            })}
+          </Box>
+          <Divider sx={{ marginTop: 4 }} />
+
+          {/* Subject */}
+          {filter?.subject && filter.subject.length > 0 && (
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Subject</InputLabel>
+              <Select
+                multiple
+                value={selectedSubjects || []}
                 onChange={(e) => {
-                  const value = e.target.value;
-                  onSortChange?.(value);
+                  const value = e.target.value as string[]; // Ensure TypeScript recognizes it as an array
+                  //@ts-ignore
+                  onSubjectsChange?.(value);
                 }}
+                renderValue={(selected) => (selected as string[]).join(', ')} // Join array values for display
+                label="Subject"
               >
-                <FormControlLabel
-                  value="asc"
-                  control={<Radio />}
-                  label="A to Z"
-                />
-                <FormControlLabel
-                  value="desc"
-                  control={<Radio />}
-                  label="Z to A"
-                />
-              </RadioGroup>
+                {filter.subject.map((subject) => (
+                  <MenuItem key={subject} value={subject}>
+                    <Checkbox
+                      checked={(selectedSubjects || []).indexOf(subject) > -1}
+                    />
+                    <ListItemText primary={subject} />
+                  </MenuItem>
+                ))}
+              </Select>
             </FormControl>
-          </>
-        )}
-        {/* Language */}
-        {filter?.language && filter.language.length > 0 && (
-          <FormControl fullWidth margin="normal">
-            <InputLabel>Language</InputLabel>
-            <Select
-              value={language}
-              onChange={(e) => onLanguageChange?.(e.target.value)}
-              label="Language"
-            >
-              {filter.language.map((lang) => (
-                <MenuItem key={lang} value={lang}>
-                  {lang}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )}
-        {/* Subject */}
-        {filter?.subject && filter.subject.length > 0 && (
-          <FormControl fullWidth margin="normal">
-            <InputLabel>Subject</InputLabel>
-            <Select
-              multiple
-              value={selectedSubjects || []}
-              onChange={(e) => {
-                const value = e.target.value as string[]; // Ensure TypeScript recognizes it as an array
-                //@ts-ignore
-                onSubjectsChange?.(value);
-              }}
-              renderValue={(selected) => (selected as string[]).join(', ')} // Join array values for display
-              label="Subject"
-            >
-              {filter.subject.map((subject) => (
-                <MenuItem key={subject} value={subject}>
-                  <Checkbox
-                    checked={(selectedSubjects || []).indexOf(subject) > -1}
-                  />
-                  <ListItemText primary={subject} />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )}
-        {/* Content Type */}
-        {filter?.contentType && filter.contentType.length > 0 && (
-          <FormControl fullWidth margin="normal">
-            <InputLabel>Content Type</InputLabel>
-            <Select
-              multiple
-              value={selectedContentTypes || []}
-              onChange={(e) => {
-                const value = e.target.value as string[];
-                //@ts-ignore
-                onContentTypeChange?.(value);
-              }}
-              renderValue={(selected) => (selected as string[]).join(', ')}
-              label="Content Type"
-            >
-              {filter.contentType.map((type) => (
-                <MenuItem key={type} value={type}>
-                  <Checkbox
-                    checked={(selectedContentTypes || []).indexOf(type) > -1}
-                  />
-                  <ListItemText primary={type} />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )}
-        {/* Buttons */}
-        <DialogActions sx={{ justifyContent: 'center' }}>
-          <Box sx={{ display: 'flex', mt: 2 }}>
+          )}
+          {/* Content Type */}
+          {filter?.contentType && filter.contentType.length > 0 && (
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Content Type</InputLabel>
+              <Select
+                multiple
+                value={selectedContentTypes || []}
+                onChange={(e) => {
+                  const value = e.target.value as string[];
+                  //@ts-ignore
+                  onContentTypeChange?.(value);
+                }}
+                renderValue={(selected) => (selected as string[]).join(', ')}
+                label="Content Type"
+              >
+                {filter.contentType.map((type) => (
+                  <MenuItem key={type} value={type}>
+                    <Checkbox
+                      checked={(selectedContentTypes || []).indexOf(type) > -1}
+                    />
+                    <ListItemText primary={type} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+          <DialogActions sx={{ justifyContent: 'center', mt: 2 }}>
             <Button
               variant="outlined"
               onClick={() => {
-                onApply?.({});
                 setSelectedValues({});
-                onClose();
+                onApply?.({});
               }}
               sx={{
                 borderRadius: '100px',
@@ -327,10 +449,7 @@ const FilterDialog = ({
             </Button>
             <Button
               variant="contained"
-              onClick={() => {
-                onApply?.(selectedValues);
-                onClose();
-              }}
+              onClick={() => onApply?.(selectedValues)}
               sx={{
                 borderRadius: '100px',
                 bgcolor: '#FFBD0D',
@@ -342,10 +461,10 @@ const FilterDialog = ({
             >
               Apply
             </Button>
-          </Box>
-        </DialogActions>
-      </DialogContent>
-    </Dialog>
+          </DialogActions>
+        </Box>
+      )}
+    </>
   );
 };
 

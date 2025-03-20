@@ -157,6 +157,15 @@ export default function Layout({
       icon: <AlternateEmailOutlinedIcon fontSize="small" />,
       to: '/contactus',
     },
+    ...(!isMobile
+      ? [
+          {
+            text: 'Quick Access',
+            icon: <ContactSupportOutlinedIcon fontSize="small" />,
+            to: '/quick-access',
+          },
+        ]
+      : []),
     {
       text: 'Recommend Resources',
       icon: <PostAddOutlinedIcon fontSize="small" />,

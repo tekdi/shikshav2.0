@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import { useKeycloak } from '@react-keycloak/web';
 import {
   Button,
   FormLabel,
@@ -15,6 +16,10 @@ import { useRouter } from 'next/navigation';
 import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
 import { signin } from '../services/LoginService';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+
+
+import keycloak from '../services/keycloack';
+
 export default function Signin() {
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState(false);
@@ -98,146 +103,146 @@ export default function Signin() {
   };
 
   return (
-    <Grid
-      container
-      spacing={2}
-      sx={{
-        flex: 1,
-        width: '100%',
-        borderRadius: 1,
-        bgcolor: '#FFFFFF',
-        justifyContent: 'center',
-
-        //   padding: 2,
-        mx: 'auto',
-      }}
-    >
+    
       <Grid
-        size={{ xs: 12, sm: 6, md: 6, lg: 6 }}
+        container
+        spacing={2}
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2,
-          borderRadius: '20px 20px 0 0',
-          padding: '15px',
-          backgroundColor: '#FFFFFF',
+          flex: 1,
+          width: '100%',
+          borderRadius: 1,
+          bgcolor: '#FFFFFF',
+          justifyContent: 'center',
+
+          //   padding: 2,
+          mx: 'auto',
         }}
       >
-        <FormLabel component="legend" sx={{ color: '#4D4639' }}>
-          Username<span style={{ color: 'red' }}>*</span>
-        </FormLabel>
-
-        <CommonTextField
-          value={email}
-          onChange={handleChange('email')}
-          type={'text'}
-          variant="outlined"
-          helperText={emailError ? `Enter valid Email ID ` : ''}
-          error={emailError}
-        />
-        <FormLabel component="legend" sx={{ color: '#4D4639' }}>
-          Password<span style={{ color: 'red' }}>*</span>
-        </FormLabel>
-
-        <CommonTextField
-          value={password}
-          onChange={handleChange('password')}
-          type={showPassword ? 'text' : 'password'}
-          variant="outlined"
-          helperText={passwordError ? `Enter valid password ` : ''}
-          error={passwordError}
-          endIcon={
-            <IconButton
-              onClick={() => setShowPassword(!showPassword)}
-              edge="end"
-            >
-              {showPassword ? <Visibility /> : <VisibilityOff />}
-            </IconButton>
-          }
-        />
-        {/* <FormLabel component="legend" sx={{ color: '#4D4639' }}>
-          Enter the 6-digit code sent to your email
-        </FormLabel>
-        <Otp
-          separator={<span></span>}
-          value={otp}
-          onChange={setOtp}
-          length={5}
-        />
-        <Typography>Request to Resend OTP in 4:59</Typography> */}
-        <Button
-          onClick={handleSigninClick}
+        <Grid
+          size={{ xs: 12, sm: 6, md: 6, lg: 6 }}
           sx={{
-            color: '#2B3133',
-            width: { xs: '80%', sm: '60%', md: '50%' }, // Responsive width
-            height: '44px',
-            background: '#FFBD0D',
-            borderRadius: '50px',
-            fontSize: '16px',
-            fontWeight: 500,
-            textTransform: 'none',
-            alignSelf: 'center', // Centers in flex container
-            mx: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            borderRadius: '20px 20px 0 0',
+            padding: '15px',
+            backgroundColor: '#FFFFFF',
           }}
         >
-          Proceed
-        </Button>
-        <GoogleOAuthProvider
-          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ''}
-        >
-          <MyCustomGoogleLogin />
-        </GoogleOAuthProvider>
-        <Typography
-          textAlign={'center'}
-          variant="h1"
-          fontSize={'16px'}
-          color="#3B383E"
-          fontWeight={500}
-        >
-          Don't Have An Account?{' '}
-          <Link href="/register" style={{ color: '#0037B9' }}>
-            Sign up
-          </Link>
-        </Typography>
-      </Grid>
-      {showAlertMsg && (
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          position="fixed"
-          top={0}
-          left={0}
-          width="100vw"
-          height="100vh"
-          sx={{ pointerEvents: 'none', bgcolor: 'rgba(0, 0, 0, 0.2)' }}
-        >
-          <Alert
-            variant="filled"
-            severity={alertSeverity}
-            sx={{ pointerEvents: 'auto' }}
-            onClick={(e) => e.stopPropagation()}
+          <FormLabel component="legend" sx={{ color: '#4D4639' }}>
+            Username<span style={{ color: 'red' }}>*</span>
+          </FormLabel>
+
+          <CommonTextField
+            value={email}
+            onChange={handleChange('email')}
+            type={'text'}
+            variant="outlined"
+            helperText={emailError ? `Enter valid Email ID ` : ''}
+            error={emailError}
+          />
+          <FormLabel component="legend" sx={{ color: '#4D4639' }}>
+            Password<span style={{ color: 'red' }}>*</span>
+          </FormLabel>
+
+          <CommonTextField
+            value={password}
+            onChange={handleChange('password')}
+            type={showPassword ? 'text' : 'password'}
+            variant="outlined"
+            helperText={passwordError ? `Enter valid password ` : ''}
+            error={passwordError}
+            endIcon={
+              <IconButton
+                onClick={() => setShowPassword(!showPassword)}
+                edge="end"
+              >
+                {showPassword ? <Visibility /> : <VisibilityOff />}
+              </IconButton>
+            }
+          />
+
+          <Button
+            onClick={handleSigninClick}
+            sx={{
+              color: '#2B3133',
+              width: { xs: '80%', sm: '60%', md: '50%' }, // Responsive width
+              height: '44px',
+              background: '#FFBD0D',
+              borderRadius: '50px',
+              fontSize: '16px',
+              fontWeight: 500,
+              textTransform: 'none',
+              alignSelf: 'center', // Centers in flex container
+              mx: 'auto',
+            }}
           >
-            {showAlertMsg}
-          </Alert>
-        </Box>
-      )}
-    </Grid>
+            Proceed
+          </Button>
+          <GoogleOAuthProvider
+            clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ''}
+          >
+            <MyCustomGoogleLogin />
+          </GoogleOAuthProvider>
+          <Typography
+            textAlign={'center'}
+            variant="h1"
+            fontSize={'16px'}
+            color="#3B383E"
+            fontWeight={500}
+          >
+            Don't Have An Account?{' '}
+            <Link href="/register" style={{ color: '#0037B9' }}>
+              Sign up
+            </Link>
+          </Typography>
+        </Grid>
+        {showAlertMsg && (
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            position="fixed"
+            top={0}
+            left={0}
+            width="100vw"
+            height="100vh"
+            sx={{ pointerEvents: 'none', bgcolor: 'rgba(0, 0, 0, 0.2)' }}
+            onClick={() => setShowAlertMsg('')}
+          >
+            <Alert
+              variant="filled"
+              severity={alertSeverity}
+              sx={{ pointerEvents: 'auto' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {showAlertMsg}
+            </Alert>
+          </Box>
+        )}
+      </Grid>
   );
 }
 const MyCustomGoogleLogin = () => {
   const router = useRouter();
-  const login = useGoogleLogin({
-    onSuccess: (tokenResponse) => {
-      console.log('Google Auth Token:', tokenResponse);
 
-      localStorage.setItem('token', tokenResponse.access_token);
+  const handleLogin = useGoogleLogin({
+    onSuccess: (response) => {
+      console.log('Google Auth Token:', response);
+      localStorage.setItem('token', response.access_token);
       router.push('/home');
     },
+    flow: 'implicit', // Ensures no full-page reload
     onError: (error) => {
       console.error('Login Failed:', error);
     },
   });
+  // const handleLogin = async () => {
+  //   console.log(keycloak);
+  //   await keycloak?.login({
+  //     // idpHint: 'google', // This tells Keycloak to use Google SSO
+  //   });
+  // };
 
   return (
     <Button
@@ -259,7 +264,7 @@ const MyCustomGoogleLogin = () => {
         mx: 'auto',
         '&:hover': { backgroundColor: '#f5f5f5' },
       }}
-      onClick={() => login()} // Manually trigger login
+      onClick={() => handleLogin()} // Manually trigger login
     >
       <Box display="flex" alignItems="center" gap="10px">
         <img

@@ -102,56 +102,68 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
           <CloseIcon />
         </IconButton>
       </Box>
-      <List>
-        {/* Render Main Menu Items */}
-        {openDrawer === 'main' &&
-          items.map((item) => (
-            <ListItemButton
-              key={item.text}
-              onClick={() => onItemClick(item.to)}
-            >
-              {item.icon && (
-                <ListItemIcon sx={{ color: '#fff' }}>{item.icon}</ListItemIcon>
-              )}
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          ))}
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100%', // Makes sure it takes full height
+          width: '100%', // Ensures it takes full width
+        }}
+      >
+        <List sx={{ width: '100%', maxWidth: '400px', textAlign: 'center' }}>
+          {/* Render Main Menu Items */}
+          {openDrawer === 'main' &&
+            items.map((item) => (
+              <ListItemButton
+                key={item.text}
+                onClick={() => onItemClick(item.to)}
+              >
+                {item.icon && (
+                  <ListItemIcon sx={{ color: '#fff' }}>
+                    {item.icon}
+                  </ListItemIcon>
+                )}
+                <ListItemText primary={item.text} />
+              </ListItemButton>
+            ))}
 
-        {/* Render Main Categories */}
-        {openDrawer === 'main' &&
-          categories.map((category) => (
-            <ListItemButton
-              key={category.text}
-              onClick={() => handleCategoryClick(category)}
-            >
-              <ListItemText primary={category.text} />
-              {category.subCategories && <ArrowForwardIcon />}
-            </ListItemButton>
-          ))}
+          {/* Render Main Categories */}
+          {openDrawer === 'main' &&
+            categories.map((category) => (
+              <ListItemButton
+                key={category.text}
+                onClick={() => handleCategoryClick(category)}
+              >
+                <ListItemText primary={category.text} />
+                {category.subCategories && <ArrowForwardIcon />}
+              </ListItemButton>
+            ))}
 
-        {/* Render Category Subcategories */}
-        {openDrawer === 'category' &&
-          currentCategory?.subCategories?.map((subcategory) => (
-            <ListItemButton
-              key={subcategory.text}
-              onClick={() => handleSubcategoryClick(subcategory)}
-            >
-              <ListItemText primary={subcategory.text} />
-              {subcategory.subCategories && <ArrowForwardIcon />}
-            </ListItemButton>
-          ))}
+          {/* Render Category Subcategories */}
+          {openDrawer === 'category' &&
+            currentCategory?.subCategories?.map((subcategory) => (
+              <ListItemButton
+                key={subcategory.text}
+                onClick={() => handleSubcategoryClick(subcategory)}
+              >
+                <ListItemText primary={subcategory.text} />
+                {subcategory.subCategories && <ArrowForwardIcon />}
+              </ListItemButton>
+            ))}
 
-        {/* Render Subcategory Subcategories */}
-        {openDrawer === 'subcategory' &&
-          currentSubcategory?.subCategories?.map((subSubcategory) => (
-            <ListItemButton
-              key={subSubcategory.text}
-              onClick={() => onItemClick(subSubcategory.to)}
-            >
-              <ListItemText primary={subSubcategory.text} />
-            </ListItemButton>
-          ))}
-      </List>
+          {/* Render Subcategory Subcategories */}
+          {openDrawer === 'subcategory' &&
+            currentSubcategory?.subCategories?.map((subSubcategory) => (
+              <ListItemButton
+                key={subSubcategory.text}
+                onClick={() => onItemClick(subSubcategory.to)}
+              >
+                <ListItemText primary={subSubcategory.text} />
+              </ListItemButton>
+            ))}
+        </List>
+      </Box>
     </Drawer>
   );
 };

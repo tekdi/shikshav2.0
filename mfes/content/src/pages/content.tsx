@@ -3,8 +3,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import SearchIcon from '@mui/icons-material/Search';
-import { Box, Chip, Typography, Switch } from '@mui/material';
-import { CommonSearch, getData, Loader } from '@shared-lib';
+import {
+  Box,
+  Chip,
+  Typography,
+  Switch,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+import { CommonSearch, getData, Loader, FilterDialog } from '@shared-lib';
 import { useRouter } from 'next/navigation';
 import BackToTop from '../components/BackToTop';
 import RenderTabContent from '../components/ContentTabs';
@@ -12,7 +19,7 @@ import HelpDesk from '../components/HelpDesk';
 import { hierarchyAPI } from '../services/Hierarchy';
 import { ContentSearch, ContentSearchResponse } from '../services/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import FilterDialog from 'libs/shared-lib/src/lib/Filterdialog/FilterDialog';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 export interface ContentProps {
   _grid?: object;
   filters?: object;
@@ -43,7 +50,9 @@ export default function Content(props: ContentProps) {
   const [propData, setPropData] = useState<ContentProps>();
   const [filterValue, setFilterValue] = useState(false); // or any other initial value
   const [fullAccess, setFullAccess] = useState(false);
-
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  console.log(isMobile);
   useEffect(() => {
     const init = async () => {
       const newData = await getData('mfes_content_pages_content');
@@ -259,10 +268,27 @@ export default function Content(props: ContentProps) {
       offset: 0, // Reset pagination on filter change
     }));
   };
-
   return (
     <Loader isLoading={isPageLoading}>
       <Box sx={{ p: 2 }}>
+        {propData?.filterBy && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              marginBottom: '20px',
+            }}
+          >
+            <ArrowBackIosIcon onClick={() => router.back()} />
+            <Typography
+              sx={{ color: '#1C170D', fontSize: '22px', fontWeight: 700 }}
+            >
+              {localStorage.getItem('category')
+                ? localStorage.getItem('category')
+                : ''}
+            </Typography>
+          </Box>
+        )}
         {(propData?.showSearch || propData?.showFilter) && (
           <Box
             sx={{
@@ -436,13 +462,16 @@ export default function Content(props: ContentProps) {
                   </Typography>
                 </Box>
 
-                <FilterDialog
-                  open={filterShow}
-                  onClose={() => setFilterShow(false)}
-                  frameworkFilter={frameworkFilter}
-                  filterValues={localFilters}
-                  onApply={handleApplyFilters}
-                />
+                {isMobile && (
+                  <FilterDialog
+                    open={filterShow}
+                    onClose={() => setFilterShow(false)}
+                    frameworkFilter={frameworkFilter}
+                    filterValues={localFilters}
+                    onApply={handleApplyFilters}
+                    isMobile={isMobile}
+                  />
+                )}
               </Box>
             )}
           </Box>

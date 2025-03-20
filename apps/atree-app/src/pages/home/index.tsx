@@ -10,6 +10,7 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  Switch,
   Typography,
   useMediaQuery,
   useTheme,
@@ -39,7 +40,8 @@ export default function Index() {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
   const [contentData, setContentData] = useState<any>([]);
-
+  const [fullAccess, setFullAccess] = useState(false);
+  const [filterData, setFilterData] = useState();
   const [consumedContent, setConsumedContent] = useState<string[]>([]);
   const [frameworkFilter, setFrameworkFilter] = useState();
   const [framework, setFramework] = useState('');
@@ -48,15 +50,18 @@ export default function Index() {
   const [filterCategory, SetFilterCategory] = useState<string>('');
   const [isLoadingChildren, setIsLoadingChildren] = useState(true);
   const [openMessageDialog, setOpenMessageDialog] = useState(false);
-  const [filters, setFilters] = useState<any>({ limit: 5, offset: 0 });
+  const [filters, setFilters] = useState<any>({});
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const frameworkName = searchParams.get('category')?.toLocaleUpperCase();
   useEffect(() => {
     if (framework) {
       if (frameworkFilter) {
-        const subFrameworkData = (frameworkFilter as any).find(
+        let subFrameworkData = (frameworkFilter as any).find(
           (item: any) => item.identifier === framework
+        );
+        subFrameworkData = subFrameworkData.associations?.filter(
+          (assoc: any) => assoc.status === 'Live'
         );
 
         SetFilterCategory(
@@ -70,9 +75,9 @@ export default function Index() {
           subFrameworkData?.name
             ? subFrameworkData.name.charAt(0).toUpperCase() +
                 subFrameworkData.name.slice(1).toLowerCase()
-            : ''
+            : 'Water'
         );
-        setSubFrameworkFilter(subFrameworkData?.associations || []);
+        setSubFrameworkFilter(subFrameworkData || []);
       }
     }
   }, [framework, frameworkFilter, filterCategory]);
@@ -86,7 +91,14 @@ export default function Index() {
           frameworks.find((item: any) => item.code === 'topic')?.terms || [];
         setFramework(fdata[0]?.identifier || '');
         setFrameworkFilter(fdata);
-
+        const frameworksD = frameworkData?.result?.framework;
+        const filteredFramework = {
+          ...frameworksD,
+          categories: frameworksD.categories.filter(
+            (category: any) => category.status === 'Live'
+          ),
+        };
+        setFilterData(filteredFramework);
         if (frameworkName) {
           const selectedFramework = fdata.find(
             (item: any) =>
@@ -141,26 +153,28 @@ export default function Index() {
     fetchContentData();
     // }
   }, [filterCategory]);
-  useEffect(() => {
-    console.log('Content Data:', contentData);
-  }, [contentData]);
+
   const handleCardClick = (content: any) => {
-    if (consumedContent.length < 3) {
-      router.push(`/contents/${content?.identifier}`);
-      setConsumedContent((prev) => {
-        const updatedContent = [...prev, content?.identifier];
-        localStorage.setItem('consumedContent', JSON.stringify(updatedContent));
-        return updatedContent;
-      });
-    } else {
-      if (consumedContent.length >= 3 && !localStorage.getItem('token')) {
-        // alert('Please log in to continue');
-        setOpenMessageDialog(true);
-        localStorage.removeItem('consumedContent');
+    if (!content?.identifier) return;
+
+    setConsumedContent((prev) => {
+      const updatedContent = Array.from(new Set([...prev, content.identifier]));
+
+      localStorage.setItem('consumedContent', JSON.stringify(updatedContent));
+
+      if (updatedContent.length < 3) {
+        router.push(`/contents/${content.identifier}`);
       } else {
-        router.push(`/contents/${content?.identifier}`);
+        if (!localStorage.getItem('token')) {
+          setOpenMessageDialog(true);
+          localStorage.removeItem('consumedContent');
+        } else {
+          router.push(`/contents/${content.identifier}`);
+        }
       }
-    }
+
+      return updatedContent;
+    });
   };
   useEffect(() => {
     const storedContent = localStorage.getItem('consumedContent');
@@ -172,12 +186,54 @@ export default function Index() {
     setOpenMessageDialog(false);
     router.push('/signin');
   };
-  const handleApplyFilters = (selectedValues: any) => {
-    console.log('h');
-    // setFilters((prevFilters: any) => ({
-    //   ...prevFilters,
-    //   ...selectedValues,
-    // }));
+  const handleApplyFilters = async (selectedValues: any) => {
+    // Build filters conditionally
+    const updatedFilters: Record<string, any> = {};
+
+    if (fullAccess) {
+      updatedFilters.access = 'Full Access';
+    }
+
+    if (selectedValues && Object.keys(selectedValues).length > 0) {
+      Object.assign(updatedFilters, selectedValues);
+    }
+
+    // Pass filters only if there are any
+    const requestData: any = {
+      channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+    };
+
+    if (Object.keys(updatedFilters).length > 0) {
+      requestData.filters = updatedFilters;
+    }
+
+    const data = await ContentSearch(requestData);
+
+    setContentData(data?.result?.content || []);
+  };
+  useEffect(() => {
+    console.log('Content Data:', contentData);
+  }, [contentData]);
+  const handleToggleFullAccess = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const accessValue = event.target.checked ? 'Full Access' : 'all'; // Set 'full' or 'all' based on switch state
+    setFullAccess(event.target.checked);
+    setFilters((prevFilters: any) => ({
+      ...prevFilters,
+      filters: {
+        ...prevFilters.filters, // Preserve existing filters
+        access: accessValue === 'all' ? undefined : accessValue, // Remove 'access' key if 'all'
+      },
+      offset: 0,
+    }));
+
+    const data = await ContentSearch({
+      channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+      ...filters, // Preserve existing filters
+    });
+
+    setContentData(data?.result?.content || []);
   };
   return (
     <Layout>
@@ -196,7 +252,8 @@ export default function Index() {
               <Grid size={{ xs: 3 }}>
                 <Box>
                   <FilterDialog
-                    frameworkFilter={frameworkFilter}
+                    open={true}
+                    frameworkFilter={filterData}
                     filterValues={filters}
                     onApply={handleApplyFilters}
                     isMobile={isMobile}
@@ -219,6 +276,82 @@ export default function Index() {
                     padding: '15px',
                   }}
                 >
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    gap={1}
+                    marginLeft="auto"
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: '14px',
+                        // fontWeight: fullAccess ? '400' : '600',
+                        // color: fullAccess ? '#9E9E9E' : '#000000',
+                      }}
+                    >
+                      All
+                    </Typography>
+
+                    <Switch
+                      checked={fullAccess} // Controlled state for switch
+                      onChange={handleToggleFullAccess}
+                      sx={{
+                        width: 42,
+                        height: 26,
+                        padding: 0,
+                        '& .MuiSwitch-switchBase': {
+                          padding: 0,
+                          transitionDuration: '300ms',
+                          '&.Mui-checked': {
+                            transform: 'translateX(16px)',
+                            color: '#fff',
+                            '& + .MuiSwitch-track': {
+                              background:
+                                'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                              opacity: 1,
+                              border: 0,
+                            },
+                            '&.Mui-disabled + .MuiSwitch-track': {
+                              opacity: 0.5,
+                            },
+                          },
+                          '&.Mui-focusVisible .MuiSwitch-thumb': {
+                            color: '#33cf4d',
+                            border: '6px solid #fff',
+                          },
+                          '&.Mui-disabled .MuiSwitch-thumb': {
+                            color: '#BDBDBD', // Grey thumb when disabled
+                          },
+                          '&.Mui-disabled + .MuiSwitch-track': {
+                            opacity: 0.5,
+                            background: '#BDBDBD', // Grey track when disabled
+                          },
+                        },
+                        '& .MuiSwitch-thumb': {
+                          boxSizing: 'border-box',
+                          width: 25,
+                          height: 25,
+                        },
+                        '& .MuiSwitch-track': {
+                          borderRadius: 26 / 2,
+                          background: fullAccess
+                            ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
+                            : '#BDBDBD', // Grey when unchecked
+                          opacity: 1,
+                        },
+                      }}
+                    />
+
+                    <Typography
+                      sx={{
+                        fontSize: '14px',
+                        fontWeight: fullAccess ? '600' : '400',
+                        color: fullAccess ? '#000000' : '#9E9E9E',
+                      }}
+                    >
+                      Only Full Access
+                    </Typography>
+                  </Box>
                   <Title onClick={() => router.push('/contents')}>
                     {t('Read, Watch, Listen')}
                   </Title>

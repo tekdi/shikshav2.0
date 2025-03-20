@@ -380,6 +380,7 @@ export default function Registration() {
             width="100vw"
             height="100vh"
             sx={{ pointerEvents: 'none', bgcolor: 'rgba(0, 0, 0, 0.2)' }}
+            onClick={() => setShowAlertMsg('')}
           >
             <Alert
               variant="filled"

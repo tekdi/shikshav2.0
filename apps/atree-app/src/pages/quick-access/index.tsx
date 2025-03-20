@@ -29,7 +29,6 @@ const MyComponent: React.FC = () => {
         filteredFramework.categories.find((item: any) => item.code === 'topic')
           ?.terms || [];
 
-      console.log(fdata.associations);
       setCategories(fdata || []);
       setIsLoadingChildren(false);
     };

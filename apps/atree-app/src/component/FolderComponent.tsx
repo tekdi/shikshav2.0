@@ -5,8 +5,9 @@ import {
   Box,
   colors,
   Typography,
+  Grid,
 } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+// import Grid from '@mui/material/Grid2';
 
 import FolderBorderIcon from '@mui/icons-material/FolderOutlined';
 
@@ -26,8 +27,6 @@ const FolderComponent = ({
   length?: Array<any>;
 }) => {
   categories = categories.filter((item) => item.status !== 'Retired');
-
-  console.log(categories, 'cat');
   return (
     <List sx={{ p: 2 }}>
       <Grid
@@ -35,7 +34,7 @@ const FolderComponent = ({
         spacing={2}
         sx={{
           display: 'grid',
-          gap: 2,
+          gap: 1,
           gridTemplateColumns: {
             xs: '1fr',
             sm: '1fr 1fr',
@@ -44,7 +43,7 @@ const FolderComponent = ({
         }}
       >
         {categories?.map((category) => (
-          <Grid key={category.id} size={{ xs: 12, sm: 6, md: 4 }}>
+          <Grid key={category.id} item xs={12} sm={6} md={12}>
             <ListItem
               key={category.id}
               sx={{
