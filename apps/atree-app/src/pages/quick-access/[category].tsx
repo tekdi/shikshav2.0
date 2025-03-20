@@ -51,7 +51,11 @@ const MyComponent: React.FC = () => {
 
       // Execute all API requests in parallel
       const results = await Promise.all(requests);
-      setSearchResults(results);
+      const data = results.filter(
+        (item, index, self) =>
+          index === self.findIndex((t) => t.subTopic === item.subTopic)
+      );
+      setSearchResults(data);
       setIsLoadingChildren(false);
     };
     init();

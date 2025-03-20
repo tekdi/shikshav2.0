@@ -74,7 +74,7 @@ export const FilterDialog = ({
   onApply,
   frameworkFilter,
   filterValues,
-  isMobile,
+  isMobile = false,
 }: {
   open?: boolean;
   onClose?: () => void;
@@ -130,6 +130,8 @@ export const FilterDialog = ({
       };
     });
   };
+  console.log('isMobile', isMobile);
+  console.log('open', open);
 
   return (
     <>

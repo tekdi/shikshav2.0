@@ -1,13 +1,5 @@
-import {
-  List,
-  ListItem,
-  ListItemText,
-  Box,
-  colors,
-  Typography,
-  Grid,
-} from '@mui/material';
-// import Grid from '@mui/material/Grid2';
+// sonar-exclusion
+import { List, ListItem, Box, Typography, Grid } from '@mui/material';
 
 import FolderBorderIcon from '@mui/icons-material/FolderOutlined';
 
@@ -26,6 +18,7 @@ const FolderComponent = ({
   _title?: any;
   length?: Array<any>;
 }) => {
+  console.log('sub--', length);
   categories = categories.filter((item) => item.status !== 'Retired');
   return (
     <List sx={{ p: 2 }}>
@@ -72,16 +65,12 @@ const FolderComponent = ({
                       letterSpacing: '0.4px',
                     }}
                   >
-                    {length && length.length > 0
+                    {Array.isArray(length) && length.length > 0
                       ? (() => {
                           const foundItem = length.find(
-                            (len) => len.subTopic === category.name
+                            (len) => len.subTopic === category?.name
                           );
-                          const liveAssociationsCount = foundItem
-                            ? foundItem.associations?.filter(
-                                (assoc: any) => assoc.status === 'Live'
-                              ).length || 0
-                            : 0;
+                          const liveAssociationsCount = foundItem?.length || 0;
 
                           return liveAssociationsCount > 0
                             ? `${liveAssociationsCount} ${
@@ -89,7 +78,8 @@ const FolderComponent = ({
                               }`
                             : 'No uploads';
                         })()
-                      : category?.associations?.filter(
+                      : Array.isArray(category?.associations) &&
+                        category.associations.filter(
                           (assoc: any) => assoc.status === 'Live'
                         ).length > 0
                       ? `${

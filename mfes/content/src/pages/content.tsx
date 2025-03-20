@@ -65,7 +65,7 @@ export default function Content(props: ContentProps) {
       setPageIsLoading(false);
     };
     init();
-  }, [props]);
+  }, [props, isMobile]);
 
   const fetchContent = useCallback(async (filters: any) => {
     try {
@@ -462,16 +462,14 @@ export default function Content(props: ContentProps) {
                   </Typography>
                 </Box>
 
-                {isMobile && (
-                  <FilterDialog
-                    open={filterShow}
-                    onClose={() => setFilterShow(false)}
-                    frameworkFilter={frameworkFilter}
-                    filterValues={localFilters}
-                    onApply={handleApplyFilters}
-                    isMobile={isMobile}
-                  />
-                )}
+                <FilterDialog
+                  open={filterShow}
+                  onClose={() => setFilterShow(false)}
+                  frameworkFilter={frameworkFilter}
+                  filterValues={localFilters}
+                  onApply={handleApplyFilters}
+                  isMobile={true}
+                />
               </Box>
             )}
           </Box>
