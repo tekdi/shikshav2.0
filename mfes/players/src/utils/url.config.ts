@@ -137,14 +137,12 @@ export const V2PlayerConfig: PlayerConfig = {
     contextRollup: { l1: process.env.NEXT_PUBLIC_CHANNEL_ID || '' },
     objectRollup: {},
     userData: { firstName: userName, lastName: '' },
-    host: process.env.NEXT_PUBLIC_TELEMETRY_URL,
     endpoint: '/v1/telemetry',
   },
   config: {
     showEndPage: false,
     endPage: [{ template: 'assessment', contentType: ['SelfAssess'] }],
     showStartPage: true,
-    host: process.env.NEXT_PUBLIC_TELEMETRY_URL,
     overlay: { showUser: false },
     splash: {
       text: '',
@@ -180,7 +178,6 @@ export const V1PlayerConfig: PlayerConfig = {
       },
     ],
     showStartPage: true,
-    // host: process.env.NEXT_PUBLIC_TELEMETRY_URL,
     endpoint: '/v1/telemetry',
     overlay: {
       enableUserSwitcher: true,

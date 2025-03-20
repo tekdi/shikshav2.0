@@ -56,7 +56,7 @@ const Players: React.FC<SunbirdPlayerProps> = ({
           //@ts-ignore
           config.context['contentId'] = identifier;
         } else {
-          config = { ...V2PlayerConfig, metadata: data, data: data.body };
+          config = { ...V2PlayerConfig, metadata: data };
           //@ts-ignore
           config.context['contentId'] = identifier;
         }

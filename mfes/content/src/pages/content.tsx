@@ -286,55 +286,44 @@ export default function Content() {
 
   const renderTabContent = () => (
     <Box sx={{ flexGrow: 1 }}>
-      {isLoading ? (
-        <Circular />
-      ) : (
-        <>
-          <Grid container spacing={2} sx={{ mt: 2 }}>
-            {contentData?.map((item) => (
-              <Grid
-                key={item?.identifier}
-                size={{ xs: 6, sm: 6, md: 3, lg: 3 }}
-              >
-                <CommonCard
-                  minheight="100%"
-                  title={item?.name.trim()}
-                  image={
-                    item?.posterImage && item?.posterImage !== 'undefined'
-                      ? item?.posterImage
-                      : `${AppConst.BASEPATH}/assests/images/image_ver.png`
-                  }
-                  content={item?.description || '-'}
-                  // subheader={item?.contentType}
-                  actions={item?.contentType}
-                  orientation="horizontal"
-                  item={[item]}
-                  TrackData={trackData}
-                  type={tabValue === 0 ? 'course' : 'content'}
-                  onClick={() =>
-                    handleCardClick(item?.identifier, item?.mimeType)
-                  }
-                />
-              </Grid>
-            ))}
+      <Grid container spacing={2} sx={{ mt: 2 }}>
+        {contentData?.map((item) => (
+          <Grid key={item?.identifier} size={{ xs: 6, sm: 6, md: 3, lg: 3 }}>
+            <CommonCard
+              minheight="100%"
+              title={item?.name.trim()}
+              image={
+                item?.posterImage && item?.posterImage !== 'undefined'
+                  ? item?.posterImage
+                  : `${AppConst.BASEPATH}/assests/images/image_ver.png`
+              }
+              content={item?.description || '-'}
+              // subheader={item?.contentType}
+              actions={item?.contentType}
+              orientation="horizontal"
+              item={[item]}
+              TrackData={trackData}
+              type={tabValue === 0 ? 'course' : 'content'}
+              onClick={() => handleCardClick(item?.identifier, item?.mimeType)}
+            />
           </Grid>
-          <Box sx={{ textAlign: 'center', mt: 4 }}>
-            {hasMoreData ? (
-              <Button
-                variant="contained"
-                onClick={handleLoadMore}
-                disabled={isLoading}
-              >
-                {isLoading ? 'Loading...' : 'Load More'}
-              </Button>
-            ) : (
-              <Typography variant="body1" color="black">
-                No more data available
-              </Typography>
-            )}
-          </Box>
-        </>
-      )}
+        ))}
+      </Grid>
+      <Box sx={{ textAlign: 'center', mt: 4 }}>
+        {hasMoreData ? (
+          <Button
+            variant="contained"
+            onClick={handleLoadMore}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Loading...' : 'Load More'}
+          </Button>
+        ) : (
+          <Typography variant="body1" color="black">
+            No more data available
+          </Typography>
+        )}
+      </Box>
     </Box>
   );
 
