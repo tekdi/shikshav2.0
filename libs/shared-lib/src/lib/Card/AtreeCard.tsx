@@ -17,7 +17,7 @@ export const AtreeCard: React.FC<{
 }) {
   return (
     <Grid container spacing={2} width="100%">
-      {contents.map((content) => (
+      {contents?.map((content) => (
         <Grid
           size={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 4 }}
           sx={{

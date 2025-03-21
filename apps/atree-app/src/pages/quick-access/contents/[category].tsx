@@ -2,7 +2,15 @@ import React, { useEffect, useState } from 'react';
 import Layout from '../../../component/layout/layout';
 import FolderComponent from '../../../component/FolderComponent';
 import { useRouter } from 'next/router';
-import { Box, Button, Chip, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Chip,
+  Switch,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Loader from '../../../component/layout/LoaderComponent';
@@ -10,10 +18,12 @@ import dynamic from 'next/dynamic';
 import atreeLogo from '../../../../assets/images/atreeLogo.png';
 import { ContentSearch, ContentSearchResponse } from '@shared-lib';
 import FilterDialog from 'libs/shared-lib/src/lib/Filterdialog/FilterDialog';
-
+import { FrameworkFilter } from 'apps/atree-app/src/component/Tags';
 const Content = dynamic(() => import('@Content'), { ssr: false });
 
 const MyComponent: React.FC = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
   const { category } = router.query;
 
@@ -22,9 +32,13 @@ const MyComponent: React.FC = () => {
   const [filterShow, setFilterShow] = useState(false);
   const [frameworkFilter, setFrameworkFilter] = useState(false);
   const [filters, setFilters] = useState<any>({ limit: 5, offset: 0 });
+  const [categories, setCategories] = useState<Array<any>>([]);
+  const [framework, setFramework] = useState('');
+
   const [searchResults, setSearchResults] = useState<
     { subTopic: string; length: number }[]
   >([]);
+  const [fullAccess, setFullAccess] = useState(false);
 
   /** SubFramework Filter Options */
   const subFrameworkFilter = [
@@ -43,10 +57,22 @@ const MyComponent: React.FC = () => {
       setFrameworkFilter(frameworkData?.result?.framework);
 
       const frameworks = frameworkData?.result?.framework?.categories || [];
-      const categoryData =
-        frameworks
-          .find((item: any) => item.code === 'topic')
-          ?.terms?.find((e: any) => e.name === category)?.associations || [];
+
+      const filteredFramework = frameworkData?.result?.framework
+        ? {
+            ...frameworkData.result.framework,
+            categories: frameworkData.result.framework.categories?.filter(
+              (category: any) => category.status === 'Live'
+            ),
+          }
+        : { categories: [] }; // Provide a default structure if frameworkData is undefined
+
+      const fdata =
+        filteredFramework.categories.find((item: any) => item.code === 'topic')
+          ?.terms || [];
+
+      setCategories(fdata || []);
+      setFramework(fdata[0]?.identifier || '');
     } catch (error) {
       console.error('Error fetching framework data:', error);
     }
@@ -95,6 +121,20 @@ const MyComponent: React.FC = () => {
     }));
   };
 
+  const handleToggleFullAccess = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const accessValue = event.target.checked ? 'Full Access' : 'all'; // Set 'full' or 'all' based on switch state
+    setFullAccess(event.target.checked);
+    setFilters((prevFilters: any) => ({
+      ...prevFilters,
+      filters: {
+        ...prevFilters.filters, // Preserve existing filters
+        access: accessValue === 'all' ? undefined : accessValue, // Remove 'access' key if 'all'
+      },
+      offset: 0, // Reset pagination on filter change
+    }));
+  };
   /** Reusable Filter Button */
   const FilterChip = () => (
     <Chip
@@ -150,7 +190,7 @@ const MyComponent: React.FC = () => {
         <Box
           sx={{
             display: 'flex',
-            alignItems: 'center',
+            // alignItems: 'center',
             gap: '16px',
             flexWrap: 'wrap',
           }}
@@ -158,13 +198,87 @@ const MyComponent: React.FC = () => {
           <Typography sx={{ fontSize: '22px', lineHeight: '28px' }}>
             {category}
           </Typography>
-          <Box
-            display="flex"
-            alignItems="center"
-            sx={{ justifyContent: 'flex-end' }}
-          >
-            <FilterChip />
-          </Box>
+          {isMobile && (
+            <Box
+              display="flex"
+              alignItems="center"
+              gap={1}
+              // sx={{ justifyContent: 'flex-end' }}
+            >
+              <FilterChip />
+              <Box display="flex" alignItems="center" gap={1} marginLeft="auto">
+                <Typography
+                  sx={{
+                    fontSize: '14px',
+                    fontWeight: fullAccess ? '400' : '600',
+                    color: fullAccess ? '#9E9E9E' : '#000000',
+                  }}
+                >
+                  All
+                </Typography>
+
+                <Switch
+                  checked={fullAccess} // Controlled state for switch
+                  onChange={handleToggleFullAccess}
+                  sx={{
+                    width: 42,
+                    height: 26,
+                    padding: 0,
+                    '& .MuiSwitch-switchBase': {
+                      padding: 0,
+                      transitionDuration: '300ms',
+                      '&.Mui-checked': {
+                        transform: 'translateX(16px)',
+                        color: '#fff',
+                        '& + .MuiSwitch-track': {
+                          background:
+                            'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                          opacity: 1,
+                          border: 0,
+                        },
+                        '&.Mui-disabled + .MuiSwitch-track': {
+                          opacity: 0.5,
+                        },
+                      },
+                      '&.Mui-focusVisible .MuiSwitch-thumb': {
+                        color: '#33cf4d',
+                        border: '6px solid #fff',
+                      },
+                      '&.Mui-disabled .MuiSwitch-thumb': {
+                        color: '#BDBDBD', // Grey thumb when disabled
+                      },
+                      '&.Mui-disabled + .MuiSwitch-track': {
+                        opacity: 0.5,
+                        background: '#BDBDBD', // Grey track when disabled
+                      },
+                    },
+                    '& .MuiSwitch-thumb': {
+                      boxSizing: 'border-box',
+                      width: 25,
+                      height: 25,
+                    },
+                    '& .MuiSwitch-track': {
+                      borderRadius: 26 / 2,
+                      background: fullAccess
+                        ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
+                        : '#BDBDBD', // Grey when unchecked
+                      opacity: 1,
+                    },
+                  }}
+                />
+
+                <Typography
+                  sx={{
+                    fontSize: '14px',
+                    fontWeight: fullAccess ? '600' : '400',
+                    color: fullAccess ? '#000000' : '#9E9E9E',
+                  }}
+                >
+                  Only Full Access
+                </Typography>
+              </Box>
+            </Box>
+          )}
         </Box>
       }
       showBack
@@ -173,62 +287,155 @@ const MyComponent: React.FC = () => {
       {isLoading ? (
         <Loader />
       ) : (
-        <Box>
-          <FolderComponent
-            categories={[{ name: category }]}
-            subLabel="resources"
-            length={searchResults}
-            onClick={handleClick}
-            _title={{ fontWeight: 700, fontSize: '14px' }}
-            _item={{
-              border: 0,
-              justifyContent: 'space-between',
-              py: 2,
-              px: 3,
-              borderRadius: '8px',
-              background: '#ECF2F3',
-              borderBottom: '1px solid  #2B3133',
-              cursor: 'auto',
-            }}
+        <Box
+          display="flex"
+          flexDirection="column"
+          gap="3rem"
+          py="1rem"
+          px="8px"
+        >
+          <FrameworkFilter
+            frameworkFilter={categories || []}
+            framework={framework}
+            setFramework={setFramework}
+            fromSubcategory={false}
           />
-          <SubFrameworkButtons />
-          <FilterDialog
-            open={filterShow}
-            onClose={() => setFilterShow(false)}
-            frameworkFilter={frameworkFilter}
-            filterValues={filters}
-            onApply={handleApplyFilters}
-          />
-          <Box
-            sx={{
-              width: '100%',
-              gap: '16px',
-              display: 'flex',
-              flexDirection: 'column',
-              padding: '16px',
-            }}
-          >
-            <Content
-              {...{
-                _grid: { size: { xs: 6, sm: 6, md: 4, lg: 3 } },
-                contentTabs: ['content'],
-                handleCardClick: (content: ContentSearchResponse) => {
-                  router.push(`/contents/${content?.identifier}`);
-                },
-                filters: {
-                  filters: {
-                    channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
-                    subTopic: `${category}`,
-                  },
-                },
-                _card: { cardName: 'AtreeCard', image: atreeLogo.src },
-                showSearch: false,
-                showFilter: false,
-                filterBy: true,
-                showFilterRight: false,
-              }}
-            />
-          </Box>
+          {isMobile && <SubFrameworkButtons />}
+          <Grid container spacing={1}>
+            <Grid size={{ xs: 3, md: 3 }}>
+              <FilterDialog
+                open={filterShow}
+                onClose={() => setFilterShow(false)}
+                frameworkFilter={frameworkFilter}
+                filterValues={filters}
+                onApply={handleApplyFilters}
+                isMobile={isMobile}
+              />
+            </Grid>
+
+            <Grid size={{ xs: 9, md: 9 }}>
+              <>
+                <Box sx={{ display: 'flex' }}>
+                  <FolderComponent
+                    categories={[{ name: category }]}
+                    subLabel="resources"
+                    length={searchResults}
+                    onClick={handleClick}
+                    _title={{ fontWeight: 700, fontSize: '14px' }}
+                    _item={{
+                      border: 0,
+                      justifyContent: 'space-between',
+                      py: 2,
+                      px: 3,
+                      borderRadius: '8px',
+                      background: '#ECF2F3',
+                      borderBottom: '1px solid  #2B3133',
+                      cursor: 'auto',
+                    }}
+                  />
+                  {!isMobile && (
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      gap={1}
+                      sx={{ width: '100%', justifyContent: 'center' }}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize: '14px',
+                          fontWeight: fullAccess ? '400' : '600',
+                          color: fullAccess ? '#9E9E9E' : '#000000',
+                        }}
+                      >
+                        All
+                      </Typography>
+
+                      <Switch
+                        checked={fullAccess} // Controlled state for switch
+                        onChange={handleToggleFullAccess}
+                        sx={{
+                          width: 42,
+                          height: 26,
+                          padding: 0,
+                          '& .MuiSwitch-switchBase': {
+                            padding: 0,
+                            transitionDuration: '300ms',
+                            '&.Mui-checked': {
+                              transform: 'translateX(16px)',
+                              color: '#fff',
+                              '& + .MuiSwitch-track': {
+                                background:
+                                  'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                                opacity: 1,
+                                border: 0,
+                              },
+                              '&.Mui-disabled + .MuiSwitch-track': {
+                                opacity: 0.5,
+                              },
+                            },
+                            '&.Mui-focusVisible .MuiSwitch-thumb': {
+                              color: '#33cf4d',
+                              border: '6px solid #fff',
+                            },
+                            '&.Mui-disabled .MuiSwitch-thumb': {
+                              color: '#BDBDBD', // Grey thumb when disabled
+                            },
+                            '&.Mui-disabled + .MuiSwitch-track': {
+                              opacity: 0.5,
+                              background: '#BDBDBD', // Grey track when disabled
+                            },
+                          },
+                          '& .MuiSwitch-thumb': {
+                            boxSizing: 'border-box',
+                            width: 25,
+                            height: 25,
+                          },
+                          '& .MuiSwitch-track': {
+                            borderRadius: 26 / 2,
+                            background: fullAccess
+                              ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
+                              : '#BDBDBD', // Grey when unchecked
+                            opacity: 1,
+                          },
+                        }}
+                      />
+
+                      <Typography
+                        sx={{
+                          fontSize: '14px',
+                          fontWeight: fullAccess ? '600' : '400',
+                          color: fullAccess ? '#000000' : '#9E9E9E',
+                        }}
+                      >
+                        Only Full Access
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
+                <Content
+                  {...{
+                    // _grid: { size: { xs: 6, sm: 6, md: 9, lg: 3 } },
+                    contentTabs: ['content'],
+                    handleCardClick: (content: ContentSearchResponse) => {
+                      router.push(`/contents/${content?.identifier}`);
+                    },
+                    filters: {
+                      filters: {
+                        channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
+                        subTopic: `${category}`,
+                      },
+                    },
+                    _card: { cardName: 'AtreeCard', image: atreeLogo.src },
+                    showSearch: false,
+                    showFilter: false,
+                    filterBy: false,
+                    showFilterRight: false,
+                  }}
+                />
+              </>
+            </Grid>
+          </Grid>
+          {/* </Box> */}
         </Box>
       )}
     </Layout>

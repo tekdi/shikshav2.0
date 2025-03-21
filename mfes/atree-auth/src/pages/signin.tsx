@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation';
 import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
 import { signin } from '../services/LoginService';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+
 export default function Signin() {
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState(false);
@@ -85,18 +86,6 @@ export default function Signin() {
     }
   };
 
-  const handleLoginSuccess = (response: any) => {
-    // Get the token and process it
-    const token = response.credential;
-    console.log('Google Login Success:', token);
-
-    router.push('/dashboard');
-  };
-
-  const handleLoginFailure = () => {
-    console.error('Google Login Failure:');
-  };
-
   return (
     <Grid
       container
@@ -155,16 +144,7 @@ export default function Signin() {
             </IconButton>
           }
         />
-        {/* <FormLabel component="legend" sx={{ color: '#4D4639' }}>
-          Enter the 6-digit code sent to your email
-        </FormLabel>
-        <Otp
-          separator={<span></span>}
-          value={otp}
-          onChange={setOtp}
-          length={5}
-        />
-        <Typography>Request to Resend OTP in 4:59</Typography> */}
+
         <Button
           onClick={handleSigninClick}
           sx={{
@@ -182,7 +162,9 @@ export default function Signin() {
         >
           Proceed
         </Button>
-        <GoogleOAuthProvider clientId="467709515234-mcvpmvt7rhen1knmaqb6b0vbjurod76s.apps.googleusercontent.com">
+        <GoogleOAuthProvider
+          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ''}
+        >
           <MyCustomGoogleLogin />
         </GoogleOAuthProvider>
         <Typography
@@ -209,6 +191,7 @@ export default function Signin() {
           width="100vw"
           height="100vh"
           sx={{ pointerEvents: 'none', bgcolor: 'rgba(0, 0, 0, 0.2)' }}
+          onClick={() => setShowAlertMsg('')}
         >
           <Alert
             variant="filled"
@@ -224,10 +207,15 @@ export default function Signin() {
   );
 }
 const MyCustomGoogleLogin = () => {
-  const login = useGoogleLogin({
-    onSuccess: (tokenResponse) => {
-      console.log('Google Auth Token:', tokenResponse);
+  const router = useRouter();
+
+  const handleLogin = useGoogleLogin({
+    onSuccess: (response) => {
+      console.log('Google Auth Token:', response);
+      localStorage.setItem('token', response.access_token);
+      router.push('/home');
     },
+    flow: 'implicit', // Ensures no full-page reload
     onError: (error) => {
       console.error('Login Failed:', error);
     },
@@ -253,7 +241,7 @@ const MyCustomGoogleLogin = () => {
         mx: 'auto',
         '&:hover': { backgroundColor: '#f5f5f5' },
       }}
-      onClick={() => login()} // Manually trigger login
+      onClick={() => handleLogin()} // Manually trigger login
     >
       <Box display="flex" alignItems="center" gap="10px">
         <img

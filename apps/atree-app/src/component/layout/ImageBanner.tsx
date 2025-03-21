@@ -7,7 +7,8 @@ import {
   CardMedia,
   Typography,
   Avatar,
-  Box,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 
 export const ImageBanner = ({
@@ -24,7 +25,8 @@ export const ImageBanner = ({
   _showAvatar?: boolean;
 }) => {
   const router = useRouter();
-
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const handleClick = () => {
     router.push(`/home?category=${encodeURIComponent(name)}`);
   };
@@ -35,7 +37,7 @@ export const ImageBanner = ({
         <CardMedia
           component="img"
           alt={name}
-          sx={{ height: 200, objectFit: 'cover', ..._image }}
+          sx={{ height: 'auto', objectFit: 'cover', ..._image }}
           image={image}
         />
         <CardContent
@@ -73,8 +75,8 @@ export const ImageBanner = ({
             sx={{
               color: 'white',
               fontWeight: 700,
-              fontSize: '18px',
-              lineHeight: '24px',
+              fontSize: isMobile ? '18px' : '48px',
+              width: isMobile ? 'auto' : '70%',
             }}
           >
             {name}

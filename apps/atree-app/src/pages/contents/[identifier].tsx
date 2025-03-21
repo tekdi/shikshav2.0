@@ -15,18 +15,23 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Grid,
   IconButton,
+  Stack,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
-import { Circular } from '@shared-lib';
 import { getContentDetails } from '../../service/content';
 import Layout from '../../component/layout/layout';
 import landingBanner from '../../../assets/images/landingBanner.png';
 import Carousel from 'react-material-ui-carousel';
-import ShareIcon from '@mui/icons-material/Share';
-import ShareDialog from '../../component/ShareDialog';
+import atreeLogo from '../../../assets/images/atreeLogo.png';
+
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Loader from '../../component/layout/LoaderComponent';
+import { AtreeCard, ContentSearch } from '@shared-lib';
+import { FrameworkFilter } from '../../component/Tags';
 
 interface ContentItem {
   name: string;
@@ -41,15 +46,22 @@ interface ContentItem {
   keywords: string[];
   year: string;
   license: string;
+  description: string;
+  publisher: string;
 }
 
 export default function Content() {
   const router = useRouter();
   const { identifier } = router.query; // Access dynamic parameter 'identifier'
   const [contentData, setContentData] = useState<ContentItem | null>(null);
+  const [contentResultData, setContentResultData] = useState<any>([]);
+
   const [isLoading, setIsLoading] = useState(true);
-  const [openShareDialog, setOpenShareDialog] = useState(false);
   const [openPopup, setOpenPopup] = useState<boolean>(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [categories, setCategories] = useState<Array<any>>([]);
+  const [framework, setFramework] = useState('');
 
   const handleOnCLick = () => {
     router.push(`/player/${identifier}`);
@@ -63,6 +75,12 @@ export default function Content() {
       if (result) {
         setContentData(result);
       }
+
+      const data = await ContentSearch({
+        channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+      });
+      console.log(data?.result?.content);
+      setContentResultData(data?.result?.content || []);
     } catch (error) {
       console.error('Failed to fetch content:', error);
     } finally {
@@ -82,15 +100,39 @@ export default function Content() {
     if (identifier) fetchContent();
   }, [identifier]);
 
+  const fetchFrameworkData = async () => {
+    try {
+      const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
+      const response = await fetch(url);
+      const frameworkData = await response.json();
+
+      const filteredFramework = frameworkData?.result?.framework
+        ? {
+            ...frameworkData.result.framework,
+            categories: frameworkData.result.framework.categories?.filter(
+              (category: any) => category.status === 'Live'
+            ),
+          }
+        : { categories: [] }; // Provide a default structure if frameworkData is undefined
+
+      const fdata =
+        filteredFramework.categories.find((item: any) => item.code === 'topic')
+          ?.terms || [];
+
+      setCategories(fdata || []);
+      setFramework(fdata[0]?.identifier || '');
+    } catch (error) {
+      console.error('Error fetching framework data:', error);
+    }
+  };
+  useEffect(() => {
+    fetchFrameworkData();
+  }, [identifier]);
+
   if (isLoading) return <Loader />;
 
-  const handleItemClick = (to: string) => {
-    router.push(to);
-  };
-  const handleShareClick = (event: React.MouseEvent) => {
-    // event.stopPropagation(); // Prevent Card click event
-    console.log('click');
-    setOpenShareDialog(true);
+  const handleCardClick = (content: any) => {
+    router.push(`/contents/${content?.identifier}`);
   };
   return (
     <Layout
@@ -128,133 +170,234 @@ export default function Content() {
         </Box>
       }
     >
-      <Box
-        sx={{
-          padding: 2,
-          margin: '0 auto',
-          textAlign: 'center',
-          borderRadius: 2,
-          gap: 2.5,
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        <Box sx={{ px: 2 }}>
-          <Carousel
-            navButtonsAlwaysVisible
-            indicators={false}
-            animation="slide"
-            cycleNavigation={false}
+      <FrameworkFilter
+        frameworkFilter={categories || []}
+        framework={framework}
+        setFramework={setFramework}
+        fromSubcategory={false}
+      />
+      {!isMobile ? (
+        // Desktop View (Carousel on Right, Content on Left)
+        <>
+          <Grid container spacing={2} sx={{ padding: 2 }}>
+            {/* Left Side (Content) */}
+            <Grid item xs={12} md={6}>
+              <Carousel
+                navButtonsAlwaysVisible
+                indicators={false}
+                animation="slide"
+                cycleNavigation={false}
+              >
+                {[...Array(4)].map((_, i) => (
+                  <ImageCard
+                    key={i}
+                    image={landingBanner?.src || ''}
+                    name={
+                      <Box display="flex" alignItems="center" gap={1}>
+                        <Box>
+                          <Typography variant="body2" gutterBottom>
+                            {contentData?.name || ''}
+                          </Typography>
+                          <Typography variant="body2" gutterBottom>
+                            {contentData?.publisher || ''}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    }
+                  />
+                ))}
+              </Carousel>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Stack spacing={2}>
+                {/* Keywords */}
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                  {displayedKeywords.map((label) => (
+                    <Chip
+                      key={label}
+                      label={label}
+                      variant="outlined"
+                      sx={{ height: 32, padding: '6px 8px' }}
+                    />
+                  ))}
+                  {showMoreIcon && (
+                    <IconButton onClick={() => setOpenPopup(true)} size="small">
+                      <MoreVertIcon />
+                    </IconButton>
+                  )}
+                </Box>
+
+                {/* Description */}
+                <Typography variant="body1" textAlign="left">
+                  {contentData?.description}
+                </Typography>
+
+                {/* Know More Button */}
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  sx={{ borderRadius: '50px', height: '40px', width: '100%' }}
+                  onClick={handleOnCLick}
+                >
+                  Know More
+                </Button>
+
+                {/* Year & License */}
+                <Typography variant="body1" textAlign="left">
+                  <b>Year:</b> {contentData?.year || ''}
+                </Typography>
+                <Typography variant="body1" textAlign="left">
+                  <b>License:</b> {contentData?.license || ''}
+                </Typography>
+              </Stack>
+            </Grid>
+
+            {/* Right Side (Carousel) */}
+          </Grid>
+          <Box
+            sx={{
+              width: '100%',
+              gap: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
           >
-            {[...Array(4)].map((_, i) => (
-              <ImageCard
-                key={i}
-                image={landingBanner?.src || ''}
-                name={
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <Box>
-                      <Typography variant="body2" gutterBottom>
-                        {contentData?.name || ''}
-                      </Typography>
-                      <Typography variant="body2" gutterBottom>
-                        Published by PrathamBooks {i + 1}
-                      </Typography>
-                    </Box>
-                  </Box>
-                }
-              />
-            ))}
-          </Carousel>
-        </Box>
-        <Button
-          variant="contained"
-          color="secondary"
-          sx={{
-            borderRadius: '50px',
-            height: '40px',
-            width: '100%',
-          }}
-          onClick={handleOnCLick}
-        >
-          Know More
-        </Button>
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-          {displayedKeywords?.map((label: any, index: any) => (
-            <Chip
-              key={index}
-              label={label}
-              variant="outlined"
-              sx={{
-                height: '32px',
-                gap: '2px',
-                padding: '6px 8px',
-                borderRadius: '0px',
-              }}
+            <Typography onClick={() => router.push('/contents')}>
+              Related Content
+            </Typography>
+            <AtreeCard
+              contents={
+                contentResultData?.length > 6
+                  ? contentResultData?.slice(4, 10)
+                  : contentResultData
+              }
+              handleCardClick={handleCardClick}
+              _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
+              _card={{ image: atreeLogo.src }}
             />
-          ))}
-          {showMoreIcon && (
-            <IconButton onClick={() => setOpenPopup(true)} size="small">
-              <MoreVertIcon />
-            </IconButton>
-          )}
-        </Box>
-        <Dialog open={openPopup} onClose={() => setOpenPopup(false)}>
-          <DialogTitle>More Keywords</DialogTitle>
-          <DialogContent>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-              {remainingKeywords.map((label: any) => (
-                <Chip
-                  key={label}
-                  label={label.charAt(0).toUpperCase() + label.slice(1)}
-                  variant="outlined"
-                  sx={{
-                    height: '32px',
-                    gap: '8px',
-                    padding: '6px 8px',
-                    borderRadius: '0px',
-                  }}
+          </Box>
+        </>
+      ) : (
+        <Box
+          sx={{
+            padding: 2,
+            margin: '0 auto',
+            textAlign: 'center',
+            borderRadius: 2,
+            gap: 2.5,
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          <Box sx={{ px: 2 }}>
+            <Carousel
+              navButtonsAlwaysVisible
+              indicators={false}
+              animation="slide"
+              cycleNavigation={false}
+            >
+              {[...Array(4)].map((_, i) => (
+                <ImageCard
+                  key={i}
+                  image={landingBanner?.src || ''}
+                  name={
+                    <Box display="flex" alignItems="center" gap={1}>
+                      <Box>
+                        <Typography variant="body2" gutterBottom>
+                          {contentData?.name || ''}
+                        </Typography>
+                        <Typography variant="body2" gutterBottom>
+                          {contentData?.publisher || ''}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  }
                 />
               ))}
-            </Box>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              onClick={() => setOpenPopup(false)}
-              variant="contained"
-              color="secondary"
-              sx={{
-                borderRadius: '50px',
-                height: '40px',
-                width: '100%',
-              }}
-            >
-              Close
-            </Button>
-          </DialogActions>
-        </Dialog>
-        <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-          Based on real accounts, this is an imagined story of a boy in the
-          aftermath of the 2004 Tsunami that hit several countries. It could
-          also be the story of any child whose life is closely linked with
-          nature. The narrative follows the feelings of the boy as he tries to
-          comprehend the horror and bewilderment of the experience.
-        </Typography>
-        <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-          Photographs, not of the devastation but of warmth, present positive
-          images that lift the spirit and reinforce the bond between water, sand
-          and child.
-        </Typography>
-        <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-          <b>Year:</b> {contentData?.year || ''}
-        </Typography>
-        <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-          <b>License:</b> {contentData?.license || ''}
-        </Typography>
-      </Box>
-      <ShareDialog
-        open={openShareDialog}
-        handleClose={() => setOpenShareDialog(false)}
-      />
+            </Carousel>
+          </Box>
+          <Button
+            variant="contained"
+            color="secondary"
+            sx={{
+              borderRadius: '50px',
+              height: '40px',
+              width: '100%',
+            }}
+            onClick={handleOnCLick}
+          >
+            Know More
+          </Button>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            {displayedKeywords?.map((label: any, index: any) => (
+              <Chip
+                key={index}
+                label={label}
+                variant="outlined"
+                sx={{
+                  height: '32px',
+                  gap: '2px',
+                  padding: '6px 8px',
+                  borderRadius: '0px',
+                }}
+              />
+            ))}
+            {showMoreIcon && (
+              <IconButton onClick={() => setOpenPopup(true)} size="small">
+                <MoreVertIcon />
+              </IconButton>
+            )}
+          </Box>
+          <Dialog open={openPopup} onClose={() => setOpenPopup(false)}>
+            <DialogTitle>More Keywords</DialogTitle>
+            <DialogContent>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                {remainingKeywords.map((label: any) => (
+                  <Chip
+                    key={label}
+                    label={label.charAt(0).toUpperCase() + label.slice(1)}
+                    variant="outlined"
+                    sx={{
+                      height: '32px',
+                      gap: '8px',
+                      padding: '6px 8px',
+                      borderRadius: '0px',
+                    }}
+                  />
+                ))}
+              </Box>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                onClick={() => setOpenPopup(false)}
+                variant="contained"
+                color="secondary"
+                sx={{
+                  borderRadius: '50px',
+                  height: '40px',
+                  width: '100%',
+                }}
+              >
+                Close
+              </Button>
+            </DialogActions>
+          </Dialog>
+          <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
+            {contentData?.description}
+          </Typography>
+          <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
+            Photographs, not of the devastation but of warmth, present positive
+            images that lift the spirit and reinforce the bond between water,
+            sand and child.
+          </Typography>
+          <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
+            <b>Year:</b> {contentData?.year || ''}
+          </Typography>
+          <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
+            <b>License:</b> {contentData?.license || ''}
+          </Typography>
+        </Box>
+      )}
     </Layout>
   );
 }

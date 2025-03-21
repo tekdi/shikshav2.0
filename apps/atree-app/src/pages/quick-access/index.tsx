@@ -11,11 +11,24 @@ const MyComponent: React.FC = () => {
   useEffect(() => {
     const init = async () => {
       const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
+
       const frameworkData = await fetch(url).then((res) => res.json());
-      const frameworks = frameworkData?.result?.framework?.categories;
+
+      const filteredFramework = frameworkData?.result?.framework
+        ? {
+            ...frameworkData.result.framework,
+            categories: frameworkData.result.framework.categories?.filter(
+              (category: any) => category.status === 'Live'
+            ),
+          }
+        : { categories: [] }; // Provide a default structure if frameworkData is undefined
+
+      console.log(filteredFramework.categories);
+
       const fdata =
-        frameworks.find((item: any) => item.code === 'topic')?.terms || [];
-      console.log(fdata);
+        filteredFramework.categories.find((item: any) => item.code === 'topic')
+          ?.terms || [];
+
       setCategories(fdata || []);
       setIsLoadingChildren(false);
     };

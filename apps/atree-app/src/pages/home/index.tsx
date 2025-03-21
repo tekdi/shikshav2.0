@@ -10,13 +10,16 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  Switch,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { AtreeCard, ContentSearch } from '@shared-lib';
+import { AtreeCard, ContentSearch, FilterDialog } from '@shared-lib';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import atreeLogo from '../../../assets/images/atreeLogo.png';
+import atreeLogo from '../../../assets/images/placeholder.jpg';
 import Layout from '../../component/layout/layout';
 // import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
@@ -31,10 +34,14 @@ const buttonColors = {
   'reference books': '#FFBD0D',
   general: '#FFBD0D',
 };
+
 export default function Index() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
   const [contentData, setContentData] = useState<any>([]);
-  const [relatedContent, setRelatedContent] = useState<any>([]);
+  const [fullAccess, setFullAccess] = useState(false);
+  const [filterData, setFilterData] = useState();
   const [consumedContent, setConsumedContent] = useState<string[]>([]);
   const [frameworkFilter, setFrameworkFilter] = useState();
   const [framework, setFramework] = useState('');
@@ -43,14 +50,18 @@ export default function Index() {
   const [filterCategory, SetFilterCategory] = useState<string>('');
   const [isLoadingChildren, setIsLoadingChildren] = useState(true);
   const [openMessageDialog, setOpenMessageDialog] = useState(false);
+  const [filters, setFilters] = useState<any>({});
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const frameworkName = searchParams.get('category')?.toLocaleUpperCase();
   useEffect(() => {
     if (framework) {
       if (frameworkFilter) {
-        const subFrameworkData = (frameworkFilter as any).find(
+        let subFrameworkData = (frameworkFilter as any).find(
           (item: any) => item.identifier === framework
+        );
+        subFrameworkData = subFrameworkData.associations?.filter(
+          (assoc: any) => assoc.status === 'Live'
         );
 
         SetFilterCategory(
@@ -64,9 +75,9 @@ export default function Index() {
           subFrameworkData?.name
             ? subFrameworkData.name.charAt(0).toUpperCase() +
                 subFrameworkData.name.slice(1).toLowerCase()
-            : ''
+            : 'Water'
         );
-        setSubFrameworkFilter(subFrameworkData?.associations || []);
+        setSubFrameworkFilter(subFrameworkData || []);
       }
     }
   }, [framework, frameworkFilter, filterCategory]);
@@ -80,7 +91,14 @@ export default function Index() {
           frameworks.find((item: any) => item.code === 'topic')?.terms || [];
         setFramework(fdata[0]?.identifier || '');
         setFrameworkFilter(fdata);
-
+        const frameworksD = frameworkData?.result?.framework;
+        const filteredFramework = {
+          ...frameworksD,
+          categories: frameworksD.categories.filter(
+            (category: any) => category.status === 'Live'
+          ),
+        };
+        setFilterData(filteredFramework);
         if (frameworkName) {
           const selectedFramework = fdata.find(
             (item: any) =>
@@ -101,41 +119,6 @@ export default function Index() {
           filters,
         });
         setContentData(data?.result?.content || []);
-
-        const getNormalizedTopics = (topic: any): string[] =>
-          Array.isArray(topic)
-            ? topic.map((t: any) => t.trim().toLowerCase())
-            : [];
-
-        const filterContentByCategory = (
-          item: any,
-          filterCategory: string
-        ): boolean => {
-          if (!filterCategory) return false;
-
-          const normalizedTopics = getNormalizedTopics(item.topic);
-          return normalizedTopics.includes(filterCategory.trim().toLowerCase());
-        };
-
-        const getSubTopics = (item: any): string[] =>
-          Array.isArray(item.subTopic)
-            ? item.subTopic
-            : [item.subTopic ?? 'Unknown'];
-
-        const relatedData = Array.isArray(data?.result?.content)
-          ? data.result.content
-              .filter((item) => filterContentByCategory(item, filterCategory))
-              .flatMap(getSubTopics)
-          : [];
-
-        const flattenedContents = relatedData.map((name) => ({
-          identifier: name.toLowerCase().replace(/\s+/g, '-'),
-          name,
-          image: atreeLogo.src,
-          year: 'N/A',
-        }));
-
-        setRelatedContent(flattenedContents);
       } catch (error) {
         console.error('Error fetching board data:', error);
       } finally {
@@ -159,45 +142,6 @@ export default function Index() {
         });
 
         setContentData(data?.result?.content || []);
-        const normalizeTopics = (topics: any): string[] =>
-          Array.isArray(topics)
-            ? topics.map((t: any) => t.trim().toLowerCase())
-            : [];
-
-        const matchesFilterCategory = (
-          item: any,
-          filterCategory: string
-        ): boolean => {
-          if (!filterCategory) return false;
-
-          return isCategoryMatch(item.topic, filterCategory);
-        };
-
-        const isCategoryMatch = (
-          topic: any,
-          filterCategory: string
-        ): boolean => {
-          const normalizedTopics = normalizeTopics(topic);
-          return normalizedTopics.includes(filterCategory.trim().toLowerCase());
-        };
-
-        const extractSubTopics = (item: any): string[] =>
-          Array.isArray(item.subTopic)
-            ? item.subTopic
-            : [item.subTopic ?? 'Unknown'];
-        const relatedData = Array.isArray(data?.result?.content)
-          ? data.result.content
-              .filter((item) => matchesFilterCategory(item, filterCategory))
-              .flatMap(extractSubTopics)
-          : [];
-
-        const flattenedContents = relatedData.map((name) => ({
-          identifier: name.toLowerCase().replace(/\s+/g, '-'),
-          name,
-          image: atreeLogo.src,
-          year: 'N/A',
-        }));
-        setRelatedContent(flattenedContents);
       } catch (error) {
         console.error('Error fetching content data:', error);
       } finally {
@@ -209,26 +153,26 @@ export default function Index() {
     fetchContentData();
     // }
   }, [filterCategory]);
-  useEffect(() => {
-    console.log('Content Data:', contentData);
-  }, [contentData]);
+
   const handleCardClick = (content: any) => {
-    if (consumedContent.length < 3) {
-      router.push(`/contents/${content?.identifier}`);
-      setConsumedContent((prev) => {
-        const updatedContent = [...prev, content?.identifier];
-        localStorage.setItem('consumedContent', JSON.stringify(updatedContent));
-        return updatedContent;
-      });
-    } else {
-      if (consumedContent.length >= 3 && !localStorage.getItem('token')) {
-        // alert('Please log in to continue');
+    if (!content?.identifier) return;
+
+    setConsumedContent((prev) => {
+      const updatedContent = Array.from(new Set([...prev, content.identifier]));
+
+      localStorage.setItem('consumedContent', JSON.stringify(updatedContent));
+
+      if (updatedContent.length < 3) {
+        router.push(`/contents/${content.identifier}`);
+      } else if (!localStorage.getItem('token')) {
         setOpenMessageDialog(true);
         localStorage.removeItem('consumedContent');
       } else {
-        router.push(`/contents/${content?.identifier}`);
+        router.push(`/contents/${content.identifier}`);
       }
-    }
+
+      return updatedContent;
+    });
   };
   useEffect(() => {
     const storedContent = localStorage.getItem('consumedContent');
@@ -239,6 +183,55 @@ export default function Index() {
   const handleCloseMessage = () => {
     setOpenMessageDialog(false);
     router.push('/signin');
+  };
+  const handleApplyFilters = async (selectedValues: any) => {
+    // Build filters conditionally
+    const updatedFilters: Record<string, any> = {};
+
+    if (fullAccess) {
+      updatedFilters.access = 'Full Access';
+    }
+
+    if (selectedValues && Object.keys(selectedValues).length > 0) {
+      Object.assign(updatedFilters, selectedValues);
+    }
+
+    // Pass filters only if there are any
+    const requestData: any = {
+      channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+    };
+
+    if (Object.keys(updatedFilters).length > 0) {
+      requestData.filters = updatedFilters;
+    }
+
+    const data = await ContentSearch(requestData);
+
+    setContentData(data?.result?.content || []);
+  };
+  useEffect(() => {
+    console.log('Content Data:', contentData);
+  }, [contentData]);
+  const handleToggleFullAccess = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const accessValue = event.target.checked ? 'Full Access' : 'all'; // Set 'full' or 'all' based on switch state
+    setFullAccess(event.target.checked);
+    setFilters((prevFilters: any) => ({
+      ...prevFilters,
+      filters: {
+        ...prevFilters.filters, // Preserve existing filters
+        access: accessValue === 'all' ? undefined : accessValue, // Remove 'access' key if 'all'
+      },
+      offset: 0,
+    }));
+
+    const data = await ContentSearch({
+      channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+      ...filters, // Preserve existing filters
+    });
+
+    setContentData(data?.result?.content || []);
   };
   return (
     <Layout>
@@ -252,69 +245,242 @@ export default function Index() {
           py="1rem"
           px="8px"
         >
-          <FrameworkFilter
-            frameworkFilter={frameworkFilter || []}
-            framework={framework}
-            setFramework={setFramework}
-            fromSubcategory={false}
-          />
-          <Box
-            sx={{
-              width: '100%',
-              gap: '16px',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            <Title onClick={() => router.push('/contents')}>
-              {t('Read, Watch, Listen')}
-            </Title>
-            <AtreeCard
-              contents={
-                contentData.length > 4 ? contentData.slice(0, 4) : contentData
-              }
-              handleCardClick={handleCardClick}
-              _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-              _card={{ image: atreeLogo.src }}
-            />
-          </Box>
-          <Box
-            sx={{
-              width: '100%',
-              gap: '16px',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            <Title>{t('Browse by Sub Categories')}</Title>
+          {!isMobile ? (
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 3 }}>
+                <Box>
+                  <FilterDialog
+                    open={true}
+                    frameworkFilter={filterData}
+                    filterValues={filters}
+                    onApply={handleApplyFilters}
+                    isMobile={isMobile}
+                  />
+                </Box>
+              </Grid>
+              <Grid size={{ xs: 9 }}>
+                <FrameworkFilter
+                  frameworkFilter={frameworkFilter || []}
+                  framework={framework}
+                  setFramework={setFramework}
+                  fromSubcategory={false}
+                />
+                <Box
+                  sx={{
+                    width: '100%',
+                    gap: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: '15px',
+                  }}
+                >
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    gap={1}
+                    marginLeft="auto"
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: '14px',
+                        // fontWeight: fullAccess ? '400' : '600',
+                        // color: fullAccess ? '#9E9E9E' : '#000000',
+                      }}
+                    >
+                      All
+                    </Typography>
 
-            <SubFrameworkFilter
-              subFrameworkFilter={subFrameworkFilter || []}
-              subFramework={subFramework}
-              setSubFramework={setSubFramework}
-              lastButton={true}
-            />
-          </Box>
-          <Box
-            sx={{
-              width: '100%',
-              gap: '16px',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            <Title onClick={() => router.push('/contents')}>
-              {t('Related Content')}
-            </Title>
-            <AtreeCard
-              contents={
-                contentData.length > 6 ? contentData.slice(4, 10) : contentData
-              }
-              handleCardClick={handleCardClick}
-              _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-              _card={{ image: atreeLogo.src }}
-            />
-          </Box>
+                    <Switch
+                      checked={fullAccess} // Controlled state for switch
+                      onChange={handleToggleFullAccess}
+                      sx={{
+                        width: 42,
+                        height: 26,
+                        padding: 0,
+                        '& .MuiSwitch-switchBase': {
+                          padding: 0,
+                          transitionDuration: '300ms',
+                          '&.Mui-checked': {
+                            transform: 'translateX(16px)',
+                            color: '#fff',
+                            '& + .MuiSwitch-track': {
+                              background:
+                                'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                              opacity: 1,
+                              border: 0,
+                            },
+                            '&.Mui-disabled + .MuiSwitch-track': {
+                              opacity: 0.5,
+                            },
+                          },
+                          '&.Mui-focusVisible .MuiSwitch-thumb': {
+                            color: '#33cf4d',
+                            border: '6px solid #fff',
+                          },
+                          '&.Mui-disabled .MuiSwitch-thumb': {
+                            color: '#BDBDBD', // Grey thumb when disabled
+                          },
+                          '&.Mui-disabled + .MuiSwitch-track': {
+                            opacity: 0.5,
+                            background: '#BDBDBD', // Grey track when disabled
+                          },
+                        },
+                        '& .MuiSwitch-thumb': {
+                          boxSizing: 'border-box',
+                          width: 25,
+                          height: 25,
+                        },
+                        '& .MuiSwitch-track': {
+                          borderRadius: 26 / 2,
+                          background: fullAccess
+                            ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
+                            : '#BDBDBD', // Grey when unchecked
+                          opacity: 1,
+                        },
+                      }}
+                    />
+
+                    <Typography
+                      sx={{
+                        fontSize: '14px',
+                        fontWeight: fullAccess ? '600' : '400',
+                        color: fullAccess ? '#000000' : '#9E9E9E',
+                      }}
+                    >
+                      Only Full Access
+                    </Typography>
+                  </Box>
+                  <Title onClick={() => router.push('/contents')}>
+                    {t('Read, Watch, Listen')}
+                  </Title>
+                  <AtreeCard
+                    contents={
+                      contentData.length > 4
+                        ? contentData.slice(0, 4)
+                        : contentData
+                    }
+                    handleCardClick={handleCardClick}
+                    _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
+                    _card={{ image: atreeLogo.src }}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    width: '100%',
+                    gap: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: '15px',
+                  }}
+                >
+                  <Title>{t('Browse by Sub Categories')}</Title>
+
+                  <SubFrameworkFilter
+                    subFrameworkFilter={subFrameworkFilter || []}
+                    subFramework={subFramework}
+                    setSubFramework={setSubFramework}
+                    lastButton={true}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    width: '100%',
+                    gap: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: '15px',
+                  }}
+                >
+                  <Title onClick={() => router.push('/contents')}>
+                    {t('Related Content')}
+                  </Title>
+                  <AtreeCard
+                    contents={
+                      contentData.length > 6
+                        ? contentData.slice(4, 10)
+                        : contentData
+                    }
+                    handleCardClick={handleCardClick}
+                    _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
+                    _card={{ image: atreeLogo.src }}
+                  />
+                </Box>
+              </Grid>
+            </Grid>
+          ) : (
+            <>
+              <FrameworkFilter
+                frameworkFilter={frameworkFilter || []}
+                framework={framework}
+                setFramework={setFramework}
+                fromSubcategory={false}
+              />
+              <Box
+                sx={{
+                  width: '100%',
+                  gap: '16px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: '15px',
+                }}
+              >
+                <Title onClick={() => router.push('/contents')}>
+                  {t('Read, Watch, Listen')}
+                </Title>
+                <AtreeCard
+                  contents={
+                    contentData.length > 4
+                      ? contentData.slice(0, 4)
+                      : contentData
+                  }
+                  handleCardClick={handleCardClick}
+                  _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
+                  _card={{ image: atreeLogo.src }}
+                />
+              </Box>
+              <Box
+                sx={{
+                  width: '100%',
+                  gap: '16px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: '15px',
+                }}
+              >
+                <Title>{t('Browse by Sub Categories')}</Title>
+
+                <SubFrameworkFilter
+                  subFrameworkFilter={subFrameworkFilter || []}
+                  subFramework={subFramework}
+                  setSubFramework={setSubFramework}
+                  lastButton={true}
+                />
+              </Box>
+              <Box
+                sx={{
+                  width: '100%',
+                  gap: '16px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: '15px',
+                }}
+              >
+                <Title onClick={() => router.push('/contents')}>
+                  {t('Related Content')}
+                </Title>
+                <AtreeCard
+                  contents={
+                    contentData.length > 6
+                      ? contentData.slice(4, 10)
+                      : contentData
+                  }
+                  handleCardClick={handleCardClick}
+                  _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
+                  _card={{ image: atreeLogo.src }}
+                />
+              </Box>
+            </>
+          )}
         </Box>
       )}
 
@@ -360,7 +526,8 @@ const FrameworkFilter = React.memo<{
   fromSubcategory,
 }) {
   const router = useRouter();
-
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const handleItemClick = (item: any) => {
     if (fromSubcategory) {
       localStorage.setItem('subcategory', item.name);
@@ -370,7 +537,21 @@ const FrameworkFilter = React.memo<{
     }
   };
   return (
-    <Grid container spacing={1} display="flex" justifyContent="center">
+    <Grid
+      container
+      spacing={1}
+      display="flex"
+      justifyContent="center"
+      sx={{
+        ...(isMobile
+          ? {} // No additional styles for mobile
+          : {
+              position: 'absolute',
+              top: '22px',
+              left: '25%',
+            }),
+      }}
+    >
       {frameworkFilter?.map((frameworkItem: any) => (
         <Grid key={frameworkItem.identifier}>
           <Button

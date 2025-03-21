@@ -29,7 +29,7 @@ import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlin
 import FilterDramaOutlinedIcon from '@mui/icons-material/FilterDramaOutlined';
 import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
 import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
-
+import { ReactKeycloakProvider, useKeycloak } from '@react-keycloak/web';
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 const poppins = Poppins({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -48,6 +48,7 @@ let myTheme: any;
 
 export function DarkTheme() {
   const theme = useTheme();
+
   const colorMode = React.useContext(ColorModeContext);
   return (
     <Box
@@ -108,6 +109,8 @@ function CustomApp({ Component, pageProps }: AppProps) {
   const ltrCache = createCache({
     key: 'mui',
   });
+  const { keycloak } = useKeycloak();
+
   const login = router.pathname === '/login';
   const drawerItems = [
     { text: 'Home', icon: <HomeOutlinedIcon fontSize="small" />, to: '/' },
@@ -153,38 +156,39 @@ function CustomApp({ Component, pageProps }: AppProps) {
           rel="stylesheet"
         />
       </Head>
-
-      <CacheProvider value={isRTL ? rtlCache : ltrCache}>
-        <CssVarsProvider theme={theme}>
-          <Box
-            sx={{
-              background: theme.palette.warning['A400'],
-              overflowX: 'hidden',
-            }}
-          >
-            <QueryClientProvider client={client}>
-              <Layout
-                isFooter={false}
-                showLogo={true}
-                showBack={true}
-                showTopAppBar={{
-                  title: 'Jal-Jungle-Jameen ',
-                  showMenuIcon: true,
-                  actionButtonLabel: 'Action',
-                }}
-                drawerItems={drawerItems}
-              >
-                <Component {...pageProps} />
-              </Layout>
-            </QueryClientProvider>
-            <ToastContainer
-              position="bottom-left"
-              autoClose={3000}
-              stacked={false}
-            />
-          </Box>
-        </CssVarsProvider>
-      </CacheProvider>
+      <ReactKeycloakProvider authClient={keycloak}>
+        <CacheProvider value={isRTL ? rtlCache : ltrCache}>
+          <CssVarsProvider theme={theme}>
+            <Box
+              sx={{
+                background: theme.palette.warning['A400'],
+                overflowX: 'hidden',
+              }}
+            >
+              <QueryClientProvider client={client}>
+                <Layout
+                  isFooter={false}
+                  showLogo={true}
+                  showBack={true}
+                  showTopAppBar={{
+                    title: 'Jal-Jungle-Jameen ',
+                    showMenuIcon: true,
+                    actionButtonLabel: 'Action',
+                  }}
+                  drawerItems={drawerItems}
+                >
+                  <Component {...pageProps} />
+                </Layout>
+              </QueryClientProvider>
+              <ToastContainer
+                position="bottom-left"
+                autoClose={3000}
+                stacked={false}
+              />
+            </Box>
+          </CssVarsProvider>
+        </CacheProvider>
+      </ReactKeycloakProvider>
     </>
   );
 }
