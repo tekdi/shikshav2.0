@@ -62,7 +62,6 @@ export default function Content() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [categories, setCategories] = useState<Array<any>>([]);
   const [framework, setFramework] = useState('');
-  const [frameworkFilter, setFrameworkFilter] = useState(false);
 
   const handleOnCLick = () => {
     router.push(`/player/${identifier}`);
@@ -106,7 +105,6 @@ export default function Content() {
       const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
       const response = await fetch(url);
       const frameworkData = await response.json();
-      setFrameworkFilter(frameworkData?.result?.framework);
 
       const filteredFramework = frameworkData?.result?.framework
         ? {
@@ -214,9 +212,9 @@ export default function Content() {
               <Stack spacing={2}>
                 {/* Keywords */}
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                  {displayedKeywords.map((label, index) => (
+                  {displayedKeywords.map((label) => (
                     <Chip
-                      key={index}
+                      key={label}
                       label={label}
                       variant="outlined"
                       sx={{ height: 32, padding: '6px 8px' }}

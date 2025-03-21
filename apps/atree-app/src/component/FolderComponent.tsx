@@ -10,7 +10,32 @@ import {
 } from '@mui/material';
 
 import FolderBorderIcon from '@mui/icons-material/FolderOutlined';
+const getResourceLabel = (
+  category: any,
+  length?: Array<any>,
+  subLabel?: string
+) => {
+  if (Array.isArray(length) && length.length > 0) {
+    const foundItem = length.find((len) => len.subTopic === category?.name);
+    const liveAssociationsCount = foundItem?.length || 0;
 
+    return liveAssociationsCount > 0
+      ? `${liveAssociationsCount} ${subLabel || 'resources'}`
+      : 'No uploads';
+  }
+
+  if (Array.isArray(category?.associations)) {
+    const liveCount = category.associations.filter(
+      (assoc: any) => assoc.status === 'Live'
+    ).length;
+
+    return liveCount > 0
+      ? `${liveCount} ${subLabel || 'resources'}`
+      : 'No uploads';
+  }
+
+  return 'No uploads';
+};
 const FolderComponent = ({
   categories,
   onClick,
@@ -49,7 +74,7 @@ const FolderComponent = ({
             <ListItem
               key={category.id}
               sx={{
-                width: isMobile ? '100vw' : '50vw',
+                width: subLabel ? '30vw' : '100%',
                 display: 'flex',
                 alignItems: 'center',
                 boxSizing: 'border-box',
@@ -84,29 +109,7 @@ const FolderComponent = ({
                       letterSpacing: '0.4px',
                     }}
                   >
-                    {Array.isArray(length) && length.length > 0
-                      ? (() => {
-                          const foundItem = length.find(
-                            (len) => len.subTopic === category?.name
-                          );
-                          const liveAssociationsCount = foundItem?.length || 0;
-
-                          return liveAssociationsCount > 0
-                            ? `${liveAssociationsCount} ${
-                                subLabel || 'resources'
-                              }`
-                            : 'No uploads';
-                        })()
-                      : Array.isArray(category?.associations) &&
-                        category.associations.filter(
-                          (assoc: any) => assoc.status === 'Live'
-                        ).length > 0
-                      ? `${
-                          category.associations.filter(
-                            (assoc: any) => assoc.status === 'Live'
-                          ).length
-                        } ${subLabel || 'resources'}`
-                      : 'No uploads'}
+                    {getResourceLabel(category, length, subLabel)}
                   </Typography>
                 </Box>
               </Box>

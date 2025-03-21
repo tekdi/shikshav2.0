@@ -164,13 +164,11 @@ export default function Index() {
 
       if (updatedContent.length < 3) {
         router.push(`/contents/${content.identifier}`);
+      } else if (!localStorage.getItem('token')) {
+        setOpenMessageDialog(true);
+        localStorage.removeItem('consumedContent');
       } else {
-        if (!localStorage.getItem('token')) {
-          setOpenMessageDialog(true);
-          localStorage.removeItem('consumedContent');
-        } else {
-          router.push(`/contents/${content.identifier}`);
-        }
+        router.push(`/contents/${content.identifier}`);
       }
 
       return updatedContent;
