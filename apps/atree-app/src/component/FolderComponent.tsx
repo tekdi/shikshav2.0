@@ -1,13 +1,5 @@
 // sonar-exclusion
-import {
-  List,
-  ListItem,
-  Box,
-  Typography,
-  Grid,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material';
+import { List, ListItem, Box, Typography, Grid } from '@mui/material';
 
 import FolderBorderIcon from '@mui/icons-material/FolderOutlined';
 const getResourceLabel = (
@@ -20,7 +12,7 @@ const getResourceLabel = (
     const liveAssociationsCount = foundItem?.length || 0;
 
     return liveAssociationsCount > 0
-      ? `${liveAssociationsCount} ${subLabel || 'resources'}`
+      ? `${liveAssociationsCount} ${subLabel ?? 'resources'}`
       : 'No uploads';
   }
 
@@ -30,7 +22,7 @@ const getResourceLabel = (
     ).length;
 
     return liveCount > 0
-      ? `${liveCount} ${subLabel || 'resources'}`
+      ? `${liveCount} ${subLabel ?? 'resources'}`
       : 'No uploads';
   }
 
@@ -52,8 +44,6 @@ const FolderComponent = ({
   length?: Array<any>;
 }) => {
   categories = categories.filter((item) => item.status !== 'Retired');
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <List sx={{ p: 2 }}>
       <Grid
