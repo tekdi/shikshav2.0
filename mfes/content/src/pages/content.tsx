@@ -30,7 +30,6 @@ import Grid from '@mui/material/Grid2';
 import { useRouter, useSearchParams } from 'next/navigation';
 import CircleIcon from '@mui/icons-material/Circle';
 import { hierarchyAPI } from '../services/Hierarchy';
-import { contentReadAPI } from '../services/Read';
 import { useTheme } from '@mui/material/styles';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';

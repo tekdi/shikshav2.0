@@ -29,12 +29,5 @@ export function middleware(request: { nextUrl: { clone: () => any } }) {
     return NextResponse.redirect(url);
   }
 
-  if (url.pathname.startsWith('/assets')) {
-    url.protocol = 'https';
-    url.hostname = process.env.NEXT_PUBLIC_ASSETS_HOSTNAME || 'sunbirdsaas.com';
-    url.port = '';
-    return NextResponse.redirect(url);
-  }
-
   return NextResponse.next();
 }

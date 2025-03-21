@@ -51,17 +51,12 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
   menuIconClick,
   backIconClick,
   onMenuClose,
-  onOptionClick,
-  actionButtonLabel = 'Action',
-  actionButtonClick,
   actionButtonColor = 'inherit',
-  position = 'static',
   color = 'transparent',
   actionIcons = [],
   profileIcon = [],
   bgcolor = '#FDF7FF',
 }) => {
-  const accountIcon = actionIcons.find((icon) => icon.ariaLabel === 'Account');
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar

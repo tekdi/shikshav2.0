@@ -22,7 +22,6 @@ interface ContentDetailsObject {
 const ContentDetails = () => {
   const router = useRouter();
   const { identifier } = router.query;
-  const [searchValue, setSearchValue] = useState('');
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [contentDetails, setContentDetails] =
     useState<ContentDetailsObject | null>(null);
@@ -42,14 +41,6 @@ const ContentDetails = () => {
 
   const handleMenuClick = () => {
     console.log('Menu icon clicked');
-  };
-
-  const handleSearchClick = () => {
-    console.log('Search button clicked');
-  };
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(event.target.value);
   };
 
   const fetchContentDetails = async () => {
@@ -76,7 +67,7 @@ const ContentDetails = () => {
     setAnchorEl(null);
     localStorage.removeItem('accToken');
     localStorage.removeItem('refToken');
-    let LOGIN = process.env.NEXT_PUBLIC_LOGIN;
+    const LOGIN = process.env.NEXT_PUBLIC_LOGIN;
     //@ts-ignore
     window.location.href = LOGIN;
   };

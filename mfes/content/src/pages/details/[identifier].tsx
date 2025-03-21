@@ -19,23 +19,14 @@ interface DetailsProps {
 export default function Details({ details }: DetailsProps) {
   const router = useRouter();
   const { identifier } = router.query; // Fetch the 'id' from the URL
-  const [searchValue, setSearchValue] = useState('');
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [trackData, setTrackData] = useState([]);
-
   const [selectedContent, setSelectedContent] = useState<any>(null);
-  useEffect(() => {
-    if (identifier) {
-      console.log('Details:', identifier);
-    }
-  }, [identifier]);
 
   const handleAccountClick = (event: React.MouseEvent<HTMLElement>) => {
-    console.log('Account clicked');
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
-    setAnchorEl(null);
     localStorage.removeItem('accToken');
     router.push(`${process.env.NEXT_PUBLIC_LOGIN}`);
   };
@@ -44,13 +35,6 @@ export default function Details({ details }: DetailsProps) {
     console.log('Menu icon clicked');
   };
 
-  const handleSearchClick = () => {
-    console.log('Search button clicked');
-  };
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(event.target.value);
-  };
   const fetchDataTrack = async (resultData: any) => {
     if (!resultData.length) return; // Ensure contentData is available
 
@@ -79,7 +63,7 @@ export default function Details({ details }: DetailsProps) {
     try {
       const result = await hierarchyAPI(identifier);
       //@ts-ignore
-      const trackable = result?.trackable;
+      // const trackable = result?.trackable;
       setSelectedContent(result);
       fetchDataTrack(result);
       // if (trackable?.autoBatch?.toString().toLowerCase() === 'no') {
@@ -125,7 +109,6 @@ export default function Details({ details }: DetailsProps) {
     <Layout
       showTopAppBar={{
         title: 'Shiksha',
-        showMenuIcon: true,
         menuIconClick: handleMenuClick,
         actionButtonLabel: 'Action',
         profileIcon: [

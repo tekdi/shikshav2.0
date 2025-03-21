@@ -6,7 +6,7 @@ export const URL_CONFIG = {
     HIERARCHY_FEILDS: 'instructions,outcomeDeclaration',
   },
   API: {
-    CONTENT_READ: 'https://sunbirdsaas.com/api/content/v1/read/',
+    CONTENT_READ: `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}${process.env.NEXT_PUBLIC_SSUNBIRD_READ_URL}`,
     HIERARCHY_API: '/action/questionset/v2/hierarchy/',
     QUESTIONSET_READ: '/action/questionset/v2/read/',
     COMPOSITE_SEARCH: '/action/composite/v3/search',
