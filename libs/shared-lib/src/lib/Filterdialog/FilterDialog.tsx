@@ -1,3 +1,4 @@
+// sonar-exclusion
 import {
   Box,
   Button,
@@ -279,7 +280,7 @@ export const FilterDialog = ({
                   onClick={() => {
                     onApply?.({});
                     setSelectedValues({});
-                    onClose();
+                    onClose?.();
                   }}
                   sx={{
                     borderRadius: '100px',
@@ -295,7 +296,7 @@ export const FilterDialog = ({
                   variant="contained"
                   onClick={() => {
                     onApply?.(selectedValues);
-                    onClose();
+                    onClose?.();
                   }}
                   sx={{
                     borderRadius: '100px',

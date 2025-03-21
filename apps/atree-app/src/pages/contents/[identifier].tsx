@@ -31,6 +31,7 @@ import atreeLogo from '../../../assets/images/atreeLogo.png';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Loader from '../../component/layout/LoaderComponent';
 import { AtreeCard, ContentSearch } from '@shared-lib';
+import { FrameworkFilter } from '../../component/Tags';
 
 interface ContentItem {
   name: string;
@@ -59,6 +60,10 @@ export default function Content() {
   const [openPopup, setOpenPopup] = useState<boolean>(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [categories, setCategories] = useState<Array<any>>([]);
+  const [framework, setFramework] = useState('');
+  const [frameworkFilter, setFrameworkFilter] = useState(false);
+
   const handleOnCLick = () => {
     router.push(`/player/${identifier}`);
   };
@@ -94,6 +99,36 @@ export default function Content() {
   const remainingKeywords = keywords.slice(3);
   useEffect(() => {
     if (identifier) fetchContent();
+  }, [identifier]);
+
+  const fetchFrameworkData = async () => {
+    try {
+      const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
+      const response = await fetch(url);
+      const frameworkData = await response.json();
+      setFrameworkFilter(frameworkData?.result?.framework);
+
+      const filteredFramework = frameworkData?.result?.framework
+        ? {
+            ...frameworkData.result.framework,
+            categories: frameworkData.result.framework.categories?.filter(
+              (category: any) => category.status === 'Live'
+            ),
+          }
+        : { categories: [] }; // Provide a default structure if frameworkData is undefined
+
+      const fdata =
+        filteredFramework.categories.find((item: any) => item.code === 'topic')
+          ?.terms || [];
+
+      setCategories(fdata || []);
+      setFramework(fdata[0]?.identifier || '');
+    } catch (error) {
+      console.error('Error fetching framework data:', error);
+    }
+  };
+  useEffect(() => {
+    fetchFrameworkData();
   }, [identifier]);
 
   if (isLoading) return <Loader />;
@@ -137,6 +172,12 @@ export default function Content() {
         </Box>
       }
     >
+      <FrameworkFilter
+        frameworkFilter={categories || []}
+        framework={framework}
+        setFramework={setFramework}
+        fromSubcategory={false}
+      />
       {!isMobile ? (
         // Desktop View (Carousel on Right, Content on Left)
         <>

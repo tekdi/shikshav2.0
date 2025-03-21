@@ -1,5 +1,13 @@
 // sonar-exclusion
-import { List, ListItem, Box, Typography, Grid } from '@mui/material';
+import {
+  List,
+  ListItem,
+  Box,
+  Typography,
+  Grid,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 
 import FolderBorderIcon from '@mui/icons-material/FolderOutlined';
 
@@ -18,8 +26,9 @@ const FolderComponent = ({
   _title?: any;
   length?: Array<any>;
 }) => {
-  console.log('sub--', length);
   categories = categories.filter((item) => item.status !== 'Retired');
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <List sx={{ p: 2 }}>
       <Grid
@@ -36,10 +45,14 @@ const FolderComponent = ({
         }}
       >
         {categories?.map((category) => (
-          <Grid key={category.id} item xs={12} sm={6} md={12}>
+          <Grid key={category.id} item xs={12} sm={12} md={12}>
             <ListItem
               key={category.id}
               sx={{
+                width: isMobile ? '100vw' : '50vw',
+                display: 'flex',
+                alignItems: 'center',
+                boxSizing: 'border-box',
                 p: 2,
                 borderWidth: '1px',
                 borderRadius: '8px',
@@ -49,9 +62,15 @@ const FolderComponent = ({
               }}
               onClick={() => onClick?.(category)}
             >
-              <Box sx={{ display: 'flex', gap: 2 }}>
+              <Box sx={{ display: 'flex', gap: 2, flex: 1 }}>
                 <FolderBorderIcon />
-                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    width: '100%',
+                  }}
+                >
                   <Typography sx={{ m: 0, ..._title }}>
                     {category.name}
                   </Typography>
