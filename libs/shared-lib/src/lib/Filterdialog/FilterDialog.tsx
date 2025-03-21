@@ -101,10 +101,12 @@ export const FilterDialog = ({
   // Manage the selected values for each category
   const [selectedValues, setSelectedValues] = useState(filterValues ?? {}); // Initialize as an empty object
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  localStorage.getItem('category');
   const handleChange = (event: any, filterCode: string) => {
     const { value } = event.target;
     const newValue = typeof value === 'string' ? value.split(',') : value;
-
+    console.log('fil', newValue);
+    localStorage.setItem('category', newValue[0]);
     if (filterCode === 'topic') {
       setSelectedTopic(newValue); // Update the selected topic
       setSelectedValues((prev: any) => ({
@@ -195,12 +197,35 @@ export const FilterDialog = ({
                     )}
 
                     {/* SubTopic - Checkboxes */}
-                    {filterCode === 'subTopic' && selectedTopic && (
+                    {filterCode === 'subTopic' && (
                       <Box>
                         {options
-                          ?.filter((option: any) =>
-                            option?.value?.includes(selectedTopic)
-                          )
+                          ?.filter((option: any) => {
+                            // Find the selected topic's associated terms (subtopics) in frameworkFilter
+                            const topicCategory =
+                              frameworkFilter.categories?.find(
+                                (category: any) => category.code === 'topic'
+                              );
+
+                            // Get the currently selected topic's code
+                            const selectedTopicCode =
+                              selectedValues?.topic?.[0];
+
+                            if (!selectedTopicCode || !topicCategory)
+                              return false;
+
+                            // Find the selected topic object
+                            const selectedTopic = topicCategory.terms?.find(
+                              (term: any) => term.code === selectedTopicCode
+                            );
+
+                            // Check if the subtopic is associated with the selected topic and is "Live"
+                            return selectedTopic?.associations?.some(
+                              (association: any) =>
+                                association.code === option.value &&
+                                association.status === 'Live'
+                            );
+                          })
                           ?.map((option: any) => (
                             <CustomCheckbox
                               key={option?.label}
@@ -358,12 +383,34 @@ export const FilterDialog = ({
                   )}
 
                   {/* SubTopic - Checkboxes */}
-                  {filterCode === 'subTopic' && selectedTopic && (
+                  {filterCode === 'subTopic' && (
                     <Box>
                       {options
-                        ?.filter((option: any) =>
-                          option?.value?.includes(selectedTopic)
-                        )
+                        ?.filter((option: any) => {
+                          // Find the topic category from frameworkFilter
+                          const topicCategory =
+                            frameworkFilter.categories?.find(
+                              (category: any) => category.code === 'topic'
+                            );
+
+                          // Get the currently selected topic's code
+                          const selectedTopicCode = selectedValues?.topic?.[0];
+
+                          if (!selectedTopicCode || !topicCategory)
+                            return false;
+
+                          // Find the selected topic object
+                          const selectedTopic = topicCategory.terms?.find(
+                            (term: any) => term.code === selectedTopicCode
+                          );
+
+                          // Check if the subtopic is associated with the selected topic and is "Live"
+                          return selectedTopic?.associations?.some(
+                            (association: any) =>
+                              association.code === option.value &&
+                              association.status === 'Live'
+                          );
+                        })
                         ?.map((option: any) => (
                           <CustomCheckbox
                             key={option?.label}
