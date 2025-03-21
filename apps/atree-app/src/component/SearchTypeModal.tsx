@@ -42,7 +42,9 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
 
   const handleClearSearch = () => {
     setSearchQuery('');
-    setSearchResults([]); // Clear results when clearing input
+    setSearchResults([]);
+    setSearchQuery('');
+    setSearchType(''); // Clear results when clearing input
   };
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
@@ -60,6 +62,8 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
       }
     } else {
       setSearchResults([]);
+      setSearchQuery('');
+      setSearchType('');
     }
   };
 
@@ -101,7 +105,7 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
           sx={{ borderBottom: '1px solid #ccc', pb: 1 }}
         >
           {/* Back Button */}
-          <IconButton onClick={onClose} sx={{ mr: 1 }}>
+          <IconButton onClick={handleClearSearch} sx={{ mr: 1 }}>
             <ArrowBackIcon />
           </IconButton>
 
@@ -117,11 +121,10 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
               width: '100%',
             }}
           />
-          {searchQuery && (
-            <IconButton onClick={handleClearSearch} sx={{ ml: 1 }}>
-              <CloseIcon />
-            </IconButton>
-          )}
+
+          <IconButton onClick={onClose} sx={{ ml: 1 }}>
+            <CloseIcon />
+          </IconButton>
         </Box>
       </DialogTitle>
 
