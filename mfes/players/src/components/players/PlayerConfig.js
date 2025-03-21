@@ -3,9 +3,9 @@ export const playerConfig = {
     mode: 'play',
     partner: [],
     pdata: {
-      id: 'pratham.admin.portal',
+      id: 'shikshav2.0.learner.portal',
       ver: '1.0.0',
-      pid: 'admin-portal',
+      pid: 'learner-portal',
     },
     contentId: 'do_12345',
     sid: '',
@@ -102,9 +102,9 @@ export const V1PlayerConfig = {
     mode: 'play',
     partner: [],
     pdata: {
-      id: 'pratham.admin.portal',
+      id: 'shikshav2.0.learner.portal',
       ver: '1.0.0',
-      pid: 'admin-portal',
+      pid: 'learner-portal',
     },
     contentId: 'do_12345',
     sid: '',

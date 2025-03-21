@@ -52,7 +52,7 @@ const Players: React.FC<SunbirdPlayerProps> = ({
           const metadata = { ...Q1?.questionset, ...Q2?.questionset };
           config.metadata = metadata;
         } else if (MIME_TYPE.INTERACTIVE_MIME_TYPE.includes(data?.mimeType)) {
-          config = { ...V1PlayerConfig, metadata: data };
+          config = { ...V1PlayerConfig, metadata: data, data: data.body };
           //@ts-ignore
           config.context['contentId'] = identifier;
         } else {

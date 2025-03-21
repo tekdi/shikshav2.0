@@ -120,7 +120,7 @@ export const hierarchyAPI = async (
     const config: AxiosRequestConfig = {
       method: 'get',
       maxBodyLength: Infinity,
-      url: `${searchApiUrl}/api/course/v1/hierarchy/${doId}`,
+      url: `${searchApiUrl}/interface/v1/api/course/v1/hierarchy/${doId}`,
     };
 
     // Execute the request
