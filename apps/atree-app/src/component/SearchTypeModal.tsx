@@ -84,6 +84,16 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
       onClose();
     }
   };
+    const handleSearch = () => {
+      if (searchQuery.trim()) {
+        const url = searchType
+          ? `/searchpage?type=${searchType}&query=${searchQuery}`
+          : `/searchpage?query=${searchQuery}`;
+
+        router.push(url);
+        onClose();
+      }
+    };
   useEffect(() => {
     console.log('Updated Search Query:', searchQuery);
   }, [searchQuery, selectedType]);
@@ -162,7 +172,11 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
         {/* API Search Results */}
         {searchResults.length > 0
           ? searchResults.map((item) => (
-              <ListItem key={item.name} sx={{ cursor: 'pointer' }}>
+              <ListItem
+                key={item.name}
+                sx={{ cursor: 'pointer' }}
+                onClick={handleSearch}
+              >
                 <ListItemAvatar>
                   <Avatar sx={{ backgroundColor: '#CEE5FF', color: '#06164B' }}>
                     {item.name ? item.name.charAt(0).toUpperCase() : 'S'}
