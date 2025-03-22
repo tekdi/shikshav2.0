@@ -23,9 +23,9 @@ interface ListProps {}
 
 const Login: React.FC<ListProps> = () => {
   const [email, setEmail] = useState('');
-  const [emailError, setEmailError] = useState(false);
+  const [emailError, setEmailError] = useState('');
   const [password, setPassword] = useState('');
-  const [passwordError, setPasswordError] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showAlertMsg, setShowAlertMsg] = useState('');
   const [alertSeverity, setAlertSeverity] = useState<
@@ -36,30 +36,65 @@ const Login: React.FC<ListProps> = () => {
   useEffect(() => {
     localStorage.clear();
   }, []);
-
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[a-zA-Z][a-zA-Z0-9._]{2,}$/;
+    return emailRegex.test(email);
+  };
+  const validatePassword = (password: string) => {
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
+  };
   const handleChange =
     (field: 'email' | 'password') =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setShowAlertMsg('');
+      const value = event.target.value.trim();
 
-      const value = event.target.value;
       if (field === 'email') {
         setEmail(value);
-        setEmailError(value.trim() === '');
+
+        if (!value) {
+          setEmailError('Username is required.');
+        } else if (!/^[a-zA-Z][a-zA-Z0-9._]{2,}$/.test(value)) {
+          setEmailError(
+            'Username must start with a letter and can only contain letters, numbers, ".", and "_". Minimum 3 characters.'
+          );
+        } else {
+          setEmailError('');
+        }
       } else {
         setPassword(value);
-        setPasswordError(value.trim() === '');
+        if (!value) {
+          setPasswordError('Password is required.');
+        } else if (
+          value.length < 8 ||
+          !/[A-Z]/.test(value) || // At least one uppercase
+          !/[a-z]/.test(value) || // At least one lowercase
+          !/[0-9]/.test(value) || // At least one number
+          !/[!@#$%^&*]/.test(value) // At least one special char
+        ) {
+          setPasswordError(
+            'Password at least 8 characters long and include uppercase, lowercase, number, and special character.'
+          );
+        } else {
+          setPasswordError('');
+        }
       }
     };
 
   const handleSigninClick = async (event: React.FormEvent) => {
     // router.push('/verifyOTP');
     event.preventDefault();
-    if (!email.trim()) {
-      setEmailError(true);
+    if (!email.trim() || !validateEmail(email)) {
+      setEmailError('Enter a valid username');
+      return;
     }
-    if (!password.trim()) {
-      setPasswordError(true);
+    if (!password.trim() || !validatePassword(password)) {
+      setPasswordError(
+        'Password must be 8+ characters, include an uppercase letter, a number, and a special character'
+      );
+      return;
     }
     if (!emailError && !passwordError) {
       setLoading(true);
@@ -119,7 +154,7 @@ const Login: React.FC<ListProps> = () => {
           }}
         >
           <FormLabel component="legend" sx={{ color: '#4D4639' }}>
-            Username<span style={{ color: 'red' }}>*</span>
+            Unloack with your Username<span style={{ color: 'red' }}>*</span>
           </FormLabel>
 
           <CommonTextField
@@ -127,8 +162,8 @@ const Login: React.FC<ListProps> = () => {
             onChange={handleChange('email')}
             type={'text'}
             variant="outlined"
-            helperText={emailError ? `Enter valid Email ID ` : ''}
-            error={emailError}
+            helperText={emailError}
+            error={!!emailError}
           />
           <FormLabel component="legend" sx={{ color: '#4D4639' }}>
             Password<span style={{ color: 'red' }}>*</span>
@@ -139,8 +174,8 @@ const Login: React.FC<ListProps> = () => {
             onChange={handleChange('password')}
             type={showPassword ? 'text' : 'password'}
             variant="outlined"
-            helperText={passwordError ? `Enter valid password ` : ''}
-            error={passwordError}
+            helperText={passwordError}
+            error={!!passwordError}
             endIcon={
               <IconButton
                 onClick={() => setShowPassword(!showPassword)}
