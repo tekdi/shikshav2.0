@@ -1,5 +1,5 @@
 // sonar-exclusion
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Button,
   Checkbox,
@@ -70,7 +70,11 @@ export default function Registration() {
 
   // **Validation Functions**
   const validateName = (name: string) => {
-    return name.trim().split(' ').length >= 2;
+    const hasNumbers = /\d/; // Regex to check if the name contains numbers
+    if (hasNumbers.test(name)) {
+      return false; // Name contains numbers
+    }
+    return name.trim().split(' ').length >= 2; // Check if the name has at least two words
   };
 
   const validateEmail = (email: string) => {
@@ -159,6 +163,15 @@ export default function Registration() {
     setOpenUserDetailsDialog(false);
     router.push('/signin');
   };
+  useEffect(() => {
+    if (showAlertMsg) {
+      const timer = setTimeout(() => {
+        setShowAlertMsg(''); // Hide the alert message after 3 seconds
+      }, 3000);
+
+      return () => clearTimeout(timer); // Cleanup timer on component unmount or state change
+    }
+  }, [showAlertMsg]);
   return (
     <Grid
       container
@@ -184,39 +197,83 @@ export default function Registration() {
           backgroundColor: '#FFFFFF',
         }}
       >
-        <FormLabel component="legend">
+        <FormLabel component="legend" sx={{ color: '#4D4639' }}>
           Full Name<span style={{ color: 'red' }}>*</span>
         </FormLabel>
         <CommonTextField
           value={formData.name}
-          onChange={handleChange('name')}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (!/\d/.test(value)) {
+              // Allow only if the input doesn't contain numbers
+              handleChange('name')(e);
+            }
+          }}
           type="text"
           variant="outlined"
           helperText={error.name ? 'Enter full name (First and Last)' : ''}
           error={error.name}
         />
 
-        <FormLabel component="legend">
+        <FormLabel component="legend" sx={{ color: '#4D4639' }}>
           Email ID<span style={{ color: 'red' }}>*</span>
         </FormLabel>
         <CommonTextField
           value={formData.email}
-          onChange={handleChange('email')}
+          onChange={(e) => {
+            const value = e.target.value;
+
+            // Prevent entering a number at the start
+            if (value.length === 1 && /^[0-9]/.test(value)) return;
+
+            handleChange('email')(e);
+
+            // Validate email format
+            const isValidEmail =
+              /^[a-zA-Z0-9._]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/.test(value);
+
+            if (!isValidEmail) {
+              setError((prevError) => ({ ...prevError, email: true }));
+            } else {
+              setError((prevError) => ({ ...prevError, email: false }));
+            }
+          }}
           type="text"
           variant="outlined"
-          helperText={error.email ? 'Enter a valid Email ID' : ''}
+          helperText={
+            error.email
+              ? 'Enter a valid Email ID (Should not start with a number)'
+              : ''
+          }
           error={error.email}
         />
-        <FormLabel component="legend">
+
+        <FormLabel component="legend" sx={{ color: '#4D4639' }}>
           Password<span style={{ color: 'red' }}>*</span>
         </FormLabel>
         <CommonTextField
           value={formData.password}
-          onChange={handleChange('password')}
+          onChange={(e) => {
+            const value = e.target.value;
+            handleChange('password')(e);
+
+            // Password validation regex
+            const passwordRegex =
+              /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[~!@#$%^&*()_+`\-={}:":;'<>?,./\\]).{8,}$/;
+
+            // Update error state based on validation
+            if (!passwordRegex.test(value)) {
+              setError((prevError) => ({ ...prevError, password: true }));
+            } else {
+              setError((prevError) => ({ ...prevError, password: false }));
+            }
+          }}
           type={showPassword ? 'text' : 'password'}
           variant="outlined"
           helperText={
-            error.password ? 'Password must be at least 6 characters' : ''
+            error.password
+              ? 'Password must be at least 8 characters, including uppercase, lowercase, number, and special character.'
+              : ''
           }
           error={error.password}
           endIcon={
@@ -228,7 +285,7 @@ export default function Registration() {
             </IconButton>
           }
         />
-        <FormLabel component="legend">
+        <FormLabel component="legend" sx={{ color: '#4D4639' }}>
           Gender<span style={{ color: 'red' }}>*</span>
         </FormLabel>
         <RadioGroup
@@ -270,7 +327,7 @@ export default function Registration() {
           </Typography>
         )}
 
-        <FormLabel component="legend">
+        <FormLabel component="legend" sx={{ color: '#4D4639' }}>
           Select Role<span style={{ color: 'red' }}>*</span>
         </FormLabel>
         <CommonSelect
@@ -284,41 +341,38 @@ export default function Registration() {
 
         {/* {otpShow ? ( */}
         <>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={termsAccepted}
-                onChange={() => setTermsAccepted(!termsAccepted)}
-                sx={{
-                  color: '#FFBD0D',
-                  '&.Mui-checked': {
+          <Box
+            sx={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}
+          >
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={termsAccepted}
+                  onChange={() => setTermsAccepted(!termsAccepted)}
+                  sx={{
+                    transform: 'scale(0.8)',
                     color: '#FFBD0D',
-                  },
-                }}
-              />
-            }
-            label={
-              <Typography fontSize="14px">
-                I have read and accepted the{' '}
-                <Link
-                  href="/termsandcondition"
-                  style={{ color: '#0047D4', textDecoration: 'underline' }}
-                >
-                  Terms and Conditions
-                </Link>
-                .
-              </Typography>
-            }
-          />
+                    '&.Mui-checked': {
+                      color: '#FFBD0D',
+                    },
+                  }}
+                />
+              }
+              label={
+                <Typography fontSize="14px" marginLeft="-2%">
+                  I have read and accepted the{' '}
+                  <Link
+                    href="/termsandcondition"
+                    style={{ color: '#0047D4', textDecoration: 'underline' }}
+                  >
+                    Terms and Conditions
+                  </Link>
+                  .
+                </Typography>
+              }
+            />
+          </Box>
 
-          {/* Additional Text */}
-          <Typography fontSize="14px" color="#3B383E">
-            Lorem ipsum dolor sit amet consectetur. Purus pretium leo semper
-            eget mi. Convallis nunc sed dis amet tristique sed. Ullamcorper
-            risus. Lorem ipsum dolor sit amet consectetur. Purus pretium leo
-            semper eget mi. Convallis nunc sed dis amet tristique sed.
-            Ullamcorper risus.
-          </Typography>
           <Button
             onClick={handleCreateUser}
             sx={{
@@ -337,7 +391,9 @@ export default function Registration() {
               !formData.name ||
               !formData.email ||
               !formData.password ||
-              !formData.gender
+              !formData.gender ||
+              !selectedValue ||
+              !termsAccepted
             }
           >
             Verify & Proceed
@@ -392,6 +448,7 @@ export default function Registration() {
         isOpen={openUserDetailsDialog}
         onClose={() => setOpenUserDetailsDialog(false)}
         header="User Details"
+        hideCloseButton={true}
         content={
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Typography variant="body1">

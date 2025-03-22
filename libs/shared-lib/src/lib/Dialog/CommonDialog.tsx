@@ -14,6 +14,7 @@ interface CommonDialogProps {
   content?: React.ReactNode;
   actions?: React.ReactNode;
   disableCloseOnBackdropClick?: boolean;
+  hideCloseButton?: boolean; // New Prop
   sx?: object;
 }
 
@@ -24,6 +25,7 @@ export const CommonDialog: React.FC<CommonDialogProps> = ({
   content,
   actions,
   disableCloseOnBackdropClick = false,
+  hideCloseButton = false,
   sx = {},
 }) => {
   return (
@@ -36,16 +38,17 @@ export const CommonDialog: React.FC<CommonDialogProps> = ({
     >
       {header && (
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          {' '}
           <Box
             display="flex"
             alignItems="center"
             justifyContent="space-between"
           >
             <Typography sx={{ fontSize: '22px' }}>{header}</Typography>
-            <IconButton aria-label="close" onClick={onClose} sx={{ ml: 2 }}>
-              <CloseIcon />
-            </IconButton>
+            {!hideCloseButton && ( // Conditionally render the close button
+              <IconButton aria-label="close" onClick={onClose} sx={{ ml: 2 }}>
+                <CloseIcon />
+              </IconButton>
+            )}
           </Box>
         </DialogTitle>
       )}

@@ -89,15 +89,13 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
       PaperProps={{
         sx: {
           backgroundColor: 'rgba(0, 0, 0, 0.8)',
-          boxShadow: '0px 2px 6px 2px #00000026, 0px 1px 2px 0px #0000004D',
           color: '#fff',
-          width: '100vw', // Full width
-          height: '100vh', // Full height
+          width: '100vw',
+          height: '100vh',
         },
       }}
     >
-      <Box display="flex" justifyContent="center" alignItems="center" p={2}>
-        {/* <Typography variant="h6">Menu</Typography> */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', padding: '8px' }}>
         <IconButton sx={{ color: '#fff' }} onClick={onDrawerClose}>
           <CloseIcon />
         </IconButton>
@@ -107,12 +105,14 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          height: '100%', // Makes sure it takes full height
-          width: '100%', // Ensures it takes full width
+          height: '80%',
+          mt: -2,
+          '@media (max-width: 600px)': {
+            alignItems: 'center',
+          },
         }}
       >
         <List sx={{ width: '100%', maxWidth: '400px', textAlign: 'center' }}>
-          {/* Render Main Menu Items */}
           {openDrawer === 'main' &&
             items.map((item) => (
               <ListItemButton
@@ -128,7 +128,6 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
               </ListItemButton>
             ))}
 
-          {/* Render Main Categories */}
           {openDrawer === 'main' &&
             categories.map((category) => (
               <ListItemButton
