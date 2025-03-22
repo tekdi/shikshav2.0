@@ -37,7 +37,7 @@ export const ImageBanner = ({
         <CardMedia
           component="img"
           alt={name}
-          sx={{ height: 'auto', objectFit: 'cover', ..._image }}
+          sx={{ objectFit: 'cover', ..._image }}
           image={image}
         />
         <CardContent
@@ -75,7 +75,7 @@ export const ImageBanner = ({
             sx={{
               color: 'white',
               fontWeight: 700,
-              fontSize: isMobile ? '18px' : '48px',
+              fontSize: '18px',
               width: isMobile ? 'auto' : '70%',
             }}
           >
