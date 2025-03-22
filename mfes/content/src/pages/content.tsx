@@ -268,6 +268,8 @@ export default function Content(props: ContentProps) {
       offset: 0, // Reset pagination on filter change
     }));
   };
+  console.log('propData', frameworkFilter, localFilters);
+
   return (
     <Loader isLoading={isPageLoading}>
       <Box sx={{ p: 2 }}>
