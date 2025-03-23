@@ -64,10 +64,12 @@ const CustomResourceCheckbox = ({
       <Checkbox
         checked={
           Array.isArray(currentSelectedValues) &&
-          currentSelectedValues.includes(option.label)
+          currentSelectedValues.includes(
+            filterCode === 'mimeType' ? option.value : option.label
+          )
         }
         onChange={(event) => handleCheckboxChange(event, filterCode)}
-        value={option.label}
+        value={filterCode === 'mimeType' ? option.value : option.label}
         sx={{ color: '#1D1B20', '&.Mui-checked': { color: '#FFBD0D' } }}
       />
     }
@@ -167,8 +169,7 @@ export const FilterDialog = ({
     filterType: 'resource' | 'mimeType'
   ) => {
     const { checked, value } = event.target;
-    console.log('open', value);
-    setSelectedValues((prev: any) => {
+    setSelectedFilters((prev: any) => {
       const currentValues = prev[filterType] || [];
       return {
         ...prev,
@@ -176,6 +177,14 @@ export const FilterDialog = ({
           ? [...currentValues, value]
           : currentValues.filter((v: string) => v !== value),
       };
+    });
+    setSelectedValues((prev: any) => {
+      const currentValues = prev[filterType] || [];
+      const updatedValues = checked
+        ? [...currentValues, value]
+        : currentValues.filter((v: string) => v !== value);
+
+      return { ...prev, [filterType]: updatedValues };
     });
   };
   console.log('isMobile', selectedValues);

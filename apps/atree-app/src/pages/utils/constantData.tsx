@@ -14,7 +14,7 @@ export const RESOURCE_TYPES = [
 ];
 
 export const MIME_TYPES = [
-  { label: 'Videos', value: 'video' },
-  { label: 'PDF', value: 'pdf' },
-  { label: 'Audiobooks', value: 'audiobook' },
+  { label: 'Videos', value: 'video/x-youtube' },
+  { label: 'PDF', value: 'application/pdf' },
+  { label: 'Audiobooks', value: 'video/mp4' },
 ];

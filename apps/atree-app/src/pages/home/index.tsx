@@ -51,45 +51,58 @@ export default function Index() {
   const [filterCategory, SetFilterCategory] = useState<string>('');
   const [isLoadingChildren, setIsLoadingChildren] = useState(true);
   const [openMessageDialog, setOpenMessageDialog] = useState(false);
-  const [filters, setFilters] = useState<any>({ limit: 5, offset: 0 });
+  const [filters, setFilters] = useState<any>({
+    request: {
+      filters: {},
+      offset: 0,
+      limit: 5,
+    },
+  });
   const [filterData, setFilterData] = useState();
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const frameworkName = searchParams.get('category')?.toLocaleUpperCase();
 
-  useEffect(() => {
-    if (framework) {
-      if (frameworkFilter) {
-        const subFrameworkData = (frameworkFilter as any).find(
-          (item: any) => item.identifier === framework
-        );
-        SetFilterCategory(
-          subFrameworkData?.name
-            ? subFrameworkData.name.charAt(0).toUpperCase() +
-                subFrameworkData.name.slice(1).toLowerCase()
-            : ''
-        );
-        localStorage.setItem(
-          'category',
-          subFrameworkData?.name
-            ? subFrameworkData.name.charAt(0).toUpperCase() +
-                subFrameworkData.name.slice(1).toLowerCase()
-            : ''
-        );
-        const uniqueAssociations = Array.from(
-          new Map(
-            subFrameworkData?.associations?.map((item: any) => [
-              item?.name,
-              item,
-            ])
-          ).values()
-        );
+  // **Handle API Calls with Updated Filters**
+  const fetchContentData = async (updatedFilters: any) => {
+    try {
+      setIsLoadingChildren(true);
 
-        setSubFrameworkFilter(uniqueAssociations);
-      }
+      const data = await ContentSearch({
+        channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+        filters: updatedFilters,
+      });
+
+      setContentData(data?.result?.content || []);
+    } catch (error) {
+      console.error('Error fetching content data:', error);
+    } finally {
+      setIsLoadingChildren(false);
     }
-  }, [framework, frameworkFilter, filterCategory]);
+  };
 
+  // **Update Filters and Trigger API Call in One Step**
+  const handleApplyFilters = async (selectedValues: any) => {
+    const { offset, limit, ...filters } = selectedValues;
+    const cleanedFilters = Object.fromEntries(
+      Object.entries(filters).filter(
+        ([_, value]) => Array.isArray(value) && value.length > 0
+      )
+    );
+
+    const newFilters = {
+      request: {
+        filters: cleanedFilters,
+        offset: offset ?? 0,
+        limit: limit ?? 5,
+      },
+    };
+
+    setFilters(newFilters); // Update filters state
+    fetchContentData(newFilters.request.filters); // Fetch content immediately
+  };
+
+  // **Initial Data Fetch Based on frameworkName**
   useEffect(() => {
     const init = async () => {
       try {
@@ -100,71 +113,83 @@ export default function Index() {
           frameworks.find((item: any) => item.code === 'topic')?.terms || [];
         setFramework(fdata[0]?.identifier || '');
         setFrameworkFilter(fdata);
-        const frameworksD = frameworkData?.result?.framework;
-        const filteredFramework = {
-          ...frameworksD,
-          categories: frameworksD.categories.filter(
+
+        // Filter live categories
+        setFilterData({
+          ...frameworkData?.result?.framework,
+          categories: frameworkData?.result?.framework.categories.filter(
             (category: any) => category.status === 'Live'
           ),
-        };
-        setFilterData(filteredFramework);
+        });
+
         if (frameworkName) {
           const selectedFramework = fdata.find(
             (item: any) =>
               item.name.toLowerCase() === frameworkName.toLowerCase()
           );
-
           if (selectedFramework) {
             setFramework(selectedFramework.identifier);
           }
         }
-
-        const filters: any = {
+        const newFilters = {
           topic: filterCategory ? [filterCategory] : ['Water'],
         };
-
-        const data = await ContentSearch({
-          channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
-          filters,
-        });
-        setContentData(data?.result?.content || []);
+        setFilters({ request: { filters: newFilters, offset: 0, limit: 5 } });
+        // Fetch content after setting filters
+        fetchContentData(newFilters);
       } catch (error) {
         console.error('Error fetching board data:', error);
       } finally {
         setIsLoadingChildren(false);
       }
     };
+
     init();
   }, [frameworkName]);
 
+  // **Update FilterCategory When Framework Changes**
   useEffect(() => {
-    const fetchContentData = async () => {
-      try {
-        setIsLoadingChildren(true);
-        const filters: any = {
-          topic: [filterCategory],
-        };
+    if (framework && frameworkFilter) {
+      //@ts-check
+      const subFrameworkData = frameworkFilter?.find(
+        (item: any) => item.identifier === framework
+      );
 
-        const data = await ContentSearch({
-          channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
-          filters,
+      const categoryName = subFrameworkData?.name
+        ? subFrameworkData.name.charAt(0).toUpperCase() +
+          subFrameworkData.name.slice(1).toLowerCase()
+        : '';
+
+      SetFilterCategory(categoryName);
+      localStorage.setItem('category', categoryName);
+
+      const uniqueAssociations = Array.from(
+        new Map(
+          subFrameworkData?.associations?.map((item: any) => [item?.name, item])
+        ).values()
+      );
+
+      setSubFrameworkFilter(uniqueAssociations);
+
+      if (filterCategory !== categoryName) {
+        setFilters({
+          request: { filters: { topic: [categoryName] }, offset: 0, limit: 5 },
         });
-
-        setContentData(data?.result?.content || []);
-      } catch (error) {
-        console.error('Error fetching content data:', error);
-      } finally {
-        setIsLoadingChildren(false);
       }
-    };
+    }
+  }, [framework, frameworkFilter]);
 
-    // if (filterCategory) {
-    fetchContentData();
-    // }
-  }, [filterCategory, filters]);
+  // **Listen for Filter Changes and Fetch Content**
   useEffect(() => {
-    console.log('Content Data:', contentData);
-  }, [contentData]);
+    if (
+      filters.request.filters &&
+      Object.keys(filters.request.filters).length
+    ) {
+      fetchContentData(filters.request.filters);
+    }
+  }, [filters, frameworkName]); // ✅ Fetch only when `filters` change
+
+  // **Handle Content Click**
   const handleCardClick = (content: any) => {
     if (consumedContent.length < 3) {
       router.push(`/contents/${content?.identifier}`);
@@ -174,8 +199,7 @@ export default function Index() {
         return updatedContent;
       });
     } else {
-      if (consumedContent.length >= 3 && !localStorage.getItem('token')) {
-        // alert('Please log in to continue');
+      if (!localStorage.getItem('token')) {
         setOpenMessageDialog(true);
         localStorage.removeItem('consumedContent');
       } else {
@@ -183,29 +207,23 @@ export default function Index() {
       }
     }
   };
+
+  // **Restore Consumed Content from LocalStorage**
   useEffect(() => {
     const storedContent = localStorage.getItem('consumedContent');
     if (storedContent) {
       setConsumedContent(JSON.parse(storedContent));
     }
-  }, []);
+  }, [frameworkName]);
+
+  // **Handle Dialog Close**
   const handleCloseMessage = () => {
     setOpenMessageDialog(false);
     router.push('/signin');
   };
-  const handleApplyFilters = (selectedValues: any) => {
-    setFilters(() => {
-      // Extract `offset` separately and keep remaining values as filters
-      const { offset, ...filters } = selectedValues;
 
-      return {
-        request: {
-          filters, // Directly assign filters without nesting again
-          offset: offset ?? 0, // Default offset to 0 if not provided
-        },
-      };
-    });
-  };
+  console.log('Filters:', frameworkName);
+  console.log('Content Data:', contentData);
   return (
     <Layout>
       {isLoadingChildren ? (
@@ -288,9 +306,7 @@ export default function Index() {
                   </Title>
                   <AtreeCard
                     contents={
-                      contentData.length > 6
-                        ? contentData.slice(4, 10)
-                        : contentData
+                      contentData.length >= 4 ? contentData.slice(4, 10) : []
                     }
                     handleCardClick={handleCardClick}
                     _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
