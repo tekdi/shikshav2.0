@@ -16,48 +16,41 @@ export const URL_CONFIG = {
 
 export interface Pdata {
   id: string;
-  pid?: string;
   ver?: string;
+  pid?: string;
 }
 
 export interface ContextRollup {
-  l1?: string;
   l2?: string;
-  l3?: string;
+  l1?: string;
   l4?: string;
+  l3?: string;
 }
 
 export interface Cdata {
-  type: string;
   id: string;
-}
-
-export interface ObjectRollup {
-  l1?: string;
-  l2?: string;
-  l3?: string;
-  l4?: string;
+  type: string;
 }
 
 export interface Context {
-  mode?: string;
   authToken?: string;
+  mode?: string;
   sid?: string;
-  did?: any;
   uid?: string;
+  did?: any;
   channel: string;
-  pdata: Pdata;
   contextRollup?: ContextRollup;
+  pdata: Pdata;
   tags?: string[];
-  cdata?: Cdata[];
   timeDiff?: number;
-  objectRollup?: ObjectRollup;
-  host?: string;
+  cdata?: Cdata[];
+  objectRollup?: ContextRollup;
   endpoint?: string;
   dispatcher?: object;
-  partner?: any[];
+  host?: string;
   contentId?: any;
   dims?: any[];
+  partner?: any[];
   app?: string[];
   userData?: {
     firstName: string;
