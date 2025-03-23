@@ -77,9 +77,7 @@ const SunbirdPdfPlayer = ({ playerConfig }: PlayerConfigProps) => {
           const pdfPlayerScript = document.querySelector(
             'script[src*="sunbird-pdf-player.js"]'
           );
-          if (pdfPlayerScript && pdfPlayerScript.parentNode) {
-            pdfPlayerScript.parentNode.removeChild(pdfPlayerScript);
-          }
+          pdfPlayerScript?.parentNode?.removeChild(pdfPlayerScript);
           removeElementById('sunbird-pdf-player-css');
         };
       }
