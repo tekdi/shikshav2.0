@@ -113,7 +113,7 @@ export const MIME_TYPE = {
 
 let userName = 'arif';
 if (typeof window !== 'undefined' && window.localStorage) {
-  userName = localStorage.getItem('userName') || '';
+  userName = localStorage.getItem('userName') ?? '';
 }
 
 export const V2PlayerConfig: PlayerConfig = {
@@ -126,14 +126,14 @@ export const V2PlayerConfig: PlayerConfig = {
       pid: 'learner-portal',
     },
     contentId: '',
-    authToken: localStorage.getItem('accToken') || undefined,
-    sid: localStorage.getItem('accToken') || undefined,
-    did: localStorage.getItem('did') || undefined,
-    uid: localStorage.getItem('userId') || undefined,
-    channel: localStorage.getItem('tenant-code') || '',
+    authToken: localStorage.getItem('accToken') ?? undefined,
+    sid: localStorage.getItem('accToken') ?? undefined,
+    did: localStorage.getItem('did') ?? undefined,
+    uid: localStorage.getItem('userId') ?? undefined,
+    channel: localStorage.getItem('tenant-code') ?? '',
     timeDiff: -0.089,
-    tags: [localStorage.getItem('tenant-code') || ''],
-    contextRollup: { l1: localStorage.getItem('tenant-code') || '' },
+    tags: [localStorage.getItem('tenant-code') ?? ''],
+    contextRollup: { l1: localStorage.getItem('tenant-code') ?? '' },
     objectRollup: {},
     userData: { firstName: userName, lastName: '' },
     host: '',
@@ -229,13 +229,13 @@ export const V1PlayerConfig: PlayerConfig = {
       pid: 'learner-portal',
     },
     contentId: '',
-    authToken: localStorage.getItem('accToken') || undefined,
-    sid: localStorage.getItem('accToken') || undefined,
-    did: localStorage.getItem('did') || undefined,
-    uid: localStorage.getItem('userId') || undefined,
-    channel: localStorage.getItem('tenant-code') || '',
-    tags: [localStorage.getItem('tenant-code') || ''],
-    app: [localStorage.getItem('tenant-code') || ''],
+    authToken: localStorage.getItem('accToken') ?? undefined,
+    sid: localStorage.getItem('accToken') ?? undefined,
+    did: localStorage.getItem('did') ?? undefined,
+    uid: localStorage.getItem('userId') ?? undefined,
+    channel: localStorage.getItem('tenant-code') ?? '',
+    tags: [localStorage.getItem('tenant-code') ?? ''],
+    app: [localStorage.getItem('tenant-code') ?? ''],
     timeDiff: -1.129,
     contextRollup: {},
     dims: [],

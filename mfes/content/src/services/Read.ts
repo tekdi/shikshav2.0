@@ -150,8 +150,8 @@ export const fetchContent = async (identifier: any) => {
       maxBodyLength: Infinity,
       url: `${API_URL}?fields=${FIELDS}&mode=${MODE}&licenseDetails=${LICENSE_DETAILS}`,
       headers: {
-        tenantId: localStorage.getItem('tenantId') || '',
-        Authorization: `Bearer ${localStorage.getItem('accToken') || ''}`,
+        tenantId: localStorage.getItem('tenantId') ?? '',
+        Authorization: `Bearer ${localStorage.getItem('accToken') ?? ''}`,
       },
     };
     const response = await axios.request(config);
