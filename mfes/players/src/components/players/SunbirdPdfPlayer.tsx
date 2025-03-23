@@ -13,6 +13,14 @@ const SunbirdPdfPlayer = ({ playerConfig }: PlayerConfigProps) => {
   const sunbirdPdfPlayerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    // Load jQuery
+    const jqueryScript = document.createElement('script');
+    jqueryScript.src =
+      'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js';
+    jqueryScript.type = 'text/javascript';
+    jqueryScript.async = true;
+    document.body.appendChild(jqueryScript);
+
     // Dynamically load the Sunbird PDF Player script from CDN
     const script = document.createElement('script');
     script.src =
