@@ -13,6 +13,8 @@ import BorderColorIcon from '@mui/icons-material/BorderColor';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { useRouter } from 'next/router';
 import { fetchContent } from '../../services/Read';
+import AppConst from '../../utils/AppConst/AppConst';
+import Image from 'next/image';
 
 interface ContentDetailsObject {
   name: string;
@@ -35,7 +37,6 @@ const ContentDetails = () => {
   };
   const handleClose = () => {
     setAnchorEl(null);
-    localStorage.removeItem('accToken');
     router.push(`${process.env.NEXT_PUBLIC_LOGIN}`);
   };
 
@@ -136,9 +137,12 @@ const ContentDetails = () => {
               // height: { xs: 'auto', md: 'auto', lg: '100vh' },
             }}
           >
-            <img
+            <Image
               src={
-                contentDetails?.posterImage || '/assets/images/default_hori.png'
+                contentDetails?.posterImage &&
+                contentDetails?.posterImage !== 'undefined'
+                  ? contentDetails?.posterImage
+                  : `${AppConst.BASEPATH}/assests/images/default_hori.png`
               }
               alt="Course Thumbnail"
               style={{
@@ -146,53 +150,87 @@ const ContentDetails = () => {
                 borderRadius: '8px',
                 marginBottom: '16px',
               }}
+              width={'100'}
+              height={'100'}
+              layout="responsive"
+              objectFit="contain"
             />
           </Box>
         </Grid>
       </Grid>
 
       {/* Section Header */}
-      <Grid container spacing={2} sx={{ margin: '16px' }}>
-        <Grid size={{ xs: 12 }}>
+      <Grid sx={{ p: '16px' }} size={{ xs: 12 }}>
+        <Typography fontSize={'22px'} fontWeight={400}>
+          Description
+        </Typography>
+        <Typography fontSize={'14px'} fontWeight={400}>
+          {contentDetails?.description
+            ? contentDetails.description
+            : 'No description available'}
+        </Typography>
+      </Grid>
+      <Grid
+        container
+        spacing={2}
+        sx={{ p: '16px' }}
+        size={{ xs: 12, sm: 12, md: 6, lg: 4, xl: 4 }}
+      >
+        <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4, xl: 4 }}>
           <Typography fontSize={'22px'} fontWeight={400}>
-            Description
+            Language
+          </Typography>
+          <Typography fontSize={'14px'} fontWeight={400}>
+            {contentDetails?.language?.join(', ') || 'No language available'}
           </Typography>
         </Grid>
-        <Grid size={{ xs: 12 }}>
-          <Typography fontSize={'14px'} fontWeight={400}>
-            {contentDetails?.description
-              ? contentDetails.description
-              : 'No description available'}
+
+        <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4, xl: 4 }}>
+          <Typography fontSize={'22px'} fontWeight={400}>
+            Author
           </Typography>
-          <Grid
-            container
-            spacing={2}
-            alignItems="center"
-            justifyContent="space-between"
-          >
-            <Typography fontSize={'22px'} fontWeight={400}>
-              Tags
-            </Typography>
-            <Grid size={{ xs: 12 }}>
-              {contentDetails?.keywords?.map((tag: string) => (
-                <Button
-                  key={tag}
-                  variant="contained"
-                  sx={{
-                    bgcolor: '#49454F1F',
-                    color: '#1D1B20',
-                    margin: '3px',
-                    fontSize: '12px',
-                    backgroundColor: '#E9E9EA',
-                    borderRadius: '5px',
-                    boxShadow: 'none',
-                    textTransform: 'none',
-                  }}
-                >
-                  {tag}
-                </Button>
-              ))}
-            </Grid>
+          <Typography fontSize={'14px'} fontWeight={400}>
+            {contentDetails?.author || 'No author available'}
+          </Typography>
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4, xl: 4 }}>
+          <Typography fontSize={'22px'} fontWeight={400}>
+            License
+          </Typography>
+          <Typography fontSize={'14px'} fontWeight={400}>
+            {contentDetails?.license || 'No license available'}
+          </Typography>
+        </Grid>
+
+        <Grid
+          container
+          spacing={2}
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <Typography fontSize={'22px'} fontWeight={400}>
+            Tags
+          </Typography>
+          <Grid size={{ xs: 12 }}>
+            {contentDetails?.keywords?.map((tag: string) => (
+              <Button
+                key={tag}
+                variant="contained"
+                sx={{
+                  bgcolor: '#49454F1F',
+                  color: '#1D1B20',
+                  margin: '3px',
+                  fontSize: '12px',
+                  backgroundColor: '#E9E9EA',
+                  borderRadius: '5px',
+                  boxShadow: 'none',
+                  textTransform: 'none',
+                }}
+              >
+                {tag}
+              </Button>
+            ))}
           </Grid>
         </Grid>
       </Grid>

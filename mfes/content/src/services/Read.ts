@@ -145,9 +145,16 @@ export const fetchContent = async (identifier: any) => {
     const FIELDS = URL_CONFIG.PARAMS.CONTENT_GET;
     const LICENSE_DETAILS = URL_CONFIG.PARAMS.LICENSE_DETAILS;
     const MODE = 'edit';
-    const response = await axios.get(
-      `${API_URL}?fields=${FIELDS}&mode=${MODE}&licenseDetails=${LICENSE_DETAILS}`
-    );
+    const config: AxiosRequestConfig = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: `${API_URL}?fields=${FIELDS}&mode=${MODE}&licenseDetails=${LICENSE_DETAILS}`,
+      headers: {
+        tenantId: localStorage.getItem('tenantId') || '',
+        Authorization: `Bearer ${localStorage.getItem('accToken') || ''}`,
+      },
+    };
+    const response = await axios.request(config);
     console.log('response =====>', response);
     return response?.data?.result?.content;
   } catch (error) {

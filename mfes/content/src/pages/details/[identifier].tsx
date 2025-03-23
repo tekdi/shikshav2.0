@@ -27,7 +27,6 @@ export default function Details({ details }: DetailsProps) {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
-    localStorage.removeItem('accToken');
     router.push(`${process.env.NEXT_PUBLIC_LOGIN}`);
   };
 
@@ -59,22 +58,7 @@ export default function Details({ details }: DetailsProps) {
       console.error('Error fetching track data:', error);
     }
   };
-  const getDetails = async (identifier: string) => {
-    try {
-      const result = await hierarchyAPI(identifier);
-      //@ts-ignore
-      // const trackable = result?.trackable;
-      setSelectedContent(result);
-      fetchDataTrack(result);
-      // if (trackable?.autoBatch?.toString().toLowerCase() === 'no') {
-      //   router.push(`/content-details/${identifier}`);
-      // } else {
-      // router.push(`/details/${identifier}`);
-      // }
-    } catch (error) {
-      console.error('Failed to fetch content:', error);
-    }
-  };
+
   const handleLogout = () => {
     setAnchorEl(null);
     localStorage.removeItem('accToken');
@@ -84,7 +68,23 @@ export default function Details({ details }: DetailsProps) {
     window.location.href = LOGIN;
   };
   useEffect(() => {
-    getDetails(identifier as string);
+    const getDetails = async (identifier: string) => {
+      try {
+        const result = await hierarchyAPI(identifier);
+        //@ts-ignore
+        // const trackable = result?.trackable;
+        setSelectedContent(result);
+        fetchDataTrack(result);
+        // if (trackable?.autoBatch?.toString().toLowerCase() === 'no') {
+        //   router.push(`/content-details/${identifier}`);
+        // } else {
+        // router.push(`/details/${identifier}`);
+        // }
+      } catch (error) {
+        console.error('Failed to fetch content:', error);
+      }
+    };
+    if (identifier) getDetails(identifier as string);
   }, [identifier]);
   const renderNestedChildren = (children: any) => {
     if (!Array.isArray(children)) {
