@@ -17,7 +17,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import Image from 'next/image';
 import SearchTypeModal from '../SearchTypeModal';
 import { FrameworkFilter } from '../Tags';
-import { ContentSearch } from '@shared-lib';
 
 interface ActionIcon {
   icon: React.ReactNode;
@@ -116,10 +115,6 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
           frameworks.find((item: any) => item.code === 'topic')?.terms || [];
         setFramework(fdata[0]?.identifier || '');
         setFrameworkFilter(fdata);
-
-        const filters: any = {
-          topic: filterCategory ? [filterCategory] : ['Water'],
-        };
       } catch (error) {
         console.error('Error fetching board data:', error);
       }

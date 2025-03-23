@@ -47,22 +47,24 @@ const Login: React.FC<ListProps> = () => {
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setAlert({ message: '', severity: 'success' });
       const value = event.target.value.trim();
+      let errorMessage = '';
+
+      if (field === 'email') {
+        if (!value) {
+          errorMessage = 'Username is required.';
+        } else if (!validateEmail(value)) {
+          errorMessage = 'Invalid username format.';
+        }
+      } else if (field === 'password') {
+        if (!value) {
+          errorMessage = 'Password is required.';
+        } else if (!validatePassword(value)) {
+          errorMessage =
+            'Password must contain at least 8 chars, including uppercase, number & special character.';
+        }
+      }
       setCredentials((prev) => ({ ...prev, [field]: value }));
-      setErrors((prev) => ({
-        ...prev,
-        [field]:
-          field === 'email'
-            ? value
-              ? validateEmail(value)
-                ? ''
-                : 'Invalid username format.'
-              : 'Username is required.'
-            : value
-            ? validatePassword(value)
-              ? ''
-              : 'Password contains at least 8 chars, include uppercase, number & special character.'
-            : 'Password is required.',
-      }));
+      setErrors((prev) => ({ ...prev, [field]: errorMessage }));
     };
 
   const handleSigninClick = async (event: React.FormEvent) => {
