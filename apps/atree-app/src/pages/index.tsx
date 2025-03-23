@@ -169,7 +169,7 @@ const LandingPage = () => {
             >
               {landingImages.map((image, index) => (
                 <ImageBanner
-                  key={index}
+                  key={image.id}
                   name={
                     'A digital hub of Environment Education resources contextual to India'
                   }

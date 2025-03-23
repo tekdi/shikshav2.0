@@ -79,7 +79,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [frameworkFilter, setFrameworkFilter] = useState();
   const [framework, setFramework] = useState('');
-  const [filterCategory, SetFilterCategory] = useState<string>('');
+  const [filterCategory, setFilterCategory] = useState<string>('');
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -90,7 +90,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
           (item: any) => item.identifier === framework
         );
 
-        SetFilterCategory(
+        setFilterCategory(
           subFrameworkData?.name
             ? subFrameworkData.name.charAt(0).toUpperCase() +
                 subFrameworkData.name.slice(1).toLowerCase()
@@ -116,22 +116,10 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
           frameworks.find((item: any) => item.code === 'topic')?.terms || [];
         setFramework(fdata[0]?.identifier || '');
         setFrameworkFilter(fdata);
-        const frameworksD = frameworkData?.result?.framework;
-        const filteredFramework = {
-          ...frameworksD,
-          categories: frameworksD.categories.filter(
-            (category: any) => category.status === 'Live'
-          ),
-        };
 
         const filters: any = {
           topic: filterCategory ? [filterCategory] : ['Water'],
         };
-
-        const data = await ContentSearch({
-          channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
-          filters,
-        });
       } catch (error) {
         console.error('Error fetching board data:', error);
       }

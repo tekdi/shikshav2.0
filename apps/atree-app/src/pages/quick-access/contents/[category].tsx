@@ -85,8 +85,6 @@ const MyComponent: React.FC = () => {
   /** Fetch Content Search Results */
   const fetchContentSearch = async () => {
     try {
-      // const filterParams =
-      //   Object.keys(filters).length > 0 ? filters : { subTopic: category };
       const filterParams: any = {
         ...filters,
         subTopic: category || filters.subTopic,

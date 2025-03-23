@@ -42,8 +42,6 @@ export default function Index() {
 
   const [consumedContent, setConsumedContent] = useState<string[]>([]);
   const [frameworkFilter, setFrameworkFilter] = useState();
-  const [filterResources, setFilterResources] = useState(RESOURCE_TYPES);
-  const [mimeType, setMimetype] = useState(MIME_TYPES);
 
   const [framework, setFramework] = useState('');
   const [subFrameworkFilter, setSubFrameworkFilter] = useState<any[]>([]);
@@ -198,13 +196,11 @@ export default function Index() {
         localStorage.setItem('consumedContent', JSON.stringify(updatedContent));
         return updatedContent;
       });
+    } else if (!localStorage.getItem('token')) {
+      setOpenMessageDialog(true);
+      localStorage.removeItem('consumedContent');
     } else {
-      if (!localStorage.getItem('token')) {
-        setOpenMessageDialog(true);
-        localStorage.removeItem('consumedContent');
-      } else {
-        router.push(`/contents/${content?.identifier}`);
-      }
+      router.push(`/contents/${content?.identifier}`);
     }
   };
 
