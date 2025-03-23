@@ -206,7 +206,7 @@ export default function Registration() {
             const value = e.target.value;
             if (!/\d/.test(value)) {
               // Allow only if the input doesn't contain numbers
-              handleChange('name')(e);
+              handleChange('name')(e as React.ChangeEvent<HTMLInputElement>);
             }
           }}
           type="text"
@@ -226,7 +226,7 @@ export default function Registration() {
             // Prevent entering a number at the start
             if (value.length === 1 && /^\d/.test(value)) return;
 
-            handleChange('email')(e);
+            handleChange('email')(e as React.ChangeEvent<HTMLInputElement>);
 
             // Validate email format
             const isValidEmail =
@@ -255,13 +255,11 @@ export default function Registration() {
           value={formData.password}
           onChange={(e) => {
             const value = e.target.value;
-            handleChange('password')(e);
+            handleChange('password')(e as React.ChangeEvent<HTMLInputElement>);
 
             // Password validation regex
-          const passwordRegex =
-            /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[~!@#$%^&*()_+`\-={}";'<>?,./\\]).{8,}$/;
-
-
+            const passwordRegex =
+              /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[~!@#$%^&*()_+`\-={}";'<>?,./\\]).{8,}$/;
 
             // Update error state based on validation
             if (!passwordRegex.test(value)) {
