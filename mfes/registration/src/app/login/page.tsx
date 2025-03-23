@@ -45,10 +45,15 @@ export default function Login() {
 
   useEffect(() => {
     const init = async () => {
-      if (!localStorage.getItem('did')) {
-        const fp = await FingerprintJS.load();
-        const { visitorId } = await fp.get();
-        localStorage.setItem('did', visitorId);
+      try {
+        if (!localStorage.getItem('did')) {
+          const fp = await FingerprintJS.load();
+          const { visitorId } = await fp.get();
+          localStorage.setItem('did', visitorId);
+          console.log('Device fingerprint generated successfully');
+        }
+      } catch (error) {
+        console.error('Error generating device fingerprint:', error);
       }
     };
     init();
@@ -205,7 +210,7 @@ export default function Login() {
             borderRadius="8px"
           /> */}
           <CommonTextField
-            focused
+            InputLabelProps={{ shrink: true }}
             label="Username"
             value={formData.userName}
             onChange={handleChange('userName')}
@@ -215,7 +220,7 @@ export default function Login() {
             error={error.userName}
           />
           <CommonTextField
-            focused
+            InputLabelProps={{ shrink: true }}
             label="Password"
             value={formData.password}
             onChange={handleChange('password')}

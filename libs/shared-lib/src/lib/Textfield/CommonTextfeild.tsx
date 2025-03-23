@@ -20,6 +20,7 @@ interface CommonTextFieldProps {
   multiline?: boolean; // Add this line
   rows?: number; // Add this line
   focused?: boolean;
+  InputLabelProps?: any;
 }
 export const CommonTextField: React.FC<CommonTextFieldProps> = ({
   label,

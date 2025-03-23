@@ -56,12 +56,21 @@ const SunbirdPdfPlayer = ({ playerConfig }: PlayerConfigProps) => {
     };
 
     return () => {
+      // Clean up event listeners
       playerElement?.removeEventListener('playerEvent', handlePlayerEvent);
       playerElement?.removeEventListener(
         'telemetryEvent',
         handleTelemetryEvent
       );
+
+      // Remove the script tags
       document.body.removeChild(script);
+      const jqueryScriptElement = document.querySelector(
+        'script[src*="jquery.min.js"]'
+      );
+      if (jqueryScriptElement) document.body.removeChild(jqueryScriptElement);
+
+      // Remove the CSS link tag
       const pdfPlayerCss = document.getElementById('sunbird-pdf-player-css');
       if (pdfPlayerCss) document.head.removeChild(pdfPlayerCss);
     };
