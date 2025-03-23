@@ -29,12 +29,5 @@ export function middleware(request: { nextUrl: { clone: () => any } }) {
     return NextResponse.redirect(url);
   }
 
-  // if (url.pathname.startsWith('/content/v3/read/')) {
-  //   url.hostname = 'dev-shiksha-admin.tekdinext.com';
-  //   url.pathname = `/action${url.pathname}`;
-  //   url.port = '';
-  //   return NextResponse.redirect(url);
-  // }
-
   return NextResponse.next();
 }
