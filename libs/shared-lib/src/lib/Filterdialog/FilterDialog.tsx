@@ -99,27 +99,26 @@ export const FilterDialog = ({
   isMobile?: boolean;
 }) => {
   // Manage the selected values for each category
-  const [selectedValues, setSelectedValues] = useState(filterValues ?? {}); // Initialize as an empty object
-  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
-  localStorage.getItem('category');
-  const handleChange = (event: any, filterCode: string) => {
-    const { value } = event.target;
-    const newValue = typeof value === 'string' ? value.split(',') : value;
-    console.log('fil', newValue);
-    localStorage.setItem('category', newValue[0]);
-    if (filterCode === 'topic') {
-      setSelectedTopic(newValue); // Update the selected topic
-      setSelectedValues((prev: any) => ({
-        ...prev,
-        subTopic: [], // Reset subtopics when topic changes
-      }));
-    }
+ const [selectedValues, setSelectedValues] = useState(filterValues ?? {});
+ const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+ localStorage.getItem('category');
+ const updateSelectedValues = (filterCode: string, newValue: any) => {
+   setSelectedValues((prev: any) => ({
+     ...prev,
+     [filterCode]: newValue,
+     ...(filterCode === 'topic' && { subTopic: [] }), // Reset subTopic if topic changes
+   }));
+ };
+ const handleChange = (event: any, filterCode: string) => {
+   const { value } = event.target;
+   const newValue = typeof value === 'string' ? value.split(',') : value;
+   localStorage.setItem('category', newValue[0]);
+   if (filterCode === 'topic') {
+     setSelectedTopic(newValue); // Update the selected topic state
+   }
+   updateSelectedValues(filterCode, newValue);
+ };
 
-    setSelectedValues((prev: any) => ({
-      ...prev,
-      [filterCode]: newValue,
-    }));
-  };
   const handleCheckboxChange = (event: any, filterCode: string) => {
     const { checked, value } = event.target;
 

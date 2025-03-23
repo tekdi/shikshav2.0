@@ -52,7 +52,6 @@ export default function Content(props: ContentProps) {
   const [fullAccess, setFullAccess] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  console.log(isMobile);
   useEffect(() => {
     const init = async () => {
       const newData = await getData('mfes_content_pages_content');
@@ -245,7 +244,6 @@ export default function Content(props: ContentProps) {
             (category: any) => category.status === 'Live'
           ),
         };
-        console.log(filteredFramework);
         setFrameworkFilter(filteredFramework);
       } catch (error) {
         console.error('Error fetching board data:', error);
@@ -268,8 +266,6 @@ export default function Content(props: ContentProps) {
       offset: 0, // Reset pagination on filter change
     }));
   };
-  console.log('propData', frameworkFilter, localFilters);
-
   return (
     <Loader isLoading={isPageLoading}>
       <Box sx={{ p: 2 }}>

@@ -73,9 +73,8 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
   );
 
   // Handle Enter Key Press
-  const handleKeyPress = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' && searchQuery.trim()) {
-      event.preventDefault();
+  const navigateToSearchPage = () => {
+    if (searchQuery.trim()) {
       const url = searchType
         ? `/searchpage?type=${searchType}&query=${searchQuery}`
         : `/searchpage?query=${searchQuery}`;
@@ -84,16 +83,19 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
       onClose();
     }
   };
-    const handleSearch = () => {
-      if (searchQuery.trim()) {
-        const url = searchType
-          ? `/searchpage?type=${searchType}&query=${searchQuery}`
-          : `/searchpage?query=${searchQuery}`;
 
-        router.push(url);
-        onClose();
-      }
-    };
+  // Handle Enter Key Press
+  const handleKeyPress = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      navigateToSearchPage();
+    }
+  };
+
+  // Handle Search Button Click
+  const handleSearch = () => {
+    navigateToSearchPage();
+  };
   useEffect(() => {
     console.log('Updated Search Query:', searchQuery);
   }, [searchQuery, selectedType]);
