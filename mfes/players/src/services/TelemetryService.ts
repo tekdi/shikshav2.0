@@ -12,6 +12,17 @@ export const handleExitEvent = () => {
   }
 };
 
+export const handlePlayerEvent = (event: any) => {
+  console.log('Player Event', event.detail);
+  if (event?.detail?.edata?.type === 'EXIT') {
+    handleExitEvent();
+  }
+};
+export const handleTelemetryEvent = (event: any) => {
+  console.log('Telemetry Event', event.detail);
+  getTelemetryEvents(event.detail, 'pdf');
+};
+
 export const getTelemetryEvents = (eventData: any, contentType: string) => {
   console.log('getTelemetryEvents hit');
 
