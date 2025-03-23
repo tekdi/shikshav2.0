@@ -39,10 +39,12 @@ const SunbirdPdfPlayer = ({ playerConfig }: PlayerConfigProps) => {
   const sunbirdPdfPlayerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    // Load the Sunbird PDF Player script from CDN
+    // It also loads jQuery which is required by the PDF player
     loadScript(
       'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js',
       () => {
-        const script = loadScript(
+        const jqueryScript = loadScript(
           'https://cdn.jsdelivr.net/npm/@project-sunbird/sunbird-pdf-player-web-component@1.4.0/sunbird-pdf-player.js',
           () => {
             const playerElement = sunbirdPdfPlayerRef.current;
@@ -54,6 +56,7 @@ const SunbirdPdfPlayer = ({ playerConfig }: PlayerConfigProps) => {
           }
         );
 
+        // Load the PDF player CSS
         loadStylesheet(
           'sunbird-pdf-player-css',
           'https://cdn.jsdelivr.net/npm/@project-sunbird/sunbird-pdf-player-web-component@1.4.0/styles.css'
@@ -61,12 +64,22 @@ const SunbirdPdfPlayer = ({ playerConfig }: PlayerConfigProps) => {
 
         return () => {
           const playerElement = sunbirdPdfPlayerRef.current;
+          // Clean up event listeners
           playerElement?.removeEventListener('playerEvent', handlePlayerEvent);
           playerElement?.removeEventListener(
             'telemetryEvent',
             handleTelemetryEvent
           );
-          document.body.removeChild(script);
+          // Remove the PDF player script and CSS
+          if (jqueryScript.parentNode) {
+            document.body.removeChild(jqueryScript);
+          }
+          const pdfPlayerScript = document.querySelector(
+            'script[src*="sunbird-pdf-player.js"]'
+          );
+          if (pdfPlayerScript && pdfPlayerScript.parentNode) {
+            pdfPlayerScript.parentNode.removeChild(pdfPlayerScript);
+          }
           removeElementById('sunbird-pdf-player-css');
         };
       }
