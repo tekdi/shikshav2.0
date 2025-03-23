@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { login } from '../../services/LoginService';
 import AppConst from '../../utils/AppConst/AppConst';
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -40,6 +41,22 @@ export default function Login() {
         }
       }
     }
+  }, []);
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        if (!localStorage.getItem('did')) {
+          const fp = await FingerprintJS.load();
+          const { visitorId } = await fp.get();
+          localStorage.setItem('did', visitorId);
+          console.log('Device fingerprint generated successfully');
+        }
+      } catch (error) {
+        console.error('Error generating device fingerprint:', error);
+      }
+    };
+    init();
   }, []);
 
   const handleChange =
@@ -96,6 +113,7 @@ export default function Login() {
         localStorage.setItem('accToken', response?.access_token);
         localStorage.setItem('refToken', response?.refresh_token);
         localStorage.setItem('userId', authUser?.userId);
+        localStorage.setItem('userName', authUser?.username);
         const { contentFramework: framework, channelId: channel } = tenantInfo;
         localStorage.setItem('framework', framework);
         localStorage.setItem('tenant-code', channel);
@@ -192,6 +210,7 @@ export default function Login() {
             borderRadius="8px"
           /> */}
           <CommonTextField
+            InputLabelProps={{ shrink: true }}
             label="Username"
             value={formData.userName}
             onChange={handleChange('userName')}
@@ -201,6 +220,7 @@ export default function Login() {
             error={error.userName}
           />
           <CommonTextField
+            InputLabelProps={{ shrink: true }}
             label="Password"
             value={formData.password}
             onChange={handleChange('password')}

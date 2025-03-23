@@ -32,16 +32,12 @@ interface CommonAppBarProps {
   showBackIcon?: boolean;
   menuIconClick?: () => void;
   backIconClick?: () => void;
-  actionButtonLabel?: string;
-  actionButtonClick?: () => void;
   actionButtonColor?: 'inherit' | 'primary' | 'secondary' | 'default';
-  position?: 'fixed' | 'absolute' | 'sticky' | 'static' | 'relative';
   color?: 'primary' | 'secondary' | 'default' | 'transparent' | 'inherit';
   actionIcons?: ActionIcon[];
   profileIcon?: ProfileIcon[];
   bgcolor?: string;
   onMenuClose?: () => void;
-  onOptionClick?: () => void;
 }
 
 export const TopAppBar: React.FC<CommonAppBarProps> = ({
@@ -51,17 +47,12 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
   menuIconClick,
   backIconClick,
   onMenuClose,
-  onOptionClick,
-  actionButtonLabel = 'Action',
-  actionButtonClick,
   actionButtonColor = 'inherit',
-  position = 'static',
   color = 'transparent',
   actionIcons = [],
   profileIcon = [],
   bgcolor = '#FDF7FF',
 }) => {
-  const accountIcon = actionIcons.find((icon) => icon.ariaLabel === 'Account');
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar

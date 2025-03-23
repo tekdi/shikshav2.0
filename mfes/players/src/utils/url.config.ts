@@ -107,43 +107,43 @@ export const MIME_TYPE = {
   INTERACTIVE_MIME_TYPE: [
     'application/vnd.ekstep.h5p-archive',
     'application/vnd.ekstep.html-archive',
+    'application/vnd.ekstep.ecml-archive',
   ],
 };
 
 let userName = 'arif';
 if (typeof window !== 'undefined' && window.localStorage) {
-  userName = localStorage.getItem('userName') || '';
+  userName = localStorage.getItem('userName') ?? '';
 }
-
-const DeviceId = '12345';
 
 export const V2PlayerConfig: PlayerConfig = {
   context: {
     mode: 'play',
     partner: [],
     pdata: {
-      id: 'pratham.admin.portal',
+      id: 'shikshav2.0.learner.portal',
       ver: '1.0.0',
-      pid: 'admin-portal',
+      pid: 'learner-portal',
     },
     contentId: '',
-    sid: '',
-    uid: '',
+    authToken: localStorage.getItem('accToken') ?? undefined,
+    sid: localStorage.getItem('accToken') ?? undefined,
+    did: localStorage.getItem('did') ?? undefined,
+    uid: localStorage.getItem('userId') ?? undefined,
+    channel: localStorage.getItem('tenant-code') ?? '',
     timeDiff: -0.089,
-    channel: process.env.NEXT_PUBLIC_CHANNEL_ID || '',
-    tags: [process.env.NEXT_PUBLIC_CHANNEL_ID || ''],
-    did: DeviceId,
-    contextRollup: { l1: process.env.NEXT_PUBLIC_CHANNEL_ID || '' },
+    tags: [localStorage.getItem('tenant-code') ?? ''],
+    contextRollup: { l1: localStorage.getItem('tenant-code') ?? '' },
     objectRollup: {},
     userData: { firstName: userName, lastName: '' },
-    host: process.env.NEXT_PUBLIC_TELEMETRY_URL,
+    host: '',
     endpoint: '/v1/telemetry',
   },
   config: {
     showEndPage: false,
     endPage: [{ template: 'assessment', contentType: ['SelfAssess'] }],
     showStartPage: true,
-    host: process.env.NEXT_PUBLIC_TELEMETRY_URL,
+    host: '',
     overlay: { showUser: false },
     splash: {
       text: '',
@@ -179,7 +179,6 @@ export const V1PlayerConfig: PlayerConfig = {
       },
     ],
     showStartPage: true,
-    host: process.env.NEXT_PUBLIC_TELEMETRY_URL,
     endpoint: '/v1/telemetry',
     overlay: {
       enableUserSwitcher: true,
@@ -225,20 +224,21 @@ export const V1PlayerConfig: PlayerConfig = {
     mode: 'play',
     // partner: [],
     pdata: {
-      id: 'pratham.admin.portal',
+      id: 'shikshav2.0.learner.portal',
       ver: '1.0.0',
-      pid: 'admin-portal',
+      pid: 'learner-portal',
     },
     contentId: '',
-    sid: '',
-    uid: '',
+    authToken: localStorage.getItem('accToken') ?? undefined,
+    sid: localStorage.getItem('accToken') ?? undefined,
+    did: localStorage.getItem('did') ?? undefined,
+    uid: localStorage.getItem('userId') ?? undefined,
+    channel: localStorage.getItem('tenant-code') ?? '',
+    tags: [localStorage.getItem('tenant-code') ?? ''],
+    app: [localStorage.getItem('tenant-code') ?? ''],
     timeDiff: -1.129,
     contextRollup: {},
-    channel: process.env.NEXT_PUBLIC_CHANNEL_ID || '',
-    did: '',
     dims: [],
-    tags: [process.env.NEXT_PUBLIC_CHANNEL_ID || ''],
-    app: [process.env.NEXT_PUBLIC_CHANNEL_ID || ''],
     cdata: [],
     userData: {
       firstName: userName,

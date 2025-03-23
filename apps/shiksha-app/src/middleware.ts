@@ -9,10 +9,24 @@ export function middleware(request: { nextUrl: { clone: () => any } }) {
     return NextResponse.rewrite(url);
   }
 
-  if (url.pathname.startsWith('/mfe_content')) {
+  if (
+    url.pathname.startsWith('/mfe_content') ||
+    url.pathname.startsWith('/content-plugins')
+  ) {
     url.hostname = 'localhost';
     url.port = '4105';
+    if (url.pathname.startsWith('/content-plugins')) {
+      url.pathname = '/mfe_content' + url.pathname;
+    }
     return NextResponse.rewrite(url);
+  }
+  if (url.pathname.startsWith('/assets')) {
+    const baseurl = process.env.NEXT_PUBLIC_ASSETS_HOSTNAME;
+    const [protocol, hostname] = baseurl?.split('://') || [];
+    url.protocol = protocol || 'https';
+    url.hostname = hostname || '';
+    url.port = '';
+    return NextResponse.redirect(url);
   }
 
   return NextResponse.next();

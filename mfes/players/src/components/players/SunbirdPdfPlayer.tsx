@@ -1,62 +1,87 @@
 import 'reflect-metadata';
 import React, { useEffect, useRef } from 'react';
 import {
-  getTelemetryEvents,
-  handleExitEvent,
+  handlePlayerEvent,
+  handleTelemetryEvent,
 } from '../../services/TelemetryService';
 
 interface PlayerConfigProps {
   playerConfig: any;
 }
 
+const loadScript = (src: string, onLoad: () => void) => {
+  const script = document.createElement('script');
+  script.src = src;
+  script.async = true;
+  script.onload = onLoad;
+  document.body.appendChild(script);
+  return script;
+};
+
+const loadStylesheet = (id: string, href: string) => {
+  if (!document.getElementById(id)) {
+    const link = document.createElement('link');
+    link.id = id;
+    link.rel = 'stylesheet';
+    link.href = href;
+    document.head.appendChild(link);
+  }
+};
+
+const removeElementById = (id: string) => {
+  const element = document.getElementById(id);
+  if (element) {
+    element.parentNode?.removeChild(element);
+  }
+};
+
 const SunbirdPdfPlayer = ({ playerConfig }: PlayerConfigProps) => {
   const sunbirdPdfPlayerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    // Dynamically load the Sunbird PDF Player script from CDN
-    const script = document.createElement('script');
-    script.src =
-      'https://cdn.jsdelivr.net/npm/@project-sunbird/sunbird-pdf-player-web-component@1.4.0/sunbird-pdf-player.js';
-    script.async = true;
-    document.body.appendChild(script);
+    // Load the Sunbird PDF Player script from CDN
+    // It also loads jQuery which is required by the PDF player
+    loadScript(
+      'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js',
+      () => {
+        const jqueryScript = loadScript(
+          'https://cdn.jsdelivr.net/npm/@project-sunbird/sunbird-pdf-player-web-component@1.4.0/sunbird-pdf-player.js',
+          () => {
+            const playerElement = sunbirdPdfPlayerRef.current;
+            playerElement?.addEventListener('playerEvent', handlePlayerEvent);
+            playerElement?.addEventListener(
+              'telemetryEvent',
+              handleTelemetryEvent
+            );
+          }
+        );
 
-    if (!document.getElementById('sunbird-pdf-player-css')) {
-      const link = document.createElement('link');
-      link.id = 'sunbird-pdf-player-css';
-      link.rel = 'stylesheet';
-      link.href =
-        'https://cdn.jsdelivr.net/npm/@project-sunbird/sunbird-pdf-player-web-component@1.4.0/styles.css';
-      document.head.appendChild(link);
-    }
-    const playerElement = sunbirdPdfPlayerRef.current;
+        // Load the PDF player CSS
+        loadStylesheet(
+          'sunbird-pdf-player-css',
+          'https://cdn.jsdelivr.net/npm/@project-sunbird/sunbird-pdf-player-web-component@1.4.0/styles.css'
+        );
 
-    const handlePlayerEvent = (event: any) => {
-      console.log('Player Event', event.detail);
-      if (event?.detail?.edata?.type === 'EXIT') {
-        handleExitEvent();
+        return () => {
+          const playerElement = sunbirdPdfPlayerRef.current;
+          // Clean up event listeners
+          playerElement?.removeEventListener('playerEvent', handlePlayerEvent);
+          playerElement?.removeEventListener(
+            'telemetryEvent',
+            handleTelemetryEvent
+          );
+          // Remove the PDF player script and CSS
+          if (jqueryScript.parentNode) {
+            document.body.removeChild(jqueryScript);
+          }
+          const pdfPlayerScript = document.querySelector(
+            'script[src*="sunbird-pdf-player.js"]'
+          );
+          pdfPlayerScript?.parentNode?.removeChild(pdfPlayerScript);
+          removeElementById('sunbird-pdf-player-css');
+        };
       }
-    };
-    const handleTelemetryEvent = (event: any) => {
-      console.log('Telemetry Event', event.detail);
-      getTelemetryEvents(event.detail, 'pdf');
-    };
-
-    // Ensure the script has loaded before adding event listeners
-    script.onload = () => {
-      playerElement?.addEventListener('playerEvent', handlePlayerEvent);
-      playerElement?.addEventListener('telemetryEvent', handleTelemetryEvent);
-    };
-
-    return () => {
-      playerElement?.removeEventListener('playerEvent', handlePlayerEvent);
-      playerElement?.removeEventListener(
-        'telemetryEvent',
-        handleTelemetryEvent
-      );
-      document.body.removeChild(script);
-      const pdfPlayerCss = document.getElementById('sunbird-pdf-player-css');
-      if (pdfPlayerCss) document.head.removeChild(pdfPlayerCss);
-    };
+    );
   }, []);
 
   return (
