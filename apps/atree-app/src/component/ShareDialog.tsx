@@ -39,7 +39,12 @@ const ShareDialog: React.FC<ShareDialogProps> = ({ open, handleClose }) => {
     setCopySuccess(true);
     setTimeout(() => setCopySuccess(false), 2000); // Reset after 2 sec
   };
-
+  const commonIconButtonStyles = {
+    backgroundColor: '#FFBD0D',
+    color: '#000000',
+    borderRadius: '100px',
+    '&:hover': { backgroundColor: '#1256A2' },
+  };
   return (
     <Dialog
       open={open}
@@ -56,25 +61,28 @@ const ShareDialog: React.FC<ShareDialogProps> = ({ open, handleClose }) => {
           {/* Social Media Buttons */}
           <Stack direction="row" spacing={2} justifyContent="center">
             <FacebookShareButton url={shareUrl}>
-              <IconButton color="primary">
-                <Facebook fontSize="large" />
+              <IconButton color="primary" sx={commonIconButtonStyles}>
+                <Facebook
+                  fontSize="large"
+                  sx={{ fontSize: '40px', borderRadius: '50%' }}
+                />
               </IconButton>
             </FacebookShareButton>
 
             <TwitterShareButton url={shareUrl}>
-              <IconButton color="primary">
+              <IconButton color="primary" sx={commonIconButtonStyles}>
                 <Twitter fontSize="large" />
               </IconButton>
             </TwitterShareButton>
 
             <WhatsappShareButton url={shareUrl}>
-              <IconButton color="primary">
+              <IconButton color="primary" sx={commonIconButtonStyles}>
                 <WhatsApp fontSize="large" />
               </IconButton>
             </WhatsappShareButton>
 
             <LinkedinShareButton url={shareUrl}>
-              <IconButton color="primary">
+              <IconButton color="primary" sx={commonIconButtonStyles}>
                 <LinkedIn fontSize="large" />
               </IconButton>
             </LinkedinShareButton>
@@ -91,7 +99,11 @@ const ShareDialog: React.FC<ShareDialogProps> = ({ open, handleClose }) => {
                 InputProps={{ readOnly: true }}
               />
               <Tooltip title={copySuccess ? 'Copied!' : 'Copy link'}>
-                <IconButton onClick={handleCopy} color="primary">
+                <IconButton
+                  onClick={handleCopy}
+                  color="primary"
+                  sx={{ color: '#000000' }}
+                >
                   <ContentCopy />
                 </IconButton>
               </Tooltip>
@@ -100,7 +112,22 @@ const ShareDialog: React.FC<ShareDialogProps> = ({ open, handleClose }) => {
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color="secondary">
+        <Button
+          onClick={handleClose}
+          color="secondary"
+          sx={{
+            color: '#2B3133',
+            width: { xs: '80%', sm: '60%', md: '50%' }, // Responsive width
+            height: '44px',
+            background: '#FFBD0D',
+            borderRadius: '50px',
+            fontSize: '16px',
+            fontWeight: 500,
+            textTransform: 'none',
+            alignSelf: 'center', // Centers in flex container
+            mx: 'auto',
+          }}
+        >
           Close
         </Button>
       </DialogActions>

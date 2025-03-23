@@ -15,7 +15,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Grid,
   IconButton,
   Stack,
   Typography,
@@ -25,6 +24,7 @@ import {
 import { getContentDetails } from '../../service/content';
 import Layout from '../../component/layout/layout';
 import landingBanner from '../../../assets/images/landingBanner.png';
+import Grid from '@mui/material/Grid2';
 
 import atreeLogo from '../../../assets/images/atreeLogo.png';
 
@@ -169,7 +169,7 @@ export default function Content() {
         <>
           <Grid container spacing={2} sx={{ padding: 2 }}>
             {/* Left Side (Content) */}
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               {/* {[...Array(4)].map((_, i) => ( */}
               <ImageCard
                 image={contentData?.appIcon || landingBanner?.src}
@@ -187,7 +187,7 @@ export default function Content() {
                 }
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Stack spacing={2}>
                 {/* Keywords */}
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
@@ -239,6 +239,7 @@ export default function Content() {
               gap: '16px',
               display: 'flex',
               flexDirection: 'column',
+              padding: '20px',
             }}
           >
             <Typography
@@ -357,11 +358,7 @@ export default function Content() {
           <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
             {contentData?.description}
           </Typography>
-          <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-            Photographs, not of the devastation but of warmth, present positive
-            images that lift the spirit and reinforce the bond between water,
-            sand and child.
-          </Typography>
+
           <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
             <b>Year:</b> {contentData?.year || ''}
           </Typography>

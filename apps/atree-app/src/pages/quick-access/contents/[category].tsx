@@ -16,9 +16,13 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Loader from '../../../component/layout/LoaderComponent';
 import dynamic from 'next/dynamic';
 import atreeLogo from '../../../../assets/images/atreeLogo.png';
-import { ContentSearch, ContentSearchResponse } from '@shared-lib';
-import FilterDialog from 'libs/shared-lib/src/lib/Filterdialog/FilterDialog';
-import { FrameworkFilter } from 'apps/atree-app/src/component/Tags';
+import {
+  ContentSearch,
+  ContentSearchResponse,
+  FilterDialog,
+} from '@shared-lib';
+import { RESOURCE_TYPES, MIME_TYPES } from '../../utils/constantData';
+
 const Content = dynamic(() => import('@Content'), { ssr: false });
 
 const MyComponent: React.FC = () => {
@@ -81,8 +85,16 @@ const MyComponent: React.FC = () => {
   /** Fetch Content Search Results */
   const fetchContentSearch = async () => {
     try {
-      const filterParams =
-        Object.keys(filters).length > 0 ? filters : { subTopic: category };
+      // const filterParams =
+      //   Object.keys(filters).length > 0 ? filters : { subTopic: category };
+      const filterParams: any = {
+        ...filters,
+        subTopic: category || filters.subTopic,
+      };
+
+      if (subFramework) {
+        filterParams.mimeType = [subFramework];
+      }
       const data = await ContentSearch({
         channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
         filters: filterParams,
@@ -294,26 +306,19 @@ const MyComponent: React.FC = () => {
           py="1rem"
           px="8px"
         >
-          <FrameworkFilter
-            frameworkFilter={categories || []}
-            framework={framework}
-            setFramework={setFramework}
-            fromSubcategory={false}
-          />
-          {isMobile && <SubFrameworkButtons />}
           <Grid container spacing={1}>
             <Grid size={{ xs: 3, md: 3 }}>
               <FilterDialog
-                open={filterShow}
-                onClose={() => setFilterShow(false)}
                 frameworkFilter={frameworkFilter}
                 filterValues={filters}
                 onApply={handleApplyFilters}
+                resources={RESOURCE_TYPES}
+                mimeType={MIME_TYPES}
                 isMobile={isMobile}
               />
             </Grid>
 
-            <Grid size={{ xs: 9, md: 9 }}>
+            <Grid size={{ xs: 12, md: 9 }}>
               <>
                 <Box sx={{ display: 'flex' }}>
                   <FolderComponent
@@ -323,6 +328,7 @@ const MyComponent: React.FC = () => {
                     onClick={handleClick}
                     _title={{ fontWeight: 700, fontSize: '14px' }}
                     _item={{
+                      width: '450px',
                       border: 0,
                       justifyContent: 'space-between',
                       py: 2,
@@ -333,6 +339,7 @@ const MyComponent: React.FC = () => {
                       cursor: 'auto',
                     }}
                   />
+
                   {!isMobile && (
                     <Box
                       display="flex"
@@ -412,6 +419,7 @@ const MyComponent: React.FC = () => {
                     </Box>
                   )}
                 </Box>
+                {isMobile && <SubFrameworkButtons />}
                 <Content
                   {...{
                     // _grid: { size: { xs: 6, sm: 6, md: 9, lg: 3 } },
@@ -423,6 +431,7 @@ const MyComponent: React.FC = () => {
                       filters: {
                         channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
                         subTopic: `${category}`,
+                        ...(subFramework && { mimeType: [subFramework] }),
                       },
                     },
                     _card: { cardName: 'AtreeCard', image: atreeLogo.src },

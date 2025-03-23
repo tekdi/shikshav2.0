@@ -245,8 +245,8 @@ export default function Index() {
                     filterValues={filters}
                     onApply={handleApplyFilters}
                     isMobile={isMobile}
-                    resources={filterResources}
-                    mimeType={mimeType}
+                    resources={RESOURCE_TYPES}
+                    mimeType={MIME_TYPES}
                   />
                 </Box>
               </Grid>
