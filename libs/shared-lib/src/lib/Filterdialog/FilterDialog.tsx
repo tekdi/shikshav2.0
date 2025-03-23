@@ -127,29 +127,30 @@ export const FilterDialog = ({
   mimeType?: { label: string; value: string }[];
 }) => {
   // Manage the selected values for each category
-  const [selectedValues, setSelectedValues] = useState(filterValues ?? {}); // Initialize as an empty object
+  const [selectedValues, setSelectedValues] = useState(filterValues ?? {});
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [selectedFilters, setSelectedFilters] = useState({
     resource: [] as string[],
     mimeType: [] as string[],
   });
-  const handleChange = (event: any, filterCode: string) => {
-    const { value } = event.target;
-    const newValue = typeof value === 'string' ? value.split(',') : value;
-
-    if (filterCode === 'topic') {
-      setSelectedTopic(newValue); // Update the selected topic
-      setSelectedValues((prev: any) => ({
-        ...prev,
-        subTopic: [], // Reset subtopics when topic changes
-      }));
-    }
-
+  localStorage.getItem('category');
+  const updateSelectedValues = (filterCode: string, newValue: any) => {
     setSelectedValues((prev: any) => ({
       ...prev,
       [filterCode]: newValue,
+      ...(filterCode === 'topic' && { subTopic: [] }), // Reset subTopic if topic changes
     }));
   };
+  const handleChange = (event: any, filterCode: string) => {
+    const { value } = event.target;
+    const newValue = typeof value === 'string' ? value.split(',') : value;
+    localStorage.setItem('category', newValue[0]);
+    if (filterCode === 'topic') {
+      setSelectedTopic(newValue); // Update the selected topic state
+    }
+    updateSelectedValues(filterCode, newValue);
+  };
+
   const handleCheckboxChange = (event: any, filterCode: string) => {
     const { checked, value } = event.target;
 
@@ -250,12 +251,35 @@ export const FilterDialog = ({
                     )}
 
                     {/* SubTopic - Checkboxes */}
-                    {filterCode === 'subTopic' && selectedTopic && (
+                    {filterCode === 'subTopic' && (
                       <Box>
                         {options
-                          ?.filter((option: any) =>
-                            option?.value?.includes(selectedTopic)
-                          )
+                          ?.filter((option: any) => {
+                            // Find the selected topic's associated terms (subtopics) in frameworkFilter
+                            const topicCategory =
+                              frameworkFilter.categories?.find(
+                                (category: any) => category.code === 'topic'
+                              );
+
+                            // Get the currently selected topic's code
+                            const selectedTopicCode =
+                              selectedValues?.topic?.[0];
+
+                            if (!selectedTopicCode || !topicCategory)
+                              return false;
+
+                            // Find the selected topic object
+                            const selectedTopic = topicCategory.terms?.find(
+                              (term: any) => term.code === selectedTopicCode
+                            );
+
+                            // Check if the subtopic is associated with the selected topic and is "Live"
+                            return selectedTopic?.associations?.some(
+                              (association: any) =>
+                                association.code === option.value &&
+                                association.status === 'Live'
+                            );
+                          })
                           ?.map((option: any) => (
                             <CustomCheckbox
                               key={option?.label}
@@ -414,7 +438,7 @@ export const FilterDialog = ({
                     color: '#181D27',
                   }}
                 >
-                  Select Resource Type
+                  Select Content Type
                 </FormLabel>
                 {mimeType?.map((option: any) => (
                   <CustomResourceCheckbox

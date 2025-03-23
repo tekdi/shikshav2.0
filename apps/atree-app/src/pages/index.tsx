@@ -145,13 +145,6 @@ const LandingPage = () => {
       ) : (
         <Grid container spacing={4} sx={{ mb: 3 }} justifyContent={'center'}>
           <Grid width={'100%'}>
-            {/* <ImageBanner
-              name={
-                'A digital hub of Environment Education resources contextual to India'
-              }
-              image={landingBanner?.src}
-              // _image={{ height: '181px' }}
-            /> */}
             <Carousel
               navButtonsAlwaysVisible
               indicators={false}
@@ -174,7 +167,11 @@ const LandingPage = () => {
                     'A digital hub of Environment Education resources contextual to India'
                   }
                   image={image.image}
-                  _image={{ height: '581px' }}
+                  _image={{ height: { xs: 'auto', md: '581px' } }}
+                  _textPosition={{
+                    bottom: '20%',
+                    left: '20%',
+                  }}
                 />
               ))}
             </Carousel>

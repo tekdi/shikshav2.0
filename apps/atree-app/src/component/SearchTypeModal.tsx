@@ -42,7 +42,9 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
 
   const handleClearSearch = () => {
     setSearchQuery('');
-    setSearchResults([]); // Clear results when clearing input
+    setSearchResults([]);
+    setSearchQuery('');
+    setSearchType(''); // Clear results when clearing input
   };
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
@@ -60,6 +62,8 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
       }
     } else {
       setSearchResults([]);
+      setSearchQuery('');
+      setSearchType('');
     }
   };
 
@@ -69,9 +73,8 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
   );
 
   // Handle Enter Key Press
-  const handleKeyPress = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' && searchQuery.trim()) {
-      event.preventDefault();
+  const navigateToSearchPage = () => {
+    if (searchQuery.trim()) {
       const url = searchType
         ? `/searchpage?type=${searchType}&query=${searchQuery}`
         : `/searchpage?query=${searchQuery}`;
@@ -79,6 +82,19 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
       router.push(url);
       onClose();
     }
+  };
+
+  // Handle Enter Key Press
+  const handleKeyPress = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      navigateToSearchPage();
+    }
+  };
+
+  // Handle Search Button Click
+  const handleSearch = () => {
+    navigateToSearchPage();
   };
   useEffect(() => {
     console.log('Updated Search Query:', searchQuery);
@@ -101,7 +117,7 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
           sx={{ borderBottom: '1px solid #ccc', pb: 1 }}
         >
           {/* Back Button */}
-          <IconButton onClick={onClose} sx={{ mr: 1 }}>
+          <IconButton onClick={handleClearSearch} sx={{ mr: 1 }}>
             <ArrowBackIcon />
           </IconButton>
 
@@ -117,11 +133,10 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
               width: '100%',
             }}
           />
-          {searchQuery && (
-            <IconButton onClick={handleClearSearch} sx={{ ml: 1 }}>
-              <CloseIcon />
-            </IconButton>
-          )}
+
+          <IconButton onClick={onClose} sx={{ ml: 1 }}>
+            <CloseIcon />
+          </IconButton>
         </Box>
       </DialogTitle>
 
@@ -159,7 +174,11 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
         {/* API Search Results */}
         {searchResults.length > 0
           ? searchResults.map((item) => (
-              <ListItem key={item.name} sx={{ cursor: 'pointer' }}>
+              <ListItem
+                key={item.name}
+                sx={{ cursor: 'pointer' }}
+                onClick={handleSearch}
+              >
                 <ListItemAvatar>
                   <Avatar sx={{ backgroundColor: '#CEE5FF', color: '#06164B' }}>
                     {item.name ? item.name.charAt(0).toUpperCase() : 'S'}
