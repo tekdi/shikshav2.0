@@ -111,13 +111,29 @@ export const MIME_TYPE = {
   ],
 };
 
-let userName = 'arif';
-if (typeof window !== 'undefined' && window.localStorage) {
-  userName = localStorage.getItem('userName') ?? '';
-}
-
-export const V2PlayerConfig: PlayerConfig = {
-  context: {
+export const getTelemetryConfig = (): Context => {
+  let localStorageData = {
+    userName: '',
+    accToken: '',
+    tenantId: '',
+    tenantCode: '',
+    did: '',
+    sid: '',
+    uid: '',
+  };
+  if (typeof window !== 'undefined' && window.localStorage) {
+    const ls = window.localStorage;
+    localStorageData = {
+      userName: ls.getItem('userName') ?? '',
+      accToken: ls.getItem('accToken') ?? '',
+      sid: ls.getItem('accToken') ?? '',
+      uid: ls.getItem('userId') ?? '',
+      tenantId: ls.getItem('tenantId') ?? '',
+      tenantCode: ls.getItem('tenant-code') ?? '',
+      did: ls.getItem('did') ?? '',
+    };
+  }
+  return {
     mode: 'play',
     partner: [],
     pdata: {
@@ -126,19 +142,19 @@ export const V2PlayerConfig: PlayerConfig = {
       pid: 'learner-portal',
     },
     contentId: '',
-    authToken: localStorage.getItem('accToken') ?? undefined,
-    sid: localStorage.getItem('accToken') ?? undefined,
-    did: localStorage.getItem('did') ?? undefined,
-    uid: localStorage.getItem('userId') ?? undefined,
-    channel: localStorage.getItem('tenant-code') ?? '',
-    timeDiff: -0.089,
-    tags: [localStorage.getItem('tenant-code') ?? ''],
-    contextRollup: { l1: localStorage.getItem('tenant-code') ?? '' },
+    channel: localStorageData.tenantCode,
+    tags: [localStorageData.tenantCode],
+    contextRollup: { l1: localStorageData.tenantCode },
     objectRollup: {},
-    userData: { firstName: userName, lastName: '' },
+    userData: { firstName: localStorageData.userName, lastName: '' },
     host: '',
     endpoint: '/v1/telemetry',
-  },
+    ...localStorageData,
+  };
+};
+
+export const V2PlayerConfig: PlayerConfig = {
+  context: getTelemetryConfig(),
   config: {
     showEndPage: false,
     endPage: [{ template: 'assessment', contentType: ['SelfAssess'] }],
@@ -179,6 +195,7 @@ export const V1PlayerConfig: PlayerConfig = {
       },
     ],
     showStartPage: true,
+    host: '',
     endpoint: '/v1/telemetry',
     overlay: {
       enableUserSwitcher: true,
@@ -220,30 +237,6 @@ export const V1PlayerConfig: PlayerConfig = {
     },
     enableTelemetryValidation: false,
   },
-  context: {
-    mode: 'play',
-    // partner: [],
-    pdata: {
-      id: 'shikshav2.0.learner.portal',
-      ver: '1.0.0',
-      pid: 'learner-portal',
-    },
-    contentId: '',
-    authToken: localStorage.getItem('accToken') ?? undefined,
-    sid: localStorage.getItem('accToken') ?? undefined,
-    did: localStorage.getItem('did') ?? undefined,
-    uid: localStorage.getItem('userId') ?? undefined,
-    channel: localStorage.getItem('tenant-code') ?? '',
-    tags: [localStorage.getItem('tenant-code') ?? ''],
-    app: [localStorage.getItem('tenant-code') ?? ''],
-    timeDiff: -1.129,
-    contextRollup: {},
-    dims: [],
-    cdata: [],
-    userData: {
-      firstName: userName,
-      lastName: '',
-    },
-  },
+  context: getTelemetryConfig(),
   data: {},
 };
