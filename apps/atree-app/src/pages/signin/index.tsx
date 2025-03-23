@@ -21,7 +21,23 @@ import { useRouter } from 'next/router';
 import { signin } from '../../service/content';
 import Loader from '../../component/layout/LoaderComponent';
 interface ListProps {}
-
+const commonButtonStyle = {
+  backgroundColor: '#ffffff',
+  width: { xs: '80%', sm: '60%', md: '50%' },
+  border: '1px solid #FFBD0D',
+  height: '44px',
+  borderRadius: '40px',
+  color: '#000',
+  textTransform: 'none',
+  padding: '10px 20px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '10px',
+  boxShadow: 'none',
+  alignSelf: 'center', // Centers in flex container
+  mx: 'auto',
+  '&:hover': { backgroundColor: '#f5f5f5' },
+};
 const Login: React.FC<ListProps> = () => {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({ email: '', password: '' });
@@ -244,23 +260,7 @@ const MyCustomGoogleLogin = () => {
   return (
     <Button
       variant="contained"
-      sx={{
-        backgroundColor: '#ffffff',
-        width: { xs: '80%', sm: '60%', md: '50%' },
-        border: '1px solid #FFBD0D',
-        height: '44px',
-        borderRadius: '40px',
-        color: '#000',
-        textTransform: 'none',
-        padding: '10px 20px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '10px',
-        boxShadow: 'none',
-        alignSelf: 'center', // Centers in flex container
-        mx: 'auto',
-        '&:hover': { backgroundColor: '#f5f5f5' },
-      }}
+      sx={commonButtonStyle}
       onClick={() => handleLogin()} // Manually trigger login
     >
       <Box display="flex" alignItems="center" gap="10px">
