@@ -71,12 +71,11 @@ export const ImageBanner = ({
             </Avatar>
           )}
           <Typography
-            variant="h5"
             sx={{
               color: 'white',
               fontWeight: 700,
-              fontSize: '18px',
               width: isMobile ? 'auto' : '70%',
+              fontSize: { xs: '18px', md: '48px' },
             }}
           >
             {name}

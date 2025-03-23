@@ -52,6 +52,28 @@ const CustomCheckbox = ({
     label={option.label}
   />
 );
+const CustomResourceCheckbox = ({
+  option,
+  filterCode,
+  handleCheckboxChange,
+  currentSelectedValues,
+}: any) => (
+  <FormControlLabel
+    key={option.label}
+    control={
+      <Checkbox
+        checked={
+          Array.isArray(currentSelectedValues) &&
+          currentSelectedValues.includes(option.label)
+        }
+        onChange={(event) => handleCheckboxChange(event, filterCode)}
+        value={option.label}
+        sx={{ color: '#1D1B20', '&.Mui-checked': { color: '#FFBD0D' } }}
+      />
+    }
+    label={option.label}
+  />
+);
 
 // Reusable Radio Component
 const CustomRadio = ({ option }: any) => (
@@ -76,6 +98,8 @@ export const FilterDialog = ({
   frameworkFilter,
   filterValues,
   isMobile = false,
+  resources = [],
+  mimeType = [],
 }: {
   open?: boolean;
   onClose?: () => void;
@@ -97,10 +121,16 @@ export const FilterDialog = ({
   frameworkFilter: any;
   filterValues: any;
   isMobile?: boolean;
+  resources?: { label: string; value: string }[];
+  mimeType?: { label: string; value: string }[];
 }) => {
   // Manage the selected values for each category
   const [selectedValues, setSelectedValues] = useState(filterValues ?? {}); // Initialize as an empty object
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  const [selectedFilters, setSelectedFilters] = useState({
+    resource: [] as string[],
+    mimeType: [] as string[],
+  });
   const handleChange = (event: any, filterCode: string) => {
     const { value } = event.target;
     const newValue = typeof value === 'string' ? value.split(',') : value;
@@ -131,8 +161,24 @@ export const FilterDialog = ({
       };
     });
   };
-  console.log('isMobile', isMobile);
-  console.log('open', open);
+
+  const handleResourceCheckboxChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    filterType: 'resource' | 'mimeType'
+  ) => {
+    const { checked, value } = event.target;
+    console.log('open', value);
+    setSelectedValues((prev: any) => {
+      const currentValues = prev[filterType] || [];
+      return {
+        ...prev,
+        [filterType]: checked
+          ? [...currentValues, value]
+          : currentValues.filter((v: string) => v !== value),
+      };
+    });
+  };
+  console.log('isMobile', selectedValues);
 
   return (
     <>
@@ -272,6 +318,7 @@ export const FilterDialog = ({
                 </Select>
               </FormControl>
             )}
+
             {/* Buttons */}
             <DialogActions sx={{ justifyContent: 'center' }}>
               <Box sx={{ display: 'flex', mt: 2 }}>
@@ -314,24 +361,18 @@ export const FilterDialog = ({
           </DialogContent>
         </Dialog>
       ) : (
-        <Box sx={{ p: 3, backgroundColor: '#FEF7FF', borderRadius: '16px' }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box
+          sx={{
+            p: 3,
+            backgroundColor: '#FEF7FF',
+            borderRadius: '16px',
+          }}
+        >
+          <Box sx={{ flexDirection: 'column', gap: 2 }}>
             {/* new filter frameworkFilter */}
-            {frameworkFilter?.categories?.map((category: any) => {
-              const filterCode =
-                category?.code === 'subTopic' ? 'subTopic' : category?.code;
-
-              // Transform terms into options
-              const options =
-                category?.terms?.map((term: any) => ({
-                  label: term?.name,
-                  value: term?.code,
-                })) ?? [];
-
-              // Get the selected vaalues for the current category
-              const currentSelectedValues = selectedValues?.[filterCode] ?? [];
-              return (
-                <FormControl fullWidth key={filterCode} sx={formControlStyles}>
+            <FormControl fullWidth sx={formControlStyles}>
+              {resources?.length > 0 && (
+                <Box sx={{ display: 'grid' }}>
                   <FormLabel
                     component="legend"
                     sx={{
@@ -340,44 +381,43 @@ export const FilterDialog = ({
                       color: '#181D27',
                     }}
                   >
-                    {category?.name === 'Sub-Topic'
-                      ? 'Select Resource Type'
-                      : category?.name}
+                    Select Resource Type
                   </FormLabel>
+                  {resources?.map((option: any) => (
+                    <CustomResourceCheckbox
+                      key={option?.label}
+                      option={option}
+                      filterCode="resource"
+                      handleCheckboxChange={handleResourceCheckboxChange}
+                      currentSelectedValues={selectedFilters.resource}
+                    />
+                  ))}
+                </Box>
+              )}
+              {/* SubTopic - Checkboxes */}
 
-                  {/* Topic - RadioGroup */}
-                  {filterCode === 'topic' && (
-                    <RadioGroup
-                      value={currentSelectedValues?.[0] ?? ''}
-                      onChange={(event) => handleChange(event, filterCode)}
-                    >
-                      {options?.map((option: any) => (
-                        <CustomRadio key={option?.value} option={option} />
-                      ))}
-                    </RadioGroup>
-                  )}
-
-                  {/* SubTopic - Checkboxes */}
-                  {filterCode === 'subTopic' && selectedTopic && (
-                    <Box>
-                      {options
-                        ?.filter((option: any) =>
-                          option?.value?.includes(selectedTopic)
-                        )
-                        ?.map((option: any) => (
-                          <CustomCheckbox
-                            key={option?.label}
-                            option={option}
-                            filterCode={filterCode}
-                            handleCheckboxChange={handleCheckboxChange}
-                            currentSelectedValues={currentSelectedValues}
-                          />
-                        ))}
-                    </Box>
-                  )}
-                </FormControl>
-              );
-            })}
+              <Box sx={{ display: 'grid' }}>
+                <FormLabel
+                  component="legend"
+                  sx={{
+                    fontSize: '18px',
+                    fontWeight: 600,
+                    color: '#181D27',
+                  }}
+                >
+                  Select Resource Type
+                </FormLabel>
+                {mimeType?.map((option: any) => (
+                  <CustomResourceCheckbox
+                    key={option?.label}
+                    option={option}
+                    filterCode="mimeType"
+                    handleCheckboxChange={handleResourceCheckboxChange}
+                    currentSelectedValues={selectedFilters.mimeType}
+                  />
+                ))}
+              </Box>
+            </FormControl>
           </Box>
           <Divider sx={{ marginTop: 4 }} />
 
@@ -407,6 +447,7 @@ export const FilterDialog = ({
               </Select>
             </FormControl>
           )}
+
           {/* Content Type */}
           {filter?.contentType && filter.contentType.length > 0 && (
             <FormControl fullWidth margin="normal">

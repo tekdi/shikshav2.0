@@ -20,10 +20,10 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import atreeLogo from '../../../assets/images/placeholder.jpg';
 import Layout from '../../component/layout/layout';
-// import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'next/navigation';
 import Loader from '../../component/layout/LoaderComponent';
+import { RESOURCE_TYPES, MIME_TYPES } from '../../pages/utils/constantData';
 const buttonColors = {
   water: '#0E28AE',
   land: '#8F4A50',
@@ -42,8 +42,11 @@ export default function Index() {
 
   const [consumedContent, setConsumedContent] = useState<string[]>([]);
   const [frameworkFilter, setFrameworkFilter] = useState();
+  const [filterResources, setFilterResources] = useState(RESOURCE_TYPES);
+  const [mimeType, setMimetype] = useState(MIME_TYPES);
+
   const [framework, setFramework] = useState('');
-  const [subFrameworkFilter, setSubFrameworkFilter] = useState();
+  const [subFrameworkFilter, setSubFrameworkFilter] = useState<any[]>([]);
   const [subFramework, setSubFramework] = useState('');
   const [filterCategory, SetFilterCategory] = useState<string>('');
   const [isLoadingChildren, setIsLoadingChildren] = useState(true);
@@ -60,7 +63,6 @@ export default function Index() {
         const subFrameworkData = (frameworkFilter as any).find(
           (item: any) => item.identifier === framework
         );
-
         SetFilterCategory(
           subFrameworkData?.name
             ? subFrameworkData.name.charAt(0).toUpperCase() +
@@ -74,10 +76,20 @@ export default function Index() {
                 subFrameworkData.name.slice(1).toLowerCase()
             : ''
         );
-        setSubFrameworkFilter(subFrameworkData?.associations || []);
+        const uniqueAssociations = Array.from(
+          new Map(
+            subFrameworkData?.associations?.map((item: any) => [
+              item?.name,
+              item,
+            ])
+          ).values()
+        );
+
+        setSubFrameworkFilter(uniqueAssociations);
       }
     }
   }, [framework, frameworkFilter, filterCategory]);
+
   useEffect(() => {
     const init = async () => {
       try {
@@ -149,7 +161,7 @@ export default function Index() {
     // if (filterCategory) {
     fetchContentData();
     // }
-  }, [filterCategory]);
+  }, [filterCategory, filters]);
   useEffect(() => {
     console.log('Content Data:', contentData);
   }, [contentData]);
@@ -182,11 +194,17 @@ export default function Index() {
     router.push('/signin');
   };
   const handleApplyFilters = (selectedValues: any) => {
-    console.log('h');
-    // setFilters((prevFilters: any) => ({
-    //   ...prevFilters,
-    //   ...selectedValues,
-    // }));
+    setFilters(() => {
+      // Extract `offset` separately and keep remaining values as filters
+      const { offset, ...filters } = selectedValues;
+
+      return {
+        request: {
+          filters, // Directly assign filters without nesting again
+          offset: offset ?? 0, // Default offset to 0 if not provided
+        },
+      };
+    });
   };
   return (
     <Layout>
@@ -209,16 +227,12 @@ export default function Index() {
                     filterValues={filters}
                     onApply={handleApplyFilters}
                     isMobile={isMobile}
+                    resources={filterResources}
+                    mimeType={mimeType}
                   />
                 </Box>
               </Grid>
               <Grid size={{ xs: 9 }}>
-                <FrameworkFilter
-                  frameworkFilter={frameworkFilter || []}
-                  framework={framework}
-                  setFramework={setFramework}
-                  fromSubcategory={false}
-                />
                 <Box
                   sx={{
                     width: '100%',
