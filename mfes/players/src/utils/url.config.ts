@@ -60,39 +60,39 @@ export interface Context {
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Config {
+  [propName: string]: any;
   toolBar?: {
     showZoomButtons?: boolean;
-    showPagesButton?: boolean;
     showPagingButtons?: boolean;
-    showSearchButton?: boolean;
+    showPagesButton?: boolean;
     showRotateButton?: boolean;
+    showSearchButton?: boolean;
   };
   sideMenu?: {
     showShare?: boolean;
-    showDownload?: boolean;
     showReplay?: boolean;
-    showExit?: boolean;
+    showDownload?: boolean;
     showPrint?: boolean;
+    showExit?: boolean;
   };
-  [propName: string]: any;
 }
 
 export interface Metadata {
   identifier: string;
-  name: string;
   artifactUrl: string;
+  name: string;
   streamingUrl?: string;
-  compatibilityLevel?: number;
   pkgVersion?: number;
+  compatibilityLevel?: number;
   isAvailableLocally?: boolean;
-  basePath?: string;
   baseDir?: string;
+  basePath?: string;
 }
 export interface PlayerConfig {
-  context?: Context;
-  config?: Config;
   metadata?: Metadata;
   data?: any;
+  config?: Config;
+  context?: Context;
 }
 
 export const MIME_TYPE = {
