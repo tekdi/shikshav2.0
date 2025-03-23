@@ -78,7 +78,6 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [frameworkFilter, setFrameworkFilter] = useState();
   const [framework, setFramework] = useState('');
-  const [filterCategory, setFilterCategory] = useState<string>('');
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -89,12 +88,6 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
           (item: any) => item.identifier === framework
         );
 
-        setFilterCategory(
-          subFrameworkData?.name
-            ? subFrameworkData.name.charAt(0).toUpperCase() +
-                subFrameworkData.name.slice(1).toLowerCase()
-            : ''
-        );
         localStorage.setItem(
           'category',
           subFrameworkData?.name
