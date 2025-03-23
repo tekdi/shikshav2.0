@@ -32,7 +32,7 @@ export default function Contactus() {
             'A digital hub of Environment Education resources contextual to India'
           }
           image={landingBanner?.src}
-          _image={{ height: '181px' }}
+          _image={{ height: 'auto' }}
         />
         {/* Contact Us Title */}
         <Typography

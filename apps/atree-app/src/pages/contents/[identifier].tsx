@@ -15,7 +15,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Grid,
   IconButton,
   Stack,
   Typography,
@@ -25,13 +24,13 @@ import {
 import { getContentDetails } from '../../service/content';
 import Layout from '../../component/layout/layout';
 import landingBanner from '../../../assets/images/landingBanner.png';
-import Carousel from 'react-material-ui-carousel';
+import Grid from '@mui/material/Grid2';
+
 import atreeLogo from '../../../assets/images/atreeLogo.png';
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Loader from '../../component/layout/LoaderComponent';
 import { AtreeCard, ContentSearch } from '@shared-lib';
-import { FrameworkFilter } from '../../component/Tags';
 
 interface ContentItem {
   name: string;
@@ -60,8 +59,6 @@ export default function Content() {
   const [openPopup, setOpenPopup] = useState<boolean>(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const [categories, setCategories] = useState<Array<any>>([]);
-  const [framework, setFramework] = useState('');
 
   const handleOnCLick = () => {
     router.push(`/player/${identifier}`);
@@ -86,7 +83,7 @@ export default function Content() {
     } finally {
       setIsLoading(false);
     }
-  }, [identifier]);
+  }, []);
   const keywords = contentData?.keywords || [];
   const showMoreIcon = keywords.length > 3;
   const capitalizeFirstLetter = (word: string) =>
@@ -98,7 +95,7 @@ export default function Content() {
   const remainingKeywords = keywords.slice(3);
   useEffect(() => {
     if (identifier) fetchContent();
-  }, [identifier]);
+  }, []);
 
   const fetchFrameworkData = async () => {
     try {
@@ -118,16 +115,13 @@ export default function Content() {
       const fdata =
         filteredFramework.categories.find((item: any) => item.code === 'topic')
           ?.terms || [];
-
-      setCategories(fdata || []);
-      setFramework(fdata[0]?.identifier || '');
     } catch (error) {
       console.error('Error fetching framework data:', error);
     }
   };
   useEffect(() => {
     fetchFrameworkData();
-  }, [identifier]);
+  }, []);
 
   if (isLoading) return <Loader />;
 
@@ -170,45 +164,30 @@ export default function Content() {
         </Box>
       }
     >
-      <FrameworkFilter
-        frameworkFilter={categories || []}
-        framework={framework}
-        setFramework={setFramework}
-        fromSubcategory={false}
-      />
       {!isMobile ? (
         // Desktop View (Carousel on Right, Content on Left)
         <>
           <Grid container spacing={2} sx={{ padding: 2 }}>
             {/* Left Side (Content) */}
-            <Grid item xs={12} md={6}>
-              <Carousel
-                navButtonsAlwaysVisible
-                indicators={false}
-                animation="slide"
-                cycleNavigation={false}
-              >
-                {[...Array(4)].map((_, i) => (
-                  <ImageCard
-                    key={i}
-                    image={landingBanner?.src || ''}
-                    name={
-                      <Box display="flex" alignItems="center" gap={1}>
-                        <Box>
-                          <Typography variant="body2" gutterBottom>
-                            {contentData?.name || ''}
-                          </Typography>
-                          <Typography variant="body2" gutterBottom>
-                            {contentData?.publisher || ''}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    }
-                  />
-                ))}
-              </Carousel>
+            <Grid size={{ xs: 12, md: 6 }}>
+              {/* {[...Array(4)].map((_, i) => ( */}
+              <ImageCard
+                image={contentData?.appIcon || landingBanner?.src}
+                name={
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <Box>
+                      <Typography variant="body2" gutterBottom>
+                        {contentData?.name || ''}
+                      </Typography>
+                      <Typography variant="body2" gutterBottom>
+                        {contentData?.publisher || ''}
+                      </Typography>
+                    </Box>
+                  </Box>
+                }
+              />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Stack spacing={2}>
                 {/* Keywords */}
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
@@ -260,9 +239,13 @@ export default function Content() {
               gap: '16px',
               display: 'flex',
               flexDirection: 'column',
+              padding: '20px',
             }}
           >
-            <Typography onClick={() => router.push('/contents')}>
+            <Typography
+              sx={{ fontSize: '22px', fontWeight: 700 }}
+              onClick={() => router.push('/contents')}
+            >
               Related Content
             </Typography>
             <AtreeCard
@@ -290,31 +273,21 @@ export default function Content() {
           }}
         >
           <Box sx={{ px: 2 }}>
-            <Carousel
-              navButtonsAlwaysVisible
-              indicators={false}
-              animation="slide"
-              cycleNavigation={false}
-            >
-              {[...Array(4)].map((_, i) => (
-                <ImageCard
-                  key={i}
-                  image={landingBanner?.src || ''}
-                  name={
-                    <Box display="flex" alignItems="center" gap={1}>
-                      <Box>
-                        <Typography variant="body2" gutterBottom>
-                          {contentData?.name || ''}
-                        </Typography>
-                        <Typography variant="body2" gutterBottom>
-                          {contentData?.publisher || ''}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  }
-                />
-              ))}
-            </Carousel>
+            <ImageCard
+              image={contentData?.appIcon || landingBanner?.src}
+              name={
+                <Box display="flex" alignItems="center" gap={1}>
+                  <Box>
+                    <Typography variant="body2" gutterBottom>
+                      {contentData?.name || ''}
+                    </Typography>
+                    <Typography variant="body2" gutterBottom>
+                      {contentData?.publisher || ''}
+                    </Typography>
+                  </Box>
+                </Box>
+              }
+            />
           </Box>
           <Button
             variant="contained"
@@ -385,11 +358,7 @@ export default function Content() {
           <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
             {contentData?.description}
           </Typography>
-          <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-            Photographs, not of the devastation but of warmth, present positive
-            images that lift the spirit and reinforce the bond between water,
-            sand and child.
-          </Typography>
+
           <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
             <b>Year:</b> {contentData?.year || ''}
           </Typography>

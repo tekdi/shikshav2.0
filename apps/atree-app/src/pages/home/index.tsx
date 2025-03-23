@@ -10,7 +10,6 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
-  Switch,
   Typography,
   useMediaQuery,
   useTheme,
@@ -21,10 +20,10 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import atreeLogo from '../../../assets/images/placeholder.jpg';
 import Layout from '../../component/layout/layout';
-// import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'next/navigation';
 import Loader from '../../component/layout/LoaderComponent';
+import { RESOURCE_TYPES, MIME_TYPES } from '../../pages/utils/constantData';
 const buttonColors = {
   water: '#0E28AE',
   land: '#8F4A50',
@@ -40,47 +39,68 @@ export default function Index() {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
   const [contentData, setContentData] = useState<any>([]);
-  const [fullAccess, setFullAccess] = useState(false);
-  const [filterData, setFilterData] = useState();
+
   const [consumedContent, setConsumedContent] = useState<string[]>([]);
   const [frameworkFilter, setFrameworkFilter] = useState();
+
   const [framework, setFramework] = useState('');
-  const [subFrameworkFilter, setSubFrameworkFilter] = useState();
+  const [subFrameworkFilter, setSubFrameworkFilter] = useState<any[]>([]);
   const [subFramework, setSubFramework] = useState('');
   const [filterCategory, SetFilterCategory] = useState<string>('');
   const [isLoadingChildren, setIsLoadingChildren] = useState(true);
   const [openMessageDialog, setOpenMessageDialog] = useState(false);
-  const [filters, setFilters] = useState<any>({});
+  const [filters, setFilters] = useState<any>({
+    request: {
+      filters: {},
+      offset: 0,
+      limit: 5,
+    },
+  });
+  const [filterData, setFilterData] = useState();
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const frameworkName = searchParams.get('category')?.toLocaleUpperCase();
-  useEffect(() => {
-    if (framework) {
-      if (frameworkFilter) {
-        let subFrameworkData = (frameworkFilter as any).find(
-          (item: any) => item.identifier === framework
-        );
-        subFrameworkData = subFrameworkData.associations?.filter(
-          (assoc: any) => assoc.status === 'Live'
-        );
 
-        SetFilterCategory(
-          subFrameworkData?.name
-            ? subFrameworkData.name.charAt(0).toUpperCase() +
-                subFrameworkData.name.slice(1).toLowerCase()
-            : ''
-        );
-        localStorage.setItem(
-          'category',
-          subFrameworkData?.name
-            ? subFrameworkData.name.charAt(0).toUpperCase() +
-                subFrameworkData.name.slice(1).toLowerCase()
-            : 'Water'
-        );
-        setSubFrameworkFilter(subFrameworkData || []);
-      }
+  // **Handle API Calls with Updated Filters**
+  const fetchContentData = async (updatedFilters: any) => {
+    try {
+      setIsLoadingChildren(true);
+
+      const data = await ContentSearch({
+        channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+        filters: updatedFilters,
+      });
+
+      setContentData(data?.result?.content || []);
+    } catch (error) {
+      console.error('Error fetching content data:', error);
+    } finally {
+      setIsLoadingChildren(false);
     }
-  }, [framework, frameworkFilter, filterCategory]);
+  };
+
+  // **Update Filters and Trigger API Call in One Step**
+  const handleApplyFilters = async (selectedValues: any) => {
+    const { offset, limit, ...filters } = selectedValues;
+    const cleanedFilters = Object.fromEntries(
+      Object.entries(filters).filter(
+        ([_, value]) => Array.isArray(value) && value.length > 0
+      )
+    );
+
+    const newFilters = {
+      request: {
+        filters: cleanedFilters,
+        offset: offset ?? 0,
+        limit: limit ?? 5,
+      },
+    };
+
+    setFilters(newFilters); // Update filters state
+    fetchContentData(newFilters.request.filters); // Fetch content immediately
+  };
+
+  // **Initial Data Fetch Based on frameworkName**
   useEffect(() => {
     const init = async () => {
       try {
@@ -91,148 +111,115 @@ export default function Index() {
           frameworks.find((item: any) => item.code === 'topic')?.terms || [];
         setFramework(fdata[0]?.identifier || '');
         setFrameworkFilter(fdata);
-        const frameworksD = frameworkData?.result?.framework;
-        const filteredFramework = {
-          ...frameworksD,
-          categories: frameworksD.categories.filter(
+
+        // Filter live categories
+        setFilterData({
+          ...frameworkData?.result?.framework,
+          categories: frameworkData?.result?.framework.categories.filter(
             (category: any) => category.status === 'Live'
           ),
-        };
-        setFilterData(filteredFramework);
+        });
+
         if (frameworkName) {
           const selectedFramework = fdata.find(
             (item: any) =>
               item.name.toLowerCase() === frameworkName.toLowerCase()
           );
-
           if (selectedFramework) {
             setFramework(selectedFramework.identifier);
           }
         }
-
-        const filters: any = {
+        const newFilters = {
           topic: filterCategory ? [filterCategory] : ['Water'],
         };
-
-        const data = await ContentSearch({
-          channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
-          filters,
-        });
-        setContentData(data?.result?.content || []);
+        setFilters({ request: { filters: newFilters, offset: 0, limit: 5 } });
+        // Fetch content after setting filters
+        fetchContentData(newFilters);
       } catch (error) {
         console.error('Error fetching board data:', error);
       } finally {
         setIsLoadingChildren(false);
       }
     };
+
     init();
   }, [frameworkName]);
 
+  // **Update FilterCategory When Framework Changes**
   useEffect(() => {
-    const fetchContentData = async () => {
-      try {
-        setIsLoadingChildren(true);
-        const filters: any = {
-          topic: [filterCategory],
-        };
+    if (framework && frameworkFilter) {
+      //@ts-check
+      const subFrameworkData = frameworkFilter?.find(
+        (item: any) => item.identifier === framework
+      );
 
-        const data = await ContentSearch({
-          channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
-          filters,
+      const categoryName = subFrameworkData?.name
+        ? subFrameworkData.name.charAt(0).toUpperCase() +
+          subFrameworkData.name.slice(1).toLowerCase()
+        : '';
+
+      SetFilterCategory(categoryName);
+      localStorage.setItem('category', categoryName);
+
+      const uniqueAssociations = Array.from(
+        new Map(
+          subFrameworkData?.associations?.map((item: any) => [item?.name, item])
+        ).values()
+      );
+
+      setSubFrameworkFilter(uniqueAssociations);
+
+      if (filterCategory !== categoryName) {
+        setFilters({
+          request: { filters: { topic: [categoryName] }, offset: 0, limit: 5 },
         });
-
-        setContentData(data?.result?.content || []);
-      } catch (error) {
-        console.error('Error fetching content data:', error);
-      } finally {
-        setIsLoadingChildren(false);
       }
-    };
+    }
+  }, [framework, frameworkFilter]);
 
-    // if (filterCategory) {
-    fetchContentData();
-    // }
-  }, [filterCategory]);
+  // **Listen for Filter Changes and Fetch Content**
+  useEffect(() => {
+    if (
+      filters.request.filters &&
+      Object.keys(filters.request.filters).length
+    ) {
+      fetchContentData(filters.request.filters);
+    }
+  }, [filters, frameworkName]); // ✅ Fetch only when `filters` change
 
+  // **Handle Content Click**
   const handleCardClick = (content: any) => {
-    if (!content?.identifier) return;
-
-    setConsumedContent((prev) => {
-      const updatedContent = Array.from(new Set([...prev, content.identifier]));
-
-      localStorage.setItem('consumedContent', JSON.stringify(updatedContent));
-
-      if (updatedContent.length < 3) {
-        router.push(`/contents/${content.identifier}`);
-      } else if (!localStorage.getItem('token')) {
-        setOpenMessageDialog(true);
-        localStorage.removeItem('consumedContent');
-      } else {
-        router.push(`/contents/${content.identifier}`);
-      }
-
-      return updatedContent;
-    });
+    if (consumedContent.length < 3) {
+      router.push(`/contents/${content?.identifier}`);
+      setConsumedContent((prev) => {
+        const updatedContent = [...prev, content?.identifier];
+        localStorage.setItem('consumedContent', JSON.stringify(updatedContent));
+        return updatedContent;
+      });
+    } else if (!localStorage.getItem('token')) {
+      setOpenMessageDialog(true);
+      localStorage.removeItem('consumedContent');
+    } else {
+      router.push(`/contents/${content?.identifier}`);
+    }
   };
+
+  // **Restore Consumed Content from LocalStorage**
   useEffect(() => {
     const storedContent = localStorage.getItem('consumedContent');
     if (storedContent) {
       setConsumedContent(JSON.parse(storedContent));
     }
-  }, []);
+  }, [frameworkName]);
+
+  // **Handle Dialog Close**
   const handleCloseMessage = () => {
     setOpenMessageDialog(false);
     router.push('/signin');
   };
-  const handleApplyFilters = async (selectedValues: any) => {
-    // Build filters conditionally
-    const updatedFilters: Record<string, any> = {};
 
-    if (fullAccess) {
-      updatedFilters.access = 'Full Access';
-    }
-
-    if (selectedValues && Object.keys(selectedValues).length > 0) {
-      Object.assign(updatedFilters, selectedValues);
-    }
-
-    // Pass filters only if there are any
-    const requestData: any = {
-      channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
-    };
-
-    if (Object.keys(updatedFilters).length > 0) {
-      requestData.filters = updatedFilters;
-    }
-
-    const data = await ContentSearch(requestData);
-
-    setContentData(data?.result?.content || []);
-  };
-  useEffect(() => {
-    console.log('Content Data:', contentData);
-  }, [contentData]);
-  const handleToggleFullAccess = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const accessValue = event.target.checked ? 'Full Access' : 'all'; // Set 'full' or 'all' based on switch state
-    setFullAccess(event.target.checked);
-    setFilters((prevFilters: any) => ({
-      ...prevFilters,
-      filters: {
-        ...prevFilters.filters, // Preserve existing filters
-        access: accessValue === 'all' ? undefined : accessValue, // Remove 'access' key if 'all'
-      },
-      offset: 0,
-    }));
-
-    const data = await ContentSearch({
-      channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
-      ...filters, // Preserve existing filters
-    });
-
-    setContentData(data?.result?.content || []);
-  };
+  console.log('Filters:', frameworkName);
+  console.log('Content Data:', contentData);
   return (
     <Layout>
       {isLoadingChildren ? (
@@ -250,21 +237,16 @@ export default function Index() {
               <Grid size={{ xs: 3 }}>
                 <Box>
                   <FilterDialog
-                    open={true}
                     frameworkFilter={filterData}
                     filterValues={filters}
                     onApply={handleApplyFilters}
                     isMobile={isMobile}
+                    resources={RESOURCE_TYPES}
+                    mimeType={MIME_TYPES}
                   />
                 </Box>
               </Grid>
               <Grid size={{ xs: 9 }}>
-                <FrameworkFilter
-                  frameworkFilter={frameworkFilter || []}
-                  framework={framework}
-                  setFramework={setFramework}
-                  fromSubcategory={false}
-                />
                 <Box
                   sx={{
                     width: '100%',
@@ -274,82 +256,6 @@ export default function Index() {
                     padding: '15px',
                   }}
                 >
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    gap={1}
-                    marginLeft="auto"
-                  >
-                    <Typography
-                      sx={{
-                        fontSize: '14px',
-                        // fontWeight: fullAccess ? '400' : '600',
-                        // color: fullAccess ? '#9E9E9E' : '#000000',
-                      }}
-                    >
-                      All
-                    </Typography>
-
-                    <Switch
-                      checked={fullAccess} // Controlled state for switch
-                      onChange={handleToggleFullAccess}
-                      sx={{
-                        width: 42,
-                        height: 26,
-                        padding: 0,
-                        '& .MuiSwitch-switchBase': {
-                          padding: 0,
-                          transitionDuration: '300ms',
-                          '&.Mui-checked': {
-                            transform: 'translateX(16px)',
-                            color: '#fff',
-                            '& + .MuiSwitch-track': {
-                              background:
-                                'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
-                              opacity: 1,
-                              border: 0,
-                            },
-                            '&.Mui-disabled + .MuiSwitch-track': {
-                              opacity: 0.5,
-                            },
-                          },
-                          '&.Mui-focusVisible .MuiSwitch-thumb': {
-                            color: '#33cf4d',
-                            border: '6px solid #fff',
-                          },
-                          '&.Mui-disabled .MuiSwitch-thumb': {
-                            color: '#BDBDBD', // Grey thumb when disabled
-                          },
-                          '&.Mui-disabled + .MuiSwitch-track': {
-                            opacity: 0.5,
-                            background: '#BDBDBD', // Grey track when disabled
-                          },
-                        },
-                        '& .MuiSwitch-thumb': {
-                          boxSizing: 'border-box',
-                          width: 25,
-                          height: 25,
-                        },
-                        '& .MuiSwitch-track': {
-                          borderRadius: 26 / 2,
-                          background: fullAccess
-                            ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
-                            : '#BDBDBD', // Grey when unchecked
-                          opacity: 1,
-                        },
-                      }}
-                    />
-
-                    <Typography
-                      sx={{
-                        fontSize: '14px',
-                        fontWeight: fullAccess ? '600' : '400',
-                        color: fullAccess ? '#000000' : '#9E9E9E',
-                      }}
-                    >
-                      Only Full Access
-                    </Typography>
-                  </Box>
                   <Title onClick={() => router.push('/contents')}>
                     {t('Read, Watch, Listen')}
                   </Title>
@@ -396,9 +302,7 @@ export default function Index() {
                   </Title>
                   <AtreeCard
                     contents={
-                      contentData.length > 6
-                        ? contentData.slice(4, 10)
-                        : contentData
+                      contentData.length >= 4 ? contentData.slice(4, 10) : []
                     }
                     handleCardClick={handleCardClick}
                     _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}

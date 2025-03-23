@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -6,12 +6,17 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Container, Menu, MenuItem } from '@mui/material';
+import {
+  Container,
+  Menu,
+  MenuItem,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import Image from 'next/image';
-import { InputBase } from '@mui/material';
 import SearchTypeModal from '../SearchTypeModal';
-import { useRouter } from 'next/router';
+import { FrameworkFilter } from '../Tags';
 
 interface ActionIcon {
   icon: React.ReactNode;
@@ -69,12 +74,46 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
   onMenuClose,
   logoUrl,
   _appBar,
-  searchQuery,
-  onSearchChange,
 }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const router = useRouter();
+  const [frameworkFilter, setFrameworkFilter] = useState();
+  const [framework, setFramework] = useState('');
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  useEffect(() => {
+    if (framework) {
+      if (frameworkFilter) {
+        const subFrameworkData = (frameworkFilter as any).find(
+          (item: any) => item.identifier === framework
+        );
+
+        localStorage.setItem(
+          'category',
+          subFrameworkData?.name
+            ? subFrameworkData.name.charAt(0).toUpperCase() +
+                subFrameworkData.name.slice(1).toLowerCase()
+            : ''
+        );
+      }
+    }
+  }, []);
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
+        const frameworkData = await fetch(url).then((res) => res.json());
+        const frameworks = frameworkData?.result?.framework?.categories;
+        const fdata =
+          frameworks.find((item: any) => item.code === 'topic')?.terms || [];
+        setFramework(fdata[0]?.identifier || '');
+        setFrameworkFilter(fdata);
+      } catch (error) {
+        console.error('Error fetching board data:', error);
+      }
+    };
+    init();
+  }, []);
   const handleSearchOpen = () => {
     setIsSearchOpen(true);
   };
@@ -120,6 +159,23 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                     <Image src={logoUrl} alt="logo" width={64} height={64} />
                   </Box>
                 )}
+                {!isMobile && (
+                  <Box
+                    sx={{
+                      flexGrow: 1,
+                      display: 'flex',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <FrameworkFilter
+                      frameworkFilter={frameworkFilter || []}
+                      framework={framework}
+                      setFramework={setFramework}
+                      fromSubcategory={false}
+                    />
+                  </Box>
+                )}
+
                 <Typography
                   component="div"
                   sx={{
@@ -147,12 +203,6 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
               </Box>
             </Box>
             <Box display="flex" alignItems="center">
-              {/* <InputBase
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={onSearchChange}
-                sx={{ ml: 1, flex: 1 }}
-              /> */}
               <IconButton
                 size="large"
                 edge="start"

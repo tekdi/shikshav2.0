@@ -16,12 +16,14 @@ export const ImageBanner = ({
   name,
   _image,
   _text,
+  _textPosition = { bottom: 0, left: 0, right: 0 },
   _showAvatar = false,
 }: {
   image: string;
   name: string;
   _image?: object;
   _text?: object;
+  _textPosition?: object;
   _showAvatar?: boolean;
 }) => {
   const router = useRouter();
@@ -37,7 +39,7 @@ export const ImageBanner = ({
         <CardMedia
           component="img"
           alt={name}
-          sx={{ height: 'auto', objectFit: 'cover', ..._image }}
+          sx={{ objectFit: 'cover', ..._image }}
           image={image}
         />
         <CardContent
@@ -50,10 +52,11 @@ export const ImageBanner = ({
             alignItems: 'center',
             justifyContent: 'center',
             gap: 1,
-            padding: 2,
+            padding: 5,
             background:
-              'linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0))',
+              'linear-gradient(to top, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0))',
             ..._text,
+            ..._textPosition,
           }}
         >
           {_showAvatar && (
@@ -71,12 +74,11 @@ export const ImageBanner = ({
             </Avatar>
           )}
           <Typography
-            variant="h5"
             sx={{
               color: 'white',
               fontWeight: 700,
-              fontSize: isMobile ? '18px' : '48px',
               width: isMobile ? 'auto' : '70%',
+              fontSize: { xs: '18px', md: '48px' },
             }}
           >
             {name}

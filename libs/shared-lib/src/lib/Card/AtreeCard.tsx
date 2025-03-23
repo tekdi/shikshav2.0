@@ -2,7 +2,6 @@ import React from 'react';
 import { Card, CardContent, CardMedia, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { ContentSearchResponse } from '../Services/Content/Search';
-// import atreeLogo from '../../assets/images/atreeLogo.png';
 
 export const AtreeCard: React.FC<{
   contents: ContentSearchResponse[];
@@ -36,7 +35,7 @@ export const AtreeCard: React.FC<{
           >
             <CardMedia
               component="img"
-              image={(content as any)?.image || _card?.image}
+              image={content?.appIcon || _card?.image}
               alt={content.name}
               sx={{
                 objectFit: 'contain',

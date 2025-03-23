@@ -21,59 +21,62 @@ interface FrameworkFilterProps {
   setFramework: (framework: string) => void;
 }
 
-export const FrameworkFilter = React.memo<FrameworkFilterProps>(
-  function FrameworkFilter({ frameworkFilter, framework, fromSubcategory }) {
-    const router = useRouter();
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+export const FrameworkFilter = ({
+  frameworkFilter,
+  framework,
+  fromSubcategory,
+  setFramework,
+}: FrameworkFilterProps) => {
+  const router = useRouter();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const handleItemClick = (item: { identifier: string; name: string }) => {
+    setFramework(item.identifier);
+    if (fromSubcategory) {
+      localStorage.setItem('subcategory', item.name);
+      router.push(`/contents`);
+    } else {
+      router.push(`/home?category=${encodeURIComponent(item.name)}`);
+    }
+  };
 
-    const handleItemClick = (item: { identifier: string; name: string }) => {
-      if (fromSubcategory) {
-        localStorage.setItem('subcategory', item.name);
-        router.push(`/contents`);
-      } else {
-        router.push(`/home?category=${encodeURIComponent(item.name)}`);
+  return (
+    <Grid
+      container
+      spacing={1}
+      justifyContent="center"
+      sx={
+        !isMobile
+          ? {
+              position: 'absolute',
+              top: '22px',
+              left: '25%',
+            }
+          : {}
       }
-    };
-
-    return (
-      <Grid
-        container
-        spacing={1}
-        justifyContent="center"
-        sx={
-          !isMobile
-            ? {
-                position: 'absolute',
-                top: '22px',
-                left: '25%',
-              }
-            : {}
-        }
-      >
-        {frameworkFilter.map(({ identifier, name }) => {
-          const isSelected = framework === identifier;
-          const lowerCaseName = name.toLowerCase();
-          return (
-            <Grid key={identifier}>
-              <Button
-                variant={isSelected ? 'contained' : 'outlined'}
-                sx={{
-                  borderRadius: '8px',
-                  borderColor: isSelected ? undefined : '#CEE5FF',
-                  color: isSelected ? undefined : '#171D1E',
-                  backgroundColor: isSelected
-                    ? buttonColors[lowerCaseName] || undefined
-                    : '#E3E9EA',
-                }}
-                onClick={() => handleItemClick({ identifier, name })}
-              >
-                {name}
-              </Button>
-            </Grid>
-          );
-        })}
-      </Grid>
-    );
-  }
-);
+    >
+      {frameworkFilter.map(({ identifier, name }) => {
+        const isSelected = framework === identifier;
+        const lowerCaseName = name.toLowerCase();
+        return (
+          <Grid key={identifier}>
+            <Button
+              variant={isSelected ? 'contained' : 'outlined'}
+              sx={{
+                borderRadius: '8px',
+                borderColor: isSelected ? undefined : '#CEE5FF',
+                color: isSelected ? undefined : '#171D1E',
+                backgroundColor: isSelected
+                  ? buttonColors[lowerCaseName] || undefined
+                  : '#E3E9EA',
+              }}
+              onClick={() => handleItemClick({ identifier, name })}
+            >
+              {name}
+            </Button>
+          </Grid>
+        );
+      })}
+    </Grid>
+  );
+};

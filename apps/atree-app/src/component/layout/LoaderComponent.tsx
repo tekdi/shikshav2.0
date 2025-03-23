@@ -19,7 +19,8 @@ const Loader: React.FC = () => {
         variant="body1"
         color="textSecondary"
         position="absolute"
-        top="400px" // Moves text slightly up
+        fontSize={'1.5rem'}
+        top="460px" // Moves text slightly up
         zIndex={1} // Ensures text is above the GIF
         bgcolor="rgba(255, 255, 255, 0.5)" // Optional: Adds background for readability
         px={1} // Padding for better visibility

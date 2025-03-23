@@ -8,11 +8,25 @@ import Forests from '../../assets/images/Forests.png';
 import instagram_logo from '../../assets/images/instagram_logo.png';
 import Land from '../../assets/images/Land.png';
 import landingBanner from '../../assets/images/landingBanner.png';
+
+import landingBanner1 from '../../assets/images/banner/Arunachal ke Saaras.jpg';
+
+import landingBanner2 from '../../assets/images/banner/Bavre Beej.jpg';
+
+import landingBanner3 from '../../assets/images/banner/Current Conservation.jpg';
+
+import landingBanner4 from '../../assets/images/banner/I wonder who that is.jpg';
+
+import landingBanner5 from '../../assets/images/banner/Nisargshala.jpg';
+import landingBanner6 from '../../assets/images/banner/The Spring of Life (2).jpg';
+import landingBanner7 from '../../assets/images/banner/Travelling Seeds.jpg';
+import landingBanner8 from '../../assets/images/banner/Whoop, goes the pufferfish.jpg';
+
 import ReferenceBooks from '../../assets/images/LetsTalkAboutTreesCover.png';
 import Water from '../../assets/images/WatercoverTekdi.png';
 import Insta from '../component/Insta';
 import Layout from '../component/layout/layout';
-
+import Carousel from 'react-material-ui-carousel';
 import { ImageBanner } from '../component/layout/ImageBanner';
 import { useEffect, useState } from 'react';
 import { ContentSearch } from '@shared-lib';
@@ -26,7 +40,40 @@ const catImages = {
   'Activity Books': ActivityBooks,
   Potpourri: ReferenceBooks,
 };
-
+const landingImages = [
+  {
+    image: landingBanner1?.src,
+    id: 1,
+  },
+  {
+    image: landingBanner2?.src,
+    id: 2,
+  },
+  {
+    image: landingBanner3?.src,
+    id: 3,
+  },
+  {
+    image: landingBanner4?.src,
+    id: 4,
+  },
+  {
+    image: landingBanner5?.src,
+    id: 5,
+  },
+  {
+    image: landingBanner6?.src,
+    id: 6,
+  },
+  {
+    image: landingBanner7?.src,
+    id: 7,
+  },
+  {
+    image: landingBanner8?.src,
+    id: 8,
+  },
+];
 const LandingPage = () => {
   // const { t } = useTranslation();
   const t = (data: string) => data;
@@ -56,12 +103,9 @@ const LandingPage = () => {
           channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
         });
         const content = data?.result?.content || [];
+
         const uniqueLanguages = [
-          ...new Set(
-            content
-              .map((item) => (Array.isArray(item) ? item[0] : item))
-              .filter((lang) => typeof lang === 'string' && lang.trim() !== '')
-          ),
+          ...new Set(content.flatMap((item) => item?.language || [])),
         ];
         setBookCount(content?.length);
         setLanguageCount(uniqueLanguages?.length);
@@ -101,13 +145,36 @@ const LandingPage = () => {
       ) : (
         <Grid container spacing={4} sx={{ mb: 3 }} justifyContent={'center'}>
           <Grid width={'100%'}>
-            <ImageBanner
-              name={
-                'A digital hub of Environment Education resources contextual to India'
-              }
-              image={landingBanner?.src}
-              // _image={{ height: '181px' }}
-            />
+            <Carousel
+              navButtonsAlwaysVisible
+              indicators={false}
+              animation="slide"
+              autoPlay={true}
+              interval={3000}
+              cycleNavigation={true}
+              sx={{
+                width: '100%',
+                height: { xs: '181px', md: '500px' },
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {landingImages.map((image, index) => (
+                <ImageBanner
+                  key={image.id}
+                  name={
+                    'A digital hub of Environment Education resources contextual to India'
+                  }
+                  image={image.image}
+                  _image={{ height: { xs: 'auto', md: '581px' } }}
+                  _textPosition={{
+                    bottom: '20%',
+                    left: '20%',
+                  }}
+                />
+              ))}
+            </Carousel>
           </Grid>
           <Grid
             sx={{ px: 4, textAlign: 'center' }}
@@ -127,8 +194,8 @@ const LandingPage = () => {
                 gutterBottom
                 sx={{
                   fontWeight: 400,
-                  fontSize: '14px',
-                  lineHeight: '24px',
+                  fontSize: { xs: '14px', md: '24px' },
+                  lineHeight: { xs: '24px', md: '44px' },
                   textAlign: 'center',
                   color: '#000000',
                 }}
@@ -142,8 +209,8 @@ const LandingPage = () => {
                 align="center"
                 sx={{
                   fontWeight: 400,
-                  fontSize: '14px',
-                  lineHeight: '24px',
+                  fontSize: { xs: '14px', md: '24px' },
+                  lineHeight: { xs: '24px', md: '44px' },
                   textAlign: 'center',
                   color: '#000000',
                 }}
@@ -208,7 +275,7 @@ const LandingPage = () => {
                 gutterBottom
                 sx={{
                   fontWeight: 400,
-                  fontSize: '14px',
+                  fontSize: { xs: '14px', md: '24px' },
                   textAlign: 'center',
                   padding: '20px',
                 }}
@@ -238,6 +305,7 @@ const LandingPage = () => {
                       name={category?.name}
                       _showAvatar={true}
                       _text={{ textAline: 'center' }}
+                      _image={{ height: { xs: '200px', md: '300px' } }}
                       image={
                         (
                           catImages?.[
