@@ -224,7 +224,7 @@ export default function Registration() {
             const value = e.target.value;
 
             // Prevent entering a number at the start
-            if (value.length === 1 && /^[0-9]/.test(value)) return;
+            if (value.length === 1 && /^\d/.test(value)) return;
 
             handleChange('email')(e);
 
@@ -258,8 +258,10 @@ export default function Registration() {
             handleChange('password')(e);
 
             // Password validation regex
-            const passwordRegex =
-              /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[~!@#$%^&*()_+`\-={}:":;'<>?,./\\]).{8,}$/;
+          const passwordRegex =
+            /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[~!@#$%^&*()_+`\-={}";'<>?,./\\]).{8,}$/;
+
+
 
             // Update error state based on validation
             if (!passwordRegex.test(value)) {
