@@ -16,48 +16,41 @@ export const URL_CONFIG = {
 
 export interface Pdata {
   id: string;
-  pid?: string;
   ver?: string;
+  pid?: string;
 }
 
 export interface ContextRollup {
-  l1?: string;
   l2?: string;
-  l3?: string;
+  l1?: string;
   l4?: string;
+  l3?: string;
 }
 
 export interface Cdata {
-  type: string;
   id: string;
-}
-
-export interface ObjectRollup {
-  l1?: string;
-  l2?: string;
-  l3?: string;
-  l4?: string;
+  type: string;
 }
 
 export interface Context {
-  mode?: string;
   authToken?: string;
+  mode?: string;
   sid?: string;
-  did?: any;
   uid?: string;
+  did?: any;
   channel: string;
-  pdata: Pdata;
   contextRollup?: ContextRollup;
+  pdata: Pdata;
   tags?: string[];
-  cdata?: Cdata[];
   timeDiff?: number;
-  objectRollup?: ObjectRollup;
-  host?: string;
+  cdata?: Cdata[];
+  objectRollup?: ContextRollup;
   endpoint?: string;
   dispatcher?: object;
-  partner?: any[];
+  host?: string;
   contentId?: any;
   dims?: any[];
+  partner?: any[];
   app?: string[];
   userData?: {
     firstName: string;
@@ -67,39 +60,39 @@ export interface Context {
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Config {
+  [propName: string]: any;
   toolBar?: {
     showZoomButtons?: boolean;
-    showPagesButton?: boolean;
     showPagingButtons?: boolean;
-    showSearchButton?: boolean;
+    showPagesButton?: boolean;
     showRotateButton?: boolean;
+    showSearchButton?: boolean;
   };
   sideMenu?: {
     showShare?: boolean;
-    showDownload?: boolean;
     showReplay?: boolean;
-    showExit?: boolean;
+    showDownload?: boolean;
     showPrint?: boolean;
+    showExit?: boolean;
   };
-  [propName: string]: any;
 }
 
 export interface Metadata {
   identifier: string;
-  name: string;
   artifactUrl: string;
+  name: string;
   streamingUrl?: string;
-  compatibilityLevel?: number;
   pkgVersion?: number;
+  compatibilityLevel?: number;
   isAvailableLocally?: boolean;
-  basePath?: string;
   baseDir?: string;
+  basePath?: string;
 }
 export interface PlayerConfig {
-  context?: Context;
-  config?: Config;
   metadata?: Metadata;
   data?: any;
+  config?: Config;
+  context?: Context;
 }
 
 export const MIME_TYPE = {
@@ -111,13 +104,29 @@ export const MIME_TYPE = {
   ],
 };
 
-let userName = 'arif';
-if (typeof window !== 'undefined' && window.localStorage) {
-  userName = localStorage.getItem('userName') ?? '';
-}
-
-export const V2PlayerConfig: PlayerConfig = {
-  context: {
+export const getTelemetryConfig = (): Context => {
+  let localStorageData = {
+    userName: '',
+    accToken: '',
+    tenantId: '',
+    tenantCode: '',
+    did: '',
+    sid: '',
+    uid: '',
+  };
+  if (typeof window !== 'undefined' && window.localStorage) {
+    const ls = window.localStorage;
+    localStorageData = {
+      userName: ls.getItem('userName') ?? '',
+      accToken: ls.getItem('accToken') ?? '',
+      sid: ls.getItem('accToken') ?? '',
+      uid: ls.getItem('userId') ?? '',
+      tenantId: ls.getItem('tenantId') ?? '',
+      tenantCode: ls.getItem('tenant-code') ?? '',
+      did: ls.getItem('did') ?? '',
+    };
+  }
+  return {
     mode: 'play',
     partner: [],
     pdata: {
@@ -126,19 +135,19 @@ export const V2PlayerConfig: PlayerConfig = {
       pid: 'learner-portal',
     },
     contentId: '',
-    authToken: localStorage.getItem('accToken') ?? undefined,
-    sid: localStorage.getItem('accToken') ?? undefined,
-    did: localStorage.getItem('did') ?? undefined,
-    uid: localStorage.getItem('userId') ?? undefined,
-    channel: localStorage.getItem('tenant-code') ?? '',
-    timeDiff: -0.089,
-    tags: [localStorage.getItem('tenant-code') ?? ''],
-    contextRollup: { l1: localStorage.getItem('tenant-code') ?? '' },
+    channel: localStorageData.tenantCode,
+    tags: [localStorageData.tenantCode],
+    contextRollup: { l1: localStorageData.tenantCode },
     objectRollup: {},
-    userData: { firstName: userName, lastName: '' },
+    userData: { firstName: localStorageData.userName, lastName: '' },
     host: '',
     endpoint: '/v1/telemetry',
-  },
+    ...localStorageData,
+  };
+};
+
+export const V2PlayerConfig: PlayerConfig = {
+  context: getTelemetryConfig(),
   config: {
     showEndPage: false,
     endPage: [{ template: 'assessment', contentType: ['SelfAssess'] }],
@@ -179,6 +188,7 @@ export const V1PlayerConfig: PlayerConfig = {
       },
     ],
     showStartPage: true,
+    host: '',
     endpoint: '/v1/telemetry',
     overlay: {
       enableUserSwitcher: true,
@@ -220,30 +230,6 @@ export const V1PlayerConfig: PlayerConfig = {
     },
     enableTelemetryValidation: false,
   },
-  context: {
-    mode: 'play',
-    // partner: [],
-    pdata: {
-      id: 'shikshav2.0.learner.portal',
-      ver: '1.0.0',
-      pid: 'learner-portal',
-    },
-    contentId: '',
-    authToken: localStorage.getItem('accToken') ?? undefined,
-    sid: localStorage.getItem('accToken') ?? undefined,
-    did: localStorage.getItem('did') ?? undefined,
-    uid: localStorage.getItem('userId') ?? undefined,
-    channel: localStorage.getItem('tenant-code') ?? '',
-    tags: [localStorage.getItem('tenant-code') ?? ''],
-    app: [localStorage.getItem('tenant-code') ?? ''],
-    timeDiff: -1.129,
-    contextRollup: {},
-    dims: [],
-    cdata: [],
-    userData: {
-      firstName: userName,
-      lastName: '',
-    },
-  },
+  context: getTelemetryConfig(),
   data: {},
 };
