@@ -17,7 +17,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import Image from 'next/image';
 import SearchTypeModal from '../SearchTypeModal';
 import { FrameworkFilter } from '../Tags';
-
+import { useRouter } from 'next/router';
 interface ActionIcon {
   icon: React.ReactNode;
   ariaLabel: string;
@@ -75,12 +75,15 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
   logoUrl,
   _appBar,
 }) => {
+  const router = useRouter();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [frameworkFilter, setFrameworkFilter] = useState();
   const [framework, setFramework] = useState('');
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isAuthPage =
+    router.pathname === '/signin' || router.pathname === '/register';
   useEffect(() => {
     if (framework) {
       if (frameworkFilter) {
@@ -159,7 +162,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                     <Image src={logoUrl} alt="logo" width={64} height={64} />
                   </Box>
                 )}
-                {!isMobile && (
+                {!isMobile && !isAuthPage && (
                   <Box
                     sx={{
                       flexGrow: 1,

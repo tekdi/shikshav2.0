@@ -2,7 +2,7 @@
 import { Button, useMediaQuery, useTheme } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const buttonColors: Record<string, string> = {
   water: '#0E28AE',
@@ -30,8 +30,18 @@ export const FrameworkFilter = ({
   const router = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [selectedFramework, setSelectedFramework] = useState<string>('');
+  useEffect(() => {
+    // Get stored category from localStorage
+    const storedCategory = localStorage.getItem('category');
+    if (storedCategory) {
+      setSelectedFramework(storedCategory);
+    }
+  }, []);
   const handleItemClick = (item: { identifier: string; name: string }) => {
     setFramework(item.identifier);
+    setSelectedFramework(item.name);
+    localStorage.setItem('category', item.name);
     if (fromSubcategory) {
       localStorage.setItem('subcategory', item.name);
       router.push(`/contents`);
@@ -56,7 +66,7 @@ export const FrameworkFilter = ({
       }
     >
       {frameworkFilter.map(({ identifier, name }) => {
-        const isSelected = framework === identifier;
+        const isSelected = selectedFramework === name;
         const lowerCaseName = name.toLowerCase();
         return (
           <Grid key={identifier}>

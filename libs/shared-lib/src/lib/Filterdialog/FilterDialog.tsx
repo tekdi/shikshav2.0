@@ -17,7 +17,7 @@ import {
   RadioGroup,
   Select,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 const formControlStyles = {
   '&.Mui-focused': { color: '#1D1B20' },
   '& .MuiInputLabel-root.Mui-focused': { color: '#1D1B20' },
@@ -134,6 +134,14 @@ export const FilterDialog = ({
     mimeType: [] as string[],
   });
   localStorage.getItem('category');
+
+  useEffect(() => {
+    const savedFilters = localStorage.getItem('selectedFilters');
+    if (savedFilters) {
+      setSelectedFilters(JSON.parse(savedFilters));
+      setSelectedValues(JSON.parse(savedFilters));
+    }
+  }, []);
   const updateSelectedValues = (filterCode: string, newValue: any) => {
     setSelectedValues((prev: any) => ({
       ...prev,
@@ -397,8 +405,9 @@ export const FilterDialog = ({
         <Box
           sx={{
             p: 3,
-            backgroundColor: '#FEF7FF',
             borderRadius: '16px',
+            border: '1px solid #DDDDDD',
+            boxShadow: '0px 8px 8px -4px #0A0D120A',
           }}
         >
           <Box sx={{ flexDirection: 'column', gap: 2 }}>
@@ -526,7 +535,13 @@ export const FilterDialog = ({
             </Button>
             <Button
               variant="contained"
-              onClick={() => onApply?.(selectedValues)}
+              onClick={() => {
+                localStorage.setItem(
+                  'selectedFilters',
+                  JSON.stringify(selectedValues)
+                );
+                onApply?.(selectedValues);
+              }}
               sx={{
                 borderRadius: '100px',
                 bgcolor: '#FFBD0D',
