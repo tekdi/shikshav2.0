@@ -393,7 +393,11 @@ export default function Index() {
 
       <Dialog
         open={openMessageDialog}
-        onClose={() => setOpenMessageDialog(false)}
+        onClose={(event, reason) => {
+          if (reason === 'backdropClick') return;
+          setOpenMessageDialog(false);
+        }}
+        disableEscapeKeyDown
         PaperProps={{
           style: {
             maxWidth: '600px',
