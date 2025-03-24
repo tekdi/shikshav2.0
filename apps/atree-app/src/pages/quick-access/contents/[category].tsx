@@ -21,7 +21,7 @@ import {
   ContentSearchResponse,
   FilterDialog,
 } from '@shared-lib';
-import { RESOURCE_TYPES, MIME_TYPES } from '../../utils/constantData';
+import { RESOURCE_TYPES, MIME_TYPES } from '../../../utils/constantData';
 
 const Content = dynamic(() => import('@Content'), { ssr: false });
 

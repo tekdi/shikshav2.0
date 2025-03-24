@@ -19,7 +19,6 @@ import RegistrationStatistics from '../components/youthNet/RegistrationStatistic
 import YouthAndVolunteers from '../components/youthNet/YouthAndVolunteers';
 import VillageNewRegistration from '../components/youthNet/VillageNewRegistration';
 import { UserList } from '../components/youthNet/UserCard';
-import { GetServerSideProps } from 'next';
 
 const index = () => {
   const { t } = useTranslation();

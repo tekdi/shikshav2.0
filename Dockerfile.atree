@@ -17,10 +17,9 @@ COPY . .
 
 # Build Specific Application
 # Build only specific applications
-RUN npx nx run-many --target=build --projects=atree-app,content,players,atree-auth,registration
-
+RUN npx nx run-many --target=build --projects=atree-app,content,players
+    npm install -g pm2
 # Install PM2 to manage multiple apps
-RUN npm install -g pm2
 
 # Expose the ports for all apps
 EXPOSE 3003
