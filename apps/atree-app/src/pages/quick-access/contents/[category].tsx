@@ -292,7 +292,7 @@ const MyComponent: React.FC = () => {
         </Box>
       }
       showBack
-      backIconClick={() => router.push('/quick-access')}
+      backIconClick={() => router.back()}
     >
       {isLoading ? (
         <Loader />
