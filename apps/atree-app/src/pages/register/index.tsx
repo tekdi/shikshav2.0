@@ -17,7 +17,6 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-// import Otp from './otp';
 import { createUser } from '../../service/content';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
@@ -89,19 +88,24 @@ export default function Registration() {
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setShowAlertMsg('');
       const value = event.target.value;
+      const validateField = (field: string, value: string) => {
+        switch (field) {
+          case 'name':
+            return !validateName(value);
+          case 'email':
+            return !validateEmail(value);
+          case 'password':
+            return !validatePassword(value);
+          case 'gender':
+            return !validateGender(value);
+          default:
+            return false;
+        }
+      };
       setFormData({ ...formData, [field]: value });
       setError({
         ...error,
-        [field]:
-          field === 'name'
-            ? !validateName(value)
-            : field === 'email'
-            ? !validateEmail(value)
-            : field === 'password'
-            ? !validatePassword(value)
-            : field === 'gender'
-            ? !validateGender(value)
-            : false,
+        [field]: validateField(field, value),
       });
     };
 
@@ -137,7 +141,6 @@ export default function Registration() {
         setShowAlertMsg('User registered successfully!');
         setAlertSeverity('success');
         setOpenUserDetailsDialog(true);
-        // router.push('/signin');
       } else if (response?.response?.data?.responseCode === 400) {
         setShowAlertMsg(response?.response?.data?.params?.err);
         setAlertSeverity('error');
