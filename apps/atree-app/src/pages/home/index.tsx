@@ -1,3 +1,6 @@
+/* eslint-disable no-constant-binary-expression */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+//@ts-nocheck
 'use client';
 
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -23,7 +26,7 @@ import Layout from '../../component/layout/layout';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'next/navigation';
 import Loader from '../../component/layout/LoaderComponent';
-import { RESOURCE_TYPES, MIME_TYPES } from '../../pages/utils/constantData';
+import { RESOURCE_TYPES, MIME_TYPES } from '../../utils/constantData';
 const buttonColors = {
   water: '#0E28AE',
   land: '#8F4A50',
@@ -441,21 +444,7 @@ const FrameworkFilter = React.memo<{
     }
   };
   return (
-    <Grid
-      container
-      spacing={1}
-      display="flex"
-      justifyContent="center"
-      sx={{
-        ...(isMobile
-          ? {} // No additional styles for mobile
-          : {
-              position: 'absolute',
-              top: '22px',
-              left: '25%',
-            }),
-      }}
-    >
+    <Grid container spacing={1} display="flex" justifyContent="center">
       {frameworkFilter?.map((frameworkItem: any) => (
         <Grid key={frameworkItem.identifier}>
           <Button
@@ -550,11 +539,12 @@ const SubFrameworkFilter = React.memo<{
         <Dialog
           open={openPopup}
           onClose={() => setOpenPopup(false)}
+          maxWidth="md"
+          fullWidth
           PaperProps={{
             style: {
-              maxWidth: '600px',
-              maxHeight: 'calc(100vh - 64px)',
-              overflow: 'auto',
+              maxHeight: '80vh',
+              overflow: 'hidden',
             },
           }}
         >

@@ -1,4 +1,3 @@
-import { post } from '@shared-lib';
 import { URL_CONFIG } from '../utils/url.config';
 import axios from 'axios';
 import { ContentCreate } from '../utils/Interface';
@@ -87,7 +86,7 @@ export const getQumlData = async (identifier: any) => {
 export const createContentTracking = async (reqBody: ContentCreate) => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_TRACKING_TELEMETRY_URL}/content/create`;
   try {
-    const response = await post(apiUrl, reqBody);
+    const response = await axios.post(apiUrl, reqBody);
     return response?.data;
   } catch (error) {
     console.log(error);
