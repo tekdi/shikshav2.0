@@ -238,34 +238,6 @@ export default function Index() {
   console.log('Filters:', frameworkName);
   console.log('Content Data:', contentData);
 
-  const ContentSection = ({ title, contents, onTitleClick }) => (
-    <Box
-      sx={{
-        width: '100%',
-        gap: '16px',
-        display: 'flex',
-        flexDirection: 'column',
-        padding: '15px',
-      }}
-    >
-      <Title onClick={onTitleClick}>{title}</Title>
-      <AtreeCard
-        contents={contents}
-        handleCardClick={handleCardClick}
-        _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-        _card={{ image: atreeLogo.src }}
-      />
-    </Box>
-  );
-  const FilterSection = ({ frameworkFilter, framework, setFramework }) => (
-    <FrameworkFilter
-      frameworkFilter={frameworkFilter || []}
-      framework={framework}
-      setFramework={setFramework}
-      fromSubcategory={false}
-    />
-  );
-
   return (
     <Layout>
       {isLoadingChildren ? (
@@ -529,6 +501,34 @@ export default function Index() {
     </Layout>
   );
 }
+
+const ContentSection = ({ title, contents, onTitleClick }) => (
+  <Box
+    sx={{
+      width: '100%',
+      gap: '16px',
+      display: 'flex',
+      flexDirection: 'column',
+      padding: '15px',
+    }}
+  >
+    <Title onClick={onTitleClick}>{title}</Title>
+    <AtreeCard
+      contents={contents}
+      handleCardClick={handleCardClick}
+      _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
+      _card={{ image: atreeLogo.src }}
+    />
+  </Box>
+);
+const FilterSection = ({ frameworkFilter, framework, setFramework }) => (
+  <FrameworkFilter
+    frameworkFilter={frameworkFilter || []}
+    framework={framework}
+    setFramework={setFramework}
+    fromSubcategory={false}
+  />
+);
 
 const FrameworkFilter = React.memo<{
   frameworkFilter: Array<{ identifier: string; name: string }>;
