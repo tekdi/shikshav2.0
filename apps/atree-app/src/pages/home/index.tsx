@@ -436,18 +436,10 @@ export default function Index() {
                   padding: '15px',
                 }}
               >
-                <Title onClick={() => router.push('/contents')}>
-                  {t('Read, Watch, Listen')}
-                </Title>
-                <AtreeCard
-                  contents={
-                    contentData.length > 4
-                      ? contentData.slice(0, 4)
-                      : contentData
-                  }
-                  handleCardClick={handleCardClick}
-                  _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-                  _card={{ image: atreeLogo.src }}
+                <ContentSection
+                  title={t('Read, Watch, Listen')}
+                  contents={contentData.slice(0, 4)}
+                  onTitleClick={() => router.push('/contents')}
                 />
               </Box>
               <Box
@@ -477,18 +469,10 @@ export default function Index() {
                   padding: '15px',
                 }}
               >
-                <Title onClick={() => router.push('/contents')}>
-                  {t('Related Content')}
-                </Title>
-                <AtreeCard
-                  contents={
-                    contentData.length > 4
-                      ? contentData.slice(4, 10)
-                      : contentData
-                  }
-                  handleCardClick={handleCardClick}
-                  _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-                  _card={{ image: atreeLogo.src }}
+                <ContentSection
+                  title={t('Related Content')}
+                  contents={contentData.slice(4, 10)}
+                  onTitleClick={() => router.push('/contents')}
                 />
               </Box>
             </>
