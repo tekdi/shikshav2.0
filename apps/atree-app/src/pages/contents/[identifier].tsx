@@ -32,7 +32,6 @@ import atreeLogo from '../../../assets/images/atreeLogo.png';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Loader from '../../component/layout/LoaderComponent';
 import { AtreeCard, ContentSearch } from '@shared-lib';
-import { Category } from '@mui/icons-material';
 
 interface ContentItem {
   name: string;

@@ -237,6 +237,35 @@ export default function Index() {
 
   console.log('Filters:', frameworkName);
   console.log('Content Data:', contentData);
+
+  const ContentSection = ({ title, contents, onTitleClick }) => (
+    <Box
+      sx={{
+        width: '100%',
+        gap: '16px',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '15px',
+      }}
+    >
+      <Title onClick={onTitleClick}>{title}</Title>
+      <AtreeCard
+        contents={contents}
+        handleCardClick={handleCardClick}
+        _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
+        _card={{ image: atreeLogo.src }}
+      />
+    </Box>
+  );
+  const FilterSection = ({ frameworkFilter, framework, setFramework }) => (
+    <FrameworkFilter
+      frameworkFilter={frameworkFilter || []}
+      framework={framework}
+      setFramework={setFramework}
+      fromSubcategory={false}
+    />
+  );
+
   return (
     <Layout>
       {isLoadingChildren ? (
@@ -349,18 +378,11 @@ export default function Index() {
                       Only Full Access
                     </Typography>
                   </Box>
-                  <Title onClick={() => router.push('/contents')}>
-                    {t('Read, Watch, Listen')}
-                  </Title>
-                  <AtreeCard
-                    contents={
-                      contentData.length > 4
-                        ? contentData.slice(0, 4)
-                        : contentData
-                    }
-                    handleCardClick={handleCardClick}
-                    _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-                    _card={{ image: atreeLogo.src }}
+
+                  <ContentSection
+                    title={t('Read, Watch, Listen')}
+                    contents={contentData.slice(0, 4)}
+                    onTitleClick={() => router.push('/contents')}
                   />
                 </Box>
                 <Box
@@ -390,27 +412,20 @@ export default function Index() {
                     padding: '15px',
                   }}
                 >
-                  <Title onClick={() => router.push('/contents')}>
-                    {t('Related Content')}
-                  </Title>
-                  <AtreeCard
-                    contents={
-                      contentData.length >= 4 ? contentData.slice(4, 10) : []
-                    }
-                    handleCardClick={handleCardClick}
-                    _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-                    _card={{ image: atreeLogo.src }}
+                  <ContentSection
+                    title={t('Read, Watch, Listen')}
+                    contents={contentData.slice(0, 4)}
+                    onTitleClick={() => router.push('/contents')}
                   />
                 </Box>
               </Grid>
             </Grid>
           ) : (
             <>
-              <FrameworkFilter
-                frameworkFilter={frameworkFilter || []}
+              <FilterSection
+                frameworkFilter={frameworkFilter}
                 framework={framework}
                 setFramework={setFramework}
-                fromSubcategory={false}
               />
               <Box
                 sx={{
