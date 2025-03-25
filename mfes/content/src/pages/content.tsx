@@ -42,7 +42,7 @@ export default function Content(props: ContentProps) {
   const [isPageLoading, setPageIsLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
-  const [localFilters, setFilters] = useState<any>({ limit: 5, offset: 0 });
+  const [localFilters, setFilters] = useState<any>({ limit: 10, offset: 0 });
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [frameworkFilter, setFrameworkFilter] = useState(false);
   const [trackData, setTrackData] = useState<[]>([]);
