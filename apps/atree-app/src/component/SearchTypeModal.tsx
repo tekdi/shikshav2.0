@@ -155,10 +155,7 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
                 selectedType === item.type ? '#FFBD0D' : 'transparent',
               opacity: selectedType === item.type ? 1 : 0.6,
               borderRadius: '8px',
-              '&:hover': {
-                backgroundColor:
-                  selectedType !== item.type ? '#FFBD0D' : '#FFBD0D',
-              },
+
               pointerEvents: selectedType === item.type ? 'none' : 'auto',
             }}
           >

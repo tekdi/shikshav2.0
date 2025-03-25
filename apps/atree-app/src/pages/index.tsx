@@ -165,16 +165,16 @@ const LandingPage = () => {
             >
               {landingImages.map((image, index) => (
                 <Box
+                  key={image.id}
                   sx={{
                     width: '100%',
-                    height: { xs: '70vh', md: '100%' }, // Ensure full height
+                    height: { xs: '55vh', md: '100%' }, // Ensure full height
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
                 >
                   <ImageBanner
-                    key={image.id}
                     name={
                       'A digital hub of Environment Education resources contextual to India'
                     }
