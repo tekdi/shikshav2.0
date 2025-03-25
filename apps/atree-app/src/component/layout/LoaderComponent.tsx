@@ -20,7 +20,7 @@ const Loader: React.FC = () => {
         color="textSecondary"
         position="absolute"
         fontSize={'1.5rem'}
-        top="460px" // Moves text slightly up
+        top="500px" // Moves text slightly up
         zIndex={1} // Ensures text is above the GIF
         bgcolor="rgba(255, 255, 255, 0.5)" // Optional: Adds background for readability
         px={1} // Padding for better visibility

@@ -144,35 +144,53 @@ const LandingPage = () => {
         <Loader />
       ) : (
         <Grid container spacing={4} sx={{ mb: 3 }} justifyContent={'center'}>
-          <Grid width={'100%'}>
+          <Grid width="100%">
             <Carousel
               navButtonsAlwaysVisible
               indicators={false}
               animation="slide"
               autoPlay={true}
-              interval={3000}
+              interval={2000}
+              swipe={true}
+              duration={500}
+              stopAutoPlayOnHover={false}
               cycleNavigation={true}
               sx={{
                 width: '100%',
-                height: { xs: '181px', md: '500px' },
+                minHeight: { xs: '50vh', md: '100vh' }, // Full height for web
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
               {landingImages.map((image, index) => (
-                <ImageBanner
+                <Box
                   key={image.id}
-                  name={
-                    'A digital hub of Environment Education resources contextual to India'
-                  }
-                  image={image.image}
-                  _image={{ height: { xs: 'auto', md: '581px' } }}
-                  _textPosition={{
-                    bottom: '20%',
-                    left: '20%',
+                  sx={{
+                    width: '100%',
+                    height: { xs: '55vh', md: '100%' }, // Ensure full height
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
-                />
+                >
+                  <ImageBanner
+                    name={
+                      'A digital hub of Environment Education resources contextual to India'
+                    }
+                    image={image.image}
+                    _image={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover', // Ensure full image visibility
+                      objectPosition: 'center',
+                    }}
+                    _textPosition={{
+                      bottom: '20%',
+                      left: '20%',
+                    }}
+                  />
+                </Box>
               ))}
             </Carousel>
           </Grid>

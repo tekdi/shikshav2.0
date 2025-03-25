@@ -42,7 +42,7 @@ export default function Content(props: ContentProps) {
   const [isPageLoading, setPageIsLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
-  const [localFilters, setFilters] = useState<any>({ limit: 5, offset: 0 });
+  const [localFilters, setLocalFilters] = useState<any>({ limit: 10, offset: 0 });
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [frameworkFilter, setFrameworkFilter] = useState(false);
   const [trackData, setTrackData] = useState<[]>([]);
@@ -84,7 +84,7 @@ export default function Content(props: ContentProps) {
 
   useEffect(() => {
     if (tabValue !== undefined && tabs?.[tabValue]?.type) {
-      setFilters((prevFilters: any) => ({
+      setLocalFilters((prevFilters: any) => ({
         ...prevFilters,
         type: tabs?.[tabValue]?.type,
       }));
@@ -93,14 +93,14 @@ export default function Content(props: ContentProps) {
 
   const handleLoadMore = (event: any) => {
     event.preventDefault();
-    setFilters((prevFilters: any) => ({
+    setLocalFilters((prevFilters: any) => ({
       ...prevFilters,
       offset: prevFilters.offset + prevFilters.limit,
     }));
   };
 
   const handleSearchClick = async () => {
-    setFilters((prevFilters: any) => ({
+    setLocalFilters((prevFilters: any) => ({
       ...prevFilters,
       query: searchValue.trim(),
     }));
@@ -173,7 +173,7 @@ export default function Content(props: ContentProps) {
           : true
       );
       setTabs(filteredTabs);
-      setFilters((prevFilters: any) => ({
+      setLocalFilters((prevFilters: any) => ({
         ...prevFilters,
         ...(propData?.filters || {}),
       }));
@@ -214,14 +214,14 @@ export default function Content(props: ContentProps) {
 
   const handleApplyFilters = async (selectedValues: any) => {
     if (Object.keys(selectedValues).length === 0) {
-      setFilters((prevFilters: any) => ({
+      setLocalFilters((prevFilters: any) => ({
         ...prevFilters,
         ...(propData?.filters || {}),
       }));
     } else {
       const { limit, offset, ...selectedValuesWithoutLimitOffset } =
         selectedValues;
-      setFilters((prevFilters: any) => ({
+        setLocalFilters((prevFilters: any) => ({
         ...prevFilters,
         filters: {
           ...prevFilters.filters,
@@ -257,7 +257,7 @@ export default function Content(props: ContentProps) {
   ) => {
     const accessValue = event.target.checked ? 'Full Access' : 'all'; // Set 'full' or 'all' based on switch state
     setFullAccess(event.target.checked);
-    setFilters((prevFilters: any) => ({
+    setLocalFilters((prevFilters: any) => ({
       ...prevFilters,
       filters: {
         ...prevFilters.filters, // Preserve existing filters

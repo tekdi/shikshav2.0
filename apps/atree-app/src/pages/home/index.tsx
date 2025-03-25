@@ -377,7 +377,7 @@ export default function Index() {
                 </Title>
                 <AtreeCard
                   contents={
-                    contentData.length > 6
+                    contentData.length > 4
                       ? contentData.slice(4, 10)
                       : contentData
                   }
