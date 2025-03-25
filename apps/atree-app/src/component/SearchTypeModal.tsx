@@ -150,11 +150,16 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
               setSearchType(item.type);
             }}
             sx={{
-              cursor: 'pointer',
+              cursor: selectedType === item.type ? 'not-allowed' : 'pointer',
               backgroundColor:
                 selectedType === item.type ? '#FFBD0D' : 'transparent',
+              opacity: selectedType === item.type ? 1 : 0.6,
               borderRadius: '8px',
-              '&:hover': { backgroundColor: '#FFBD0D' },
+              '&:hover': {
+                backgroundColor:
+                  selectedType !== item.type ? '#FFBD0D' : '#FFBD0D',
+              },
+              pointerEvents: selectedType === item.type ? 'none' : 'auto',
             }}
           >
             <ListItemAvatar>
