@@ -41,7 +41,13 @@ const MyComponent: React.FC = () => {
 
   return (
     <Layout isLoadingChildren={isLoadingChildren} backTitle={'Quick Access'}>
-      <FolderComponent categories={categories} onClick={handleClick} />
+      <FolderComponent
+        categories={categories}
+        onClick={handleClick}
+        _item={{
+          width: { xs: '450px', md: '100%' },
+        }}
+      />
     </Layout>
   );
 };

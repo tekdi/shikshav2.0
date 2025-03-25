@@ -133,7 +133,6 @@ export const FilterDialog = ({
     resource: [] as string[],
     mimeType: [] as string[],
   });
-  localStorage.getItem('category');
 
   useEffect(() => {
     const savedFilters = localStorage.getItem('selectedFilters');
@@ -414,7 +413,6 @@ export const FilterDialog = ({
               {resources?.length > 0 && (
                 <Box sx={{ display: 'grid' }}>
                   <FormLabel
-                    component="legend"
                     sx={{
                       fontSize: '18px',
                       fontWeight: 600,

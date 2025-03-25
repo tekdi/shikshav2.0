@@ -25,12 +25,14 @@ import { getContentDetails } from '../../service/content';
 import Layout from '../../component/layout/layout';
 import landingBanner from '../../../assets/images/landingBanner.png';
 import Grid from '@mui/material/Grid2';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import atreeLogo from '../../../assets/images/atreeLogo.png';
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Loader from '../../component/layout/LoaderComponent';
 import { AtreeCard, ContentSearch } from '@shared-lib';
+import { Category } from '@mui/icons-material';
 
 interface ContentItem {
   name: string;
@@ -75,6 +77,9 @@ export default function Content() {
 
       const data = await ContentSearch({
         channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+        filters: {
+          topic: localStorage.getItem('category'),
+        },
       });
       console.log(data?.result?.content);
       setContentResultData(data?.result?.content || []);
@@ -169,7 +174,7 @@ export default function Content() {
         <>
           <Grid container spacing={2} sx={{ padding: 2 }}>
             {/* Left Side (Content) */}
-            <Grid size={{ xs: 12, md: 6 }}>
+            <Grid size={{ xs: 12, md: 3 }}>
               {/* {[...Array(4)].map((_, i) => ( */}
               <ImageCard
                 image={contentData?.appIcon || landingBanner?.src}
@@ -187,7 +192,7 @@ export default function Content() {
                 }
               />
             </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
+            <Grid size={{ xs: 12, md: 9 }}>
               <Stack spacing={2}>
                 {/* Keywords */}
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
@@ -242,17 +247,28 @@ export default function Content() {
               padding: '20px',
             }}
           >
-            <Typography
-              sx={{ fontSize: '22px', fontWeight: 700 }}
-              onClick={() => router.push('/contents')}
+            <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent="space-between"
+              alignItems="center"
+              width="100%"
             >
-              Related Content
-            </Typography>
+              <Typography
+                sx={{ fontSize: '22px', fontWeight: 700 }}
+                onClick={() => router.push('/contents')}
+              >
+                Related Content
+              </Typography>
+              <IconButton onClick={() => router.push('/contents')}>
+                <ChevronRightIcon />
+              </IconButton>
+            </Box>
             <AtreeCard
               contents={
-                contentResultData?.length > 6
-                  ? contentResultData?.slice(4, 10)
-                  : contentResultData
+                contentResultData?.length > 4
+                  ? contentResultData?.slice(0, 4)
+                  : []
               }
               handleCardClick={handleCardClick}
               _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
@@ -321,40 +337,7 @@ export default function Content() {
               </IconButton>
             )}
           </Box>
-          <Dialog open={openPopup} onClose={() => setOpenPopup(false)}>
-            <DialogTitle>More Keywords</DialogTitle>
-            <DialogContent>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                {remainingKeywords.map((label: any) => (
-                  <Chip
-                    key={label}
-                    label={label.charAt(0).toUpperCase() + label.slice(1)}
-                    variant="outlined"
-                    sx={{
-                      height: '32px',
-                      gap: '8px',
-                      padding: '6px 8px',
-                      borderRadius: '0px',
-                    }}
-                  />
-                ))}
-              </Box>
-            </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={() => setOpenPopup(false)}
-                variant="contained"
-                color="secondary"
-                sx={{
-                  borderRadius: '50px',
-                  height: '40px',
-                  width: '100%',
-                }}
-              >
-                Close
-              </Button>
-            </DialogActions>
-          </Dialog>
+
           <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
             {contentData?.description}
           </Typography>
@@ -367,6 +350,40 @@ export default function Content() {
           </Typography>
         </Box>
       )}
+      <Dialog open={openPopup} onClose={() => setOpenPopup(false)}>
+        <DialogTitle>More Keywords</DialogTitle>
+        <DialogContent>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            {remainingKeywords.map((label: any) => (
+              <Chip
+                key={label}
+                label={label.charAt(0).toUpperCase() + label.slice(1)}
+                variant="outlined"
+                sx={{
+                  height: '32px',
+                  gap: '8px',
+                  padding: '6px 8px',
+                  borderRadius: '0px',
+                }}
+              />
+            ))}
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setOpenPopup(false)}
+            variant="contained"
+            color="secondary"
+            sx={{
+              borderRadius: '50px',
+              height: '40px',
+              width: '100%',
+            }}
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Layout>
   );
 }

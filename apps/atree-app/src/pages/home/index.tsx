@@ -507,7 +507,7 @@ export default function Index() {
             onClick={handleCloseMessage}
             sx={{ borderRadius: '50px', height: '40px', width: '100%' }}
           >
-            {t('Close')}
+            {t('Proceed')}
           </Button>
         </DialogActions>
       </Dialog>
