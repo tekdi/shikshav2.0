@@ -17,13 +17,11 @@ const List: React.FC<ListProps> = () => {
   const mfe_content = process.env.NEXT_PUBLIC_CONTENT;
   const [isLoadingChildren, setIsLoadingChildren] = React.useState(true);
   const router = useRouter();
-  const [subCategory, setSubCategory] = useState<string | null>(null);
+  const subCategory =
+    typeof window !== 'undefined' ? localStorage.getItem('subcategory') : null;
+  const storedCategory =
+    typeof window !== 'undefined' ? localStorage.getItem('category') : null;
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setSubCategory(localStorage.getItem('subcategory'));
-    }
-  }, []);
   useEffect(() => {
     const init = async () => {
       setIsLoadingChildren(false);
@@ -52,7 +50,9 @@ const List: React.FC<ListProps> = () => {
             filters: {
               filters: {
                 channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
-                query: subCategory || '',
+                ...(subCategory
+                  ? { subTopic: subCategory }
+                  : { topic: storedCategory }),
                 // status: ['Live'],
               },
             },

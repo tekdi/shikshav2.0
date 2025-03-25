@@ -82,7 +82,7 @@ const MyComponent: React.FC = () => {
         </Typography>
       }
       showBack
-      backIconClick={() => router.push('/quick-access')}
+      backIconClick={() => router.back()}
     >
       <FolderComponent
         categories={categories}

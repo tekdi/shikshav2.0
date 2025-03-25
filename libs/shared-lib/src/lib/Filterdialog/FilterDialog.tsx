@@ -521,6 +521,7 @@ export const FilterDialog = ({
               variant="outlined"
               onClick={() => {
                 setSelectedValues({});
+                localStorage.removeItem('selectedFilters');
                 onApply?.({});
               }}
               sx={{
