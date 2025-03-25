@@ -1,6 +1,6 @@
 //@ts-nocheck
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import IconButton from '@mui/material/IconButton';
@@ -12,6 +12,7 @@ import { CommonDrawer } from '../Drawer/CommonDrawer';
 import {
   Button,
   Checkbox,
+  debounce,
   Dialog,
   DialogActions,
   DialogContent,
@@ -26,11 +27,12 @@ import {
   Radio,
   RadioGroup,
   Select,
-  SelectChangeEvent,
   Typography,
 } from '@mui/material';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
+import { Loader } from '../Loader/Loader';
 interface LayoutProps {
+  isLoadingChildren?: boolean;
   children: React.ReactNode;
   isFooter?: boolean;
   showBack?: boolean;
@@ -445,9 +447,37 @@ export const Layout: React.FC<LayoutProps> = ({
   onApply,
   filterValues,
   sx = {},
+  isLoadingChildren = false,
 }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [filterShow, setFilterShow] = useState(false);
+  const [layoutHeight, setLayoutHeight] = useState(0);
+  const refs = useRef({});
+
+  useEffect(() => {
+    const handleResize = debounce(() => {
+      const totalHeight = Object.keys(refs.current).reduce((acc, key) => {
+        const ref: HTMLElement | undefined =
+          refs.current[key as keyof typeof refs.current];
+        if (ref) {
+          return acc + (ref as HTMLElement).offsetHeight;
+        }
+        return acc;
+      }, 0);
+      setLayoutHeight(totalHeight);
+    }, 500);
+
+    window.addEventListener('resize', handleResize);
+
+    if (Object.keys(refs.current).length) {
+      handleResize();
+    }
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [Object.keys(refs.current).length]);
+
   const handleButtonClick = () => {
     console.log('Footer button clicked!');
   };
@@ -463,144 +493,165 @@ export const Layout: React.FC<LayoutProps> = ({
         ...sx,
       }}
     >
-      {/* <Header showLogo={showLogo} showBack={showBack} /> */}
-      {showTopAppBar && (
-        <Box
-          sx={{
-            // width: '100%',
-            display: 'center',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'column',
-            // padding: 2,
+      <Box
+        ref={(refAppBar) => {
+          if (
+            !Object.prototype.hasOwnProperty.call(refs.current, 'topAppBar')
+          ) {
+            refs.current = { ...refs.current, topAppBar: refAppBar };
+          }
+        }}
+      >
+        {/* <Header showLogo={showLogo} showBack={showBack} /> */}
+        {showTopAppBar && (
+          <Box
+            sx={{
+              // width: '100%',
+              display: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+              // padding: 2,
+            }}
+          >
+            <Box
+              sx={{
+                width: '100%',
+                bgcolor: '#FFFFFF',
+              }}
+              minHeight={'64px'}
+            >
+              <TopAppBar
+                title="Dashboard"
+                bgcolor="#FDF7FF"
+                profileIcon={showTopAppBar?.profileIcon}
+                actionIcons={topAppBarIcons}
+                menuIconClick={() => setIsDrawerOpen(true)}
+                onLogoutClick={(event) => action.onLogoutClick(event)}
+                showSearch={showTopAppBar.showSearch}
+                {...showTopAppBar}
+              />
+            </Box>
+          </Box>
+        )}
+
+        <CommonDrawer
+          open={isDrawerOpen}
+          onDrawerClose={() => setIsDrawerOpen(false)}
+          items={drawerItems}
+          categories={categorieItems}
+          onItemClick={(to) => {
+            onItemClick?.(to);
+            setIsDrawerOpen(false);
           }}
-        >
+        />
+
+        {showSearch && (
           <Box
             sx={{
               width: '100%',
-              bgcolor: '#FFFFFF',
+              display: 'flex',
+              justifyContent: 'space-between',
+              marginTop: '70px',
             }}
           >
-            <TopAppBar
-              title="Dashboard"
-              bgcolor="#FDF7FF"
-              profileIcon={showTopAppBar?.profileIcon}
-              actionIcons={topAppBarIcons}
-              menuIconClick={() => setIsDrawerOpen(true)}
-              onLogoutClick={(event) => action.onLogoutClick(event)}
-              {...showTopAppBar}
-            />
-          </Box>
-        </Box>
-      )}
-
-      <CommonDrawer
-        open={isDrawerOpen}
-        onDrawerClose={() => setIsDrawerOpen(false)}
-        items={drawerItems}
-        categories={categorieItems}
-        onItemClick={(to) => {
-          onItemClick?.(to);
-          setIsDrawerOpen(false);
-        }}
-      />
-
-      {showSearch && (
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginTop: '70px',
-          }}
-        >
-          <CommonSearch
-            placeholder={showSearch.placeholder || ''}
-            leftIcon={showSearch.leftIcon ? showSearch.leftIcon : undefined}
-            rightIcon={showSearch.rightIcon ? showSearch.rightIcon : undefined}
-            onLeftIconClick={
-              showSearch.leftIcon ? showSearch.onLeftIconClick : undefined
-            }
-            onRightIconClick={
-              showSearch.rightIcon ? showSearch.onRightIconClick : undefined
-            }
-            inputValue={showSearch.inputValue || ''}
-            onInputChange={showSearch.onInputChange}
-            sx={
-              showSearch.sx || {
-                width: 400,
-                marginTop: '8px',
-                marginLeft: '10px',
+            <CommonSearch
+              placeholder={showSearch.placeholder || ''}
+              leftIcon={showSearch.leftIcon ? showSearch.leftIcon : undefined}
+              rightIcon={
+                showSearch.rightIcon ? showSearch.rightIcon : undefined
               }
-            }
-          />
-          {showFilter && (
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                backgroundColor: '#ECE6F0',
-                borderRadius: '12px',
-                // padding: '8px',
-                width: '56px',
-                height: '46px',
-                '&:hover': {
-                  backgroundColor: '#E0E0E0',
-                  boxShadow: '0px 4px 8px 3px #00000026',
-                },
-                marginLeft: '4px',
-                marginRight: '7px',
+              onLeftIconClick={
+                showSearch.leftIcon ? showSearch.onLeftIconClick : undefined
+              }
+              onRightIconClick={
+                showSearch.rightIcon ? showSearch.onRightIconClick : undefined
+              }
+              inputValue={showSearch.inputValue || ''}
+              onInputChange={showSearch.onInputChange}
+              sx={
+                showSearch.sx || {
+                  width: 400,
+                  marginTop: '8px',
+                  marginLeft: '10px',
+                }
+              }
+            />
+            {showFilter && (
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  backgroundColor: '#ECE6F0',
+                  borderRadius: '12px',
+                  // padding: '8px',
+                  width: '56px',
+                  height: '46px',
+                  '&:hover': {
+                    backgroundColor: '#E0E0E0',
+                    boxShadow: '0px 4px 8px 3px #00000026',
+                  },
+                  marginLeft: '4px',
+                  marginRight: '7px',
 
-                boxShadow: '0px 1px 3px 0px #0000004D',
-              }}
-              onClick={() => setFilterShow(true)}
-            >
-              <FilterAltOutlinedIcon
-                sx={{ color: '#6750A4', fontSize: '25px' }}
-              />
-            </Box>
-          )}
-        </Box>
-      )}
-      {/* Render Back Button Below the TopAppBar */}
-      {showBack && backIconClick && (
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            padding: '8px 16px',
-            bgcolor: '#FFFFFF',
-            position: 'fixed', // Ensures it stays in view
-            top: '55px', // Adjust based on TopAppBar's height
-            zIndex: 1100, // Ensure it stays above other elements
-          }}
-        >
-          <Button
-            startIcon={<ArrowBackIcon />}
-            onClick={backIconClick}
+                  boxShadow: '0px 1px 3px 0px #0000004D',
+                }}
+                onClick={() => setFilterShow(true)}
+              >
+                <FilterAltOutlinedIcon
+                  sx={{ color: '#6750A4', fontSize: '25px' }}
+                />
+              </Box>
+            )}
+          </Box>
+        )}
+        {/* Render Back Button Below the TopAppBar */}
+        {showBack && backIconClick && (
+          <Box
             sx={{
-              textTransform: 'none',
-              color: '#1E1B16',
-              fontSize: '16px',
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              padding: '8px 16px',
+              bgcolor: '#FFFFFF',
+              position: 'fixed', // Ensures it stays in view
+              top: '55px', // Adjust based on TopAppBar's height
+              zIndex: 1100, // Ensure it stays above other elements
             }}
           >
-            <Typography fontSize={'22px'} fontWeight={400}>
-              {backTitle}
-            </Typography>
-          </Button>
-        </Box>
-      )}
+            <Button
+              startIcon={<ArrowBackIcon />}
+              onClick={backIconClick}
+              sx={{
+                textTransform: 'none',
+                color: '#1E1B16',
+                fontSize: '16px',
+              }}
+            >
+              <Typography fontSize={'22px'} fontWeight={400}>
+                {backTitle}
+              </Typography>
+            </Button>
+          </Box>
+        )}
+      </Box>
 
-      {children}
+      <Loader isLoading={isLoadingChildren} layoutHeight={layoutHeight}>
+        {children}
+      </Loader>
 
       {isFooter && (
         <Box
           sx={{
             width: '100%',
             bgcolor: 'white',
+          }}
+          ref={(refFoot) => {
+            if (!Object.prototype.hasOwnProperty.call(refs.current, 'footer')) {
+              refs.current = { ...refs.current, footer: refFoot };
+            }
           }}
         >
           <Footer

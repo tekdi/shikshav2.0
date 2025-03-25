@@ -1,17 +1,25 @@
 import React, { useState } from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Button,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+} from '@mui/material';
 import { useRouter } from 'next/router'; // Use Next.js router for navigation
 import PictureAsPdfOutlinedIcon from '@mui/icons-material/PictureAsPdfOutlined';
 import PlayCircleOutlineOutlinedIcon from '@mui/icons-material/PlayCircleOutlineOutlined';
 import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined';
 import LensOutlinedIcon from '@mui/icons-material/LensOutlined';
+import LensIcon from '@mui/icons-material/Lens';
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
-import { Progress } from '@shared-lib';
 import { useTheme } from '@mui/material/styles';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { CircularProgressWithLabel } from '@shared-lib';
 // Types for nested data structure and actions
 interface NestedItem {
   identifier: string;
@@ -25,11 +33,9 @@ interface CommonAccordionProps {
   title: string;
   data: NestedItem[];
   actions?: { label: string; onClick: () => void }[];
-  defaultExpanded?: boolean;
   status?: 'Not started' | 'Completed' | 'In progress' | string;
   progress?: number;
-  TrackData?: never[];
-  item: NestedItem[];
+  TrackData?: any[];
 }
 
 const getIconByMimeType = (mimeType?: string): React.ReactNode => {
@@ -55,91 +61,111 @@ const RenderNestedData: React.FC<{
 }> = ({ data, expandedItems, toggleExpanded, trackComplete }) => {
   const router = useRouter();
 
-  return (
-    <>
-      {data?.map((item) => {
-        const isExpanded = expandedItems.has(item.identifier);
-        const childrenCount = item.children?.length || 0;
+  return data?.map((item) => {
+    const isExpanded = expandedItems.has(item.identifier);
+    const childrenCount = item.children?.length || 0;
 
-        const handleItemClick = (identifier: string) => {
-          localStorage.setItem('unitId', identifier);
-          const path =
-            childrenCount >= 1 &&
-            item.mimeType === 'application/vnd.ekstep.content-collection'
-              ? `/details/${identifier}`
-              : `/player/${item.identifier}`;
-          router.push(path);
-        };
+    const handleItemClick = (identifier: string) => {
+      localStorage.setItem('unitId', identifier);
+      const path =
+        childrenCount >= 1 &&
+        item.mimeType === 'application/vnd.ekstep.content-collection'
+          ? `/details/${identifier}`
+          : `/player/${item.identifier}`;
+      router.push(path);
+    };
 
-        return (
-          <Box
-            key={item.identifier}
-            sx={{
-              borderBottom: '1px solid #ccc',
-              borderRadius: '4px',
-              margin: '8px 0',
-              padding: '8px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              width: '100%',
-            }}
-          >
-            <Box onClick={() => handleItemClick(item.identifier)}>
-              <Typography variant="body1" fontSize={'14px'} fontWeight={400}>
-                {childrenCount === 0 && getIconByMimeType(item.mimeType)}{' '}
-                {item.name}
+    return (
+      <Box
+        key={item.identifier}
+        sx={{
+          borderBottom: '1px solid #ccc',
+          borderRadius: '4px',
+          padding: '12px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: '100%',
+          cursor: 'pointer',
+          gap: '16px',
+        }}
+        onClick={() => handleItemClick(item.identifier)}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
+          {childrenCount === 0 && getIconByMimeType(item.mimeType)}
+          <Typography variant="body1" fontSize={'14px'} fontWeight={400}>
+            {item.name}
+          </Typography>
+
+          {childrenCount > 0 && (
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <Typography
+                variant="caption"
+                color="textSecondary"
+                sx={{
+                  color: '#65558F',
+                  textDecoration: 'underline',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                {childrenCount} Units <ArrowForwardOutlinedIcon />
               </Typography>
-
-              {childrenCount > 0 && (
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Typography
-                    variant="caption"
-                    color="textSecondary"
-                    sx={{
-                      color: '#65558F',
-                      textDecoration: 'underline',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    {childrenCount} Units <ArrowForwardOutlinedIcon />
-                  </Typography>
-                </Box>
-              )}
             </Box>
-            <Box>
-              {trackComplete === 100 ? (
-                <>
-                  <CheckCircleIcon sx={{ color: '#21A400' }} />
-                </>
-              ) : (
-                <>
-                  <ErrorIcon sx={{ color: '#FFB74D' }} />
-                </>
-              )}
-            </Box>
+          )}
+        </Box>
+        {trackComplete === 100 ? (
+          <>
+            <CheckCircleIcon sx={{ color: '#21A400' }} />
+          </>
+        ) : (
+          <>
+            <ErrorIcon sx={{ color: '#FFB74D' }} />
+          </>
+        )}
 
-            {isExpanded && item.children?.length && (
-              <Box sx={{ marginTop: '8px', paddingLeft: '16px' }}>
-                <RenderNestedData
-                  data={item.children}
-                  expandedItems={expandedItems}
-                  toggleExpanded={toggleExpanded}
-                />
-              </Box>
-            )}
+        {isExpanded && item.children?.length && (
+          <Box sx={{ marginTop: '8px', paddingLeft: '16px' }}>
+            <RenderNestedData
+              data={item.children}
+              expandedItems={expandedItems}
+              toggleExpanded={toggleExpanded}
+            />
           </Box>
-        );
-      })}
-    </>
-  );
+        )}
+      </Box>
+    );
+  });
+};
+
+const getLeafNodes = (node: any) => {
+  const result = [];
+
+  // If the node has leafNodes, add them to the result array
+  if (node.leafNodes) {
+    result.push(...node.leafNodes);
+  }
+
+  // If the node has children, iterate through them and recursively collect leaf nodes
+  if (node.children) {
+    node.children.forEach((child: any) => {
+      result.push(...getLeafNodes(child));
+    });
+  }
+
+  return result;
 };
 
 export const CommonCollapse: React.FC<CommonAccordionProps> = ({
@@ -147,98 +173,36 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
   title,
   data,
   actions = [],
-  item,
   TrackData,
-  defaultExpanded = false,
 }) => {
   const router = useRouter();
   const theme = useTheme();
-
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [trackCompleted, setTrackCompleted] = React.useState(0);
   const [trackProgress, setTrackProgress] = React.useState(0);
 
   React.useEffect(() => {
-    fetchDataTrack();
-  }, []);
-  const getLeafNodes = (node: any) => {
-    let result = [];
-
-    // If the node has leafNodes, add them to the result array
-    if (node.leafNodes) {
-      result.push(...node.leafNodes);
-    }
-
-    // If the node has children, iterate through them and recursively collect leaf nodes
-    if (node.children) {
-      node.children.forEach((child: any) => {
-        result.push(...getLeafNodes(child));
-      });
-    }
-
-    return result;
-  };
-  const fetchDataTrack = async () => {
-    try {
-      //@ts-ignore
-      if (TrackData && item?.children) {
-        for (let i = 0; i < TrackData.length; i++) {
-          //@ts-ignore
-          if (TrackData[i]?.courseId) {
-            //merge offlien and online
-            //@ts-ignore
-            const mergedArray = [...TrackData[i]?.completed_list];
-            const uniqueArray = [...new Set(mergedArray)];
-            let completed_list = uniqueArray;
-
-            //merge offlien and online
-            //@ts-ignore
-            const mergedArray_progress = [...TrackData[i]?.in_progress_list];
-            const uniqueArray_progress = [...new Set(mergedArray_progress)];
-            let in_progress_list = uniqueArray_progress;
-
-            //fetch all content in unit
-            let unit_content_list = getLeafNodes(item);
-            let unit_content_completed_list = [];
-            if (unit_content_list && completed_list) {
-              if (unit_content_list.length > 0 && completed_list.length > 0) {
-                for (let ii = 0; ii < unit_content_list.length; ii++) {
-                  let temp_item = unit_content_list[ii];
-                  if (completed_list.includes(temp_item)) {
-                    unit_content_completed_list.push(temp_item);
-                  }
-                }
-                let totalContent = unit_content_list.length;
-                let completed = unit_content_completed_list.length;
-                let percentageCompleted = (completed / totalContent) * 100;
-                percentageCompleted = Math.round(percentageCompleted);
-
-                setTrackCompleted(percentageCompleted);
-              }
-            }
-            let unit_content_in_progress_list = [];
-            if (unit_content_list && in_progress_list) {
-              if (unit_content_list.length > 0 && in_progress_list.length > 0) {
-                for (let ii = 0; ii < unit_content_list.length; ii++) {
-                  let temp_item = unit_content_list[ii];
-                  if (in_progress_list.includes(temp_item)) {
-                    unit_content_in_progress_list.push(temp_item);
-                  }
-                }
-                let totalContent = unit_content_list.length;
-                let in_progress = unit_content_in_progress_list.length;
-                let percentageInProgress = (in_progress / totalContent) * 100;
-                percentageInProgress = Math.round(percentageInProgress);
-                setTrackProgress(percentageInProgress);
-              }
-            }
-          }
+    const init = () => {
+      try {
+        //@ts-ignore
+        if (TrackData) {
+          const result = TrackData.find((e: any) => e.courseId === identifier);
+          setTrackCompleted(result?.completed ? 100 : 0);
+          const leafNodes = getLeafNodes(data);
+          const completedCount = result?.completed_list?.length || 0;
+          const percentage =
+            leafNodes.length > 0
+              ? Math.round((completedCount / leafNodes.length) * 100)
+              : 0;
+          setTrackProgress(percentage);
         }
+      } catch (e) {
+        console.log('error', e);
       }
-    } catch (e) {
-      console.log('error', e);
-    }
-  };
+    };
+    init();
+  }, [TrackData, identifier, data]);
+
   const toggleExpanded = (identifier: string) => {
     setExpandedItems((prev) => {
       const newExpandedItems = new Set(prev);
@@ -256,87 +220,16 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
     router.push(path);
   };
   return (
-    <Box sx={{ margin: '10px' }}>
+    <Box>
       {data?.length > 0 ? (
-        <Box
-          sx={{
-            backgroundColor: theme.palette.custom?.secondaryBackground,
-            padding: '8px',
-            borderRadius: '4px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}
-        >
-          <LensOutlinedIcon sx={{ fontSize: '17px' }} />
-          <Typography variant="h6" fontSize={'12px'} fontWeight={500}>
-            {title}
-          </Typography>
-          {/* {trackProgress >= 0 && (
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '2px',
-               
-                position: 'relative',
-              }}
-            >
-              <Progress
-                variant="determinate"
-                value={100}
-                size={30}
-                thickness={6}
-                sx={{
-                  color: '#cccccc',
-                  position: 'absolute',
-                  left: '10px',
-                }}
-              />
-              <Progress
-                variant="determinate"
-                value={trackCompleted}
-                size={30}
-                thickness={6}
-                sx={{
-                  color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
-                  position: 'absolute',
-                  left: '10px',
-                }}
-              />
-              <Typography
-                sx={{
-                  fontSize: '12px',
-                  fontWeight: 'bold',
-                  marginLeft: '6px',
-                  color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
-                  position: 'absolute',
-                  left: '40px',
-                }}
-              >
-                {status &&
-                //@ts-ignore
-                data?.mimeType === 'application/vnd.ekstep.content-collection'
-                  ? status
-                  : `${trackCompleted}%`}
-              </Typography>
-            </Box>
-          )} */}
-          <Box
-            sx={{ marginLeft: 'auto' }}
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleExpanded(identifier);
-              localStorage.setItem('unitId', identifier);
-            }}
-          >
-            {expandedItems.has(identifier) ? (
-              <ArrowDropDownIcon />
-            ) : (
-              <ArrowDropUpIcon />
-            )}
-          </Box>
-        </Box>
+        <AccordionWrapper
+          title={title}
+          data={data}
+          expandedItems={expandedItems}
+          toggleExpanded={toggleExpanded}
+          trackProgress={trackProgress}
+          trackCompleted={trackCompleted}
+        />
       ) : (
         <Box
           sx={{
@@ -414,18 +307,6 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
         </Box>
       )}
 
-      <Box sx={{ marginTop: '8px' }}>
-        {expandedItems.has(identifier) && (
-          <RenderNestedData
-            data={data}
-            expandedItems={expandedItems}
-            toggleExpanded={toggleExpanded}
-            progressNumber={trackProgress}
-            trackComplete={trackCompleted}
-          />
-        )}
-      </Box>
-
       {actions.length > 0 && (
         <Box sx={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
           {actions.map((action) => (
@@ -444,3 +325,65 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
 };
 
 export default CommonCollapse;
+
+const AccordionWrapper = ({
+  title,
+  data,
+  expandedItems,
+  toggleExpanded,
+  trackProgress,
+  trackCompleted,
+}: {
+  title: string;
+  data: NestedItem[];
+  expandedItems: Set<string>;
+  toggleExpanded: (identifier: string) => void;
+  trackProgress: number;
+  trackCompleted: number;
+}) => {
+  const theme = useTheme();
+
+  return (
+    <Accordion
+      expanded={expandedItems.has(data[0].identifier)}
+      onChange={() => toggleExpanded(data[0].identifier)}
+    >
+      <AccordionSummary
+        sx={{
+          backgroundColor: theme.palette.custom?.secondaryBackground,
+        }}
+        expandIcon={
+          expandedItems.has(data[0].identifier) ? (
+            <ArrowDropDownIcon sx={{ fontSize: '2rem' }} />
+          ) : (
+            <ArrowDropUpIcon sx={{ fontSize: '2rem' }} />
+          )
+        }
+      >
+        <Typography variant="body2" fontWeight={500}>
+          {title}
+        </Typography>
+        <CircularProgressWithLabel
+          value={trackProgress}
+          _text={{
+            sx: {
+              color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
+            },
+          }}
+          sx={{
+            color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
+          }}
+        />
+      </AccordionSummary>
+      <AccordionDetails>
+        <RenderNestedData
+          data={data}
+          expandedItems={expandedItems}
+          toggleExpanded={toggleExpanded}
+          progressNumber={trackProgress}
+          trackComplete={trackCompleted}
+        />
+      </AccordionDetails>
+    </Accordion>
+  );
+};
