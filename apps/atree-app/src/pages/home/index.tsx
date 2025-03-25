@@ -13,6 +13,7 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  Switch,
   Typography,
   useMediaQuery,
   useTheme,
@@ -52,6 +53,7 @@ export default function Index() {
   const [filterCategory, SetFilterCategory] = useState<string>('');
   const [isLoadingChildren, setIsLoadingChildren] = useState(true);
   const [openMessageDialog, setOpenMessageDialog] = useState(false);
+  const [fullAccess, setFullAccess] = useState(false);
   const [filters, setFilters] = useState<any>({
     request: {
       filters: {},
@@ -206,7 +208,19 @@ export default function Index() {
       router.push(`/contents/${content?.identifier}`);
     }
   };
+  const handleToggleFullAccess = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const accessValue = event.target.checked ? 'Full Access' : 'all'; // Set 'full' or 'all' based on switch state
+    setFullAccess(event.target.checked);
 
+    if (accessValue) {
+      const newFilters = {
+        access: accessValue,
+      };
+      fetchContentData(newFilters);
+    }
+  };
   // **Restore Consumed Content from LocalStorage**
   useEffect(() => {
     const storedContent = localStorage.getItem('consumedContent');
@@ -259,6 +273,82 @@ export default function Index() {
                     padding: '15px',
                   }}
                 >
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    gap={1}
+                    marginLeft="auto"
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: '14px',
+                        fontWeight: fullAccess ? '400' : '600',
+                        color: fullAccess ? '#9E9E9E' : '#000000',
+                      }}
+                    >
+                      All
+                    </Typography>
+
+                    <Switch
+                      checked={fullAccess} // Controlled state for switch
+                      onChange={handleToggleFullAccess}
+                      sx={{
+                        width: 42,
+                        height: 26,
+                        padding: 0,
+                        '& .MuiSwitch-switchBase': {
+                          padding: 0,
+                          transitionDuration: '300ms',
+                          '&.Mui-checked': {
+                            transform: 'translateX(16px)',
+                            color: '#fff',
+                            '& + .MuiSwitch-track': {
+                              background:
+                                'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                              opacity: 1,
+                              border: 0,
+                            },
+                            '&.Mui-disabled + .MuiSwitch-track': {
+                              opacity: 0.5,
+                            },
+                          },
+                          '&.Mui-focusVisible .MuiSwitch-thumb': {
+                            color: '#33cf4d',
+                            border: '6px solid #fff',
+                          },
+                          '&.Mui-disabled .MuiSwitch-thumb': {
+                            color: '#BDBDBD', // Grey thumb when disabled
+                          },
+                          '&.Mui-disabled + .MuiSwitch-track': {
+                            opacity: 0.5,
+                            background: '#BDBDBD', // Grey track when disabled
+                          },
+                        },
+                        '& .MuiSwitch-thumb': {
+                          boxSizing: 'border-box',
+                          width: 25,
+                          height: 25,
+                        },
+                        '& .MuiSwitch-track': {
+                          borderRadius: 26 / 2,
+                          background: fullAccess
+                            ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
+                            : '#BDBDBD', // Grey when unchecked
+                          opacity: 1,
+                        },
+                      }}
+                    />
+
+                    <Typography
+                      sx={{
+                        fontSize: '14px',
+                        fontWeight: fullAccess ? '600' : '400',
+                        color: fullAccess ? '#000000' : '#9E9E9E',
+                      }}
+                    >
+                      Only Full Access
+                    </Typography>
+                  </Box>
                   <Title onClick={() => router.push('/contents')}>
                     {t('Read, Watch, Listen')}
                   </Title>

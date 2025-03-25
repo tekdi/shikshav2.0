@@ -45,7 +45,7 @@ const FolderComponent = ({
 }) => {
   categories = categories.filter((item) => item.status !== 'Retired');
   return (
-    <List sx={{ p: 2 }}>
+    <List sx={{ p: 1 }}>
       <Grid
         container
         spacing={2}
@@ -64,7 +64,7 @@ const FolderComponent = ({
             <ListItem
               key={category.id}
               sx={{
-                width: subLabel ? '30vw' : '100%',
+                width: { xs: '30vw' },
                 display: 'flex',
                 alignItems: 'center',
                 boxSizing: 'border-box',

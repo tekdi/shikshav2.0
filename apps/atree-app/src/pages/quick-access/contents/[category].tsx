@@ -216,6 +216,14 @@ const MyComponent: React.FC = () => {
               // sx={{ justifyContent: 'flex-end' }}
             >
               <FilterChip />
+              <FilterDialog
+                open={filterShow}
+                onClose={() => setFilterShow(false)}
+                frameworkFilter={frameworkFilter}
+                filterValues={filters}
+                onApply={handleApplyFilters}
+                isMobile={isMobile}
+              />
               <Box display="flex" alignItems="center" gap={1} marginLeft="auto">
                 <Typography
                   sx={{
