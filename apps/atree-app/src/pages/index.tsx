@@ -159,7 +159,7 @@ const LandingPage = () => {
               cycleNavigation={true}
               sx={{
                 width: '100%',
-                minHeight: { xs: '50vh', md: '500px' }, // Full height for web
+                minHeight: { md: '500px' }, // Full height for web
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
