@@ -264,9 +264,7 @@ export default function Index() {
                   </Title>
                   <AtreeCard
                     contents={
-                      contentData.length > 4
-                        ? contentData.slice(0, 4)
-                        : contentData
+                      contentData?.length > 0 && contentData?.slice(0, 4)
                     }
                     handleCardClick={handleCardClick}
                     _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
@@ -305,7 +303,7 @@ export default function Index() {
                   </Title>
                   <AtreeCard
                     contents={
-                      contentData.length >= 4 ? contentData.slice(4, 10) : []
+                      contentData?.length > 4 && contentData?.slice(4, 10)
                     }
                     handleCardClick={handleCardClick}
                     _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
@@ -335,11 +333,7 @@ export default function Index() {
                   {t('Read, Watch, Listen')}
                 </Title>
                 <AtreeCard
-                  contents={
-                    contentData.length > 4
-                      ? contentData.slice(0, 4)
-                      : contentData
-                  }
+                  contents={contentData?.length > 0 && contentData?.slice(0, 4)}
                   handleCardClick={handleCardClick}
                   _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
                   _card={{ image: atreeLogo.src }}
@@ -377,9 +371,7 @@ export default function Index() {
                 </Title>
                 <AtreeCard
                   contents={
-                    contentData.length > 6
-                      ? contentData.slice(4, 10)
-                      : contentData
+                    contentData?.length > 4 && contentData?.slice(4, 10)
                   }
                   handleCardClick={handleCardClick}
                   _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
