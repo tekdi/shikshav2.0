@@ -6,6 +6,7 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Stack,
 } from '@mui/material';
 import { useRouter } from 'next/router'; // Use Next.js router for navigation
 import PictureAsPdfOutlinedIcon from '@mui/icons-material/PictureAsPdfOutlined';
@@ -53,17 +54,20 @@ const getIconByMimeType = (mimeType?: string): React.ReactNode => {
 const RenderNestedData: React.FC<{
   data: NestedItem[];
   expandedItems: Set<string>;
-  status?: 'Not started' | 'Completed' | 'In progress' | string;
-  progressNumber?: number;
-  trackComplete?: number;
-
+  trackData?: any[];
   toggleExpanded: (identifier: string) => void;
-}> = ({ data, expandedItems, toggleExpanded, trackComplete }) => {
+}> = React.memo(function RenderNestedData({
+  data,
+  expandedItems,
+  toggleExpanded,
+  trackData,
+}) {
   const router = useRouter();
 
   return data?.map((item) => {
     const isExpanded = expandedItems.has(item.identifier);
     const childrenCount = item.children?.length || 0;
+    const newTrack = trackData?.find((e) => e?.courseId == item?.identifier);
 
     const handleItemClick = (identifier: string) => {
       localStorage.setItem('unitId', identifier);
@@ -76,7 +80,7 @@ const RenderNestedData: React.FC<{
     };
 
     return (
-      <Box
+      <Stack
         key={item.identifier}
         sx={{
           borderBottom: '1px solid #ccc',
@@ -91,64 +95,32 @@ const RenderNestedData: React.FC<{
         }}
         onClick={() => handleItemClick(item.identifier)}
       >
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}
-        >
-          {childrenCount === 0 && getIconByMimeType(item.mimeType)}
-          <Typography variant="body1" fontSize={'14px'} fontWeight={400}>
-            {item.name}
-          </Typography>
-
-          {childrenCount > 0 && (
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <Typography
-                variant="caption"
-                color="textSecondary"
-                sx={{
-                  color: '#65558F',
-                  textDecoration: 'underline',
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              >
-                {childrenCount} Units <ArrowForwardOutlinedIcon />
-              </Typography>
-            </Box>
-          )}
-        </Box>
-        {trackComplete === 100 ? (
-          <>
-            <CheckCircleIcon sx={{ color: '#21A400' }} />
-          </>
-        ) : (
-          <>
-            <ErrorIcon sx={{ color: '#FFB74D' }} />
-          </>
-        )}
+        <Stack sx={{ width: '100%' }}>
+          <RowContent
+            title={item.name}
+            data={item.children || []}
+            mimeType={item.mimeType}
+            expandedItems={expandedItems}
+            trackCompleted={newTrack?.completed ? 100 : 0}
+            showStatus
+          />
+        </Stack>
 
         {isExpanded && item.children?.length && (
-          <Box sx={{ marginTop: '8px', paddingLeft: '16px' }}>
+          <Stack sx={{ marginTop: '8px', paddingLeft: '16px', width: '100%' }}>
             <RenderNestedData
               data={item.children}
               expandedItems={expandedItems}
               toggleExpanded={toggleExpanded}
             />
-          </Box>
+          </Stack>
         )}
-      </Box>
+      </Stack>
     );
   });
-};
+});
+
+RenderNestedData.displayName = 'RenderNestedData';
 
 const getLeafNodes = (node: any) => {
   const result = [];
@@ -176,7 +148,6 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
   TrackData,
 }) => {
   const router = useRouter();
-  const theme = useTheme();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [trackCompleted, setTrackCompleted] = React.useState(0);
   const [trackProgress, setTrackProgress] = React.useState(0);
@@ -229,6 +200,7 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
           toggleExpanded={toggleExpanded}
           trackProgress={trackProgress}
           trackCompleted={trackCompleted}
+          trackData={TrackData ?? []}
         />
       ) : (
         <Box
@@ -333,6 +305,7 @@ const AccordionWrapper = ({
   toggleExpanded,
   trackProgress,
   trackCompleted,
+  trackData,
 }: {
   title: string;
   data: NestedItem[];
@@ -340,6 +313,7 @@ const AccordionWrapper = ({
   toggleExpanded: (identifier: string) => void;
   trackProgress: number;
   trackCompleted: number;
+  trackData: any[];
 }) => {
   const theme = useTheme();
 
@@ -360,11 +334,84 @@ const AccordionWrapper = ({
           )
         }
       >
+        <RowContent
+          title={title}
+          data={data}
+          expandedItems={expandedItems}
+          trackProgress={trackProgress}
+          trackCompleted={trackCompleted}
+          showProgress
+        />
+      </AccordionSummary>
+      <AccordionDetails sx={{ p: 0 }}>
+        <RenderNestedData
+          data={data}
+          expandedItems={expandedItems}
+          toggleExpanded={toggleExpanded}
+          trackData={trackData}
+        />
+      </AccordionDetails>
+    </Accordion>
+  );
+};
+
+export const RowContent = ({
+  title,
+  data,
+  mimeType,
+  expandedItems,
+  trackProgress,
+  trackCompleted,
+  showProgress = false,
+  showStatus = false,
+}: {
+  title: string;
+  data: NestedItem[];
+  expandedItems: Set<string>;
+  mimeType?: string;
+  trackProgress?: number;
+  trackCompleted?: number;
+  showProgress?: boolean;
+  showStatus?: boolean;
+}) => {
+  return (
+    <Stack
+      width={'100%'}
+      direction="row"
+      justifyContent="space-between"
+      alignItems={'center'}
+    >
+      <Stack direction="row" spacing={1} alignItems={'center'}>
+        {showStatus ? (
+          data?.length === 0 ? (
+            getIconByMimeType(mimeType)
+          ) : null
+        ) : expandedItems.has(data?.[0]?.identifier) ? (
+          <LensIcon sx={{ fontSize: '1.5rem' }} />
+        ) : (
+          <LensOutlinedIcon sx={{ fontSize: '1.5rem' }} />
+        )}
         <Typography variant="body2" fontWeight={500}>
           {title}
         </Typography>
+        {showStatus && data?.length && (
+          <Typography
+            variant="caption"
+            color="textSecondary"
+            sx={{
+              color: '#65558F',
+              textDecoration: 'underline',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            {data.length} Units <ArrowForwardOutlinedIcon />
+          </Typography>
+        )}
+      </Stack>
+      {showProgress && (
         <CircularProgressWithLabel
-          value={trackProgress}
+          value={trackProgress ?? 0}
           _text={{
             sx: {
               color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
@@ -374,16 +421,13 @@ const AccordionWrapper = ({
             color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
           }}
         />
-      </AccordionSummary>
-      <AccordionDetails>
-        <RenderNestedData
-          data={data}
-          expandedItems={expandedItems}
-          toggleExpanded={toggleExpanded}
-          progressNumber={trackProgress}
-          trackComplete={trackCompleted}
-        />
-      </AccordionDetails>
-    </Accordion>
+      )}
+      {showStatus &&
+        (trackCompleted === 100 ? (
+          <CheckCircleIcon sx={{ color: '#21A400' }} />
+        ) : (
+          <ErrorIcon sx={{ color: '#FFB74D' }} />
+        ))}
+    </Stack>
   );
 };
