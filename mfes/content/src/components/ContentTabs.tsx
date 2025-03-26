@@ -25,7 +25,7 @@ const RenderTabContent = memo(
     value,
     onChange,
     ariaLabel,
-    isLodingMoreData,
+    isLoadingMoreData,
   }: {
     contentData: ContentSearchResponse[];
     _grid: any;
@@ -38,7 +38,7 @@ const RenderTabContent = memo(
     value?: number;
     onChange?: (event: React.SyntheticEvent, newValue: number) => void;
     ariaLabel?: string;
-    isLodingMoreData: boolean;
+    isLoadingMoreData: boolean;
     _card?: any;
   }) => {
     return (
@@ -117,9 +117,9 @@ const RenderTabContent = memo(
                 <Button
                   variant="contained"
                   onClick={handleLoadMore}
-                  disabled={isLodingMoreData}
+                  disabled={isLoadingMoreData}
                 >
-                  {isLodingMoreData ? (
+                  {isLoadingMoreData ? (
                     <CircularProgress size={20} />
                   ) : (
                     'Load More'

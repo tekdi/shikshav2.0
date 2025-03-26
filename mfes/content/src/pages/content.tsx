@@ -411,7 +411,7 @@ export default function Content(props: Readonly<ContentProps>) {
           handleCardClick={handleCardClickLocal}
           hasMoreData={hasMoreData}
           handleLoadMore={handleLoadMore}
-          isLodingMoreData={isLoading}
+          isLoadingMoreData={isLoading}
           tabs={tabs}
         />
         {propData?.showHelpDesk && <HelpDesk />}
