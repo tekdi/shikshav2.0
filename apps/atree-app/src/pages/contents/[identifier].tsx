@@ -87,7 +87,8 @@ export default function Content() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [identifier]);
+
   const keywords = contentData?.keywords || [];
   const showMoreIcon = keywords.length > 3;
   const capitalizeFirstLetter = (word: string) =>
@@ -99,7 +100,7 @@ export default function Content() {
   const remainingKeywords = keywords.slice(3);
   useEffect(() => {
     if (identifier) fetchContent();
-  }, []);
+  }, [identifier]);
 
   const fetchFrameworkData = async () => {
     try {
@@ -127,14 +128,13 @@ export default function Content() {
     fetchFrameworkData();
   }, []);
 
-  if (isLoading) return <Loader />;
-
   const handleCardClick = (content: any) => {
     router.push(`/contents/${content?.identifier}`);
   };
   return (
     <Layout
       showBack
+      isLoadingChildren={isLoading}
       backIconClick={() => router.back()}
       backTitle={
         <Box>
@@ -265,7 +265,7 @@ export default function Content() {
             </Box>
             <AtreeCard
               contents={
-                contentResultData?.length > 4
+                contentResultData?.length > 0
                   ? contentResultData?.slice(0, 4)
                   : []
               }

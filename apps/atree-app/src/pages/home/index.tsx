@@ -365,7 +365,7 @@ export default function Index() {
 
                   <ContentSection
                     contents={
-                      contentData.length > 4
+                      contentData.length > 0
                         ? contentData.slice(0, 4)
                         : contentData
                     }
@@ -412,7 +412,9 @@ export default function Index() {
                       router.push('/contents');
                     }}
                     contents={
-                      contentData.length >= 4 ? contentData.slice(4, 10) : []
+                      contentData.length > 4
+                        ? contentData.slice(4, 10)
+                        : ['No Data found']
                     }
                     handleCardClick={handleCardClick}
                   />
@@ -444,7 +446,7 @@ export default function Index() {
                     router.push('/contents');
                   }}
                   contents={
-                    contentData.length > 4
+                    contentData.length > 0
                       ? contentData.slice(0, 4)
                       : contentData
                   }
