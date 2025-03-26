@@ -460,7 +460,7 @@ export const Layout: React.FC<LayoutProps> = ({
         const ref: HTMLElement | undefined =
           refs.current[key as keyof typeof refs.current];
         if (ref) {
-          return acc + (ref as HTMLElement).offsetHeight;
+          return acc + ref.offsetHeight;
         }
         return acc;
       }, 0);

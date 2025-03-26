@@ -29,7 +29,7 @@ const RenderTabContent = memo(
   }: {
     contentData: ContentSearchResponse[];
     _grid: any;
-    trackData?: [] | undefined;
+    trackData?: [];
     type: string;
     handleCardClick: (content: ContentSearchResponse) => void;
     hasMoreData: boolean;

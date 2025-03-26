@@ -27,17 +27,20 @@ export interface ContentProps {
   showBackToTop?: boolean;
   showHelpDesk?: boolean;
 }
-export default function Content(props: ContentProps) {
+export default function Content(props: Readonly<ContentProps>) {
   const router = useRouter();
   const [searchValue, setSearchValue] = useState('');
   const [tabValue, setTabValue] = useState<number>();
   const [tabs, setTabs] = useState<any>([]);
   const [contentData, setContentData] = useState<ContentSearchResponse[]>([]);
-  const [isPageLoading, setPageIsLoading] = useState(true);
+  const [isPageLoading, setIsPageLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [hasMoreData, setHasMoreData] = useState(true);
-  const [localFilters, setFilters] = useState<any>({ limit: 5, offset: 0 });
+  const [localFilters, setLocalFilters] = useState<any>({
+    limit: 5,
+    offset: 0,
+  });
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [frameworkFilter, setFrameworkFilter] = useState(false);
   const [trackData, setTrackData] = useState<[]>([]);
@@ -58,7 +61,7 @@ export default function Content(props: ContentProps) {
         ...(props || newData),
       });
       setTabValue(0);
-      setPageIsLoading(false);
+      setIsPageLoading(false);
     };
     init();
   }, [props]);
@@ -71,7 +74,6 @@ export default function Content(props: ContentProps) {
         data = [result];
       } else {
         data = await ContentSearch(filters);
-        console.log('hello');
       }
       return data;
     } catch (error) {
@@ -90,7 +92,6 @@ export default function Content(props: ContentProps) {
       if (!userId || !courseList.length) return; // Ensure required values exist
       //@ts-ignore
       const course_track_data = await trackingData(userIdArray, courseList);
-      console.log('course_track_data', course_track_data);
       if (course_track_data?.data) {
         //@ts-ignore
 
@@ -106,7 +107,7 @@ export default function Content(props: ContentProps) {
 
   useEffect(() => {
     if (tabValue !== undefined && tabs?.[tabValue]?.type) {
-      setFilters((prevFilters: any) => ({
+      setLocalFilters((prevFilters: any) => ({
         ...prevFilters,
         type: tabs?.[tabValue]?.type,
       }));
@@ -115,7 +116,7 @@ export default function Content(props: ContentProps) {
 
   const handleLoadMore = (event: any) => {
     event.preventDefault();
-    setFilters((prevFilters: any) => ({
+    setLocalFilters((prevFilters: any) => ({
       ...prevFilters,
       offset: prevFilters.offset + prevFilters.limit,
     }));
@@ -140,7 +141,7 @@ export default function Content(props: ContentProps) {
   };
 
   const handleSearchClick = async () => {
-    setFilters((prevFilters: any) => ({
+    setLocalFilters((prevFilters: any) => ({
       ...prevFilters,
       query: searchValue.trim(),
     }));
@@ -213,7 +214,7 @@ export default function Content(props: ContentProps) {
           : true
       );
       setTabs(filteredTabs);
-      setFilters((prevFilters: any) => ({
+      setLocalFilters((prevFilters: any) => ({
         ...prevFilters,
         ...(propData?.filters || {}),
       }));
@@ -240,7 +241,6 @@ export default function Content(props: ContentProps) {
             ]);
           }
           const userTrackData = await fetchDataTrack(result?.content || []);
-          console.log(userTrackData);
           setTrackData(userTrackData);
           setHasMoreData(
             result?.count > localFilters.offset + result?.content?.length
@@ -257,14 +257,14 @@ export default function Content(props: ContentProps) {
 
   const handleApplyFilters = async (selectedValues: any) => {
     if (Object.keys(selectedValues).length === 0) {
-      setFilters((prevFilters: any) => ({
+      setLocalFilters((prevFilters: any) => ({
         ...prevFilters,
-        ...(propData?.filters || {}),
+        filters: {},
       }));
     } else {
       const { limit, offset, ...selectedValuesWithoutLimitOffset } =
         selectedValues;
-      setFilters((prevFilters: any) => ({
+      setLocalFilters((prevFilters: any) => ({
         ...prevFilters,
         filters: {
           ...prevFilters.filters,

@@ -69,7 +69,8 @@ export const CommonCard: React.FC<CommonCardProps> = ({
         if (TrackData) {
           if (type === 'course') {
             // Course
-            setTrackProgress(0);
+            const data = TrackData.find((e) => e.courseId === item.identifier);
+            setTrackCompleted(data?.completed ? 100 : 0);
           } else {
             const data = TrackData.find((e) => e.courseId === item.identifier);
             setTrackCompleted(data?.completed ? 100 : 0);

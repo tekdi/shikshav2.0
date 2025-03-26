@@ -1,7 +1,6 @@
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
-import React, { memo } from 'react';
-import { ReactNode } from 'react';
+import React, { memo, ReactNode } from 'react';
 
 interface LoaderProps {
   isLoading: boolean;

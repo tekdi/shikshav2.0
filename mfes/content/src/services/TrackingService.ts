@@ -26,7 +26,6 @@ export const trackingData = (subIds: string[], courseIds: string[]) => {
   return axios
     .request(config)
     .then((response) => {
-      console.log('Tracking Response:', response.data);
       return response.data;
     })
     .catch((error) => {

@@ -383,9 +383,7 @@ export const RowContent = ({
     >
       <Stack direction="row" spacing={1} alignItems={'center'}>
         {showStatus ? (
-          data?.length === 0 ? (
-            getIconByMimeType(mimeType)
-          ) : null
+          data?.length === 0 && getIconByMimeType(mimeType)
         ) : expandedItems.has(data?.[0]?.identifier) ? (
           <LensIcon sx={{ fontSize: '1.5rem' }} />
         ) : (
@@ -394,7 +392,7 @@ export const RowContent = ({
         <Typography variant="body2" fontWeight={500}>
           {title}
         </Typography>
-        {showStatus && data?.length && (
+        {Boolean(showStatus && data?.length) && (
           <Typography
             variant="caption"
             color="textSecondary"

@@ -126,11 +126,7 @@ export const ContentSearch = async ({
     // Ensure the environment variable is defined
     const searchApiUrl = process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL;
     if (!searchApiUrl) {
-      throw new Error(
-        !searchApiUrl
-          ? 'Search API URL environment variable is not configured'
-          : ''
-      );
+      throw new Error('Search API URL environment variable is not configured');
     }
     // Axios request configuration
 
