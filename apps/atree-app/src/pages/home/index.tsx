@@ -114,9 +114,14 @@ export default function Index() {
   useEffect(() => {
     const init = async () => {
       try {
+        //Framework URL
         const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
+        //response from API
         const frameworkData = await fetch(url).then((res) => res.json());
+        //category data
         const frameworks = frameworkData?.result?.framework?.categories;
+        //Framework topic wise data
+
         const fdata =
           frameworks.find((item: any) => item.code === 'topic')?.terms || [];
         setFramework(fdata[0]?.identifier || '');
@@ -129,7 +134,7 @@ export default function Index() {
             (category: any) => category.status === 'Live'
           ),
         });
-
+        //condition if category from URL
         if (frameworkName) {
           const selectedFramework = fdata.find(
             (item: any) =>
@@ -139,6 +144,7 @@ export default function Index() {
             setFramework(selectedFramework.identifier);
           }
         }
+        //create filters
         const newFilters = {
           topic: filterCategory ? [filterCategory] : ['Water'],
         };
@@ -298,15 +304,15 @@ export default function Index() {
                       checked={fullAccess} // Controlled state for switch
                       onChange={handleToggleFullAccess}
                       sx={{
-                        width: 42,
                         height: 26,
                         padding: 0,
+                        width: 42,
                         '& .MuiSwitch-switchBase': {
-                          padding: 0,
                           transitionDuration: '300ms',
+                          padding: 0,
                           '&.Mui-checked': {
-                            transform: 'translateX(16px)',
                             color: '#fff',
+                            transform: 'translateX(16px)',
                             '& + .MuiSwitch-track': {
                               background:
                                 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
@@ -318,37 +324,39 @@ export default function Index() {
                             },
                           },
                           '&.Mui-focusVisible .MuiSwitch-thumb': {
-                            color: '#33cf4d',
                             border: '6px solid #fff',
+                            color: '#33cf4d',
+                          },
+
+                          '&.Mui-disabled + .MuiSwitch-track': {
+                            background: '#BDBDBD', // Grey track when disabled
+                            opacity: 0.5,
                           },
                           '&.Mui-disabled .MuiSwitch-thumb': {
                             color: '#BDBDBD', // Grey thumb when disabled
                           },
-                          '&.Mui-disabled + .MuiSwitch-track': {
-                            opacity: 0.5,
-                            background: '#BDBDBD', // Grey track when disabled
-                          },
                         },
                         '& .MuiSwitch-thumb': {
-                          boxSizing: 'border-box',
-                          width: 25,
                           height: 25,
+                          boxSizing: 'border-box',
+
+                          width: 25,
                         },
                         '& .MuiSwitch-track': {
-                          borderRadius: 26 / 2,
                           background: fullAccess
                             ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
                             : '#BDBDBD', // Grey when unchecked
                           opacity: 1,
+                          borderRadius: 26 / 2,
                         },
                       }}
                     />
 
                     <Typography
                       sx={{
+                        color: fullAccess ? '#000000' : '#9E9E9E',
                         fontSize: '14px',
                         fontWeight: fullAccess ? '600' : '400',
-                        color: fullAccess ? '#000000' : '#9E9E9E',
                       }}
                     >
                       Only Full Access
@@ -356,56 +364,57 @@ export default function Index() {
                   </Box>
 
                   <ContentSection
-                    title={t('Read, Watch, Listen')}
-                    handleCardClick={handleCardClick}
                     contents={
                       contentData.length > 4
                         ? contentData.slice(0, 4)
                         : contentData
                     }
+                    title={t('Read, Watch, Listen')}
                     onTitleClick={() => {
                       localStorage.removeItem('subcategory');
                       router.push('/contents');
                     }}
+                    handleCardClick={handleCardClick}
                   />
                 </Box>
                 <Box
                   sx={{
                     width: '100%',
-                    gap: '16px',
-                    display: 'flex',
-                    flexDirection: 'column',
                     padding: '15px',
+                    gap: '16px',
+                    flexDirection: 'column',
+                    display: 'flex',
                   }}
                 >
                   <Title>{t('Browse by Sub Categories')}</Title>
 
                   <SubFrameworkFilter
-                    subFrameworkFilter={subFrameworkFilter || []}
                     subFramework={subFramework}
                     setSubFramework={setSubFramework}
                     lastButton={true}
+                    subFrameworkFilter={subFrameworkFilter || []}
                   />
                 </Box>
                 <Box
                   sx={{
                     width: '100%',
-                    gap: '16px',
-                    display: 'flex',
                     flexDirection: 'column',
+
                     padding: '15px',
+                    display: 'flex',
+                    gap: '16px',
                   }}
                 >
                   <ContentSection
                     title={t('Related Content')}
-                    contents={
-                      contentData.length >= 4 ? contentData.slice(4, 10) : []
-                    }
-                    handleCardClick={handleCardClick}
                     onTitleClick={() => {
                       localStorage.removeItem('subcategory');
                       router.push('/contents');
                     }}
+                    contents={
+                      contentData.length >= 4 ? contentData.slice(4, 10) : []
+                    }
+                    handleCardClick={handleCardClick}
                   />
                 </Box>
               </Grid>
@@ -420,32 +429,32 @@ export default function Index() {
               />
               <Box
                 sx={{
+                  flexDirection: 'column',
                   width: '100%',
                   gap: '16px',
-                  display: 'flex',
-                  flexDirection: 'column',
                   padding: '15px',
+                  display: 'flex',
                 }}
               >
                 <ContentSection
                   title={t('Read, Watch, Listen')}
                   handleCardClick={handleCardClick}
+                  onTitleClick={() => {
+                    localStorage.removeItem('subcategory');
+                    router.push('/contents');
+                  }}
                   contents={
                     contentData.length > 4
                       ? contentData.slice(0, 4)
                       : contentData
                   }
-                  onTitleClick={() => {
-                    localStorage.removeItem('subcategory');
-                    router.push('/contents');
-                  }}
                 />
               </Box>
               <Box
                 sx={{
+                  display: 'flex',
                   width: '100%',
                   gap: '16px',
-                  display: 'flex',
                   flexDirection: 'column',
                   padding: '15px',
                 }}
@@ -454,25 +463,25 @@ export default function Index() {
 
                 <SubFrameworkFilter
                   subFrameworkFilter={subFrameworkFilter || []}
-                  subFramework={subFramework}
                   setSubFramework={setSubFramework}
+                  subFramework={subFramework}
                   lastButton={true}
                 />
               </Box>
               <Box
                 sx={{
+                  display: 'flex',
                   width: '100%',
                   gap: '16px',
-                  display: 'flex',
-                  flexDirection: 'column',
                   padding: '15px',
+                  flexDirection: 'column',
                 }}
               >
                 <ContentSection
-                  title={t('Related Content')}
                   contents={
                     contentData.length >= 4 ? contentData.slice(4, 10) : []
                   }
+                  title={t('Related Content')}
                   handleCardClick={handleCardClick}
                   onTitleClick={() => {
                     localStorage.removeItem('subcategory');
