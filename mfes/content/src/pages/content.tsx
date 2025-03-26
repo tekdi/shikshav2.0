@@ -232,16 +232,17 @@ export default function Content(props: Readonly<ContentProps>) {
           localFilters.offset !== undefined
         ) {
           const { result } = await fetchContent(localFilters);
+          const userTrackData = await fetchDataTrack(result?.content || []);
           if (localFilters.offset === 0) {
             setContentData(result?.content || []);
+            setTrackData(userTrackData);
           } else {
             setContentData((prevState: any) => [
               ...prevState,
               ...(result?.content || []),
             ]);
+            setTrackData((e) => ({ ...e, userTrackData }));
           }
-          const userTrackData = await fetchDataTrack(result?.content || []);
-          setTrackData(userTrackData);
           setHasMoreData(
             result?.count > localFilters.offset + result?.content?.length
           );

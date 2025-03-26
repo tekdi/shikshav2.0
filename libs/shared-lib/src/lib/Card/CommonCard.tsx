@@ -85,7 +85,7 @@ export const CommonCard: React.FC<CommonCardProps> = ({
       try {
         //@ts-ignore
         if (TrackData) {
-          const result = TrackData.find((e) => e.courseId === item.identifier);
+          const result = TrackData?.find((e) => e.courseId === item.identifier);
           setTrackCompleted(result?.completed ? 100 : 0);
           if (type === 'Course') {
             const leafNodes = getLeafNodes(item?.leafNodes ?? []);
