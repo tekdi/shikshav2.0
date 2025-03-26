@@ -1,8 +1,7 @@
 import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
 import React, { memo } from 'react';
 import { ReactNode } from 'react';
-
+import loaderGif from '../../assets/images/snail-yellow.gif';
 interface LoaderProps {
   isLoading: boolean;
   layoutHeight?: number;
@@ -26,7 +25,7 @@ export const Loader: React.FC<LoaderProps> = memo(
               backgroundColor: 'white',
             }}
           >
-            <CircularProgress />
+            <img src={loaderGif} alt="Loading..." />
           </Box>
         )}
         <Box
