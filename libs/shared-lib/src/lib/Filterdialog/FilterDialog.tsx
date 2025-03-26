@@ -16,6 +16,7 @@ import {
   Radio,
   RadioGroup,
   Select,
+  Typography,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 const formControlStyles = {
@@ -412,7 +413,7 @@ export const FilterDialog = ({
             <FormControl fullWidth sx={formControlStyles}>
               {resources?.length > 0 && (
                 <Box sx={{ display: 'grid' }}>
-                  <FormLabel
+                  <Typography
                     sx={{
                       fontSize: '18px',
                       fontWeight: 600,
@@ -420,7 +421,7 @@ export const FilterDialog = ({
                     }}
                   >
                     Select Resource Type
-                  </FormLabel>
+                  </Typography>
                   {resources?.map((option: any) => (
                     <CustomResourceCheckbox
                       key={option?.label}
@@ -435,8 +436,7 @@ export const FilterDialog = ({
               {/* SubTopic - Checkboxes */}
 
               <Box sx={{ display: 'grid' }}>
-                <FormLabel
-                  component="legend"
+                <Typography
                   sx={{
                     fontSize: '18px',
                     fontWeight: 600,
@@ -444,7 +444,7 @@ export const FilterDialog = ({
                   }}
                 >
                   Select Content Type
-                </FormLabel>
+                </Typography>
                 {mimeType?.map((option: any) => (
                   <CustomResourceCheckbox
                     key={option?.label}
