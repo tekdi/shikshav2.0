@@ -63,7 +63,6 @@ const FilterDialog = ({
 
   const handleChange = (event: any, filterCode: any) => {
     const { value } = event.target;
-
     setSelectedValues((prev: any) => ({
       ...prev,
       [filterCode]: typeof value === 'string' ? value.split(',') : value,
@@ -72,24 +71,24 @@ const FilterDialog = ({
 
   return (
     <Dialog
-      open={open}
-      onClose={onClose}
       fullWidth
+      open={open}
       sx={{
         borderRadius: '16px',
         '& .MuiDialog-paper': { backgroundColor: '#FEF7FF' },
       }}
+      onClose={onClose}
     >
       <DialogTitle>Filters</DialogTitle>
       <IconButton
-        aria-label="close"
-        onClick={onClose}
         sx={(theme) => ({
           position: 'absolute',
-          right: 8,
           top: 8,
+          right: 8,
           color: theme.palette.grey[500],
         })}
+        onClick={onClose}
+        aria-label="close"
       >
         <CloseIcon />
       </IconButton>
@@ -106,14 +105,14 @@ const FilterDialog = ({
         {/* <FormControl fullWidth>
             <InputLabel id="multi-checkbox-label">Select Options</InputLabel>
             <Select
-              labelId="multi-checkbox-label"
               multiple
               value={selectedOptions}
-              onChange={handleChange}
               renderValue={(selected) => selected.join(', ')} // Display selected options
+              onChange={handleChange}
+              labelId="multi-checkbox-label"
             >
               {options.map((option) => (
-                <MenuItem key={option} value={option}>
+                <MenuItem value={option} key={option} >
                   <Checkbox checked={selectedOptions.indexOf(option) > -1} />
                   <ListItemText primary={option} />
                 </MenuItem>
@@ -123,26 +122,26 @@ const FilterDialog = ({
         {/* Sort By */}
         {filter?.sort && (
           <>
-            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+            <Typography sx={{ fontWeight: 700 }} variant="subtitle1">
               Sort By
             </Typography>
             <FormControl>
               <RadioGroup
-                value={sort?.sortBy || 'asc'}
                 onChange={(e) => {
                   const value = e.target.value;
                   onSortChange?.(value);
                 }}
+                value={sort?.sortBy || 'asc'}
               >
                 <FormControlLabel
                   value="asc"
-                  control={<Radio />}
                   label="A to Z"
+                  control={<Radio />}
                 />
                 <FormControlLabel
                   value="desc"
-                  control={<Radio />}
                   label="Z to A"
+                  control={<Radio />}
                 />
               </RadioGroup>
             </FormControl>
@@ -153,12 +152,12 @@ const FilterDialog = ({
           <FormControl fullWidth margin="normal">
             <InputLabel>Language</InputLabel>
             <Select
-              value={language}
-              onChange={(e) => onLanguageChange?.(e.target.value)}
               label="Language"
+              onChange={(e) => onLanguageChange?.(e.target.value)}
+              value={language}
             >
               {filter.language.map((lang) => (
-                <MenuItem key={lang} value={lang}>
+                <MenuItem value={lang} key={lang}>
                   {lang}
                 </MenuItem>
               ))}
@@ -167,20 +166,20 @@ const FilterDialog = ({
         )}
         {/* Subject */}
         {filter?.subject && filter.subject.length > 0 && (
-          <FormControl fullWidth margin="normal">
+          <FormControl margin="normal" fullWidth>
             <InputLabel>Subject</InputLabel>
             <Select
               multiple
+              label="Subject"
               value={selectedSubjects || []}
+              renderValue={(selected) => (selected as string[]).join(', ')} // Join array values for display
               onChange={(e) => {
                 const value = e.target.value as string[];
                 onSubjectsChange?.(value);
               }}
-              renderValue={(selected) => (selected as string[]).join(', ')} // Join array values for display
-              label="Subject"
             >
               {filter.subject.map((subject) => (
-                <MenuItem key={subject} value={subject}>
+                <MenuItem value={subject} key={subject}>
                   <Checkbox
                     checked={(selectedSubjects || []).indexOf(subject) > -1}
                   />
@@ -195,14 +194,14 @@ const FilterDialog = ({
           <FormControl fullWidth margin="normal">
             <InputLabel>Content Type</InputLabel>
             <Select
+              renderValue={(selected) => (selected as string[]).join(', ')}
+              label="Content Type"
               multiple
               value={selectedContentTypes || []}
               onChange={(e) => {
                 const value = e.target.value as string[];
                 onContentTypeChange?.(value);
               }}
-              renderValue={(selected) => (selected as string[]).join(', ')}
-              label="Content Type"
             >
               {filter.contentType.map((type) => (
                 <MenuItem key={type} value={type}>
@@ -219,32 +218,32 @@ const FilterDialog = ({
         <DialogActions sx={{ justifyContent: 'center' }}>
           <Box sx={{ display: 'flex', mt: 2 }}>
             <Button
-              variant="outlined"
-              onClick={() => {
-                onApply?.({});
-                setSelectedValues({});
-                onClose();
-              }}
               sx={{
                 borderRadius: '100px',
                 color: '#6750A4',
                 textTransform: 'none',
               }}
+              onClick={() => {
+                onApply?.({});
+                setSelectedValues({});
+                onClose();
+              }}
+              variant="outlined"
             >
               Clear All
             </Button>
             <Button
               variant="contained"
-              onClick={() => {
-                onApply?.(selectedValues);
-                onClose();
-              }}
               sx={{
                 borderRadius: '100px',
                 bgcolor: '#6750A4',
                 color: '#FFFFFF',
                 marginLeft: 2,
                 textTransform: 'none',
+              }}
+              onClick={() => {
+                onApply?.(selectedValues);
+                onClose();
               }}
             >
               Apply
@@ -274,10 +273,10 @@ const RenderCategories = React.memo(
         fullWidth
         key={componentKey}
         sx={{
-          '&.Mui-focused': {
+          '& .MuiInputLabel-root.Mui-focused': {
             color: '#1D1B20',
           },
-          '& .MuiInputLabel-root.Mui-focused': {
+          '&.Mui-focused': {
             color: '#1D1B20',
           },
           '& .MuiInputLabel-root': { color: '#1D1B20' },
@@ -286,10 +285,10 @@ const RenderCategories = React.memo(
             '& .MuiOutlinedInput-notchedOutline': {
               borderColor: '#1D1B20',
             },
-            '&:hover .MuiOutlinedInput-notchedOutline': {
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
               borderColor: '#1D1B20',
             },
-            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            '&:hover .MuiOutlinedInput-notchedOutline': {
               borderColor: '#1D1B20',
             },
           },
@@ -297,11 +296,10 @@ const RenderCategories = React.memo(
       >
         <InputLabel id={componentKey}>{categories?.name}</InputLabel>
         <Select
+          multiple
           labelId={componentKey}
           input={<OutlinedInput label={categories?.name} />}
-          multiple
           value={currentSelectedValues}
-          onChange={(event) => handleChange(event, `se_${categories?.code}s`)}
           renderValue={(selected) =>
             (selected as string[])
               .map((selectedValue: any) => {
@@ -312,9 +310,10 @@ const RenderCategories = React.memo(
               })
               .join(', ')
           }
+          onChange={(event) => handleChange(event, `se_${categories?.code}s`)}
         >
           {options.map((option: any) => (
-            <MenuItem key={option.value} value={option.value}>
+            <MenuItem value={option.value} key={option.value}>
               <Checkbox
                 sx={{
                   color: '#6750A4',
