@@ -281,7 +281,7 @@ export default function Index() {
                     gap: '16px',
                     display: 'flex',
                     flexDirection: 'column',
-                    padding: '15px',
+                    padding: '12px',
                   }}
                 >
                   <Box
@@ -367,7 +367,7 @@ export default function Index() {
                     contents={
                       contentData.length > 0
                         ? contentData.slice(0, 4)
-                        : contentData
+                        : [contentData]
                     }
                     title={t('Read, Watch, Listen')}
                     onTitleClick={() => {
@@ -380,7 +380,7 @@ export default function Index() {
                 <Box
                   sx={{
                     width: '100%',
-                    padding: '15px',
+                    padding: '12px',
                     gap: '16px',
                     flexDirection: 'column',
                     display: 'flex',
@@ -412,9 +412,7 @@ export default function Index() {
                       router.push('/contents');
                     }}
                     contents={
-                      contentData.length > 4
-                        ? contentData.slice(4, 10)
-                        : ['No Data found']
+                      contentData.length > 4 ? contentData.slice(4, 10) : []
                     }
                     handleCardClick={handleCardClick}
                   />
@@ -541,12 +539,16 @@ const ContentSection = ({ title, contents, onTitleClick, handleCardClick }) => (
     }}
   >
     <Title onClick={onTitleClick}>{title}</Title>
-    <AtreeCard
-      contents={contents}
-      handleCardClick={handleCardClick}
-      _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-      _card={{ image: atreeLogo.src }}
-    />
+    {contents?.length > 0 ? (
+      <AtreeCard
+        contents={contents}
+        handleCardClick={handleCardClick}
+        _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
+        _card={{ image: atreeLogo.src }}
+      />
+    ) : (
+      <Typography>No data available...</Typography>
+    )}
   </Box>
 );
 
@@ -626,18 +628,17 @@ const SubFrameworkFilter = React.memo<{
 }) {
   const { t } = useTranslation();
   const router = useRouter();
-  // const theme = useTheme();
+
   const [openPopup, setOpenPopup] = useState<boolean>(false);
   const [filterItems, setFilterItems] = useState<
     Array<{ identifier: string; name: string }>
   >([]);
-
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const maxItems = isMobile ? 3 : 5;
   useEffect(() => {
     if (subFrameworkFilter) {
-      // const deviceName = Object.keys(theme.breakpoints.values).find((key) => {
-      //   return window.innerWidth <= theme.breakpoints.values?.[key];
-      // });
-      setFilterItems(subFrameworkFilter.slice(0, 3));
+      setFilterItems(subFrameworkFilter.slice(0, maxItems));
     }
   }, [subFrameworkFilter]);
   const handleItemClick = (item: any) => {
@@ -661,7 +662,7 @@ const SubFrameworkFilter = React.memo<{
           </Button>
         </Grid>
       ))}
-      {subFrameworkFilter?.length > 3 && (
+      {subFrameworkFilter?.length > (isMobile ? 3 : 5) && (
         <Button
           onClick={() => setOpenPopup(true)}
           sx={{
@@ -673,7 +674,7 @@ const SubFrameworkFilter = React.memo<{
           <MoreVertIcon onClick={() => setOpenPopup(true)} />
         </Button>
       )}
-      {subFrameworkFilter?.length > 3 && openPopup && (
+      {subFrameworkFilter?.length > (isMobile ? 3 : 5) && openPopup && (
         <Dialog
           open={openPopup}
           onClose={() => setOpenPopup(false)}
