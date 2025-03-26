@@ -22,6 +22,7 @@ interface ContentItem {
   mimeType: string;
   description: string;
   posterImage: string;
+  leafNodes?: [{}];
   children: [{}];
 }
 interface CommonCardProps {
@@ -41,6 +42,23 @@ interface CommonCardProps {
   type: string;
   onClick?: () => void;
 }
+export const getLeafNodes = (node: any) => {
+  const result = [];
+
+  // If the node has leafNodes, add them to the result array
+  if (node.leafNodes) {
+    result.push(...node.leafNodes);
+  }
+
+  // If the node has children, iterate through them and recursively collect leaf nodes
+  if (node.children) {
+    node.children.forEach((child: any) => {
+      result.push(...getLeafNodes(child));
+    });
+  }
+
+  return result;
+};
 
 export const CommonCard: React.FC<CommonCardProps> = ({
   avatarLetter,
@@ -60,40 +78,31 @@ export const CommonCard: React.FC<CommonCardProps> = ({
   onClick,
 }) => {
   const [trackCompleted, setTrackCompleted] = React.useState(0);
-  const [trackProgress, setTrackProgress] = React.useState(0);
+  const [trackProgress, setTrackProgress] = React.useState(100);
 
   React.useEffect(() => {
     const init = () => {
       try {
         //@ts-ignore
         if (TrackData) {
-          const data = TrackData.find((e) => e.courseId === item.identifier);
-          setTrackCompleted(data?.completed ? 100 : 0);
+          const result = TrackData.find((e) => e.courseId === item.identifier);
+          setTrackCompleted(result?.completed ? 100 : 0);
+          if (type === 'Course') {
+            const leafNodes = getLeafNodes(item?.leafNodes ?? []);
+            const completedCount = result?.completed_list?.length || 0;
+            const percentage =
+              leafNodes.length > 0
+                ? Math.round((completedCount / leafNodes.length) * 100)
+                : 0;
+            setTrackProgress(percentage);
+          }
         }
       } catch (e) {
         console.log('error', e);
       }
     };
     init();
-  }, [TrackData, item.identifier, type]);
-
-  const getLeafNodes = (node: any) => {
-    const result = [];
-
-    // If the node has leafNodes, add them to the result array
-    if (node.leafNodes) {
-      result.push(...node.leafNodes);
-    }
-
-    // If the node has children, iterate through them and recursively collect leaf nodes
-    if (node.children) {
-      node.children.forEach((child: any) => {
-        result.push(...getLeafNodes(child));
-      });
-    }
-
-    return result;
-  };
+  }, [TrackData, item, type]);
 
   return (
     <Card
@@ -147,7 +156,7 @@ export const CommonCard: React.FC<CommonCardProps> = ({
               background: 'rgba(0, 0, 0, 0.5)',
             }}
           >
-            {type === 'course' ? (
+            {type === 'Course' ? (
               <>
                 <Progress
                   variant="determinate"

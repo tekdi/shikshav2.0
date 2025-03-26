@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -20,7 +20,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { CircularProgressWithLabel } from '@shared-lib';
+import { CircularProgressWithLabel, getLeafNodes } from '@shared-lib';
 // Types for nested data structure and actions
 interface NestedItem {
   identifier: string;
@@ -121,24 +121,6 @@ const RenderNestedData: React.FC<{
 });
 
 RenderNestedData.displayName = 'RenderNestedData';
-
-const getLeafNodes = (node: any) => {
-  const result = [];
-
-  // If the node has leafNodes, add them to the result array
-  if (node.leafNodes) {
-    result.push(...node.leafNodes);
-  }
-
-  // If the node has children, iterate through them and recursively collect leaf nodes
-  if (node.children) {
-    node.children.forEach((child: any) => {
-      result.push(...getLeafNodes(child));
-    });
-  }
-
-  return result;
-};
 
 export const CommonCollapse: React.FC<CommonAccordionProps> = ({
   identifier,
@@ -383,10 +365,9 @@ export const RowContent = ({
     >
       <Stack direction="row" spacing={1} alignItems={'center'}>
         <StatusIcon
-          showStatus={showStatus}
-          data={data}
+          showLenseIcon={expandedItems.has(data?.[0]?.identifier)}
+          showMimeTypeIcon={showStatus && data?.length === 0}
           mimeType={mimeType}
-          expandedItems={expandedItems}
         />
         <Typography variant="body2" fontWeight={500}>
           {title}
@@ -431,23 +412,20 @@ export const RowContent = ({
 
 const StatusIcon = React.memo(
   ({
-    showStatus,
-    data,
+    showMimeTypeIcon,
+    showLenseIcon,
     mimeType,
-    expandedItems,
   }: {
-    showStatus: boolean;
-    data: any[];
+    showMimeTypeIcon: boolean;
+    showLenseIcon: boolean;
     mimeType?: string;
-    expandedItems: Set<string>;
   }) => {
-    return showStatus ? (
-      data?.length === 0 && getIconByMimeType(mimeType)
-    ) : expandedItems.has(data?.[0]?.identifier) ? (
-      <LensIcon sx={{ fontSize: '1.5rem' }} />
-    ) : (
-      <LensOutlinedIcon sx={{ fontSize: '1.5rem' }} />
-    );
+    if (showMimeTypeIcon) {
+      return getIconByMimeType(mimeType);
+    } else if (showLenseIcon) {
+      return <LensIcon sx={{ fontSize: '1.5rem' }} />;
+    }
+    return <LensOutlinedIcon sx={{ fontSize: '1.5rem' }} />;
   }
 );
 StatusIcon.displayName = 'StatusIcon';
