@@ -13,7 +13,7 @@ interface ContentItem {
   language: string[];
   artifactUrl: string;
   identifier: string;
-  appIcon: string;
+  posterImage: string;
   contentType: string;
   mimeType: string;
 }

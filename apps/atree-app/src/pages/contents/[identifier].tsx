@@ -39,7 +39,7 @@ interface ContentItem {
   language: string[];
   artifactUrl: string;
   identifier: string;
-  appIcon: string;
+  posterImage: string;
   contentType: string;
   mimeType: string;
   author: string;
@@ -176,7 +176,7 @@ export default function Content() {
             <Grid size={{ xs: 12, md: 3 }}>
               {/* {[...Array(4)].map((_, i) => ( */}
               <ImageCard
-                image={contentData?.appIcon || landingBanner?.src}
+                image={contentData?.posterImage || landingBanner?.src}
                 name={
                   <Box display="flex" alignItems="center" gap={1}>
                     <Box>
@@ -289,7 +289,7 @@ export default function Content() {
         >
           <Box sx={{ px: 2 }}>
             <ImageCard
-              image={contentData?.appIcon || landingBanner?.src}
+              image={contentData?.posterImage || landingBanner?.src}
               name={
                 <Box display="flex" alignItems="center" gap={1}>
                   <Box>
