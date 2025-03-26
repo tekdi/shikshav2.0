@@ -1,5 +1,5 @@
 'use client';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useMediaQuery, useTheme } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import Image from 'next/image';
 import ActivityBooks from '../../assets/images/ActivityBooks.jpeg';
@@ -90,6 +90,8 @@ const LandingPage = () => {
     'Activity Books',
     'Potpourri',
   ];
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   useEffect(() => {
     const init = async () => {
       try {
@@ -157,7 +159,7 @@ const LandingPage = () => {
               cycleNavigation={true}
               sx={{
                 width: '100%',
-                minHeight: { xs: '50vh', md: '100vh' }, // Full height for web
+                minHeight: { md: '500px' }, // Full height for web
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -168,26 +170,21 @@ const LandingPage = () => {
                   key={image.id}
                   sx={{
                     width: '100%',
-                    height: { xs: '55vh', md: '100%' }, // Ensure full height
+                    height: { xs: '181px', md: '500px' },
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
                 >
                   <ImageBanner
+                    key={image.id}
                     name={
                       'A digital hub of Environment Education resources contextual to India'
                     }
                     image={image.image}
-                    _image={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover', // Ensure full image visibility
-                      objectPosition: 'center',
-                    }}
+                    _image={{ height: { xs: 'auto', md: '500px' } }}
                     _textPosition={{
-                      bottom: '20%',
-                      left: '20%',
+                      bottom: '0%',
                     }}
                   />
                 </Box>
@@ -206,37 +203,65 @@ const LandingPage = () => {
               flexDirection="column"
               alignItems="center"
             >
-              <Typography
-                variant="body1"
-                align="center"
-                gutterBottom
-                sx={{
-                  fontWeight: 400,
-                  fontSize: { xs: '14px', md: '24px' },
-                  lineHeight: { xs: '24px', md: '44px' },
-                  textAlign: 'center',
-                  color: '#000000',
-                }}
-              >
-                {t(
-                  'Change stems from local action. Hope stems from children’s empowerment to act upon local environmental problems.'
-                )}
-              </Typography>
-              <Typography
-                variant="body1"
-                align="center"
-                sx={{
-                  fontWeight: 400,
-                  fontSize: { xs: '14px', md: '24px' },
-                  lineHeight: { xs: '24px', md: '44px' },
-                  textAlign: 'center',
-                  color: '#000000',
-                }}
-              >
-                {t(
-                  'Our mission is to empower environment educators with both hope and action in times of climate change.'
-                )}
-              </Typography>
+              {isMobile ? (
+                <Box>
+                  <Typography
+                    variant="body1"
+                    align="center"
+                    gutterBottom
+                    sx={{
+                      fontWeight: 400,
+                      fontSize: { xs: '14px', md: '24px' },
+                      lineHeight: { xs: '24px', md: '44px' },
+                      textAlign: 'center',
+                      color: '#000000',
+                    }}
+                  >
+                    {t(
+                      'Change stems from local action. Hope stems from children’s empowerment to act upon local environmental problems.'
+                    )}
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    align="center"
+                    sx={{
+                      fontWeight: 400,
+                      fontSize: { xs: '14px', md: '24px' },
+                      lineHeight: { xs: '24px', md: '44px' },
+                      textAlign: 'center',
+                      color: '#000000',
+                    }}
+                  >
+                    {t(
+                      'Our mission is to empower environment educators with both hope and action in times of climate change.'
+                    )}
+                  </Typography>
+                </Box>
+              ) : (
+                <Box>
+                  <Typography
+                    variant="body1"
+                    align="center"
+                    gutterBottom
+                    sx={{
+                      fontWeight: 400,
+                      fontSize: { xs: '14px', md: '24px' },
+                      lineHeight: { xs: '24px', md: '44px' },
+                      pl: '55px',
+                      pr: '55px',
+                      textAlign: 'center',
+                      color: '#000000',
+                    }}
+                  >
+                    {t(
+                      'Change stems from local action. Hope stems from children’s empowerment to act upon local environmental problems.'
+                    )}
+                    {t(
+                      'Our mission is to empower environment educators with both hope and action in times of climate change.'
+                    )}
+                  </Typography>
+                </Box>
+              )}
             </Grid>
           </Grid>
           <Grid container spacing={1}>
@@ -245,7 +270,7 @@ const LandingPage = () => {
               display="flex"
               flexDirection="column"
               alignItems="center"
-              justifyContent={'center'}
+              justifyContent={'space-evenly'}
             >
               <Box
                 sx={{
@@ -265,9 +290,9 @@ const LandingPage = () => {
                 }}
               >
                 {[
-                  { label: 'Books', value: bookCount },
-                  { label: 'Categories', value: '15' },
-                  { label: 'Language', value: languageCount },
+                  { label: 'RESOURCES', value: bookCount },
+                  { label: 'CATEGORIES', value: '15' },
+                  { label: 'LANGUAGES', value: languageCount },
                   // { label: 'Reader', value: readerCount },
                 ].map((item, index) => (
                   <Box key={index}>

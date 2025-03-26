@@ -13,6 +13,7 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  Switch,
   Typography,
   useMediaQuery,
   useTheme,
@@ -37,6 +38,11 @@ const buttonColors = {
   general: '#FFBD0D',
 };
 
+interface ContentSectionProps {
+  contentData: ContentType[];
+  handleCardClick: (content: ContentType) => void;
+}
+
 export default function Index() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -52,6 +58,7 @@ export default function Index() {
   const [filterCategory, SetFilterCategory] = useState<string>('');
   const [isLoadingChildren, setIsLoadingChildren] = useState(true);
   const [openMessageDialog, setOpenMessageDialog] = useState(false);
+  const [fullAccess, setFullAccess] = useState(false);
   const [filters, setFilters] = useState<any>({
     request: {
       filters: {},
@@ -107,9 +114,14 @@ export default function Index() {
   useEffect(() => {
     const init = async () => {
       try {
+        //Framework URL
         const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
+        //response from API
         const frameworkData = await fetch(url).then((res) => res.json());
+        //category data
         const frameworks = frameworkData?.result?.framework?.categories;
+        //Framework topic wise data
+
         const fdata =
           frameworks.find((item: any) => item.code === 'topic')?.terms || [];
         setFramework(fdata[0]?.identifier || '');
@@ -122,7 +134,7 @@ export default function Index() {
             (category: any) => category.status === 'Live'
           ),
         });
-
+        //condition if category from URL
         if (frameworkName) {
           const selectedFramework = fdata.find(
             (item: any) =>
@@ -132,6 +144,7 @@ export default function Index() {
             setFramework(selectedFramework.identifier);
           }
         }
+        //create filters
         const newFilters = {
           topic: filterCategory ? [filterCategory] : ['Water'],
         };
@@ -206,7 +219,19 @@ export default function Index() {
       router.push(`/contents/${content?.identifier}`);
     }
   };
+  const handleToggleFullAccess = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const accessValue = event.target.checked ? 'Full Access' : 'all'; // Set 'full' or 'all' based on switch state
+    setFullAccess(event.target.checked);
 
+    if (accessValue) {
+      const newFilters = {
+        access: accessValue,
+      };
+      fetchContentData(newFilters);
+    }
+  };
   // **Restore Consumed Content from LocalStorage**
   useEffect(() => {
     const storedContent = localStorage.getItem('consumedContent');
@@ -259,57 +284,139 @@ export default function Index() {
                     padding: '15px',
                   }}
                 >
-                  <Title onClick={() => router.push('/contents')}>
-                    {t('Read, Watch, Listen')}
-                  </Title>
-                  <AtreeCard
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    gap={1}
+                    marginLeft="auto"
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: '14px',
+                        fontWeight: fullAccess ? '400' : '600',
+                        color: fullAccess ? '#9E9E9E' : '#000000',
+                      }}
+                    >
+                      All
+                    </Typography>
+
+                    <Switch
+                      checked={fullAccess} // Controlled state for switch
+                      onChange={handleToggleFullAccess}
+                      sx={{
+                        height: 26,
+                        padding: 0,
+                        width: 42,
+                        '& .MuiSwitch-switchBase': {
+                          transitionDuration: '300ms',
+                          padding: 0,
+                          '&.Mui-checked': {
+                            color: '#fff',
+                            transform: 'translateX(16px)',
+                            '& + .MuiSwitch-track': {
+                              background:
+                                'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                              opacity: 1,
+                              border: 0,
+                            },
+                            '&.Mui-disabled + .MuiSwitch-track': {
+                              opacity: 0.5,
+                            },
+                          },
+                          '&.Mui-focusVisible .MuiSwitch-thumb': {
+                            border: '6px solid #fff',
+                            color: '#33cf4d',
+                          },
+
+                          '&.Mui-disabled + .MuiSwitch-track': {
+                            background: '#BDBDBD', // Grey track when disabled
+                            opacity: 0.5,
+                          },
+                          '&.Mui-disabled .MuiSwitch-thumb': {
+                            color: '#BDBDBD', // Grey thumb when disabled
+                          },
+                        },
+                        '& .MuiSwitch-thumb': {
+                          height: 25,
+                          boxSizing: 'border-box',
+
+                          width: 25,
+                        },
+                        '& .MuiSwitch-track': {
+                          background: fullAccess
+                            ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
+                            : '#BDBDBD', // Grey when unchecked
+                          opacity: 1,
+                          borderRadius: 26 / 2,
+                        },
+                      }}
+                    />
+
+                    <Typography
+                      sx={{
+                        color: fullAccess ? '#000000' : '#9E9E9E',
+                        fontSize: '14px',
+                        fontWeight: fullAccess ? '600' : '400',
+                      }}
+                    >
+                      Only Full Access
+                    </Typography>
+                  </Box>
+
+                  <ContentSection
                     contents={
-                      contentData.length > 4
+                      contentData.length > 0
                         ? contentData.slice(0, 4)
                         : contentData
                     }
+                    title={t('Read, Watch, Listen')}
+                    onTitleClick={() => {
+                      localStorage.removeItem('subcategory');
+                      router.push('/contents');
+                    }}
                     handleCardClick={handleCardClick}
-                    _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-                    _card={{ image: atreeLogo.src }}
                   />
                 </Box>
                 <Box
                   sx={{
                     width: '100%',
-                    gap: '16px',
-                    display: 'flex',
-                    flexDirection: 'column',
                     padding: '15px',
+                    gap: '16px',
+                    flexDirection: 'column',
+                    display: 'flex',
                   }}
                 >
                   <Title>{t('Browse by Sub Categories')}</Title>
 
                   <SubFrameworkFilter
-                    subFrameworkFilter={subFrameworkFilter || []}
                     subFramework={subFramework}
                     setSubFramework={setSubFramework}
                     lastButton={true}
+                    subFrameworkFilter={subFrameworkFilter || []}
                   />
                 </Box>
                 <Box
                   sx={{
                     width: '100%',
-                    gap: '16px',
-                    display: 'flex',
                     flexDirection: 'column',
+
                     padding: '15px',
+                    display: 'flex',
+                    gap: '16px',
                   }}
                 >
-                  <Title onClick={() => router.push('/contents')}>
-                    {t('Related Content')}
-                  </Title>
-                  <AtreeCard
+                  <ContentSection
+                    title={t('Related Content')}
+                    onTitleClick={() => {
+                      localStorage.removeItem('subcategory');
+                      router.push('/contents');
+                    }}
                     contents={
-                      contentData.length >= 4 ? contentData.slice(4, 10) : []
+                      contentData.length > 4
+                        ? contentData.slice(4, 10)
+                        : ['No Data found']
                     }
                     handleCardClick={handleCardClick}
-                    _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-                    _card={{ image: atreeLogo.src }}
                   />
                 </Box>
               </Grid>
@@ -324,32 +431,32 @@ export default function Index() {
               />
               <Box
                 sx={{
+                  flexDirection: 'column',
                   width: '100%',
                   gap: '16px',
-                  display: 'flex',
-                  flexDirection: 'column',
                   padding: '15px',
+                  display: 'flex',
                 }}
               >
-                <Title onClick={() => router.push('/contents')}>
-                  {t('Read, Watch, Listen')}
-                </Title>
-                <AtreeCard
+                <ContentSection
+                  title={t('Read, Watch, Listen')}
+                  handleCardClick={handleCardClick}
+                  onTitleClick={() => {
+                    localStorage.removeItem('subcategory');
+                    router.push('/contents');
+                  }}
                   contents={
-                    contentData.length > 4
+                    contentData.length > 0
                       ? contentData.slice(0, 4)
                       : contentData
                   }
-                  handleCardClick={handleCardClick}
-                  _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-                  _card={{ image: atreeLogo.src }}
                 />
               </Box>
               <Box
                 sx={{
+                  display: 'flex',
                   width: '100%',
                   gap: '16px',
-                  display: 'flex',
                   flexDirection: 'column',
                   padding: '15px',
                 }}
@@ -358,32 +465,30 @@ export default function Index() {
 
                 <SubFrameworkFilter
                   subFrameworkFilter={subFrameworkFilter || []}
-                  subFramework={subFramework}
                   setSubFramework={setSubFramework}
+                  subFramework={subFramework}
                   lastButton={true}
                 />
               </Box>
               <Box
                 sx={{
+                  display: 'flex',
                   width: '100%',
                   gap: '16px',
-                  display: 'flex',
-                  flexDirection: 'column',
                   padding: '15px',
+                  flexDirection: 'column',
                 }}
               >
-                <Title onClick={() => router.push('/contents')}>
-                  {t('Related Content')}
-                </Title>
-                <AtreeCard
+                <ContentSection
                   contents={
-                    contentData.length > 4
-                      ? contentData.slice(4, 10)
-                      : contentData
+                    contentData.length >= 4 ? contentData.slice(4, 10) : []
                   }
+                  title={t('Related Content')}
                   handleCardClick={handleCardClick}
-                  _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-                  _card={{ image: atreeLogo.src }}
+                  onTitleClick={() => {
+                    localStorage.removeItem('subcategory');
+                    router.push('/contents');
+                  }}
                 />
               </Box>
             </>
@@ -417,13 +522,42 @@ export default function Index() {
             onClick={handleCloseMessage}
             sx={{ borderRadius: '50px', height: '40px', width: '100%' }}
           >
-            {t('Close')}
+            {t('Proceed')}
           </Button>
         </DialogActions>
       </Dialog>
     </Layout>
   );
 }
+
+const ContentSection = ({ title, contents, onTitleClick, handleCardClick }) => (
+  <Box
+    sx={{
+      width: '100%',
+      gap: '16px',
+      display: 'flex',
+      flexDirection: 'column',
+      padding: '15px',
+    }}
+  >
+    <Title onClick={onTitleClick}>{title}</Title>
+    <AtreeCard
+      contents={contents}
+      handleCardClick={handleCardClick}
+      _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
+      _card={{ image: atreeLogo.src }}
+    />
+  </Box>
+);
+
+const FilterSection = ({ frameworkFilter, framework, setFramework }) => (
+  <FrameworkFilter
+    frameworkFilter={frameworkFilter || []}
+    framework={framework}
+    setFramework={setFramework}
+    fromSubcategory={false}
+  />
+);
 
 const FrameworkFilter = React.memo<{
   frameworkFilter: Array<{ identifier: string; name: string }>;

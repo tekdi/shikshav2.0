@@ -7,7 +7,6 @@ import { ImageBanner } from '../component/layout/ImageBanner';
 export default function Aboutus() {
   return (
     <Layout
-      isFooter={true}
       footerComponent={
         <Grid sx={{ px: 4, py: 1, backgroundColor: 'secondary.main' }}>
           <Typography align="center" gutterBottom sx={{ fontSize: '10px' }}>

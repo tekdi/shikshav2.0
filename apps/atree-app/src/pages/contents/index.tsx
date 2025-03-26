@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { ContentSearchResponse } from '@shared-lib';
 import Layout from '../../component/layout/layout';
 import { Box } from '@mui/material';
-import atreeLogo from '../../../assets/images/atreeLogo.png';
+import atreeLogo from '../../../assets/images/placeholder.jpg';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 

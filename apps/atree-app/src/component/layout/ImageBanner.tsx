@@ -54,7 +54,7 @@ export const ImageBanner = ({
             gap: 1,
             padding: 5,
             background:
-              'linear-gradient(to top, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0))',
+              'linear-gradient(180deg, rgba(102, 102, 102, 0) 0%, #000000 100%)',
             ..._text,
             ..._textPosition,
           }}
@@ -64,9 +64,9 @@ export const ImageBanner = ({
               sx={{
                 bgcolor: '#CEE5FF',
                 color: '#000',
-                width: 40,
-                height: 40,
-                fontSize: '18px',
+                width: { xs: 40, md: 85 },
+                height: { xs: 40, md: 85 },
+                fontSize: { xs: '18px', md: '45px' },
                 fontWeight: 500,
               }}
             >
@@ -77,7 +77,7 @@ export const ImageBanner = ({
             sx={{
               color: 'white',
               fontWeight: 700,
-              width: isMobile ? 'auto' : '70%',
+              // width: isMobile ? 'auto' : '70%',
               fontSize: { xs: '18px', md: '48px' },
             }}
           >

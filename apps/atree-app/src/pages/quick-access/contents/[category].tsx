@@ -208,6 +208,21 @@ const MyComponent: React.FC = () => {
           <Typography sx={{ fontSize: '22px', lineHeight: '28px' }}>
             {category}
           </Typography>
+        </Box>
+      }
+      showBack
+      backIconClick={() => router.back()}
+    >
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <Box
+          display="flex"
+          flexDirection="column"
+          gap="1rem"
+          py="1rem"
+          px="8px"
+        >
           {isMobile && (
             <Box
               display="flex"
@@ -216,6 +231,14 @@ const MyComponent: React.FC = () => {
               // sx={{ justifyContent: 'flex-end' }}
             >
               <FilterChip />
+              <FilterDialog
+                open={filterShow}
+                onClose={() => setFilterShow(false)}
+                frameworkFilter={frameworkFilter}
+                filterValues={filters}
+                onApply={handleApplyFilters}
+                isMobile={isMobile}
+              />
               <Box display="flex" alignItems="center" gap={1} marginLeft="auto">
                 <Typography
                   sx={{
@@ -289,21 +312,6 @@ const MyComponent: React.FC = () => {
               </Box>
             </Box>
           )}
-        </Box>
-      }
-      showBack
-      backIconClick={() => router.back()}
-    >
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <Box
-          display="flex"
-          flexDirection="column"
-          gap="3rem"
-          py="1rem"
-          px="8px"
-        >
           <Grid container spacing={1}>
             <Grid size={{ xs: 3, md: 3 }}>
               <FilterDialog
@@ -326,7 +334,7 @@ const MyComponent: React.FC = () => {
                     onClick={handleClick}
                     _title={{ fontWeight: 700, fontSize: '14px' }}
                     _item={{
-                      width: '450px',
+                      width: { xs: '335px', md: '445px' },
                       border: 0,
                       justifyContent: 'space-between',
                       py: 2,
