@@ -7,7 +7,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid2';
 // import { SelectChangeEvent } from '@mui/material/Select';
 import { CommonTextField, Layout } from '@shared-lib';
-import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { login } from '../../services/LoginService';
@@ -118,9 +117,7 @@ export default function Login() {
         localStorage.setItem('framework', framework);
         localStorage.setItem('tenant-code', channel);
         localStorage.setItem('tenantId', authUser?.tenantData?.[0]?.tenantId);
-        const decoded = jwtDecode(response?.access_token);
-        const subId = decoded?.sub?.split(':')[2];
-        document.cookie = `subid=${subId}; path=/;`;
+        document.cookie = `subid=${authUser?.userId}; path=/;`;
         const redirectUrl = process.env.NEXT_PUBLIC_CONTENT;
         if (redirectUrl) {
           router.push(redirectUrl);
@@ -162,7 +159,7 @@ export default function Login() {
           borderRadius: 1,
           bgcolor: '#FFFFFF',
           justifyContent: 'center',
-
+          height: '100vh',
           padding: 2,
           mx: 'auto',
         }}

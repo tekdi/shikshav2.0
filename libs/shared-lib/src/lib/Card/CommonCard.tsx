@@ -22,6 +22,7 @@ interface ContentItem {
   mimeType: string;
   description: string;
   posterImage: string;
+  leafNodes?: [{}];
   children: [{}];
 }
 interface CommonCardProps {
@@ -36,12 +37,28 @@ interface CommonCardProps {
   children?: React.ReactNode;
   orientation?: 'vertical' | 'horizontal';
   minheight?: string;
-
-  TrackData?: never[];
-  item: ContentItem[];
+  TrackData?: any[];
+  item: ContentItem;
   type: string;
   onClick?: () => void;
 }
+export const getLeafNodes = (node: any) => {
+  const result = [];
+
+  // If the node has leafNodes, add them to the result array
+  if (node.leafNodes) {
+    result.push(...node.leafNodes);
+  }
+
+  // If the node has children, iterate through them and recursively collect leaf nodes
+  if (node.children) {
+    node.children.forEach((child: any) => {
+      result.push(...getLeafNodes(child));
+    });
+  }
+
+  return result;
+};
 
 export const CommonCard: React.FC<CommonCardProps> = ({
   avatarLetter,
@@ -55,96 +72,38 @@ export const CommonCard: React.FC<CommonCardProps> = ({
   children,
   orientation,
   minheight,
-
   TrackData,
   item,
   type,
   onClick,
 }) => {
   const [trackCompleted, setTrackCompleted] = React.useState(0);
-  const [trackProgress, setTrackProgress] = React.useState(0);
+  const [trackProgress, setTrackProgress] = React.useState(100);
 
   React.useEffect(() => {
-    fetchDataTrack();
-  }, []);
-  const getLeafNodes = (node: any) => {
-    let result = [];
-
-    // If the node has leafNodes, add them to the result array
-    if (node.leafNodes) {
-      result.push(...node.leafNodes);
-    }
-
-    // If the node has children, iterate through them and recursively collect leaf nodes
-    if (node.children) {
-      node.children.forEach((child: any) => {
-        result.push(...getLeafNodes(child));
-      });
-    }
-
-    return result;
-  };
-  const fetchDataTrack = async () => {
-    try {
-      //@ts-ignore
-      if (TrackData && item?.children) {
-        for (let i = 0; i < TrackData.length; i++) {
-          //@ts-ignore
-          if (TrackData[i]?.courseId) {
-            //merge offlien and online
-            //@ts-ignore
-            const mergedArray = [...TrackData[i]?.completed_list];
-            const uniqueArray = [...new Set(mergedArray)];
-            let completed_list = uniqueArray;
-
-            //merge offlien and online
-            //@ts-ignore
-            const mergedArray_progress = [...TrackData[i]?.in_progress_list];
-            const uniqueArray_progress = [...new Set(mergedArray_progress)];
-            let in_progress_list = uniqueArray_progress;
-
-            //fetch all content in unit
-            let unit_content_list = getLeafNodes(item);
-            let unit_content_completed_list = [];
-            if (unit_content_list && completed_list) {
-              if (unit_content_list.length > 0 && completed_list.length > 0) {
-                for (let ii = 0; ii < unit_content_list.length; ii++) {
-                  let temp_item = unit_content_list[ii];
-                  if (completed_list.includes(temp_item)) {
-                    unit_content_completed_list.push(temp_item);
-                  }
-                }
-                let totalContent = unit_content_list.length;
-                let completed = unit_content_completed_list.length;
-                let percentageCompleted = (completed / totalContent) * 100;
-                percentageCompleted = Math.round(percentageCompleted);
-
-                setTrackCompleted(percentageCompleted);
-              }
-            }
-            let unit_content_in_progress_list = [];
-            if (unit_content_list && in_progress_list) {
-              if (unit_content_list.length > 0 && in_progress_list.length > 0) {
-                for (let ii = 0; ii < unit_content_list.length; ii++) {
-                  let temp_item = unit_content_list[ii];
-                  if (in_progress_list.includes(temp_item)) {
-                    unit_content_in_progress_list.push(temp_item);
-                  }
-                }
-                let totalContent = unit_content_list.length;
-                let in_progress = unit_content_in_progress_list.length;
-                let percentageInProgress = (in_progress / totalContent) * 100;
-                percentageInProgress = Math.round(percentageInProgress);
-                setTrackProgress(percentageInProgress);
-              }
-            }
+    const init = () => {
+      try {
+        //@ts-ignore
+        if (TrackData) {
+          const result = TrackData?.find((e) => e.courseId === item.identifier);
+          setTrackCompleted(result?.completed ? 100 : 0);
+          if (type === 'Course') {
+            const leafNodes = getLeafNodes(item?.leafNodes ?? []);
+            const completedCount = result?.completed_list?.length || 0;
+            const percentage =
+              leafNodes.length > 0
+                ? Math.round((completedCount / leafNodes.length) * 100)
+                : 0;
+            setTrackProgress(percentage);
           }
         }
+      } catch (e) {
+        console.log('error', e);
       }
-    } catch (e) {
-      console.log('error', e);
-    }
-  };
+    };
+    init();
+  }, [TrackData, item, type]);
+
   return (
     <Card
       sx={{
@@ -197,7 +156,7 @@ export const CommonCard: React.FC<CommonCardProps> = ({
               background: 'rgba(0, 0, 0, 0.5)',
             }}
           >
-            {type === 'course' ? (
+            {type === 'Course' ? (
               <>
                 <Progress
                   variant="determinate"
@@ -284,7 +243,6 @@ export const CommonCard: React.FC<CommonCardProps> = ({
                         left: '50px',
                       }}
                     >
-                      {' '}
                       Completed
                     </Typography>
                   </>
@@ -301,7 +259,6 @@ export const CommonCard: React.FC<CommonCardProps> = ({
                         left: '20px',
                       }}
                     >
-                      {' '}
                       In progress
                     </Typography>
                   </>

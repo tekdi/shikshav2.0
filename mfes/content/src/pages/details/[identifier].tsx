@@ -22,6 +22,7 @@ export default function Details({ details }: DetailsProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [trackData, setTrackData] = useState([]);
   const [selectedContent, setSelectedContent] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   const handleAccountClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -32,31 +33,6 @@ export default function Details({ details }: DetailsProps) {
 
   const handleMenuClick = () => {
     console.log('Menu icon clicked');
-  };
-
-  const fetchDataTrack = async (resultData: any) => {
-    if (!resultData.length) return; // Ensure contentData is available
-
-    try {
-      const courseList = resultData.map((item: any) => item.identifier); // Extract all identifiers
-      const userId = localStorage.getItem('subId');
-      const userIdArray = userId?.split(',');
-      if (!userId || !courseList.length) return; // Ensure required values exist
-      //@ts-ignore
-
-      const course_track_data = await trackingData(userIdArray, courseList);
-
-      if (course_track_data?.data) {
-        //@ts-ignore
-
-        const userTrackData =
-          course_track_data.data.find((course: any) => course.userId === userId)
-            ?.course || [];
-        setTrackData(userTrackData);
-      }
-    } catch (error) {
-      console.error('Error fetching track data:', error);
-    }
   };
 
   const handleLogout = () => {
@@ -72,20 +48,33 @@ export default function Details({ details }: DetailsProps) {
       try {
         const result = await hierarchyAPI(identifier);
         //@ts-ignore
-        // const trackable = result?.trackable;
         setSelectedContent(result);
-        fetchDataTrack(result);
-        // if (trackable?.autoBatch?.toString().toLowerCase() === 'no') {
-        //   router.push(`/content-details/${identifier}`);
-        // } else {
-        // router.push(`/details/${identifier}`);
-        // }
+        setLoading(false);
+        try {
+          const courseList = result?.childNodes; // Extract all identifiers
+          const userId = localStorage.getItem('subId');
+          const userIdArray = userId?.split(',');
+          if (!userId || !courseList.length) return; // Ensure required values exist
+          //@ts-ignore
+          const course_track_data = await trackingData(userIdArray, courseList);
+          if (course_track_data?.data) {
+            //@ts-ignore
+            const userTrackData =
+              course_track_data.data.find(
+                (course: any) => course.userId === userId
+              )?.course || [];
+            setTrackData(userTrackData);
+          }
+        } catch (error) {
+          console.error('Error fetching track data:', error);
+        }
       } catch (error) {
         console.error('Failed to fetch content:', error);
       }
     };
     if (identifier) getDetails(identifier as string);
   }, [identifier]);
+
   const renderNestedChildren = (children: any) => {
     if (!Array.isArray(children)) {
       return null;
@@ -96,9 +85,7 @@ export default function Details({ details }: DetailsProps) {
         identifier={item.identifier as string}
         title={item.name}
         data={item?.children}
-        defaultExpanded={false}
         TrackData={trackData}
-        item={[item]}
       />
     ));
   };
@@ -107,6 +94,7 @@ export default function Details({ details }: DetailsProps) {
   };
   return (
     <Layout
+      isLoadingChildren={loading}
       showTopAppBar={{
         title: 'Shiksha',
         menuIconClick: handleMenuClick,
@@ -155,20 +143,21 @@ export default function Details({ details }: DetailsProps) {
       backIconClick={onBackClick}
       sx={{ height: '0vh' }}
     >
-      <Box sx={{ width: '100%', marginTop: '70px' }}>
+      <Box sx={{ p: '8px' }}>
         <Grid container spacing={2}>
-          <Grid fontSize={{ xs: 12 }}>
+          <Grid size={{ xs: 12 }}>
             <Typography
               variant="h6"
               sx={{ marginTop: '60px', fontWeight: 'bold' }}
             >
-              {/* {selectedContent?.name} */}
+              {selectedContent?.name}
             </Typography>
           </Grid>
+          <Grid size={{ xs: 12 }}>
+            {selectedContent?.children?.length > 0 &&
+              renderNestedChildren(selectedContent.children)}
+          </Grid>
         </Grid>
-
-        {selectedContent?.children?.length > 0 &&
-          renderNestedChildren(selectedContent.children)}
       </Box>
     </Layout>
   );

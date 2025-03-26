@@ -124,7 +124,7 @@ const ContentDetails = () => {
       showLogo={true}
       sx={{ height: '0vh' }}
     >
-      <Grid container spacing={2} sx={{ marginTop: '120px' }}>
+      <Grid container spacing={2}>
         <Grid size={{ xs: 12 }} sx={{ textAlign: 'center' }}>
           <Typography fontSize={'22px'} fontWeight={400}>
             {contentDetails?.name}
