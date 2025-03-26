@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
+import Image from 'next/image';
 import loaderGif from '../../../assets/images/snail-yellow.gif';
-
 const Loader: React.FC = () => {
   return (
     <Box
@@ -12,7 +12,7 @@ const Loader: React.FC = () => {
       position="relative"
     >
       {/* Loader GIF */}
-      <img src={loaderGif.src} alt="Loading..." />
+      <Image src={loaderGif} alt="Loading..." />
 
       {/* Loading Text */}
       <Typography

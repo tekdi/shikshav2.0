@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box';
 import React, { memo } from 'react';
 import { ReactNode } from 'react';
+import Image from 'next/image';
 import loaderGif from '../../assets/images/snail-yellow.gif';
 interface LoaderProps {
   isLoading: boolean;
@@ -25,7 +26,7 @@ export const Loader: React.FC<LoaderProps> = memo(
               backgroundColor: 'white',
             }}
           >
-            <img src={loaderGif} alt="Loading..." />
+            <Image src={loaderGif} alt="Loading..." />
           </Box>
         )}
         <Box

@@ -35,7 +35,7 @@ export const AtreeCard: React.FC<{
           >
             <CardMedia
               component="img"
-              image={content?.appIcon || _card?.image}
+              image={content?.posterImage || _card?.image}
               alt={content.name}
               sx={{
                 objectFit: 'contain',
