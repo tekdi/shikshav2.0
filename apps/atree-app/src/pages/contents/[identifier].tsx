@@ -27,7 +27,7 @@ import landingBanner from '../../../assets/images/landingBanner.png';
 import Grid from '@mui/material/Grid2';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
-import atreeLogo from '../../../assets/images/atreeLogo.png';
+import atreeLogo from '../../../assets/images/placeholder.jpg';
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Loader from '../../component/layout/LoaderComponent';

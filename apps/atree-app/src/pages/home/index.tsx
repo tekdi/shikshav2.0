@@ -38,6 +38,11 @@ const buttonColors = {
   general: '#FFBD0D',
 };
 
+interface ContentSectionProps {
+  contentData: ContentType[];
+  handleCardClick: (content: ContentType) => void;
+}
+
 export default function Index() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -349,23 +354,19 @@ export default function Index() {
                       Only Full Access
                     </Typography>
                   </Box>
-                  <Title
-                    onClick={() => {
-                      localStorage.removeItem('subcategory'),
-                        router.push('/contents');
-                    }}
-                  >
-                    {t('Read, Watch, Listen')}
-                  </Title>
-                  <AtreeCard
+
+                  <ContentSection
+                    title={t('Read, Watch, Listen')}
+                    handleCardClick={handleCardClick}
                     contents={
                       contentData.length > 4
                         ? contentData.slice(0, 4)
                         : contentData
                     }
-                    handleCardClick={handleCardClick}
-                    _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-                    _card={{ image: atreeLogo.src }}
+                    onTitleClick={() => {
+                      localStorage.removeItem('subcategory'),
+                        router.push('/contents');
+                    }}
                   />
                 </Box>
                 <Box
@@ -395,21 +396,16 @@ export default function Index() {
                     padding: '15px',
                   }}
                 >
-                  <Title
-                    onClick={() => {
-                      localStorage.removeItem('subcategory'),
-                        router.push('/contents');
-                    }}
-                  >
-                    {t('Related Content')}
-                  </Title>
-                  <AtreeCard
+                  <ContentSection
+                    title={t('Related Content')}
                     contents={
                       contentData.length >= 4 ? contentData.slice(4, 10) : []
                     }
                     handleCardClick={handleCardClick}
-                    _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-                    _card={{ image: atreeLogo.src }}
+                    onTitleClick={() => {
+                      localStorage.removeItem('subcategory'),
+                        router.push('/contents');
+                    }}
                   />
                 </Box>
               </Grid>
@@ -431,23 +427,18 @@ export default function Index() {
                   padding: '15px',
                 }}
               >
-                <Title
-                  onClick={() => {
-                    localStorage.removeItem('subcategory'),
-                      router.push('/contents');
-                  }}
-                >
-                  {t('Read, Watch, Listen')}
-                </Title>
-                <AtreeCard
+                <ContentSection
+                  title={t('Read, Watch, Listen')}
+                  handleCardClick={handleCardClick}
                   contents={
                     contentData.length > 4
                       ? contentData.slice(0, 4)
                       : contentData
                   }
-                  handleCardClick={handleCardClick}
-                  _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-                  _card={{ image: atreeLogo.src }}
+                  onTitleClick={() => {
+                    localStorage.removeItem('subcategory'),
+                      router.push('/contents');
+                  }}
                 />
               </Box>
               <Box
@@ -477,23 +468,16 @@ export default function Index() {
                   padding: '15px',
                 }}
               >
-                <Title
-                  onClick={() => {
+                <ContentSection
+                  title={t('Related Content')}
+                  contents={
+                    contentData.length >= 4 ? contentData.slice(4, 10) : []
+                  }
+                  handleCardClick={handleCardClick}
+                  onTitleClick={() => {
                     localStorage.removeItem('subcategory'),
                       router.push('/contents');
                   }}
-                >
-                  {t('Related Content')}
-                </Title>
-                <AtreeCard
-                  contents={
-                    contentData.length > 4
-                      ? contentData.slice(4, 10)
-                      : contentData
-                  }
-                  handleCardClick={handleCardClick}
-                  _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-                  _card={{ image: atreeLogo.src }}
                 />
               </Box>
             </>
@@ -534,6 +518,35 @@ export default function Index() {
     </Layout>
   );
 }
+
+const ContentSection = ({ title, contents, onTitleClick, handleCardClick }) => (
+  <Box
+    sx={{
+      width: '100%',
+      gap: '16px',
+      display: 'flex',
+      flexDirection: 'column',
+      padding: '15px',
+    }}
+  >
+    <Title onClick={onTitleClick}>{title}</Title>
+    <AtreeCard
+      contents={contents}
+      handleCardClick={handleCardClick}
+      _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
+      _card={{ image: atreeLogo.src }}
+    />
+  </Box>
+);
+
+const FilterSection = ({ frameworkFilter, framework, setFramework }) => (
+  <FrameworkFilter
+    frameworkFilter={frameworkFilter || []}
+    framework={framework}
+    setFramework={setFramework}
+    fromSubcategory={false}
+  />
+);
 
 const FrameworkFilter = React.memo<{
   frameworkFilter: Array<{ identifier: string; name: string }>;
