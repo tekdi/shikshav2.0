@@ -51,7 +51,7 @@ export default function Details({ details }: DetailsProps) {
         setSelectedContent(result);
         setLoading(false);
         try {
-          const courseList = result?.childNodes; // Extract all identifiers
+          const courseList = result?.childNodes ?? []; // Extract all identifiers
           const userId = localStorage.getItem('subId');
           const userIdArray = userId?.split(',');
           if (!userId || !courseList.length) return; // Ensure required values exist

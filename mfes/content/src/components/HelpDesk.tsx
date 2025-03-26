@@ -56,8 +56,14 @@ const HelpDesk = () => {
     };
 
   const handleOtpSubmit = async () => {
-    const queryString = new URLSearchParams(issueData).toString();
-    const frappeDeskUrl = `http://localhost:8000/helpdesk/tickets/new?${queryString}`;
+    const { subject, description, status, priority } = issueData;
+    const queryString = new URLSearchParams({
+      subject,
+      description,
+      status,
+      priority,
+    }).toString();
+    const frappeDeskUrl = `${process.env.NEXT_PUBLIC_MIDDLEWARE_URL}/helpdesk/tickets/new?${queryString}`;
     router.push(frappeDeskUrl);
   };
 

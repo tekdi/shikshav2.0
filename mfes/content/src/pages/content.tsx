@@ -110,6 +110,7 @@ export default function Content(props: Readonly<ContentProps>) {
       setLocalFilters((prevFilters: any) => ({
         ...prevFilters,
         type: tabs?.[tabValue]?.type,
+        offset: 0,
       }));
     }
   }, [tabValue, tabs]);
@@ -241,7 +242,9 @@ export default function Content(props: Readonly<ContentProps>) {
               ...prevState,
               ...(result?.content || []),
             ]);
-            setTrackData((e) => ({ ...e, userTrackData }));
+            setTrackData(
+              (prevState: []) => [...prevState, ...(userTrackData || [])] as []
+            );
           }
           setHasMoreData(
             result?.count > localFilters.offset + result?.content?.length
@@ -413,6 +416,7 @@ export default function Content(props: Readonly<ContentProps>) {
           hasMoreData={hasMoreData}
           handleLoadMore={handleLoadMore}
           isLoadingMoreData={isLoading}
+          isPageLoading={isLoading && localFilters?.offset === 0}
           tabs={tabs}
         />
         {propData?.showHelpDesk && <HelpDesk />}
