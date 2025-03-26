@@ -364,8 +364,8 @@ export default function Index() {
                         : contentData
                     }
                     onTitleClick={() => {
-                      localStorage.removeItem('subcategory'),
-                        router.push('/contents');
+                      localStorage.removeItem('subcategory');
+                      router.push('/contents');
                     }}
                   />
                 </Box>
@@ -403,8 +403,8 @@ export default function Index() {
                     }
                     handleCardClick={handleCardClick}
                     onTitleClick={() => {
-                      localStorage.removeItem('subcategory'),
-                        router.push('/contents');
+                      localStorage.removeItem('subcategory');
+                      router.push('/contents');
                     }}
                   />
                 </Box>
@@ -436,8 +436,8 @@ export default function Index() {
                       : contentData
                   }
                   onTitleClick={() => {
-                    localStorage.removeItem('subcategory'),
-                      router.push('/contents');
+                    localStorage.removeItem('subcategory');
+                    router.push('/contents');
                   }}
                 />
               </Box>
@@ -475,8 +475,8 @@ export default function Index() {
                   }
                   handleCardClick={handleCardClick}
                   onTitleClick={() => {
-                    localStorage.removeItem('subcategory'),
-                      router.push('/contents');
+                    localStorage.removeItem('subcategory');
+                    router.push('/contents');
                   }}
                 />
               </Box>
