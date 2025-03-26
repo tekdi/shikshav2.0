@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import {
   Box,
   Typography,
@@ -382,13 +382,12 @@ export const RowContent = ({
       alignItems={'center'}
     >
       <Stack direction="row" spacing={1} alignItems={'center'}>
-        {showStatus ? (
-          data?.length === 0 && getIconByMimeType(mimeType)
-        ) : expandedItems.has(data?.[0]?.identifier) ? (
-          <LensIcon sx={{ fontSize: '1.5rem' }} />
-        ) : (
-          <LensOutlinedIcon sx={{ fontSize: '1.5rem' }} />
-        )}
+        <StatusIcon
+          showStatus={showStatus}
+          data={data}
+          mimeType={mimeType}
+          expandedItems={expandedItems}
+        />
         <Typography variant="body2" fontWeight={500}>
           {title}
         </Typography>
@@ -429,3 +428,26 @@ export const RowContent = ({
     </Stack>
   );
 };
+
+const StatusIcon = React.memo(
+  ({
+    showStatus,
+    data,
+    mimeType,
+    expandedItems,
+  }: {
+    showStatus: boolean;
+    data: any[];
+    mimeType?: string;
+    expandedItems: Set<string>;
+  }) => {
+    return showStatus ? (
+      data?.length === 0 && getIconByMimeType(mimeType)
+    ) : expandedItems.has(data?.[0]?.identifier) ? (
+      <LensIcon sx={{ fontSize: '1.5rem' }} />
+    ) : (
+      <LensOutlinedIcon sx={{ fontSize: '1.5rem' }} />
+    );
+  }
+);
+StatusIcon.displayName = 'StatusIcon';

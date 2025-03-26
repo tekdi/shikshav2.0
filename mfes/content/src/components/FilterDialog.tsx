@@ -258,84 +258,96 @@ const FilterDialog = ({
 
 export default React.memo(FilterDialog);
 
+const RenderCategories = React.memo(
+  ({ categories, selectedValues, handleChange }: any) => {
+    const componentKey = `multi-checkbox-label_${categories?.identifier}`;
+    const options = categories?.terms.map((term: any) => ({
+      label: term.name,
+      value: term.code,
+    }));
+
+    const currentSelectedValues =
+      selectedValues[`se_${categories?.code}s`] || [];
+
+    return (
+      <FormControl
+        fullWidth
+        key={componentKey}
+        sx={{
+          '&.Mui-focused': {
+            color: '#1D1B20',
+          },
+          '& .MuiInputLabel-root.Mui-focused': {
+            color: '#1D1B20',
+          },
+          '& .MuiInputLabel-root': { color: '#1D1B20' },
+          '& .MuiOutlinedInput-root': {
+            color: '#1D1B20',
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#1D1B20',
+            },
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#1D1B20',
+            },
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#1D1B20',
+            },
+          },
+        }}
+      >
+        <InputLabel id={componentKey}>{categories?.name}</InputLabel>
+        <Select
+          labelId={componentKey}
+          input={<OutlinedInput label={categories?.name} />}
+          multiple
+          value={currentSelectedValues}
+          onChange={(event) => handleChange(event, `se_${categories?.code}s`)}
+          renderValue={(selected) =>
+            (selected as string[])
+              .map((selectedValue: any) => {
+                const selectedOption = options.find(
+                  (option: any) => option.value === selectedValue
+                );
+                return selectedOption ? selectedOption.label : '';
+              })
+              .join(', ')
+          }
+        >
+          {options.map((option: any) => (
+            <MenuItem key={option.value} value={option.value}>
+              <Checkbox
+                sx={{
+                  color: '#6750A4',
+                  '&.Mui-checked': {
+                    color: '#6750A4',
+                  },
+                }}
+                checked={currentSelectedValues.includes(option.value)}
+              />
+              <ListItemText primary={option.label} />
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    );
+  }
+);
+
+RenderCategories.displayName = 'RenderCategories';
+
 const FrameworkFilterComponent = ({
   frameworkFilter,
   selectedValues,
   handleChange,
 }: any) => {
-  return (
-    <>
-      {frameworkFilter?.categories?.map((categories: any) => {
-        const filterCode = `se_${categories?.code}s`;
-        const componentKey = `multi-checkbox-label_${categories?.identifier}`;
-        const options = categories?.terms.map((term: any) => ({
-          label: term.name,
-          value: term.code,
-        }));
-        const currentSelectedValues = selectedValues[filterCode] || [];
-
-        return (
-          <FormControl
-            fullWidth
-            key={filterCode}
-            sx={{
-              '&.Mui-focused': {
-                color: '#1D1B20',
-              },
-              '& .MuiInputLabel-root.Mui-focused': {
-                color: '#1D1B20',
-              },
-              '& .MuiInputLabel-root': { color: '#1D1B20' },
-              '& .MuiOutlinedInput-root': {
-                color: '#1D1B20',
-                '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: '#1D1B20',
-                },
-                '&:hover .MuiOutlinedInput-notchedOutline': {
-                  borderColor: '#1D1B20',
-                },
-                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                  borderColor: '#1D1B20',
-                },
-              },
-            }}
-          >
-            <InputLabel id={componentKey}>{categories?.name}</InputLabel>
-            <Select
-              labelId={componentKey}
-              input={<OutlinedInput label={categories?.name} />}
-              multiple
-              value={currentSelectedValues}
-              onChange={(event) => handleChange(event, filterCode)}
-              renderValue={(selected) =>
-                (selected as string[])
-                  .map((selectedValue: any) => {
-                    const selectedOption = options.find(
-                      (option: any) => option.value === selectedValue
-                    );
-                    return selectedOption ? selectedOption.label : '';
-                  })
-                  .join(', ')
-              }
-            >
-              {options.map((option: any) => (
-                <MenuItem key={option.value} value={option.value}>
-                  <Checkbox
-                    sx={{
-                      color: '#6750A4',
-                      '&.Mui-checked': {
-                        color: '#6750A4',
-                      },
-                    }}
-                    checked={currentSelectedValues.includes(option.value)}
-                  />
-                  <ListItemText primary={option.label} />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        );
-      })}
-    </>
-  );
+  return frameworkFilter?.categories?.map((categories: any) => {
+    return (
+      <RenderCategories
+        key={categories?.identifier}
+        categories={categories}
+        selectedValues={selectedValues}
+        handleChange={handleChange}
+      />
+    );
+  });
 };

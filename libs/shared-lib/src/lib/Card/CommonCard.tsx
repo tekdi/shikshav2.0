@@ -67,14 +67,8 @@ export const CommonCard: React.FC<CommonCardProps> = ({
       try {
         //@ts-ignore
         if (TrackData) {
-          if (type === 'course') {
-            // Course
-            const data = TrackData.find((e) => e.courseId === item.identifier);
-            setTrackCompleted(data?.completed ? 100 : 0);
-          } else {
-            const data = TrackData.find((e) => e.courseId === item.identifier);
-            setTrackCompleted(data?.completed ? 100 : 0);
-          }
+          const data = TrackData.find((e) => e.courseId === item.identifier);
+          setTrackCompleted(data?.completed ? 100 : 0);
         }
       } catch (e) {
         console.log('error', e);
