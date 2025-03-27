@@ -61,6 +61,52 @@ const MyComponent: React.FC = () => {
     color: fullAccess ? '#9E9E9E' : '#000000',
     fontWeight: fullAccess ? '400' : '600',
   };
+  const customSwitchStyle = {
+    width: 42,
+    height: 26,
+    padding: 0,
+    '& .MuiSwitch-switchBase': {
+      padding: 0,
+      transitionDuration: '300ms',
+      '&.Mui-checked': {
+        transform: 'translateX(16px)',
+        color: '#fff',
+        '& + .MuiSwitch-track': {
+          background:
+            'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+          opacity: 1,
+          border: 0,
+        },
+        '&.Mui-disabled + .MuiSwitch-track': {
+          opacity: 0.5,
+        },
+      },
+      '&.Mui-focusVisible .MuiSwitch-thumb': {
+        color: '#33cf4d',
+        border: '6px solid #fff',
+      },
+      '&.Mui-disabled .MuiSwitch-thumb': {
+        color: '#BDBDBD', // Grey thumb when disabled
+      },
+      '&.Mui-disabled + .MuiSwitch-track': {
+        opacity: 0.5,
+        background: '#BDBDBD', // Grey track when disabled
+      },
+    },
+    '& .MuiSwitch-thumb': {
+      boxSizing: 'border-box',
+      width: 25,
+      height: 25,
+    },
+    '& .MuiSwitch-track': {
+      opacity: 1,
+      borderRadius: 26 / 2,
+
+      background: fullAccess
+        ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
+        : '#BDBDBD', // Grey when unchecked
+    },
+  };
   /** Fetch Framework Data */
   const fetchFrameworkData = async () => {
     try {
@@ -269,64 +315,10 @@ const MyComponent: React.FC = () => {
                 <Switch
                   checked={fullAccess} // Controlled state for switch
                   onChange={handleToggleFullAccess}
-                  sx={{
-                    width: 42,
-                    height: 26,
-                    padding: 0,
-                    '& .MuiSwitch-switchBase': {
-                      padding: 0,
-                      transitionDuration: '300ms',
-                      '&.Mui-checked': {
-                        transform: 'translateX(16px)',
-                        color: '#fff',
-                        '& + .MuiSwitch-track': {
-                          background:
-                            'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
-                          opacity: 1,
-                          border: 0,
-                        },
-                        '&.Mui-disabled + .MuiSwitch-track': {
-                          opacity: 0.5,
-                        },
-                      },
-                      '&.Mui-focusVisible .MuiSwitch-thumb': {
-                        color: '#33cf4d',
-                        border: '6px solid #fff',
-                      },
-                      '&.Mui-disabled .MuiSwitch-thumb': {
-                        color: '#BDBDBD', // Grey thumb when disabled
-                      },
-                      '&.Mui-disabled + .MuiSwitch-track': {
-                        opacity: 0.5,
-                        background: '#BDBDBD', // Grey track when disabled
-                      },
-                    },
-                    '& .MuiSwitch-thumb': {
-                      boxSizing: 'border-box',
-                      width: 25,
-                      height: 25,
-                    },
-                    '& .MuiSwitch-track': {
-                      opacity: 1,
-                      borderRadius: 26 / 2,
-
-                      background: fullAccess
-                        ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
-                        : '#BDBDBD', // Grey when unchecked
-                    },
-                  }}
+                  sx={customSwitchStyle}
                 />
 
-                <Typography
-                  sx={{
-                    fontSize: '14px',
-
-                    color: fullAccess ? '#000000' : '#9E9E9E',
-                    fontWeight: fullAccess ? '600' : '400',
-                  }}
-                >
-                  Only Full Access
-                </Typography>
+                <Typography sx={customFontStyle}>Only Full Access</Typography>
               </Box>
             </Box>
           )}
@@ -376,62 +368,10 @@ const MyComponent: React.FC = () => {
                       <Switch
                         checked={fullAccess} // Controlled state for switch
                         onChange={handleToggleFullAccess}
-                        sx={{
-                          padding: 0,
-                          width: 42,
-                          height: 26,
-
-                          '& .MuiSwitch-switchBase': {
-                            padding: 0,
-                            transitionDuration: '300ms',
-                            '&.Mui-checked': {
-                              transform: 'translateX(16px)',
-                              color: '#fff',
-                              '& + .MuiSwitch-track': {
-                                border: 0,
-                                background:
-                                  'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
-                                opacity: 1,
-                              },
-                              '&.Mui-focusVisible .MuiSwitch-thumb': {
-                                color: '#33cf4d',
-                                border: '6px solid #fff',
-                              },
-                              '&.Mui-disabled + .MuiSwitch-track': {
-                                opacity: 0.5,
-                              },
-                            },
-
-                            '&.Mui-disabled .MuiSwitch-thumb': {
-                              color: '#BDBDBD', // Grey thumb when disabled
-                            },
-                            '&.Mui-disabled + .MuiSwitch-track': {
-                              background: '#BDBDBD', // Grey track when disabled
-                              opacity: 0.5,
-                            },
-                          },
-                          '& .MuiSwitch-thumb': {
-                            boxSizing: 'border-box',
-                            width: 25,
-                            height: 25,
-                          },
-                          '& .MuiSwitch-track': {
-                            borderRadius: 26 / 2,
-                            opacity: 1,
-                            background: fullAccess
-                              ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
-                              : '#BDBDBD', // Grey when unchecked
-                          },
-                        }}
+                        sx={customSwitchStyle}
                       />
 
-                      <Typography
-                        sx={{
-                          fontSize: '14px',
-                          fontWeight: fullAccess ? '600' : '400',
-                          color: fullAccess ? '#000000' : '#9E9E9E',
-                        }}
-                      >
+                      <Typography sx={customFontStyle}>
                         Only Full Access
                       </Typography>
                     </Box>
