@@ -7,10 +7,10 @@ export const URL_CONFIG = {
   },
   API: {
     CONTENT_READ: `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}${process.env.NEXT_PUBLIC_SSUNBIRD_READ_URL}`,
-    HIERARCHY_API: `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/action/questionset/v2/hierarchy/`,
-    QUESTIONSET_READ: `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/action/questionset/v2/read/`,
-    COMPOSITE_SEARCH: `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/interface/v1/action/composite/v3/search`,
-    CONTENT_HIERARCHY: `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/action/content/v3/hierarchy`,
+    HIERARCHY_API: `${process.env.NEXT_PUBLIC_MIDDLEWARE_URL}/action/questionset/v2/hierarchy/`,
+    QUESTIONSET_READ: `${process.env.NEXT_PUBLIC_MIDDLEWARE_URL}/action/questionset/v2/read/`,
+    COMPOSITE_SEARCH: `${process.env.NEXT_PUBLIC_MIDDLEWARE_URL}/action/composite/v3/search`,
+    CONTENT_HIERARCHY: `${process.env.NEXT_PUBLIC_MIDDLEWARE_URL}/action/content/v3/hierarchy`,
   },
 };
 

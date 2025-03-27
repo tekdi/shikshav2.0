@@ -145,6 +145,7 @@ export default function Content(props: Readonly<ContentProps>) {
     setLocalFilters((prevFilters: any) => ({
       ...prevFilters,
       query: searchValue.trim(),
+      offset: 0,
     }));
   };
 
@@ -233,21 +234,24 @@ export default function Content(props: Readonly<ContentProps>) {
           localFilters.offset !== undefined
         ) {
           const { result } = await fetchContent(localFilters);
-          const userTrackData = await fetchDataTrack(result?.content || []);
+          const newContentData = Object.values(result)
+            .filter((e): e is ContentSearchResponse[] => Array.isArray(e))
+            .flat();
+          const userTrackData = await fetchDataTrack(newContentData || []);
           if (localFilters.offset === 0) {
-            setContentData(result?.content || []);
+            setContentData((newContentData as ContentSearchResponse[]) || []);
             setTrackData(userTrackData);
           } else {
             setContentData((prevState: any) => [
               ...prevState,
-              ...(result?.content || []),
+              ...(newContentData || []),
             ]);
             setTrackData(
               (prevState: []) => [...prevState, ...(userTrackData || [])] as []
             );
           }
           setHasMoreData(
-            result?.count > localFilters.offset + result?.content?.length
+            result?.count > localFilters.offset + newContentData?.length
           );
         }
       } catch (error) {
@@ -264,12 +268,14 @@ export default function Content(props: Readonly<ContentProps>) {
       setLocalFilters((prevFilters: any) => ({
         ...prevFilters,
         filters: {},
+        offset: 0,
       }));
     } else {
       const { limit, offset, ...selectedValuesWithoutLimitOffset } =
         selectedValues;
       setLocalFilters((prevFilters: any) => ({
         ...prevFilters,
+        offset: 0,
         filters: {
           ...prevFilters.filters,
           ...selectedValuesWithoutLimitOffset,

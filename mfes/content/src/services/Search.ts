@@ -137,8 +137,12 @@ export const ContentSearch = async ({
           // identifier: 'do_1141652605790289921389',
           //need below after login user channel for dynamic load content
           // channel: '0135656861912678406',
-          primaryCategory: [type],
           ...filters,
+          status: ['live'],
+          primaryCategory:
+            type?.toLowerCase() === 'course'
+              ? ['Course']
+              : ['Learning Resource', 'Practice Question Set'],
           channel: localStorage.getItem('tenant-code'),
         },
         fields: [
