@@ -23,6 +23,7 @@ import {
 import { RESOURCE_TYPES, MIME_TYPES } from '../../../utils/constantData';
 import CustomSwitch from '../../../component/CustomSwitch';
 import LoginDialog from '../../../component/LoginDialog';
+import useHandleCardClick from '../../../utils/useHandleCardClick';
 const Content = dynamic(() => import('@Content'), { ssr: false });
 
 const MyComponent: React.FC = () => {
@@ -41,10 +42,11 @@ const MyComponent: React.FC = () => {
     { subTopic: string; length: number }[]
   >([]);
   const [fullAccess, setFullAccess] = useState(false);
-  const [openMessageDialog, setOpenMessageDialog] = useState(false);
+  // const [openMessageDialog, setOpenMessageDialog] = useState(false);
   //set
   const [consumedContent, setConsumedContent] = useState<string[]>([]);
-
+  const { handleCardClick, openMessageDialog, setOpenMessageDialog } =
+    useHandleCardClick();
   /** SubFramework Filter Options */
   const subFrameworkFilter = [
     { identifier: '', name: 'All' },
@@ -135,27 +137,6 @@ const MyComponent: React.FC = () => {
     }
   };
 
-  const handleCardClick = (content: any) => {
-    //check
-    if (consumedContent.length < 3) {
-      router.push(`/contents/${content?.identifier}`);
-
-      //set local
-      setConsumedContent((prev) => {
-        const updatedContent = [...prev, content?.identifier];
-        localStorage.setItem('consumedContent', JSON.stringify(updatedContent));
-        return updatedContent;
-      });
-      //else condition
-    } else if (!localStorage.getItem('token')) {
-      //open
-      setOpenMessageDialog(true);
-      localStorage.removeItem('consumedContent');
-      // router
-    } else {
-      router.push(`/contents/${content?.identifier}`);
-    }
-  };
   useEffect(() => {
     //create
     const storedContent = localStorage.getItem('consumedContent');
@@ -339,7 +320,11 @@ const MyComponent: React.FC = () => {
                     // _grid: { size: { xs: 6, sm: 6, md: 9, lg: 3 } },
                     contentTabs: ['content'],
                     handleCardClick: (content: ContentSearchResponse) => {
-                      handleCardClick(content);
+                      if (content.identifier) {
+                        handleCardClick({ identifier: content.identifier });
+                      } else {
+                        console.warn('Content identifier is missing:', content);
+                      }
                     },
                     filters: {
                       filters: {
