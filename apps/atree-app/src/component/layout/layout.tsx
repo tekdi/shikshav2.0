@@ -14,13 +14,12 @@ import TopAppBar from './TopToolBar';
 import Footer from './Footer';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlined';
-import FilterDramaOutlinedIcon from '@mui/icons-material/FilterDramaOutlined';
 import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
 import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import ParkOutlinedIcon from '@mui/icons-material/ParkOutlined';
 import { useRouter } from 'next/router';
-
-import SearchTypeModal from '../SearchTypeModal';
+import BookmarksOutlinedIcon from '@mui/icons-material/BookmarksOutlined';
 import TermsAndCondition from '../TermsAndCondition';
 interface LayoutProps {
   children?: React.ReactNode;
@@ -80,6 +79,7 @@ interface LayoutProps {
   backIconClick?: () => void;
   _backButton?: object;
   _footer?: object;
+  isDrawer?: boolean;
 }
 
 export default function Layout({
@@ -97,6 +97,7 @@ export default function Layout({
   sx = {},
   footerComponent,
   _footer,
+  isDrawer = true,
 }: LayoutProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Detect mobile screen
@@ -149,7 +150,7 @@ export default function Layout({
     },
     {
       text: 'About Us',
-      icon: <FilterDramaOutlinedIcon fontSize="small" />,
+      icon: <ParkOutlinedIcon fontSize="small" />,
       to: '/aboutus',
     },
     {
@@ -161,7 +162,7 @@ export default function Layout({
       ? [
           {
             text: 'Quick Access',
-            icon: <ContactSupportOutlinedIcon fontSize="small" />,
+            icon: <BookmarksOutlinedIcon fontSize="small" />,
             to: '/quick-access',
           },
         ]
@@ -238,6 +239,7 @@ export default function Layout({
                   color: 'text.secondary',
                   fontWeight: 400,
                 }}
+                _isDrawer={isDrawer}
                 // subTitle="In Classrooms"
                 _subTitle={{
                   fontSize: '14px',
@@ -281,17 +283,20 @@ export default function Layout({
           </Box>
         )}
       </Box>
-      <CommonDrawer
-        anchor="right"
-        open={isDrawerOpen}
-        onDrawerClose={() => setIsDrawerOpen(false)}
-        items={drawerItems}
-        categories={categorieItems}
-        onItemClick={(to) => {
-          handleItemClick?.(to || '');
-          setIsDrawerOpen(false);
-        }}
-      />
+      {isDrawer && (
+        <CommonDrawer
+          anchor="right"
+          open={isDrawerOpen}
+          onDrawerClose={() => setIsDrawerOpen(false)}
+          items={drawerItems}
+          categories={categorieItems}
+          onItemClick={(to) => {
+            handleItemClick?.(to || '');
+            setIsDrawerOpen(false);
+          }}
+        />
+      )}
+
       <Loader isLoading={isLoadingChildren} layoutHeight={layoutHeight}>
         {children}
       </Loader>

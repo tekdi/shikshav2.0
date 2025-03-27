@@ -113,7 +113,7 @@ const Login: React.FC<ListProps> = () => {
     }
   };
   return (
-    <Layout isFooter={false}>
+    <Layout isFooter={false} isDrawer={false}>
       {loading ? (
         <Loader />
       ) : (

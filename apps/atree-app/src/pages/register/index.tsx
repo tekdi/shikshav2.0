@@ -177,7 +177,7 @@ export default function Registration() {
     }
   }, [showAlertMsg]);
   return (
-    <Layout isFooter={false}>
+    <Layout isFooter={false} isDrawer={false}>
       <Grid
         container
         spacing={2}
