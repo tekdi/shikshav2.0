@@ -36,8 +36,6 @@ const MyComponent: React.FC = () => {
   const [filterShow, setFilterShow] = useState(false);
   const [frameworkFilter, setFrameworkFilter] = useState(false);
   const [filters, setFilters] = useState<any>({ limit: 5, offset: 0 });
-  const [categories, setCategories] = useState<Array<any>>([]);
-  const [framework, setFramework] = useState('');
 
   const [searchResults, setSearchResults] = useState<
     { subTopic: string; length: number }[]
@@ -60,8 +58,6 @@ const MyComponent: React.FC = () => {
       const frameworkData = await response.json();
       setFrameworkFilter(frameworkData?.result?.framework);
 
-      const frameworks = frameworkData?.result?.framework?.categories || [];
-
       const filteredFramework = frameworkData?.result?.framework
         ? {
             ...frameworkData.result.framework,
@@ -70,13 +66,6 @@ const MyComponent: React.FC = () => {
             ),
           }
         : { categories: [] }; // Provide a default structure if frameworkData is undefined
-
-      const fdata =
-        filteredFramework.categories.find((item: any) => item.code === 'topic')
-          ?.terms || [];
-
-      setCategories(fdata || []);
-      setFramework(fdata[0]?.identifier || '');
     } catch (error) {
       console.error('Error fetching framework data:', error);
     }
@@ -125,10 +114,18 @@ const MyComponent: React.FC = () => {
 
   /** Handle Filter Application */
   const handleApplyFilters = (selectedValues: any) => {
-    setFilters((prevFilters: any) => ({
-      ...prevFilters,
-      ...selectedValues,
-    }));
+    const isEmpty = Object.keys(selectedValues).length === 0;
+
+    if (selectedValues) {
+      setFilters((prevFilters: any) => ({
+        ...prevFilters,
+        ...selectedValues,
+        ...(isEmpty ? { subTopic: category } : {}),
+        ...(isEmpty ? { topic: undefined } : {}),
+        ...(isEmpty ? { resource: undefined } : {}),
+        ...(isEmpty ? { mimeType: undefined } : {}),
+      }));
+    }
   };
 
   const handleToggleFullAccess = (
@@ -142,7 +139,7 @@ const MyComponent: React.FC = () => {
         ...prevFilters.filters, // Preserve existing filters
         access: accessValue === 'all' ? undefined : accessValue, // Remove 'access' key if 'all'
       },
-      offset: 0, // Reset pagination on filter change
+      offset: 0,
     }));
   };
   /** Reusable Filter Button */
@@ -436,8 +433,23 @@ const MyComponent: React.FC = () => {
                     filters: {
                       filters: {
                         channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
-                        subTopic: `${category}`,
+                        ...(filters.topic?.length
+                          ? {}
+                          : { subTopic: category }),
+                        ...(fullAccess ? { access: 'Full Access' } : {}),
                         ...(subFramework && { mimeType: [subFramework] }),
+                        ...(filters.mimeType?.length
+                          ? { mimeType: filters.mimeType }
+                          : {}),
+                        ...(filters.resource?.length
+                          ? { resource: filters.resource }
+                          : {}),
+                        ...(filters.topic?.length
+                          ? { topic: filters.topic }
+                          : {}),
+                        ...(filters.subTopic?.length
+                          ? { subTopic: filters.subTopic }
+                          : {}),
                       },
                     },
                     _card: { cardName: 'AtreeCard', image: atreeLogo.src },
