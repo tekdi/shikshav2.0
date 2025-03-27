@@ -9,10 +9,6 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-  DialogActions,
-  Dialog,
-  DialogTitle,
-  DialogContent,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -123,6 +119,8 @@ const MyComponent: React.FC = () => {
     const isEmpty = Object.keys(selectedValues).length === 0;
     //set values
     if (selectedValues) {
+      //set values
+
       setFilters((prevFilters: any) => ({
         ...prevFilters,
         ...selectedValues,
@@ -135,25 +133,35 @@ const MyComponent: React.FC = () => {
   };
 
   const handleCardClick = (content: any) => {
+    //check
     if (consumedContent.length < 3) {
       router.push(`/contents/${content?.identifier}`);
+
+      //set local
       setConsumedContent((prev) => {
         const updatedContent = [...prev, content?.identifier];
         localStorage.setItem('consumedContent', JSON.stringify(updatedContent));
         return updatedContent;
       });
+      //else condition
     } else if (!localStorage.getItem('token')) {
+      //open
       setOpenMessageDialog(true);
       localStorage.removeItem('consumedContent');
+      // router
     } else {
       router.push(`/contents/${content?.identifier}`);
     }
   };
   useEffect(() => {
+    //create
     const storedContent = localStorage.getItem('consumedContent');
+    //set
     if (storedContent) {
       setConsumedContent(JSON.parse(storedContent));
     }
+
+    //not
   }, []);
 
   const handleToggleFullAccess = (
