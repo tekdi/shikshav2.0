@@ -58,6 +58,8 @@ const ContentDetails = () => {
     };
     if (identifier) {
       fetchContentDetails();
+    } else {
+      setIsLoading(false);
     }
   }, [identifier]);
 
