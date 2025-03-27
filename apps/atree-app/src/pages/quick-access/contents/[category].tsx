@@ -10,6 +10,10 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -41,6 +45,8 @@ const MyComponent: React.FC = () => {
     { subTopic: string; length: number }[]
   >([]);
   const [fullAccess, setFullAccess] = useState(false);
+  const [consumedContent, setConsumedContent] = useState<string[]>([]);
+  const [openMessageDialog, setOpenMessageDialog] = useState(false);
 
   /** SubFramework Filter Options */
   const subFrameworkFilter = [
@@ -57,15 +63,6 @@ const MyComponent: React.FC = () => {
       const response = await fetch(url);
       const frameworkData = await response.json();
       setFrameworkFilter(frameworkData?.result?.framework);
-
-      const filteredFramework = frameworkData?.result?.framework
-        ? {
-            ...frameworkData.result.framework,
-            categories: frameworkData.result.framework.categories?.filter(
-              (category: any) => category.status === 'Live'
-            ),
-          }
-        : { categories: [] }; // Provide a default structure if frameworkData is undefined
     } catch (error) {
       console.error('Error fetching framework data:', error);
     }
@@ -115,7 +112,7 @@ const MyComponent: React.FC = () => {
   /** Handle Filter Application */
   const handleApplyFilters = (selectedValues: any) => {
     const isEmpty = Object.keys(selectedValues).length === 0;
-
+    //set values
     if (selectedValues) {
       setFilters((prevFilters: any) => ({
         ...prevFilters,
@@ -126,6 +123,32 @@ const MyComponent: React.FC = () => {
         ...(isEmpty ? { mimeType: undefined } : {}),
       }));
     }
+  };
+
+  const handleCardClick = (content: any) => {
+    if (consumedContent.length < 3) {
+      router.push(`/contents/${content?.identifier}`);
+      setConsumedContent((prev) => {
+        const updatedContent = [...prev, content?.identifier];
+        localStorage.setItem('consumedContent', JSON.stringify(updatedContent));
+        return updatedContent;
+      });
+    } else if (!localStorage.getItem('token')) {
+      setOpenMessageDialog(true);
+      localStorage.removeItem('consumedContent');
+    } else {
+      router.push(`/contents/${content?.identifier}`);
+    }
+  };
+  useEffect(() => {
+    const storedContent = localStorage.getItem('consumedContent');
+    if (storedContent) {
+      setConsumedContent(JSON.parse(storedContent));
+    }
+  }, []);
+  const handleCloseMessage = () => {
+    setOpenMessageDialog(false);
+    router.push('/signin');
   };
 
   const handleToggleFullAccess = (
@@ -216,9 +239,9 @@ const MyComponent: React.FC = () => {
         <Box
           display="flex"
           flexDirection="column"
-          gap="1rem"
           py="1rem"
           px="8px"
+          gap="1rem"
         >
           {isMobile && (
             <Box
@@ -240,8 +263,8 @@ const MyComponent: React.FC = () => {
                 <Typography
                   sx={{
                     fontSize: '14px',
-                    fontWeight: fullAccess ? '400' : '600',
                     color: fullAccess ? '#9E9E9E' : '#000000',
+                    fontWeight: fullAccess ? '400' : '600',
                   }}
                 >
                   All
@@ -288,11 +311,12 @@ const MyComponent: React.FC = () => {
                       height: 25,
                     },
                     '& .MuiSwitch-track': {
-                      borderRadius: 26 / 2,
+                      opacity: 1,
+
                       background: fullAccess
                         ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
                         : '#BDBDBD', // Grey when unchecked
-                      opacity: 1,
+                      borderRadius: 26 / 2,
                     },
                   }}
                 />
@@ -300,8 +324,9 @@ const MyComponent: React.FC = () => {
                 <Typography
                   sx={{
                     fontSize: '14px',
-                    fontWeight: fullAccess ? '600' : '400',
+
                     color: fullAccess ? '#000000' : '#9E9E9E',
+                    fontWeight: fullAccess ? '600' : '400',
                   }}
                 >
                   Only Full Access
@@ -352,9 +377,9 @@ const MyComponent: React.FC = () => {
                     >
                       <Typography
                         sx={{
-                          fontSize: '14px',
                           fontWeight: fullAccess ? '400' : '600',
                           color: fullAccess ? '#9E9E9E' : '#000000',
+                          fontSize: '14px',
                         }}
                       >
                         All
@@ -364,9 +389,10 @@ const MyComponent: React.FC = () => {
                         checked={fullAccess} // Controlled state for switch
                         onChange={handleToggleFullAccess}
                         sx={{
+                          padding: 0,
                           width: 42,
                           height: 26,
-                          padding: 0,
+
                           '& .MuiSwitch-switchBase': {
                             padding: 0,
                             transitionDuration: '300ms',
@@ -379,20 +405,21 @@ const MyComponent: React.FC = () => {
                                 opacity: 1,
                                 border: 0,
                               },
+                              '&.Mui-focusVisible .MuiSwitch-thumb': {
+                                color: '#33cf4d',
+                                border: '6px solid #fff',
+                              },
                               '&.Mui-disabled + .MuiSwitch-track': {
                                 opacity: 0.5,
                               },
                             },
-                            '&.Mui-focusVisible .MuiSwitch-thumb': {
-                              color: '#33cf4d',
-                              border: '6px solid #fff',
-                            },
+
                             '&.Mui-disabled .MuiSwitch-thumb': {
                               color: '#BDBDBD', // Grey thumb when disabled
                             },
                             '&.Mui-disabled + .MuiSwitch-track': {
-                              opacity: 0.5,
                               background: '#BDBDBD', // Grey track when disabled
+                              opacity: 0.5,
                             },
                           },
                           '& .MuiSwitch-thumb': {
@@ -428,7 +455,7 @@ const MyComponent: React.FC = () => {
                     // _grid: { size: { xs: 6, sm: 6, md: 9, lg: 3 } },
                     contentTabs: ['content'],
                     handleCardClick: (content: ContentSearchResponse) => {
-                      router.push(`/contents/${content?.identifier}`);
+                      handleCardClick(content);
                     },
                     filters: {
                       filters: {
@@ -465,6 +492,36 @@ const MyComponent: React.FC = () => {
           {/* </Box> */}
         </Box>
       )}
+      <Dialog
+        open={openMessageDialog}
+        onClose={(event, reason) => {
+          if (reason === 'backdropClick') return;
+          setOpenMessageDialog(false);
+        }}
+        disableEscapeKeyDown
+        PaperProps={{
+          style: {
+            maxWidth: '600px',
+            maxHeight: 'calc(100vh - 64px)',
+            overflow: 'auto',
+          },
+        }}
+      >
+        <DialogTitle>Message</DialogTitle>
+        <DialogContent>
+          <Typography>Please login to continue</Typography>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: 'center', py: 2, px: 3 }}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleCloseMessage}
+            sx={{ borderRadius: '50px', height: '40px', width: '100%' }}
+          >
+            Proceed
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Layout>
   );
 };
