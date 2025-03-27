@@ -52,10 +52,23 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
 
     if (query.trim()) {
       try {
-        const data = await ContentSearch({
+        const filters: {
+          type?: string;
+          channel: string;
+          query?: string;
+          filters?: object;
+          limit?: number;
+          offset?: number;
+        } = {
           channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
           query: query,
-        });
+        };
+
+        if (searchType) {
+          filters.filters = { [searchType]: query }; // Add searchType as a filter
+        }
+
+        const data = await ContentSearch(filters);
         setSearchResults(data?.result?.content || []); // Store search results
       } catch (error) {
         console.error('Error fetching search results:', error);
@@ -71,7 +84,6 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
   const filteredSearchTypes = searchTypes.filter((item) =>
     item.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
   // Handle Enter Key Press
   const navigateToSearchPage = () => {
     if (searchQuery.trim()) {

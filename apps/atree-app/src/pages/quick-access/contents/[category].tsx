@@ -142,14 +142,13 @@ const MyComponent: React.FC = () => {
     setFullAccess(event.target.checked);
     setFilters((prevFilters: any) => ({
       ...prevFilters,
-      filters: {
-        ...prevFilters.filters, // Preserve existing filters
-        access: accessValue === 'all' ? undefined : accessValue, // Remove 'access' key if 'all'
-      },
+      ...prevFilters.filters, // Preserve existing filters
+      access: accessValue === 'all' ? undefined : accessValue, // Remove 'access' key if 'all'
       offset: 0,
     }));
   };
   /** Reusable Filter Button */
+
   const FilterChip = () => (
     <Chip
       label={

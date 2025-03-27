@@ -3,7 +3,7 @@
 import { Box, Button, Grid, IconButton, Typography } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useState } from 'react';
-import atreeLogo from '../../assets/images/atreeLogo.png';
+import atreeLogo from '../../assets/images/placeholder.jpg';
 import Layout from '../component/layout/layout';
 import dynamic from 'next/dynamic';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -76,7 +76,7 @@ export default function Searchpage() {
                   }}
                   // onClick={() => handleFrameworkClick(frameworkItem)}
                 >
-                    {frameworkItem.charAt(0).toUpperCase() +
+                  {frameworkItem.charAt(0).toUpperCase() +
                     frameworkItem.slice(1)}
                 </Button>
               </Grid>
@@ -104,9 +104,9 @@ export default function Searchpage() {
               filters: {
                 filters: {
                   channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
-
-                  // query: selectedquery,
-                  query: `${selectedquery}`,
+                  ...(selectedType
+                    ? { [selectedType]: selectedquery }
+                    : { query: selectedquery }),
                 },
               },
               _card: {
