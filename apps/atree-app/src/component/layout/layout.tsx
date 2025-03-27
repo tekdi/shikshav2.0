@@ -98,7 +98,7 @@ export default function Layout({
   footerComponent,
   _footer,
   isDrawer = true,
-}: LayoutProps) {
+}: Readonly<LayoutProps>) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Detect mobile screen
 
