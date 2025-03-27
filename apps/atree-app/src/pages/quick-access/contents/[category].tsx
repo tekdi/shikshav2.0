@@ -42,7 +42,7 @@ const MyComponent: React.FC = () => {
   >([]);
   const [fullAccess, setFullAccess] = useState(false);
   const [openMessageDialog, setOpenMessageDialog] = useState(false);
-
+  //set
   const [consumedContent, setConsumedContent] = useState<string[]>([]);
 
   /** SubFramework Filter Options */
@@ -53,8 +53,9 @@ const MyComponent: React.FC = () => {
     { identifier: 'video/mp4', name: 'Audiobooks' },
   ];
   const customFontStyle = {
-    fontSize: '14px',
+    fontSize: '14px', //font
     color: fullAccess ? '#9E9E9E' : '#000000',
+    //color
     fontWeight: fullAccess ? '400' : '600',
   };
 
@@ -107,7 +108,9 @@ const MyComponent: React.FC = () => {
     })();
   }, []);
   const handleCloseMessage = () => {
+    //close
     setOpenMessageDialog(false);
+    //rout
     router.push('/signin');
   };
   /** Handle Category Click */
