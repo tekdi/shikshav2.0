@@ -42,9 +42,7 @@ const MyComponent: React.FC = () => {
     { subTopic: string; length: number }[]
   >([]);
   const [fullAccess, setFullAccess] = useState(false);
-  // const [openMessageDialog, setOpenMessageDialog] = useState(false);
-  //set
-  const [consumedContent, setConsumedContent] = useState<string[]>([]);
+
   const { handleCardClick, openMessageDialog, setOpenMessageDialog } =
     useHandleCardClick();
   /** SubFramework Filter Options */
@@ -136,17 +134,6 @@ const MyComponent: React.FC = () => {
       }));
     }
   };
-
-  useEffect(() => {
-    //create
-    const storedContent = localStorage.getItem('consumedContent');
-    //set
-    if (storedContent) {
-      setConsumedContent(JSON.parse(storedContent));
-    }
-
-    //not
-  }, []);
 
   const handleToggleFullAccess = (
     event: React.ChangeEvent<HTMLInputElement>
