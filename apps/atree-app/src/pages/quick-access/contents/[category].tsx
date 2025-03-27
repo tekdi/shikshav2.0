@@ -10,10 +10,10 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-  Dialog,
   DialogActions,
-  DialogContent,
+  Dialog,
   DialogTitle,
+  DialogContent,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -45,8 +45,9 @@ const MyComponent: React.FC = () => {
     { subTopic: string; length: number }[]
   >([]);
   const [fullAccess, setFullAccess] = useState(false);
-  const [consumedContent, setConsumedContent] = useState<string[]>([]);
   const [openMessageDialog, setOpenMessageDialog] = useState(false);
+
+  const [consumedContent, setConsumedContent] = useState<string[]>([]);
 
   /** SubFramework Filter Options */
   const subFrameworkFilter = [
@@ -55,7 +56,11 @@ const MyComponent: React.FC = () => {
     { identifier: 'application/pdf', name: 'PDFs' },
     { identifier: 'video/mp4', name: 'Audiobooks' },
   ];
-
+  const customFontStyle = {
+    fontSize: '14px',
+    color: fullAccess ? '#9E9E9E' : '#000000',
+    fontWeight: fullAccess ? '400' : '600',
+  };
   /** Fetch Framework Data */
   const fetchFrameworkData = async () => {
     try {
@@ -104,7 +109,10 @@ const MyComponent: React.FC = () => {
       setIsLoading(false);
     })();
   }, []);
-
+  const handleCloseMessage = () => {
+    setOpenMessageDialog(false);
+    router.push('/signin');
+  };
   /** Handle Category Click */
   const handleClick = (category: any) =>
     router.push(`/contents/${category.name}`);
@@ -146,10 +154,6 @@ const MyComponent: React.FC = () => {
       setConsumedContent(JSON.parse(storedContent));
     }
   }, []);
-  const handleCloseMessage = () => {
-    setOpenMessageDialog(false);
-    router.push('/signin');
-  };
 
   const handleToggleFullAccess = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -260,15 +264,7 @@ const MyComponent: React.FC = () => {
                 isMobile={isMobile}
               />
               <Box display="flex" alignItems="center" gap={1} marginLeft="auto">
-                <Typography
-                  sx={{
-                    fontSize: '14px',
-                    color: fullAccess ? '#9E9E9E' : '#000000',
-                    fontWeight: fullAccess ? '400' : '600',
-                  }}
-                >
-                  All
-                </Typography>
+                <Typography sx={customFontStyle}>All</Typography>
 
                 <Switch
                   checked={fullAccess} // Controlled state for switch
@@ -312,11 +308,11 @@ const MyComponent: React.FC = () => {
                     },
                     '& .MuiSwitch-track': {
                       opacity: 1,
+                      borderRadius: 26 / 2,
 
                       background: fullAccess
                         ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
                         : '#BDBDBD', // Grey when unchecked
-                      borderRadius: 26 / 2,
                     },
                   }}
                 />
@@ -375,15 +371,7 @@ const MyComponent: React.FC = () => {
                       gap={1}
                       sx={{ width: '100%', justifyContent: 'center' }}
                     >
-                      <Typography
-                        sx={{
-                          fontWeight: fullAccess ? '400' : '600',
-                          color: fullAccess ? '#9E9E9E' : '#000000',
-                          fontSize: '14px',
-                        }}
-                      >
-                        All
-                      </Typography>
+                      <Typography sx={customFontStyle}>All</Typography>
 
                       <Switch
                         checked={fullAccess} // Controlled state for switch
@@ -400,10 +388,10 @@ const MyComponent: React.FC = () => {
                               transform: 'translateX(16px)',
                               color: '#fff',
                               '& + .MuiSwitch-track': {
+                                border: 0,
                                 background:
                                   'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
                                 opacity: 1,
-                                border: 0,
                               },
                               '&.Mui-focusVisible .MuiSwitch-thumb': {
                                 color: '#33cf4d',
@@ -429,10 +417,10 @@ const MyComponent: React.FC = () => {
                           },
                           '& .MuiSwitch-track': {
                             borderRadius: 26 / 2,
+                            opacity: 1,
                             background: fullAccess
                               ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
                               : '#BDBDBD', // Grey when unchecked
-                            opacity: 1,
                           },
                         }}
                       />
