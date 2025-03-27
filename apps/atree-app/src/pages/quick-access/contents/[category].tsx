@@ -26,6 +26,7 @@ import {
 } from '@shared-lib';
 import { RESOURCE_TYPES, MIME_TYPES } from '../../../utils/constantData';
 import CustomSwitch from '../../../component/CustomSwitch';
+import LoginDialog from '../../../component/LoginDialog';
 const Content = dynamic(() => import('@Content'), { ssr: false });
 
 const MyComponent: React.FC = () => {
@@ -345,9 +346,7 @@ const MyComponent: React.FC = () => {
                         ...(filters.resource?.length
                           ? { resource: filters.resource }
                           : {}),
-                        ...(filters.topic?.length
-                          ? { topic: filters.topic }
-                          : {}),
+
                         ...(filters.subTopic?.length
                           ? { subTopic: filters.subTopic }
                           : {}),
@@ -366,36 +365,14 @@ const MyComponent: React.FC = () => {
           {/* </Box> */}
         </Box>
       )}
-      <Dialog
+      <LoginDialog
         open={openMessageDialog}
-        onClose={(event, reason) => {
-          if (reason === 'backdropClick') return;
-          setOpenMessageDialog(false);
-        }}
-        disableEscapeKeyDown
-        PaperProps={{
-          style: {
-            maxWidth: '600px',
-            maxHeight: 'calc(100vh - 64px)',
-            overflow: 'auto',
-          },
-        }}
-      >
-        <DialogTitle>Message</DialogTitle>
-        <DialogContent>
-          <Typography>Please login to continue</Typography>
-        </DialogContent>
-        <DialogActions sx={{ justifyContent: 'center', py: 2, px: 3 }}>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleCloseMessage}
-            sx={{ borderRadius: '50px', height: '40px', width: '100%' }}
-          >
-            Proceed
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onClose={handleCloseMessage}
+        title="Alert"
+        message="You need to log in to continue."
+        buttonText="Login"
+        onButtonClick={handleCloseMessage}
+      />
     </Layout>
   );
 };
