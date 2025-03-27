@@ -34,6 +34,7 @@ export const FrameworkFilter = ({
   useEffect(() => {
     // Get stored category from localStorage
     const storedCategory = localStorage.getItem('category');
+    localStorage.removeItem('selectedFilters');
     if (storedCategory) {
       setSelectedFramework(storedCategory);
     }
@@ -41,6 +42,7 @@ export const FrameworkFilter = ({
   const handleItemClick = (item: { identifier: string; name: string }) => {
     setFramework(item.identifier);
     setSelectedFramework(item.name);
+    localStorage.removeItem('selectedFilters');
     localStorage.setItem('category', item.name);
     if (fromSubcategory) {
       localStorage.setItem('subcategory', item.name);

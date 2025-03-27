@@ -6,7 +6,6 @@ import {
   Box,
   Button,
   Chip,
-  Switch,
   Typography,
   useMediaQuery,
   useTheme,
@@ -22,7 +21,9 @@ import {
   FilterDialog,
 } from '@shared-lib';
 import { RESOURCE_TYPES, MIME_TYPES } from '../../../utils/constantData';
-
+import CustomSwitch from '../../../component/CustomSwitch';
+import LoginDialog from '../../../component/LoginDialog';
+import useHandleCardClick from '../../../utils/useHandleCardClick';
 const Content = dynamic(() => import('@Content'), { ssr: false });
 
 const MyComponent: React.FC = () => {
@@ -36,14 +37,14 @@ const MyComponent: React.FC = () => {
   const [filterShow, setFilterShow] = useState(false);
   const [frameworkFilter, setFrameworkFilter] = useState(false);
   const [filters, setFilters] = useState<any>({ limit: 5, offset: 0 });
-  const [categories, setCategories] = useState<Array<any>>([]);
-  const [framework, setFramework] = useState('');
 
   const [searchResults, setSearchResults] = useState<
     { subTopic: string; length: number }[]
   >([]);
   const [fullAccess, setFullAccess] = useState(false);
 
+  const { handleCardClick, openMessageDialog, setOpenMessageDialog } =
+    useHandleCardClick();
   /** SubFramework Filter Options */
   const subFrameworkFilter = [
     { identifier: '', name: 'All' },
@@ -51,6 +52,12 @@ const MyComponent: React.FC = () => {
     { identifier: 'application/pdf', name: 'PDFs' },
     { identifier: 'video/mp4', name: 'Audiobooks' },
   ];
+  const customFontStyle = {
+    fontSize: '14px', //font
+    color: fullAccess ? '#9E9E9E' : '#000000',
+    //color
+    fontWeight: fullAccess ? '400' : '600',
+  };
 
   /** Fetch Framework Data */
   const fetchFrameworkData = async () => {
@@ -59,24 +66,6 @@ const MyComponent: React.FC = () => {
       const response = await fetch(url);
       const frameworkData = await response.json();
       setFrameworkFilter(frameworkData?.result?.framework);
-
-      const frameworks = frameworkData?.result?.framework?.categories || [];
-
-      const filteredFramework = frameworkData?.result?.framework
-        ? {
-            ...frameworkData.result.framework,
-            categories: frameworkData.result.framework.categories?.filter(
-              (category: any) => category.status === 'Live'
-            ),
-          }
-        : { categories: [] }; // Provide a default structure if frameworkData is undefined
-
-      const fdata =
-        filteredFramework.categories.find((item: any) => item.code === 'topic')
-          ?.terms || [];
-
-      setCategories(fdata || []);
-      setFramework(fdata[0]?.identifier || '');
     } catch (error) {
       console.error('Error fetching framework data:', error);
     }
@@ -118,17 +107,32 @@ const MyComponent: React.FC = () => {
       setIsLoading(false);
     })();
   }, []);
-
+  const handleCloseMessage = () => {
+    //close
+    setOpenMessageDialog(false);
+    //rout
+    router.push('/signin');
+  };
   /** Handle Category Click */
   const handleClick = (category: any) =>
     router.push(`/contents/${category.name}`);
 
   /** Handle Filter Application */
   const handleApplyFilters = (selectedValues: any) => {
-    setFilters((prevFilters: any) => ({
-      ...prevFilters,
-      ...selectedValues,
-    }));
+    const isEmpty = Object.keys(selectedValues).length === 0;
+    //set values
+    if (selectedValues) {
+      //set values
+
+      setFilters((prevFilters: any) => ({
+        ...prevFilters,
+        ...selectedValues,
+        ...(isEmpty ? { subTopic: category } : {}),
+        ...(isEmpty ? { topic: undefined } : {}),
+        ...(isEmpty ? { resource: undefined } : {}),
+        ...(isEmpty ? { mimeType: undefined } : {}),
+      }));
+    }
   };
 
   const handleToggleFullAccess = (
@@ -142,7 +146,7 @@ const MyComponent: React.FC = () => {
         ...prevFilters.filters, // Preserve existing filters
         access: accessValue === 'all' ? undefined : accessValue, // Remove 'access' key if 'all'
       },
-      offset: 0, // Reset pagination on filter change
+      offset: 0,
     }));
   };
   /** Reusable Filter Button */
@@ -219,9 +223,9 @@ const MyComponent: React.FC = () => {
         <Box
           display="flex"
           flexDirection="column"
-          gap="1rem"
           py="1rem"
           px="8px"
+          gap="1rem"
         >
           {isMobile && (
             <Box
@@ -240,75 +244,11 @@ const MyComponent: React.FC = () => {
                 isMobile={isMobile}
               />
               <Box display="flex" alignItems="center" gap={1} marginLeft="auto">
-                <Typography
-                  sx={{
-                    fontSize: '14px',
-                    fontWeight: fullAccess ? '400' : '600',
-                    color: fullAccess ? '#9E9E9E' : '#000000',
-                  }}
-                >
-                  All
-                </Typography>
-
-                <Switch
-                  checked={fullAccess} // Controlled state for switch
-                  onChange={handleToggleFullAccess}
-                  sx={{
-                    width: 42,
-                    height: 26,
-                    padding: 0,
-                    '& .MuiSwitch-switchBase': {
-                      padding: 0,
-                      transitionDuration: '300ms',
-                      '&.Mui-checked': {
-                        transform: 'translateX(16px)',
-                        color: '#fff',
-                        '& + .MuiSwitch-track': {
-                          background:
-                            'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
-                          opacity: 1,
-                          border: 0,
-                        },
-                        '&.Mui-disabled + .MuiSwitch-track': {
-                          opacity: 0.5,
-                        },
-                      },
-                      '&.Mui-focusVisible .MuiSwitch-thumb': {
-                        color: '#33cf4d',
-                        border: '6px solid #fff',
-                      },
-                      '&.Mui-disabled .MuiSwitch-thumb': {
-                        color: '#BDBDBD', // Grey thumb when disabled
-                      },
-                      '&.Mui-disabled + .MuiSwitch-track': {
-                        opacity: 0.5,
-                        background: '#BDBDBD', // Grey track when disabled
-                      },
-                    },
-                    '& .MuiSwitch-thumb': {
-                      boxSizing: 'border-box',
-                      width: 25,
-                      height: 25,
-                    },
-                    '& .MuiSwitch-track': {
-                      borderRadius: 26 / 2,
-                      background: fullAccess
-                        ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
-                        : '#BDBDBD', // Grey when unchecked
-                      opacity: 1,
-                    },
-                  }}
+                <CustomSwitch
+                  fullAccess={fullAccess}
+                  handleToggleFullAccess={handleToggleFullAccess}
+                  customFontStyle={customFontStyle}
                 />
-
-                <Typography
-                  sx={{
-                    fontSize: '14px',
-                    fontWeight: fullAccess ? '600' : '400',
-                    color: fullAccess ? '#000000' : '#9E9E9E',
-                  }}
-                >
-                  Only Full Access
-                </Typography>
               </Box>
             </Box>
           )}
@@ -353,75 +293,11 @@ const MyComponent: React.FC = () => {
                       gap={1}
                       sx={{ width: '100%', justifyContent: 'center' }}
                     >
-                      <Typography
-                        sx={{
-                          fontSize: '14px',
-                          fontWeight: fullAccess ? '400' : '600',
-                          color: fullAccess ? '#9E9E9E' : '#000000',
-                        }}
-                      >
-                        All
-                      </Typography>
-
-                      <Switch
-                        checked={fullAccess} // Controlled state for switch
-                        onChange={handleToggleFullAccess}
-                        sx={{
-                          width: 42,
-                          height: 26,
-                          padding: 0,
-                          '& .MuiSwitch-switchBase': {
-                            padding: 0,
-                            transitionDuration: '300ms',
-                            '&.Mui-checked': {
-                              transform: 'translateX(16px)',
-                              color: '#fff',
-                              '& + .MuiSwitch-track': {
-                                background:
-                                  'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
-                                opacity: 1,
-                                border: 0,
-                              },
-                              '&.Mui-disabled + .MuiSwitch-track': {
-                                opacity: 0.5,
-                              },
-                            },
-                            '&.Mui-focusVisible .MuiSwitch-thumb': {
-                              color: '#33cf4d',
-                              border: '6px solid #fff',
-                            },
-                            '&.Mui-disabled .MuiSwitch-thumb': {
-                              color: '#BDBDBD', // Grey thumb when disabled
-                            },
-                            '&.Mui-disabled + .MuiSwitch-track': {
-                              opacity: 0.5,
-                              background: '#BDBDBD', // Grey track when disabled
-                            },
-                          },
-                          '& .MuiSwitch-thumb': {
-                            boxSizing: 'border-box',
-                            width: 25,
-                            height: 25,
-                          },
-                          '& .MuiSwitch-track': {
-                            borderRadius: 26 / 2,
-                            background: fullAccess
-                              ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
-                              : '#BDBDBD', // Grey when unchecked
-                            opacity: 1,
-                          },
-                        }}
+                      <CustomSwitch
+                        fullAccess={fullAccess}
+                        handleToggleFullAccess={handleToggleFullAccess}
+                        customFontStyle={customFontStyle}
                       />
-
-                      <Typography
-                        sx={{
-                          fontSize: '14px',
-                          fontWeight: fullAccess ? '600' : '400',
-                          color: fullAccess ? '#000000' : '#9E9E9E',
-                        }}
-                      >
-                        Only Full Access
-                      </Typography>
                     </Box>
                   )}
                 </Box>
@@ -431,13 +307,32 @@ const MyComponent: React.FC = () => {
                     // _grid: { size: { xs: 6, sm: 6, md: 9, lg: 3 } },
                     contentTabs: ['content'],
                     handleCardClick: (content: ContentSearchResponse) => {
-                      router.push(`/contents/${content?.identifier}`);
+                      if (content.identifier) {
+                        handleCardClick({ identifier: content.identifier });
+                      } else {
+                        console.warn('Content identifier is missing:', content);
+                      }
                     },
                     filters: {
                       filters: {
                         channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
-                        subTopic: `${category}`,
+                        ...(filters.topic?.length
+                          ? {}
+                          : { subTopic: category }),
+                        ...(filters.access === 'Full Access' && {
+                          access: 'Full Access',
+                        }),
                         ...(subFramework && { mimeType: [subFramework] }),
+                        ...(filters.mimeType?.length
+                          ? { mimeType: filters.mimeType }
+                          : {}),
+                        ...(filters.resource?.length
+                          ? { resource: filters.resource }
+                          : {}),
+
+                        ...(filters.subTopic?.length
+                          ? { subTopic: filters.subTopic }
+                          : {}),
                       },
                     },
                     _card: { cardName: 'AtreeCard', image: atreeLogo.src },
@@ -453,6 +348,14 @@ const MyComponent: React.FC = () => {
           {/* </Box> */}
         </Box>
       )}
+      <LoginDialog
+        open={openMessageDialog}
+        onClose={handleCloseMessage}
+        title="Alert"
+        message="You need to log in to continue."
+        buttonText="Login"
+        onButtonClick={handleCloseMessage}
+      />
     </Layout>
   );
 };

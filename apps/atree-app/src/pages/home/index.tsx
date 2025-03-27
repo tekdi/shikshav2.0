@@ -97,7 +97,7 @@ export default function Index() {
         ([_, value]) => Array.isArray(value) && value.length > 0
       )
     );
-
+    cleanedFilters.topic = filterCategory ? [filterCategory] : ['Water'];
     const newFilters = {
       request: {
         filters: cleanedFilters,
@@ -226,9 +226,14 @@ export default function Index() {
     setFullAccess(event.target.checked);
 
     if (accessValue) {
-      const newFilters = {
-        access: accessValue,
-      };
+      const newFilters =
+        accessValue === 'Full Access'
+          ? {
+              access: 'Full Access',
+              topic: filterCategory ? [filterCategory] : ['Water'],
+            }
+          : { topic: filterCategory ? [filterCategory] : ['Water'] };
+
       fetchContentData(newFilters);
     }
   };
@@ -256,7 +261,7 @@ export default function Index() {
         <Box
           display="flex"
           flexDirection="column"
-          gap="3rem"
+          gap="1rem"
           py="1rem"
           px="8px"
         >

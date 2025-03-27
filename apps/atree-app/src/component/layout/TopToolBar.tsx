@@ -57,6 +57,7 @@ interface CommonAppBarProps {
   _appBar?: object;
   searchQuery?: string;
   onSearchChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  _isDrawer?: boolean;
 }
 
 const TopAppBar: React.FC<CommonAppBarProps> = ({
@@ -74,6 +75,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
   onMenuClose,
   logoUrl,
   _appBar,
+  _isDrawer,
 }) => {
   const router = useRouter();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -205,42 +207,44 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                 )}
               </Box>
             </Box>
-            <Box display="flex" alignItems="center">
-              <IconButton
-                size="large"
-                edge="start"
-                sx={{ color: 'text.secondary' }}
-                aria-label="search"
-                onClick={handleSearchOpen}
-              >
-                <SearchIcon />
-              </IconButton>
-              <SearchTypeModal
-                open={isSearchOpen}
-                onClose={handleSearchClose}
-                onSelect={(type) => console.log(type)}
-              />
-
-              <IconButton
-                size="large"
-                edge="start"
-                sx={{ color: 'text.secondary' }}
-                aria-label="menu"
-                onClick={menuIconClick}
-              >
-                <MenuIcon />
-              </IconButton>
-
-              {profileIcon && profileIcon.length > 0 && (
+            {_isDrawer && (
+              <Box display="flex" alignItems="center">
                 <IconButton
-                  color={actionButtonColor}
-                  aria-label={profileIcon[0]?.ariaLabel}
-                  onClick={profileIcon[0]?.onLogoutClick}
+                  size="large"
+                  edge="start"
+                  sx={{ color: 'text.secondary' }}
+                  aria-label="search"
+                  onClick={handleSearchOpen}
                 >
-                  {profileIcon[0].icon}
+                  <SearchIcon />
                 </IconButton>
-              )}
-            </Box>
+                <SearchTypeModal
+                  open={isSearchOpen}
+                  onClose={handleSearchClose}
+                  onSelect={(type) => console.log(type)}
+                />
+
+                <IconButton
+                  size="large"
+                  edge="start"
+                  sx={{ color: 'text.secondary' }}
+                  aria-label="menu"
+                  onClick={menuIconClick}
+                >
+                  <MenuIcon />
+                </IconButton>
+
+                {profileIcon && profileIcon.length > 0 && (
+                  <IconButton
+                    color={actionButtonColor}
+                    aria-label={profileIcon[0]?.ariaLabel}
+                    onClick={profileIcon[0]?.onLogoutClick}
+                  >
+                    {profileIcon[0].icon}
+                  </IconButton>
+                )}
+              </Box>
+            )}
           </Toolbar>
         </Container>
       </AppBar>
