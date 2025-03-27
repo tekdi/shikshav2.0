@@ -109,7 +109,7 @@ interface ContentSearchResponse {
 
 export const hierarchyAPI = async (
   doId: string
-): Promise<ContentSearchResponse[]> => {
+): Promise<ContentSearchResponse> => {
   try {
     // Ensure the environment variable is defined
     const searchApiUrl = process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL;

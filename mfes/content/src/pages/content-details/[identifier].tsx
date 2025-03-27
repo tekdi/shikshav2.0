@@ -27,6 +27,7 @@ const ContentDetails = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [contentDetails, setContentDetails] =
     useState<ContentDetailsObject | null>(null);
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const theme = useTheme();
   const handleBackClick = () => {
     router.back(); // Navigate to the previous page
@@ -44,26 +45,24 @@ const ContentDetails = () => {
     console.log('Menu icon clicked');
   };
 
-  const fetchContentDetails = async () => {
-    try {
-      if (identifier) {
+  useEffect(() => {
+    const fetchContentDetails = async () => {
+      try {
         const result = await fetchContent(identifier as string);
         setContentDetails(result);
+      } catch (error) {
+        console.error('Failed to fetch content:', error);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error('Failed to fetch content:', error);
-    }
-  };
-
-  useEffect(() => {
+    };
     if (identifier) {
       fetchContentDetails();
+    } else {
+      setIsLoading(false);
     }
   }, [identifier]);
 
-  if (!identifier) {
-    return <Typography>Loading...</Typography>; // Show loading state while identifier is undefined
-  }
   const handleLogout = () => {
     setAnchorEl(null);
     localStorage.removeItem('accToken');
@@ -72,8 +71,10 @@ const ContentDetails = () => {
     //@ts-ignore
     window.location.href = LOGIN;
   };
+
   return (
     <Layout
+      isLoadingChildren={isLoading}
       showTopAppBar={{
         title: 'Shiksha',
         showMenuIcon: true,

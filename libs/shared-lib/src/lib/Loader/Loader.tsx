@@ -6,23 +6,27 @@ interface LoaderProps {
   isLoading: boolean;
   layoutHeight?: number;
   children: ReactNode;
+  _loader?: React.CSSProperties;
 }
 
 export const Loader: React.FC<LoaderProps> = memo(
-  ({ isLoading, layoutHeight, children }) => {
+  ({ isLoading, layoutHeight, _loader, children }) => {
     return (
-      <Box>
+      <>
         {isLoading && (
           <Box
             sx={{
-              width: '100%',
-              height: `calc(100vh - ${layoutHeight || 0}px)`,
+              width: 'auto',
+              minHeight: `calc(100vh - ${layoutHeight || 0}px)`,
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
               position: 'absolute',
               zIndex: 9999,
+              left: 0,
+              right: 0,
               backgroundColor: 'white',
+              ..._loader,
             }}
           >
             <CircularProgress />
@@ -31,14 +35,14 @@ export const Loader: React.FC<LoaderProps> = memo(
         <Box
           style={{
             width: '100%',
-            overflowY: 'auto',
+            // overflowY: 'auto',
             display: isLoading ? 'none' : 'block',
-            height: `calc(100vh - ${layoutHeight}px)`,
+            maxHeight: `calc(100vh - ${layoutHeight}px)`,
           }}
         >
           {children}
         </Box>
-      </Box>
+      </>
     );
   }
 );

@@ -18,7 +18,7 @@ export const handlePlayerEvent = (event: any) => {
     handleExitEvent();
   }
 };
-export const handleTelemetryEvent = (event: any) => {
+export const handleTelemetryEventPDF = (event: any) => {
   console.log('Telemetry Event', event.detail);
   getTelemetryEvents(event.detail, 'pdf');
 };

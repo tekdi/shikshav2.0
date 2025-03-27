@@ -51,8 +51,8 @@ const FilterDialog = ({
   selectedContentTypes?: string[];
   sort?: any;
   onLanguageChange?: (language: string) => void;
-  onSubjectsChange?: (subjects: string) => void;
-  onContentTypeChange?: (contentType: string) => void;
+  onSubjectsChange?: (subjects: string[]) => void;
+  onContentTypeChange?: (contentType: string[]) => void;
   onSortChange?: (sort: any) => void;
   onApply?: (data: any) => void;
   frameworkFilter: any;
