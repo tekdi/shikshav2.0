@@ -192,10 +192,11 @@ export const FilterDialog = ({
       const updatedValues = checked
         ? [...currentValues, value]
         : currentValues.filter((v: string) => v !== value);
-
+      onApply?.({ ...prev, [filterType]: updatedValues });
       return { ...prev, [filterType]: updatedValues };
     });
   };
+
   console.log('isMobile', selectedValues);
 
   return (
@@ -222,7 +223,7 @@ export const FilterDialog = ({
                   const options =
                     category?.terms?.map((term: any) => ({
                       label: term?.name,
-                      value: term?.code,
+                      value: term?.name,
                     })) ?? [];
 
                   // Get selected values for the current category

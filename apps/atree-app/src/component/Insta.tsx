@@ -49,7 +49,7 @@ const Insta: React.FC = () => {
             margin: '1px',
             padding: '0',
             maxHeight: '100%',
-            width: 'calc(100vw - 64px)',
+            width: 'calc(100vw - 500px)',
           }}
         >
           <div style={{ padding: '16px' }}>

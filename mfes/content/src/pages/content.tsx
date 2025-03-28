@@ -135,7 +135,7 @@ export default function Content(props: ContentProps) {
           router.push(`/player/${content?.identifier}`);
         }
       } else {
-        router.push(`/content-details/${content?.identifier}`);
+        router.push(`/contents/${content?.identifier}`);
       }
     } catch (error) {
       console.error('Failed to fetch content:', error);
