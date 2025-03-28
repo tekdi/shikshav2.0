@@ -18,13 +18,22 @@ export const handlePlayerEvent = (event: any) => {
     handleExitEvent();
   }
 };
+
 export const handleTelemetryEventPDF = (event: any) => {
-  console.log('Telemetry Event', event.detail);
   getTelemetryEvents(event.detail, 'pdf');
 };
 
+export const handleTelemetryEventQuml = (event: any) => {
+  getTelemetryEvents(event.detail, 'quml');
+};
+
 export const getTelemetryEvents = (eventData: any, contentType: string) => {
-  console.log('getTelemetryEvents hit');
+  console.log(
+    'getTelemetryEvents hit',
+    'Telemetry Event',
+    contentType,
+    eventData
+  );
 
   if (!eventData || !eventData.object || !eventData.object.id) {
     console.error('Invalid event data');
@@ -49,7 +58,7 @@ export const getTelemetryEvents = (eventData: any, contentType: string) => {
 
   localStorage.setItem(telemetryKey, JSON.stringify(telemetryData));
 
-  if (eid === 'END') {
+  if (eid === 'END' || (contentType === 'quml' && eid === 'SUMMARY')) {
     try {
       const detailsObject: any[] = [];
 

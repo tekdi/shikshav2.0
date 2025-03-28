@@ -9,7 +9,7 @@ interface PlayerConfigProps {
   playerConfig: any;
 }
 
-const loadScript = (src: string, onLoad: () => void) => {
+export const loadScript = (src: string, onLoad: () => void) => {
   const script = document.createElement('script');
   script.src = src;
   script.async = true;
@@ -18,7 +18,7 @@ const loadScript = (src: string, onLoad: () => void) => {
   return script;
 };
 
-const loadStylesheet = (id: string, href: string) => {
+export const loadStylesheet = (id: string, href: string) => {
   if (!document.getElementById(id)) {
     const link = document.createElement('link');
     link.id = id;
@@ -28,7 +28,7 @@ const loadStylesheet = (id: string, href: string) => {
   }
 };
 
-const removeElementById = (id: string) => {
+export const removeElementById = (id: string) => {
   const element = document.getElementById(id);
   if (element) {
     element.parentNode?.removeChild(element);

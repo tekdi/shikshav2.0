@@ -96,7 +96,7 @@ const RenderTabContent = memo(
                 {contentData?.map((item: any) => (
                   <Grid
                     key={item?.identifier}
-                    size={{ xs: 6, sm: 6, md: 3, lg: 3 }}
+                    size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
                     {..._grid}
                   >
                     <CommonCard
