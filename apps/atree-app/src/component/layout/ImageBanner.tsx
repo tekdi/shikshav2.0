@@ -75,6 +75,7 @@ export const ImageBanner = ({
           )}
           <Typography
             sx={{
+              width: '245px',
               color: 'white',
               fontWeight: 700,
               // width: isMobile ? 'auto' : '70%',

@@ -34,6 +34,9 @@ export const FrameworkFilter = ({
   const [selectedFramework, setSelectedFramework] = useState<string>('');
   useEffect(() => {
     // Get stored category from localStorage
+    if (window.location.pathname === '/') {
+      localStorage.removeItem('category');
+    }
     const storedCategory = localStorage.getItem('category');
     localStorage.removeItem('selectedFilters');
     if (storedCategory) {
