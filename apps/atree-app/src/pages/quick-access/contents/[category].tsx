@@ -14,7 +14,7 @@ import Grid from '@mui/material/Grid2';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Loader from '../../../component/layout/LoaderComponent';
 import dynamic from 'next/dynamic';
-import atreeLogo from '../../../../assets/images/atreeLogo.png';
+import atreeLogo from '../../../../assets/images/atreeLogo.svg';
 import {
   ContentSearch,
   ContentSearchResponse,

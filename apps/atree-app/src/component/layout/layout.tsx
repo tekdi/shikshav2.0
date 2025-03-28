@@ -9,7 +9,7 @@ import {
 import Box from '@mui/material/Box';
 import { CommonDrawer, Loader } from '@shared-lib';
 import React, { useEffect, useRef, useState } from 'react';
-import atreeLogo from '../../../assets/images/atreeLogo.png';
+import atreeLogo from '../../../assets/images/atreeLogo.svg';
 import TopAppBar from './TopToolBar';
 import Footer from './Footer';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
