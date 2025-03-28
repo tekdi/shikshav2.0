@@ -21,6 +21,7 @@ const buttonColors = {
   'activity books': '#23005A',
   'reference books': '#FFBD0D',
   general: '#FFBD0D',
+  potpourri: '#FFBD0D',
 };
 
 export default function Searchpage() {

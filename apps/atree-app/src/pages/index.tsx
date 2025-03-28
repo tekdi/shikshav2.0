@@ -147,17 +147,9 @@ const LandingPage = () => {
       ) : (
         <Grid container spacing={4} sx={{ mb: 3 }} justifyContent={'center'}>
           <Grid width="100%">
-            <Carousel
-              navButtonsAlwaysVisible
-              indicators={false}
-              animation="slide"
-              autoPlay={true}
-              interval={2000}
-              swipe={true}
-              duration={500}
-              stopAutoPlayOnHover={false}
-              cycleNavigation={true}
+            <Box
               sx={{
+                position: 'relative',
                 width: '100%',
                 minHeight: { md: '500px' }, // Full height for web
                 display: 'flex',
@@ -165,31 +157,63 @@ const LandingPage = () => {
                 justifyContent: 'center',
               }}
             >
-              {landingImages.map((image, index) => (
-                <Box
-                  key={image.id}
-                  sx={{
-                    width: '100%',
-                    height: { xs: '181px', md: '500px' },
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <ImageBanner
+              {/* Fixed Text */}
+              <Typography
+                sx={{
+                  position: 'absolute',
+                  bottom: '10%', // Adjust the position as needed
+                  zIndex: 2,
+                  color: 'white', // Adjust text color if needed
+                  fontSize: { xs: '16px', md: '48px' },
+                  textAlign: 'center',
+                  fontWeight: 400,
+                  width: '100%',
+                }}
+              >
+                A digital hub of Environment Education resources contextual to
+                India
+              </Typography>
+
+              {/* Carousel with Images */}
+              <Carousel
+                navButtonsAlwaysVisible
+                indicators={false}
+                animation="slide"
+                autoPlay={true}
+                interval={6000}
+                swipe={true}
+                duration={4000}
+                stopAutoPlayOnHover={false}
+                cycleNavigation={true}
+                sx={{
+                  width: '100%',
+                  minHeight: { md: '500px' }, // Full height for web
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                {landingImages.map((image) => (
+                  <Box
                     key={image.id}
-                    name={
-                      'A digital hub of Environment Education resources contextual to India'
-                    }
-                    image={image.image}
-                    _image={{ height: { xs: 'auto', md: '500px' } }}
-                    _textPosition={{
-                      bottom: '0%',
+                    sx={{
+                      width: '100%',
+                      height: { xs: '181px', md: '500px' },
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                     }}
-                  />
-                </Box>
-              ))}
-            </Carousel>
+                  >
+                    <ImageBanner
+                      key={image.id}
+                      name={''}
+                      image={image.image}
+                      _image={{ height: { xs: 'auto', md: '500px' } }}
+                    />
+                  </Box>
+                ))}
+              </Carousel>
+            </Box>
           </Grid>
           <Grid
             sx={{ px: 4, textAlign: 'center' }}
@@ -312,7 +336,7 @@ const LandingPage = () => {
                 ))}
               </Box>
 
-              <Typography
+              {/* <Typography
                 variant="body1"
                 align="center"
                 gutterBottom
@@ -324,7 +348,7 @@ const LandingPage = () => {
                 }}
               >
                 {t('Choose what best fits your interests and needs')}
-              </Typography>
+              </Typography> */}
             </Grid>
           </Grid>
           <Grid sx={{ px: 1 }}>

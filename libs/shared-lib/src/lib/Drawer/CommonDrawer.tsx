@@ -96,7 +96,17 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
       }}
     >
       <Box sx={{ display: 'flex', justifyContent: 'center', padding: '8px' }}>
-        <IconButton sx={{ color: '#fff' }} onClick={onDrawerClose}>
+        <IconButton
+          sx={{
+            color: '#fff',
+            fontSize: '51.5px', // Increases the icon size
+            padding: '12px', // Increases button padding for better click area
+            '& .MuiSvgIcon-root': {
+              fontSize: '51.5px', // Specifically increases the CloseIcon size
+            },
+          }}
+          onClick={onDrawerClose}
+        >
           <CloseIcon />
         </IconButton>
       </Box>
@@ -112,7 +122,14 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
           },
         }}
       >
-        <List sx={{ width: '100%', maxWidth: '400px', textAlign: 'center' }}>
+        <List
+          sx={{
+            width: '100%',
+            maxWidth: '400px',
+            textAlign: 'center',
+            fontSize: '20px',
+          }}
+        >
           {openDrawer === 'main' &&
             items.map((item) => (
               <ListItemButton
@@ -124,7 +141,14 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
                     {item.icon}
                   </ListItemIcon>
                 )}
-                <ListItemText primary={item.text} />
+                <ListItemText
+                  primaryTypographyProps={{
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                    color: '#fff',
+                  }}
+                  primary={item.text}
+                />
               </ListItemButton>
             ))}
 
@@ -134,7 +158,9 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
                 key={category.text}
                 onClick={() => handleCategoryClick(category)}
               >
-                <ListItemText primary={category.text} />
+                <ListItemText
+                  primary={category.text}
+                />
                 {category.subCategories && <ArrowForwardIcon />}
               </ListItemButton>
             ))}
