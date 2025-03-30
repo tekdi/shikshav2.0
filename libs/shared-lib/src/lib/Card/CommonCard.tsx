@@ -46,12 +46,12 @@ export const getLeafNodes = (node: any) => {
   const result = [];
 
   // If the node has leafNodes, add them to the result array
-  if (node.leafNodes) {
+  if (node?.leafNodes) {
     result.push(...node.leafNodes);
   }
 
   // If the node has children, iterate through them and recursively collect leaf nodes
-  if (node.children) {
+  if (node?.children) {
     node.children.forEach((child: any) => {
       result.push(...getLeafNodes(child));
     });

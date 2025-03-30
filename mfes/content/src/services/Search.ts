@@ -1,3 +1,4 @@
+import { post } from '@shared-lib';
 import axios, { AxiosRequestConfig } from 'axios';
 export interface ContentSearchResponse {
   ownershipType?: string[];
@@ -164,15 +165,12 @@ export const ContentSearch = async ({
         offset,
       },
     };
-    const config: AxiosRequestConfig = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: `${searchApiUrl}/interface/v1/action/composite/v3/search`,
-      data: data,
-    };
 
     // Execute the request
-    const response = await axios.request(config);
+    const response = await post(
+      `${searchApiUrl}/interface/v1/action/composite/v3/search`,
+      data
+    );
     const res = response?.data;
 
     return res;
