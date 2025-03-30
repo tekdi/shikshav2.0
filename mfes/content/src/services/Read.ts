@@ -1,5 +1,5 @@
-import axios, { AxiosRequestConfig } from 'axios';
 import { URL_CONFIG } from '../utils/url.config';
+import { get } from '@shared-lib';
 interface ContentSearchResponse {
   ownershipType?: string[];
   publish_type?: string;
@@ -115,21 +115,15 @@ export const contentReadAPI = async (doId: string) => {
     if (!searchApiUrl) {
       throw new Error('Search API URL environment variable is not configured');
     }
-    console.log('doId', doId);
 
-    // Axios request configuration
-    const config: AxiosRequestConfig = {
-      method: 'get',
-      maxBodyLength: Infinity,
-      url: `${searchApiUrl}/interface/v1/action/content/v3/read/` + doId,
-      headers: {
+    // Execute the request
+    const response = await get(
+      `${searchApiUrl}/interface/v1/action/content/v3/read/${doId}`,
+      {
         tenantId: localStorage.getItem('tenantId') || '',
         Authorization: `Bearer ${localStorage.getItem('accToken') || ''}`,
-      },
-    };
-    console.log('config', config);
-    // Execute the request
-    const response = await axios.request(config);
+      }
+    );
     const res = response?.data?.result?.content;
 
     return res;
@@ -145,16 +139,13 @@ export const fetchContent = async (identifier: any) => {
     const FIELDS = URL_CONFIG.PARAMS.CONTENT_GET;
     const LICENSE_DETAILS = URL_CONFIG.PARAMS.LICENSE_DETAILS;
     const MODE = 'edit';
-    const config: AxiosRequestConfig = {
-      method: 'get',
-      maxBodyLength: Infinity,
-      url: `${API_URL}?fields=${FIELDS}&mode=${MODE}&licenseDetails=${LICENSE_DETAILS}`,
-      headers: {
+    const response = await get(
+      `${API_URL}?fields=${FIELDS}&mode=${MODE}&licenseDetails=${LICENSE_DETAILS}`,
+      {
         tenantId: localStorage.getItem('tenantId') ?? '',
         Authorization: `Bearer ${localStorage.getItem('accToken') ?? ''}`,
-      },
-    };
-    const response = await axios.request(config);
+      }
+    );
     console.log('response =====>', response);
     return response?.data?.result?.content;
   } catch (error) {

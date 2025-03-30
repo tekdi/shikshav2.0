@@ -13,6 +13,8 @@ import PictureAsPdfOutlinedIcon from '@mui/icons-material/PictureAsPdfOutlined';
 import PlayCircleOutlineOutlinedIcon from '@mui/icons-material/PlayCircleOutlineOutlined';
 import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined';
 import LensOutlinedIcon from '@mui/icons-material/LensOutlined';
+import AutoStoriesIcon from '@mui/icons-material/AutoStories';
+import SlideshowIcon from '@mui/icons-material/Slideshow';
 import LensIcon from '@mui/icons-material/Lens';
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 import { useTheme } from '@mui/material/styles';
@@ -30,12 +32,8 @@ interface NestedItem {
 }
 
 interface CommonAccordionProps {
-  identifier: string;
-  title: string;
-  data: NestedItem[];
+  item: NestedItem;
   actions?: { label: string; onClick: () => void }[];
-  status?: 'Not started' | 'Completed' | 'In progress' | string;
-  progress?: number;
   TrackData?: any[];
 }
 
@@ -46,6 +44,8 @@ const getIconByMimeType = (mimeType?: string): React.ReactNode => {
     'video/webm': <PlayCircleOutlineOutlinedIcon />,
     'video/x-youtube': <PlayCircleOutlineOutlinedIcon />,
     'application/vnd.sunbird.questionset': <TextSnippetOutlinedIcon />,
+    'application/vnd.ekstep.h5p-archive': <SlideshowIcon />,
+    'application/epub': <AutoStoriesIcon />,
   };
   //@ts-ignore
   return icons[mimeType] || <TextSnippetOutlinedIcon />;
@@ -123,9 +123,7 @@ const RenderNestedData: React.FC<{
 RenderNestedData.displayName = 'RenderNestedData';
 
 export const CommonCollapse: React.FC<CommonAccordionProps> = ({
-  identifier,
-  title,
-  data,
+  item,
   actions = [],
   TrackData,
 }) => {
@@ -139,10 +137,14 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
       try {
         //@ts-ignore
         if (TrackData) {
-          const result = TrackData.find((e: any) => e.courseId === identifier);
-          setTrackCompleted(result?.completed ? 100 : 0);
-          const leafNodes = getLeafNodes(data);
-          const completedCount = result?.completed_list?.length || 0;
+          const completedTrackData = TrackData.filter(
+            (e: any) => e.courseId !== item.identifier && e.completed
+          );
+          const leafNodes = getLeafNodes(item);
+          setTrackCompleted(
+            completedTrackData?.length === leafNodes?.length ? 100 : 0
+          );
+          const completedCount = completedTrackData?.length || 0;
           const percentage =
             leafNodes.length > 0
               ? Math.round((completedCount / leafNodes.length) * 100)
@@ -154,7 +156,7 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
       }
     };
     init();
-  }, [TrackData, identifier, data]);
+  }, [TrackData, item]);
 
   const toggleExpanded = (identifier: string) => {
     setExpandedItems((prev) => {
@@ -173,11 +175,11 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
     router.push(path);
   };
   return (
-    <Box>
-      {data?.length > 0 ? (
+    <>
+      {item?.children && item.children.length > 0 ? (
         <AccordionWrapper
-          title={title}
-          data={data}
+          title={item?.name}
+          data={item?.children || []}
           expandedItems={expandedItems}
           toggleExpanded={toggleExpanded}
           trackProgress={trackProgress}
@@ -185,80 +187,32 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
           trackData={TrackData ?? []}
         />
       ) : (
-        <Box
+        <Stack
           sx={{
+            borderBottom: '1px solid #ccc',
+            borderRadius: '4px',
+            padding: '12px',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
+            width: '100%',
+            cursor: 'pointer',
+            gap: '16px',
+            backgroundColor: '#fff',
           }}
-          onClick={() => handleItemClick(identifier)}
+          onClick={() => handleItemClick(item.identifier)}
         >
-          <Typography variant="body1" fontSize={'14px'} fontWeight={400}>
-            {/* @ts-ignore */}
-            {getIconByMimeType(data?.mimeType)} {title}
-          </Typography>
-          <Box>
-            {trackCompleted === 100 ? (
-              <>
-                <CheckCircleIcon sx={{ color: '#21A400' }} />
-              </>
-            ) : (
-              <>
-                <ErrorIcon sx={{ color: '#FFB74D' }} />
-              </>
-            )}
-          </Box>
-          {/* {trackProgress >= 0 && (
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '2px',
-                // marginLeft: 'auto',
-                position: 'relative',
-              }}
-            >
-              <Progress
-                variant="determinate"
-                value={100}
-                size={30}
-                thickness={6}
-                sx={{
-                  color: '#cccccc',
-                  position: 'absolute',
-                  left: '10px',
-                }}
-              />
-              <Progress
-                variant="determinate"
-                value={trackCompleted}
-                size={30}
-                thickness={6}
-                sx={{
-                  color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
-                  position: 'absolute',
-                  left: '10px',
-                }}
-              />
-              <Typography
-                sx={{
-                  fontSize: '12px',
-                  fontWeight: 'bold',
-                  marginLeft: '6px',
-                  color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
-                  position: 'absolute',
-                  left: '40px',
-                }}
-              >
-                {status &&
-                //@ts-ignore
-                data?.mimeType === 'application/vnd.ekstep.content-collection'
-                  ? status
-                  : `${trackCompleted}%`}
-              </Typography>
-            </Box>
-          )} */}
-        </Box>
+          <Stack sx={{ width: '100%' }}>
+            <RowContent
+              title={item?.name}
+              data={item?.children || []}
+              mimeType={item?.mimeType}
+              expandedItems={expandedItems}
+              trackCompleted={trackCompleted}
+              showStatus
+            />
+          </Stack>
+        </Stack>
       )}
 
       {actions.length > 0 && (
@@ -274,7 +228,7 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
           ))}
         </Box>
       )}
-    </Box>
+    </>
   );
 };
 
@@ -366,7 +320,7 @@ export const RowContent = ({
       <Stack direction="row" spacing={1} alignItems={'center'}>
         <StatusIcon
           showLenseIcon={expandedItems.has(data?.[0]?.identifier)}
-          showMimeTypeIcon={showStatus && data?.length === 0}
+          showMimeTypeIcon={showStatus && !data?.length}
           mimeType={mimeType}
         />
         <Typography variant="body2" fontWeight={500}>

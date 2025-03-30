@@ -75,20 +75,6 @@ export default function Details({ details }: DetailsProps) {
     if (identifier) getDetails(identifier as string);
   }, [identifier]);
 
-  const renderNestedChildren = (children: any) => {
-    if (!Array.isArray(children)) {
-      return null;
-    }
-    return children?.map((item: any) => (
-      <CommonCollapse
-        key={item.id}
-        identifier={item.identifier as string}
-        title={item.name}
-        data={item?.children}
-        TrackData={trackData}
-      />
-    ));
-  };
   const onBackClick = () => {
     router.back();
   };
@@ -154,11 +140,30 @@ export default function Details({ details }: DetailsProps) {
             </Typography>
           </Grid>
           <Grid size={{ xs: 12 }}>
-            {selectedContent?.children?.length > 0 &&
-              renderNestedChildren(selectedContent.children)}
+            {selectedContent?.children?.length > 0 && (
+              <RenderNestedChildren
+                data={selectedContent.children}
+                trackData={trackData}
+              />
+            )}
           </Grid>
         </Grid>
       </Box>
     </Layout>
   );
 }
+
+const RenderNestedChildren = React.memo(function RenderNestedChildren({
+  data,
+  trackData,
+}: {
+  data: any[];
+  trackData: any[];
+}) {
+  if (!Array.isArray(data)) {
+    return null;
+  }
+  return data?.map((item: any) => (
+    <CommonCollapse key={item.identifier} item={item} TrackData={trackData} />
+  ));
+});
