@@ -30,7 +30,7 @@ const MyComponent: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
-  const { category } = router.query;
+  const { category, isTopic } = router.query;
 
   const [isLoading, setIsLoading] = useState(true);
   const [subFramework, setSubFramework] = useState('');
@@ -74,14 +74,23 @@ const MyComponent: React.FC = () => {
   /** Fetch Content Search Results */
   const fetchContentSearch = async () => {
     try {
+      const isTopicValid = typeof isTopic === 'string' && isTopic.trim() !== '';
+      if (isTopicValid) {
+        setFilters((prevFilters: any) => ({
+          ...prevFilters,
+
+          ...{ topic: category },
+        }));
+      }
       const filterParams: any = {
         ...filters,
-        subTopic: category || filters.subTopic,
+        [isTopicValid ? 'topic' : 'subTopic']: category || filters.subTopic,
       };
 
       if (subFramework) {
         filterParams.mimeType = [subFramework];
       }
+
       const data = await ContentSearch({
         channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
         filters: filterParams,
@@ -99,7 +108,6 @@ const MyComponent: React.FC = () => {
       console.error('Error fetching content search:', error);
     }
   };
-
   useEffect(() => {
     (async () => {
       await fetchFrameworkData();
@@ -123,7 +131,15 @@ const MyComponent: React.FC = () => {
     //set values
     if (selectedValues) {
       //set values
-
+      const { isTopic, ...updatedQuery } = router.query;
+      router.replace(
+        {
+          pathname: router.pathname,
+          query: updatedQuery, // Updated query without `isTopic`
+        },
+        undefined,
+        { shallow: true } // Prevents full page reload
+      );
       setFilters((prevFilters: any) => ({
         ...prevFilters,
         ...selectedValues,
@@ -316,8 +332,9 @@ const MyComponent: React.FC = () => {
                       filters: {
                         channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
                         ...(filters.topic?.length
-                          ? {}
-                          : { subTopic: category }),
+                          ? { topic: filters.topic }
+                          : {}),
+
                         ...(filters.access === 'Full Access' && {
                           access: 'Full Access',
                         }),
