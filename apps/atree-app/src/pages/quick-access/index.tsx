@@ -34,7 +34,6 @@ const MyComponent: React.FC = () => {
   }, []);
 
   const handleClick = (category: any) => {
-    // router.push(`/quick-access/${category.name}`);
     const hasValidAssociations =
       category.associations &&
       Array.isArray(category.associations) &&
