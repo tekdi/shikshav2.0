@@ -119,26 +119,21 @@ const RenderTabContent = memo(
                   </Grid>
                 ))}
               </Grid>
-              <Box sx={{ textAlign: 'center', mt: 4 }}>
-                {hasMoreData ? (
-                  <Button
-                    variant="contained"
-                    onClick={handleLoadMore}
-                    disabled={isLodingMoreData}
-                  >
-                    {isLodingMoreData ? (
-                      <CircularProgress size={20} />
-                    ) : (
-                      'Load More'
-                    )}
-                  </Button>
-                ) : (
-                  <Typography variant="body1">
-                    No more data available
-                  </Typography>
-                )}
-              </Box>
             </Box>
+          )}
+        </Box>
+        <Box sx={{ textAlign: 'center', mt: 4 }}>
+          {hasMoreData ? (
+            <Button
+              variant="contained"
+              onClick={handleLoadMore}
+              disabled={isLodingMoreData}
+              sx={{ background: '#FFBD0D', color: '#2B3133' }}
+            >
+              {isLodingMoreData ? <CircularProgress size={20} /> : 'Load More'}
+            </Button>
+          ) : (
+            <Typography variant="body1"></Typography>
           )}
         </Box>
       </Box>
