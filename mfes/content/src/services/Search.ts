@@ -142,6 +142,9 @@ export const ContentSearch = async ({
         filters: {
           channel,
           ...filteredFilters,
+          "contentType": {
+            "ne": "Asset"
+        }
         },
 
         query,
