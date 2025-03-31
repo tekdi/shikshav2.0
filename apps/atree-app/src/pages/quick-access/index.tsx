@@ -23,8 +23,6 @@ const MyComponent: React.FC = () => {
           }
         : { categories: [] }; // Provide a default structure if frameworkData is undefined
 
-      console.log(filteredFramework.categories);
-
       const fdata =
         filteredFramework.categories.find((item: any) => item.code === 'topic')
           ?.terms || [];
@@ -36,7 +34,17 @@ const MyComponent: React.FC = () => {
   }, []);
 
   const handleClick = (category: any) => {
-    router.push(`/quick-access/${category.name}`);
+    const hasValidAssociations =
+      category.associations &&
+      Array.isArray(category.associations) &&
+      category.associations.some((assoc: any) => assoc.status === 'Live');
+
+    if (!hasValidAssociations) {
+      const query = true;
+      router.push(`/quick-access/contents/${category.name}?isTopic=${query}`);
+    } else {
+      router.push(`/quick-access/${category.name}`);
+    }
   };
 
   return (

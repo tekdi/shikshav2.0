@@ -14,7 +14,7 @@ import Grid from '@mui/material/Grid2';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Loader from '../../../component/layout/LoaderComponent';
 import dynamic from 'next/dynamic';
-import atreeLogo from '../../../../assets/images/atreeLogo.svg';
+import atreeLogo from '../../../../assets/images/placeholder.jpg';
 import {
   ContentSearch,
   ContentSearchResponse,
@@ -30,13 +30,19 @@ const MyComponent: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
-  const { category } = router.query;
+  const { category, isTopic } = router.query;
 
   const [isLoading, setIsLoading] = useState(true);
   const [subFramework, setSubFramework] = useState('');
   const [filterShow, setFilterShow] = useState(false);
   const [frameworkFilter, setFrameworkFilter] = useState(false);
-  const [filters, setFilters] = useState<any>({ limit: 5, offset: 0 });
+  const [filters, setFilters] = useState<any>({
+    limit: 5,
+    offset: 0,
+    channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
+    topic: isTopic ? category : undefined, // Initialize topic if isTopic=true
+    subTopic: !isTopic ? category : undefined,
+  });
 
   const [searchResults, setSearchResults] = useState<
     { subTopic: string; length: number }[]
@@ -74,14 +80,24 @@ const MyComponent: React.FC = () => {
   /** Fetch Content Search Results */
   const fetchContentSearch = async () => {
     try {
+      const isTopicValid = typeof isTopic === 'string' && isTopic.trim() !== '';
+      setFilters((prevFilters: any) => ({
+        ...prevFilters,
+        ...(isTopicValid
+          ? { topic: category, subTopic: undefined }
+          : { subTopic: category }),
+      }));
       const filterParams: any = {
         ...filters,
-        subTopic: category || filters.subTopic,
+        ...(isTopicValid
+          ? { topic: category, subTopic: undefined }
+          : { subTopic: category }),
       };
 
       if (subFramework) {
         filterParams.mimeType = [subFramework];
       }
+
       const data = await ContentSearch({
         channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
         filters: filterParams,
@@ -99,7 +115,13 @@ const MyComponent: React.FC = () => {
       console.error('Error fetching content search:', error);
     }
   };
-
+  useEffect(() => {
+    setFilters((prevFilters: any) => ({
+      ...prevFilters,
+      topic: isTopic ? category : undefined,
+      subTopic: !isTopic ? category : undefined,
+    }));
+  }, [isTopic, category]);
   useEffect(() => {
     (async () => {
       await fetchFrameworkData();
@@ -120,20 +142,38 @@ const MyComponent: React.FC = () => {
   /** Handle Filter Application */
   const handleApplyFilters = (selectedValues: any) => {
     const isEmpty = Object.keys(selectedValues).length === 0;
-    //set values
-    if (selectedValues) {
-      //set values
 
-      setFilters((prevFilters: any) => ({
-        ...prevFilters,
-        ...selectedValues,
-        ...(isEmpty ? { subTopic: category } : {}),
-        ...(isEmpty ? { topic: undefined } : {}),
-        ...(isEmpty ? { resource: undefined } : {}),
-        ...(isEmpty ? { mimeType: undefined } : {}),
-      }));
+    if (selectedValues) {
+      // Remove `isTopic` from the URL
+      const { isTopic, ...updatedQuery } = router.query;
+      router.replace(
+        {
+          pathname: router.pathname,
+          query: updatedQuery,
+        },
+        undefined,
+        { shallow: true } // Prevents full page reload
+      );
+
+      // Update filters correctly
+      setFilters((prevFilters: any) => {
+        const newFilters = {
+          ...prevFilters,
+          ...selectedValues,
+          ...(isEmpty ? { subTopic: category } : {}),
+          ...(isEmpty ? { topic: undefined } : {}),
+          ...(isEmpty ? { resource: undefined } : {}),
+          ...(isEmpty ? { mimeType: undefined } : {}),
+        };
+        console.log('Updated Filters (inside setState callback)==', newFilters);
+        return newFilters;
+      });
     }
   };
+
+  useEffect(() => {
+    console.log('Updated Filters (inside useEffect)==', filters);
+  }, [filters]);
 
   const handleToggleFullAccess = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -316,8 +356,9 @@ const MyComponent: React.FC = () => {
                       filters: {
                         channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
                         ...(filters.topic?.length
-                          ? {}
-                          : { subTopic: category }),
+                          ? { topic: filters.topic }
+                          : {}),
+
                         ...(filters.access === 'Full Access' && {
                           access: 'Full Access',
                         }),
