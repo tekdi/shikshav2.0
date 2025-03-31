@@ -183,23 +183,12 @@ export const ContentSearch = async ({
       request: {
         filters: {
           channel,
-          // primaryCategory: [type],
+          contentType: {
+            ne: 'Asset',
+          },
           ...filters,
         },
-        // fields: [
-        //   'name',
-        //   'appIcon',
-        //   'description',
-        //   'posterImage',
-        //   'mimeType',
-        //   'identifier',
-        //   'resourceType',
-        //   'primaryCategory',
-        //   'contentType',
-        //   'trackable',
-        //   'children',
-        //   'leafNodes',
-        // ],
+
         query,
         limit,
         offset,
