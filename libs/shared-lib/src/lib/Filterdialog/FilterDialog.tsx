@@ -196,8 +196,13 @@ export const FilterDialog = ({
       return { ...prev, [filterType]: updatedValues };
     });
   };
-
-  console.log('isMobile', selectedValues);
+  useEffect(() => {
+    console.log(
+      'Updated Filters (inside useEffect)==',
+      selectedValues,
+      selectedFilters
+    );
+  }, [selectedValues, selectedFilters]);
 
   return (
     <>
