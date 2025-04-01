@@ -3,31 +3,23 @@ import Grid from '@mui/material/Grid2';
 import Layout from '../component/layout/layout';
 import { Typography } from '@mui/material';
 import Banner from '../component/Banner';
+import FooterText from '../component/FooterText';
 export default function Aboutus() {
   return (
-    <Layout
-      footerComponent={
-        <Grid sx={{ px: 4, py: 1, backgroundColor: 'secondary.main' }}>
-          <Typography align="center" gutterBottom sx={{ fontSize: '10px' }}>
-            Curated by ATREE: For, Of, and By Environment Educators of India
-          </Typography>
-        </Grid>
-      }
-    >
+    <Layout footerComponent={<FooterText />}>
       <Banner />
       <Grid
         container
         spacing={2}
         direction="column"
         alignItems="center"
-        justifyContent="center"
+        // justifyContent="center"
         marginBottom={'25px'}
         padding={'10px'}
       >
         {/* About Us Title */}
         <Typography
-          variant="h4"
-          sx={{ textAlign: 'center', fontWeight: 400, fontSize: '24px', mt: 2 }}
+          sx={{ textAlign: 'left', fontWeight: 500, fontSize: '57px', mt: 2 }}
         >
           Terms and Conditions
         </Typography>
@@ -46,11 +38,11 @@ export default function Aboutus() {
           alters the privacy or security, users will be notified upon their
           first return to the platform.
         </Typography>
-        <Typography>
+        <Typography sx={{ textAlign: 'left' }}>
           Please contact our team at envedu@atree.org if you have any questions,
           concerns, or comments.
         </Typography>
-        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+        <Typography fontWeight="bold" gutterBottom sx={{ textAlign: 'left' }}>
           1. Open Access and Login Requirements
         </Typography>
 
