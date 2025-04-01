@@ -179,6 +179,11 @@ export default function Layout({
     },
   ];
   const handleItemClick = (to: string) => {
+    if (to.startsWith('http')) {
+      // Open external links in a new tab
+      window.open(to, '_blank');
+      return;
+    }
     if (to === '/signin') {
       if (token) {
         // If logged in, clear localStorage and log out
