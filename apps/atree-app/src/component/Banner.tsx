@@ -49,9 +49,10 @@ export default function Banner() {
             zIndex: 2,
             color: 'white', // Adjust text color if needed
             fontSize: { xs: '16px', md: '48px' },
-            textAlign: 'center',
-            fontWeight: 400,
+            textAlign: 'left',
+            fontWeight: 700,
             width: '100%',
+            marginLeft: '77px',
           }}
         >
           A digital hub of Environment Education resources contextual to India
