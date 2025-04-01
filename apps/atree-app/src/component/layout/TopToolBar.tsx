@@ -6,8 +6,12 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+
 import {
+  Chip,
   Container,
+  InputBase,
   Menu,
   MenuItem,
   useMediaQuery,
@@ -209,31 +213,98 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
             </Box>
             {_isDrawer && (
               <Box display="flex" alignItems="center">
-                <IconButton
-                  size="large"
-                  edge="start"
-                  sx={{ color: 'text.secondary' }}
-                  aria-label="search"
-                  onClick={handleSearchOpen}
-                >
-                  <SearchIcon />
-                </IconButton>
+                {!isMobile ? (
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      gap: 2,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        width: '238px',
+                        height: '40px',
+                        marginTop: '5px',
+                        borderRadius: '28px',
+                        border: '1px solid #ccc',
+                        paddingLeft: '12px',
+                        backgroundColor: '#fff',
+                      }}
+                    >
+                      <SearchIcon
+                        sx={{ color: 'text.secondary', marginRight: '8px' }}
+                      />
+                      <InputBase
+                        placeholder="Search for resources..."
+                        onClick={handleSearchOpen}
+                        // value={searchValue}
+                        // onChange={(e) => setSearchValue(e.target.value)}
+                        sx={{ flex: 1 }}
+                      />
+                    </Box>
+                    <Box display="flex" alignItems="center">
+                      <Chip
+                        label={
+                          <Box display="flex" alignItems="center" gap={1}>
+                            <span>English</span>
+                            <ArrowDropDownIcon
+                              sx={{ color: '#42474E', fontSize: '20px' }}
+                            />
+                          </Box>
+                        }
+                        // onClick={() => setFilterShow(true)}
+                        sx={{
+                          color: '#000000',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                          fontWeight: '500',
+                          cursor: 'pointer',
+                          backgroundColor: '#FFFFFF',
+                          border: '1px solid #C2C7CF',
+                          paddingX: '8px',
+                        }}
+                      />
+                    </Box>
+                    <IconButton
+                      size="large"
+                      edge="start"
+                      sx={{ color: 'text.secondary' }}
+                      aria-label="menu"
+                      onClick={menuIconClick}
+                    >
+                      <MenuIcon />
+                    </IconButton>
+                  </Box>
+                ) : (
+                  <Box>
+                    <IconButton
+                      size="large"
+                      edge="start"
+                      sx={{ color: 'text.secondary' }}
+                      aria-label="search"
+                      onClick={handleSearchOpen}
+                    >
+                      <SearchIcon />
+                    </IconButton>
+
+                    <IconButton
+                      size="large"
+                      edge="start"
+                      sx={{ color: 'text.secondary' }}
+                      aria-label="menu"
+                      onClick={menuIconClick}
+                    >
+                      <MenuIcon />
+                    </IconButton>
+                  </Box>
+                )}
                 <SearchTypeModal
                   open={isSearchOpen}
                   onClose={handleSearchClose}
                   onSelect={(type) => console.log(type)}
                 />
-
-                <IconButton
-                  size="large"
-                  edge="start"
-                  sx={{ color: 'text.secondary' }}
-                  aria-label="menu"
-                  onClick={menuIconClick}
-                >
-                  <MenuIcon />
-                </IconButton>
-
                 {profileIcon && profileIcon.length > 0 && (
                   <IconButton
                     color={actionButtonColor}
