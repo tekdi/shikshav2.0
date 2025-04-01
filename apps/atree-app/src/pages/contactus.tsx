@@ -7,7 +7,7 @@ import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlin
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import Layout from '../component/layout/layout';
 import { ImageBanner } from '../component/layout/ImageBanner';
-
+import Banner from '../component/Banner';
 import { Typography, Box } from '@mui/material';
 export default function Contactus() {
   return (
@@ -20,6 +20,7 @@ export default function Contactus() {
         </Grid>
       }
     >
+      <Banner />
       <Grid
         container
         spacing={2}
@@ -27,13 +28,6 @@ export default function Contactus() {
         alignItems="center"
         justifyContent="center"
       >
-        <ImageBanner
-          name={
-            'A digital hub of Environment Education resources contextual to India'
-          }
-          image={landingBanner?.src}
-          _image={{ height: 'auto' }}
-        />
         {/* Contact Us Title */}
         <Typography
           variant="h4"
@@ -53,21 +47,27 @@ export default function Contactus() {
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <LocalPhoneOutlinedIcon sx={{ color: 'goldenrod', mr: 1 }} />
+            <LocalPhoneOutlinedIcon
+              sx={{ color: 'goldenrod', mr: 1, marginLeft: '15px' }}
+            />
             <Typography variant="body1" sx={{ color: '#333' }}>
               +91-80-23635555
             </Typography>
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <AlternateEmailOutlinedIcon sx={{ color: 'goldenrod', mr: 1 }} />
+            <AlternateEmailOutlinedIcon
+              sx={{ color: 'goldenrod', mr: 1, marginLeft: '15px' }}
+            />
             <Typography variant="body1" sx={{ color: '#333' }}>
               envedu@atree.org
             </Typography>
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <LocationOnOutlinedIcon sx={{ color: 'goldenrod', mr: 1 }} />
+            <LocationOnOutlinedIcon
+              sx={{ color: 'goldenrod', mr: 1, marginLeft: '15px' }}
+            />
             <Typography variant="body1" sx={{ color: '#333' }}>
               Royal Enclave, Srirampura, Jakkur, Bengaluru, Karnataka 560064
             </Typography>

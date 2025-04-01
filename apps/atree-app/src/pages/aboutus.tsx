@@ -1,9 +1,8 @@
 import * as React from 'react';
 import Grid from '@mui/material/Grid2';
-import landingBanner from '../../assets/images/landingBanner.png';
 import Layout from '../component/layout/layout';
 import { Typography } from '@mui/material';
-import { ImageBanner } from '../component/layout/ImageBanner';
+import Banner from '../component/Banner';
 export default function Aboutus() {
   return (
     <Layout
@@ -15,6 +14,7 @@ export default function Aboutus() {
         </Grid>
       }
     >
+      <Banner />
       <Grid
         container
         spacing={2}
@@ -23,13 +23,6 @@ export default function Aboutus() {
         justifyContent="center"
         marginBottom={'25px'}
       >
-        <ImageBanner
-          name={
-            'A digital hub of Environment Education resources contextual to India'
-          }
-          image={landingBanner?.src}
-          _image={{ height: 'auto' }}
-        />
         {/* About Us Title */}
         <Typography
           variant="h4"
