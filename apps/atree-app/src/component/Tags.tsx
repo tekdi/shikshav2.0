@@ -31,7 +31,15 @@ export const FrameworkFilter = ({
   const router = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const [selectedFramework, setSelectedFramework] = useState<string>('');
+  const [selectedFramework, setSelectedFramework] = useState<string | null>(
+    () => {
+      if (typeof window !== 'undefined') {
+        return localStorage.getItem('category');
+      }
+      return null;
+    }
+  );
+  console.log('cat--', selectedFramework);
   useEffect(() => {
     // Get stored category from localStorage
     if (window.location.pathname === '/') {
@@ -43,6 +51,9 @@ export const FrameworkFilter = ({
       setSelectedFramework(storedCategory);
     }
   }, []);
+  useEffect(() => {
+    console.log(selectedFramework);
+  }, [selectedFramework]);
   const handleItemClick = (item: { identifier: string; name: string }) => {
     setFramework(item.identifier);
     setSelectedFramework(item.name);
@@ -65,8 +76,8 @@ export const FrameworkFilter = ({
         !isMobile
           ? {
               position: 'absolute',
-              top: '22px',
-              left: '25%',
+              top: '30px',
+              left: '10%',
             }
           : {}
       }
@@ -84,7 +95,7 @@ export const FrameworkFilter = ({
                 color: isSelected ? undefined : '#171D1E',
                 backgroundColor: isSelected
                   ? buttonColors[lowerCaseName] || undefined
-                  : '#E3E9EA',
+                  : '',
               }}
               onClick={() => handleItemClick({ identifier, name })}
             >

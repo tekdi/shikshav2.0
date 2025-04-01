@@ -31,6 +31,7 @@ import { ImageBanner } from '../component/layout/ImageBanner';
 import { useEffect, useState } from 'react';
 import { ContentSearch } from '@shared-lib';
 import Loader from '../component/layout/LoaderComponent';
+import FooterText from '../component/FooterText';
 
 const catImages = {
   Water,
@@ -133,13 +134,7 @@ const LandingPage = () => {
   return (
     <Layout
       footerComponent={
-        <Grid sx={{ px: 4, py: 1, backgroundColor: 'secondary.main' }}>
-          <Typography align="center" gutterBottom sx={{ fontSize: '10px' }}>
-            {t(
-              'Curated by ATREE: For, Of, and By Environment Educators of India'
-            )}
-          </Typography>
-        </Grid>
+       <FooterText/>
       }
     >
       {loading ? (

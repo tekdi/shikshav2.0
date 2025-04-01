@@ -1,25 +1,15 @@
 import * as React from 'react';
 import Grid from '@mui/material/Grid2';
-import landingBanner from '../../assets/images/landingBanner.png';
-
 import LocalPhoneOutlinedIcon from '@mui/icons-material/LocalPhoneOutlined';
 import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import Layout from '../component/layout/layout';
-import { ImageBanner } from '../component/layout/ImageBanner';
 import Banner from '../component/Banner';
-import { Typography, Box } from '@mui/material';
+import { Typography, Box, SvgIcon } from '@mui/material';
+import FooterText from '../component/FooterText';
 export default function Contactus() {
   return (
-    <Layout
-      footerComponent={
-        <Grid sx={{ px: 4, py: 1, backgroundColor: 'secondary.main' }}>
-          <Typography align="center" gutterBottom sx={{ fontSize: '10px' }}>
-            Curated by ATREE: For, Of, and By Environment Educators of India
-          </Typography>
-        </Grid>
-      }
-    >
+    <Layout footerComponent={<FooterText />}>
       <Banner />
       <Grid
         container
@@ -44,30 +34,87 @@ export default function Contactus() {
             p: 2,
             display: 'flex',
             flexDirection: { xs: 'column', md: 'row' },
+            gap: 3,
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <LocalPhoneOutlinedIcon
-              sx={{ color: 'goldenrod', mr: 1, marginLeft: '15px' }}
-            />
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
+            <SvgIcon
+              component="svg"
+              sx={{ width: 48, height: 48 }}
+              viewBox="0 0 24 24"
+            >
+              <defs>
+                <linearGradient
+                  id="gradient1"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="0%"
+                >
+                  <stop offset="0%" stopColor="#E68907" />
+                  <stop offset="100%" stopColor="#FFBD0D" />
+                </linearGradient>
+              </defs>
+              <LocalPhoneOutlinedIcon sx={{ fill: 'url(#gradient1)' }} />
+            </SvgIcon>
             <Typography variant="body1" sx={{ color: '#333' }}>
               +91-80-23635555
             </Typography>
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <AlternateEmailOutlinedIcon
-              sx={{ color: 'goldenrod', mr: 1, marginLeft: '15px' }}
-            />
+            <SvgIcon
+              component="svg"
+              sx={{ width: 48, height: 48 }}
+              viewBox="0 0 24 24"
+            >
+              <defs>
+                <linearGradient
+                  id="gradient1"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="0%"
+                >
+                  <stop offset="0%" stopColor="#E68907" />
+                  <stop offset="100%" stopColor="#FFBD0D" />
+                </linearGradient>
+              </defs>
+              <AlternateEmailOutlinedIcon sx={{ fill: 'url(#gradient1)' }} />
+            </SvgIcon>
+
             <Typography variant="body1" sx={{ color: '#333' }}>
               envedu@atree.org
             </Typography>
           </Box>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <LocationOnOutlinedIcon
-              sx={{ color: 'goldenrod', mr: 1, marginLeft: '15px' }}
-            />
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              mb: 2,
+              width: '250px',
+            }}
+          >
+            <SvgIcon
+              component="svg"
+              sx={{ width: 48, height: 48 }}
+              viewBox="0 0 24 24"
+            >
+              <defs>
+                <linearGradient
+                  id="gradient1"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="0%"
+                >
+                  <stop offset="0%" stopColor="#E68907" />
+                  <stop offset="100%" stopColor="#FFBD0D" />
+                </linearGradient>
+              </defs>
+              <LocationOnOutlinedIcon sx={{ fill: 'url(#gradient1)' }} />
+            </SvgIcon>
             <Typography variant="body1" sx={{ color: '#333' }}>
               Royal Enclave, Srirampura, Jakkur, Bengaluru, Karnataka 560064
             </Typography>
