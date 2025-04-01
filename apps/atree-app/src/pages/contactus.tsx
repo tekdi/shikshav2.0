@@ -1,14 +1,11 @@
 import * as React from 'react';
 import Grid from '@mui/material/Grid2';
-import landingBanner from '../../assets/images/landingBanner.png';
-import { SvgIcon } from '@mui/material';
 import LocalPhoneOutlinedIcon from '@mui/icons-material/LocalPhoneOutlined';
 import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import Layout from '../component/layout/layout';
-import { ImageBanner } from '../component/layout/ImageBanner';
 import Banner from '../component/Banner';
-import { Typography, Box } from '@mui/material';
+import { Typography, Box, SvgIcon } from '@mui/material';
 import FooterText from '../component/FooterText';
 export default function Contactus() {
   return (
