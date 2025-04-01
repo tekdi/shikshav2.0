@@ -27,13 +27,52 @@ export default function Contactus() {
         alignItems="center"
         justifyContent="center"
       >
-        <ImageBanner
-          name={
-            'A digital hub of Environment Education resources contextual to India'
-          }
-          image={landingBanner?.src}
-          _image={{ height: 'auto' }}
-        />
+        <Grid width="100%">
+          <Box
+            sx={{
+              position: 'relative',
+              width: '100%',
+              minHeight: { md: '500px' }, // Full height for web
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {/* Fixed Text */}
+            <Typography
+              sx={{
+                position: 'absolute',
+                bottom: '10%', // Adjust the position as needed
+                zIndex: 2,
+                color: 'white', // Adjust text color if needed
+                fontSize: { xs: '16px', md: '48px' },
+                textAlign: 'center',
+                fontWeight: 400,
+                width: '100%',
+              }}
+            >
+              A digital hub of Environment Education resources contextual to
+              India
+            </Typography>
+
+            <Box
+              sx={{
+                width: '100%',
+                height: { xs: '181px', md: '500px' },
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <ImageBanner
+                name={''}
+                image={landingBanner?.src}
+                _image={{ height: { xs: 'auto', md: '500px' } }}
+              />
+            </Box>
+          </Box>
+        </Grid>
+
         {/* Contact Us Title */}
         <Typography
           variant="h4"
@@ -53,21 +92,27 @@ export default function Contactus() {
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <LocalPhoneOutlinedIcon sx={{ color: 'goldenrod', mr: 1 }} />
+            <LocalPhoneOutlinedIcon
+              sx={{ color: 'goldenrod', mr: 1, marginLeft: '15px' }}
+            />
             <Typography variant="body1" sx={{ color: '#333' }}>
               +91-80-23635555
             </Typography>
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <AlternateEmailOutlinedIcon sx={{ color: 'goldenrod', mr: 1 }} />
+            <AlternateEmailOutlinedIcon
+              sx={{ color: 'goldenrod', mr: 1, marginLeft: '15px' }}
+            />
             <Typography variant="body1" sx={{ color: '#333' }}>
               envedu@atree.org
             </Typography>
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <LocationOnOutlinedIcon sx={{ color: 'goldenrod', mr: 1 }} />
+            <LocationOnOutlinedIcon
+              sx={{ color: 'goldenrod', mr: 1, marginLeft: '15px' }}
+            />
             <Typography variant="body1" sx={{ color: '#333' }}>
               Royal Enclave, Srirampura, Jakkur, Bengaluru, Karnataka 560064
             </Typography>
