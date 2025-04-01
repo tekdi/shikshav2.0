@@ -31,12 +31,14 @@ export const Loader: React.FC<LoaderProps> = memo(
             <Typography
               variant="body1"
               color="textSecondary"
-              position="absolute"
               fontSize={'1.5rem'}
-              top="400px" // Moves text slightly up
-              zIndex={1} // Ensures text is above the GIF
-              bgcolor="rgba(255, 255, 255, 0.5)" // Optional: Adds background for readability
-              px={1} // Padding for better visibility
+              sx={{
+                position: 'absolute',
+                top: { xs: '400px', md: '550px' }, // Responsive positioning
+                zIndex: 1,
+                bgcolor: 'rgba(255, 255, 255, 0.5)', // Optional: Background for readability
+                px: 1, // Padding for visibility
+              }}
             >
               Loading...
             </Typography>
