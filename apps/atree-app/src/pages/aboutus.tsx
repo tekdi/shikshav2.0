@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Grid from '@mui/material/Grid2';
 import Layout from '../component/layout/layout';
-import { Typography, Box } from '@mui/material';
+import { Typography } from '@mui/material';
 import Banner from '../component/Banner';
 export default function Aboutus() {
   return (
