@@ -7,7 +7,7 @@ import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlin
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import Layout from '../component/layout/layout';
 import { ImageBanner } from '../component/layout/ImageBanner';
-
+import Banner from '../component/Banner';
 import { Typography, Box } from '@mui/material';
 export default function Contactus() {
   return (
@@ -20,6 +20,7 @@ export default function Contactus() {
         </Grid>
       }
     >
+      <Banner />
       <Grid
         container
         spacing={2}
@@ -27,52 +28,6 @@ export default function Contactus() {
         alignItems="center"
         justifyContent="center"
       >
-        <Grid width="100%">
-          <Box
-            sx={{
-              position: 'relative',
-              width: '100%',
-              minHeight: { md: '500px' }, // Full height for web
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            {/* Fixed Text */}
-            <Typography
-              sx={{
-                position: 'absolute',
-                bottom: '10%', // Adjust the position as needed
-                zIndex: 2,
-                color: 'white', // Adjust text color if needed
-                fontSize: { xs: '16px', md: '48px' },
-                textAlign: 'center',
-                fontWeight: 400,
-                width: '100%',
-              }}
-            >
-              A digital hub of Environment Education resources contextual to
-              India
-            </Typography>
-
-            <Box
-              sx={{
-                width: '100%',
-                height: { xs: '181px', md: '500px' },
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <ImageBanner
-                name={''}
-                image={landingBanner?.src}
-                _image={{ height: { xs: 'auto', md: '500px' } }}
-              />
-            </Box>
-          </Box>
-        </Grid>
-
         {/* Contact Us Title */}
         <Typography
           variant="h4"
