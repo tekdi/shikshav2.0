@@ -161,7 +161,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                       justifyContent: 'center',
                     }}
                   >
-                    <Image src={logoUrl} alt="logo" width={64} height={64} />
+                    <Image src={logoUrl} alt="logo" width={91} height={91} />
                   </Box>
                 )}
                 {!isMobile && !isAuthPage && (
