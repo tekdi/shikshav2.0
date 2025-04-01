@@ -160,9 +160,10 @@ const LandingPage = () => {
                   zIndex: 2,
                   color: 'white', // Adjust text color if needed
                   fontSize: { xs: '16px', md: '48px' },
-                  textAlign: 'center',
-                  fontWeight: 400,
-                  width: '100%',
+                  textAlign: 'left',
+                  fontWeight: 700,
+                    width: '100%',
+                  marginLeft:'77px'
                 }}
               >
                 A digital hub of Environment Education resources contextual to
@@ -309,7 +310,7 @@ const LandingPage = () => {
                 }}
               >
                 {[
-                  { label: 'RESOURCES', value: bookCount },
+                  { label: 'RESOURCES', value: '1000' },
                   { label: 'CATEGORIES', value: '15' },
                   { label: 'LANGUAGES', value: languageCount },
                   // { label: 'Reader', value: readerCount },
