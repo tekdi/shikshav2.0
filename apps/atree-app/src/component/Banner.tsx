@@ -14,39 +14,21 @@ import Carousel from 'react-material-ui-carousel';
 
 export default function Banner() {
   const landingImages = [
-    {
-      image: landingBanner1?.src,
-      id: 1,
-    },
-    {
-      image: landingBanner2?.src,
-      id: 2,
-    },
-    {
-      image: landingBanner3?.src,
-      id: 3,
-    },
-    {
-      image: landingBanner4?.src,
-      id: 4,
-    },
-    {
-      image: landingBanner5?.src,
-      id: 5,
-    },
-    {
-      image: landingBanner6?.src,
-      id: 6,
-    },
-    {
-      image: landingBanner7?.src,
-      id: 7,
-    },
-    {
-      image: landingBanner8?.src,
-      id: 8,
-    },
+    { image: landingBanner1?.src, id: 1 },
+    { image: landingBanner2?.src, id: 2 },
+    { image: landingBanner3?.src, id: 3 },
+    { image: landingBanner4?.src, id: 4 },
+    { image: landingBanner5?.src, id: 5 },
+    { image: landingBanner6?.src, id: 6 },
+    { image: landingBanner7?.src, id: 7 },
+    { image: landingBanner8?.src, id: 8 },
   ];
+
+  // Remove duplicate images (if any)
+  const uniqueLandingImages = Array.from(
+    new Map(landingImages.map((img) => [img.id, img])).values()
+  );
+
   return (
     <Grid width="100%">
       <Box
@@ -94,9 +76,9 @@ export default function Banner() {
             justifyContent: 'center',
           }}
         >
-          {landingImages.map((image) => (
+          {uniqueLandingImages.map((image) => (
             <Box
-              key={image.id}
+              key={image.id} // ✅ Ensure this is the only key
               sx={{
                 width: '100%',
                 height: { xs: '181px', md: '500px' },
@@ -106,8 +88,7 @@ export default function Banner() {
               }}
             >
               <ImageBanner
-                key={image.id}
-                name={''}
+                name=""
                 image={image.image}
                 _image={{ height: { xs: 'auto', md: '500px' } }}
               />
