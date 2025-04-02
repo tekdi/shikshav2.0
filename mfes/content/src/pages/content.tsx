@@ -257,7 +257,7 @@ export default function Content(props: ContentProps) {
   useEffect(() => {
     const accessShow = localStorage.getItem('access');
     if (accessShow) {
-      setFullAccess(accessShow === 'Full Access' ? true : false);
+      setFullAccess(accessShow === 'Full Access');
     }
   }, []);
   const handleToggleFullAccess = (
