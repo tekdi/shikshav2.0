@@ -146,8 +146,15 @@ export default function Index() {
           }
         }
         //create filters
+        const localCategory = localStorage.getItem('category');
+        let selectedCategory = 'Water';
+        if (filterCategory) {
+          selectedCategory = filterCategory;
+        } else if (localCategory) {
+          selectedCategory = localCategory;
+        }
         const newFilters = {
-          topic: filterCategory ? [filterCategory] : ['Water'],
+          topic: [selectedCategory],
         };
         setFilters({ request: { filters: newFilters, offset: 0, limit: 5 } });
         // Fetch content after setting filters
@@ -597,7 +604,7 @@ const FrameworkFilter = React.memo<{
                         frameworkItem?.name?.toLowerCase() as keyof typeof buttonColors
                       ]
                     : ''
-                  : '#E3E9EA',
+                  : '',
             }}
             // onClick={() => setFramework(frameworkItem.identifier)}
             onClick={() => handleItemClick(frameworkItem)}

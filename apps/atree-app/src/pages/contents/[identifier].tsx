@@ -26,12 +26,12 @@ import Layout from '../../component/layout/layout';
 import landingBanner from '../../../assets/images/landingBanner.png';
 import Grid from '@mui/material/Grid2';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-
+import ShareIcon from '@mui/icons-material/Share';
 import atreeLogo from '../../../assets/images/placeholder.jpg';
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import Loader from '../../component/layout/LoaderComponent';
 import { AtreeCard, ContentSearch } from '@shared-lib';
+import ShareDialog from '../../component/ShareDialog';
 
 interface ContentItem {
   name: string;
@@ -62,7 +62,9 @@ export default function Content() {
   const [openPopup, setOpenPopup] = useState<boolean>(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [open, setOpen] = useState(false);
 
+  const handleOpen = () => setOpen(true);
   const handleOnCLick = () => {
     if (contentData?.url) {
       window.open(contentData.url, '_blank');
@@ -165,35 +167,56 @@ export default function Content() {
       isLoadingChildren={isLoading}
       backIconClick={() => router.back()}
       backTitle={
-        <Box>
-          <Typography
-            sx={{
-              fontWeight: 700,
-              fontSize: '22px',
-              lineHeight: '28px',
-              m: 0,
-              textAlign: 'left',
-            }}
-            gutterBottom
-          >
-            {contentData?.name || ''}
-          </Typography>
-          <Typography
-            variant="subtitle1"
-            color="textSecondary"
-            gutterBottom
-            sx={{
-              fontWeight: 500,
-              fontSize: '16px',
-              lineHeight: '24px',
-              letterSpacing: '0.15px',
-              m: 0,
-              textAlign: 'left',
-            }}
-          >
-            {contentData?.author || ''}
-          </Typography>
-        </Box>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+          }}
+        >
+          {/* Left Side - Name and Author */}
+          <div style={{ flexGrow: 1 }}>
+            <Typography
+              sx={{
+                fontWeight: 700,
+                fontSize: '22px',
+                lineHeight: '28px',
+                textAlign: 'left',
+              }}
+              gutterBottom
+            >
+              {contentData?.name || ''}
+            </Typography>
+            <Typography
+              variant="subtitle1"
+              color="textSecondary"
+              sx={{
+                fontWeight: 500,
+                fontSize: '16px',
+                lineHeight: '24px',
+                letterSpacing: '0.15px',
+                textAlign: 'left',
+              }}
+            >
+              {contentData?.author || ''}
+            </Typography>
+          </div>
+
+          {/* Right Side - Share Button */}
+          {!isMobile && (
+            <IconButton
+              onClick={handleOpen}
+              color="primary"
+              style={{ marginLeft: 'auto' }}
+            >
+              <ShareIcon />
+            </IconButton>
+          )}
+          {/* Share Dialog */}
+
+          <ShareDialog open={open} handleClose={() => setOpen(false)} />
+        </div>
       }
     >
       {!isMobile ? (
