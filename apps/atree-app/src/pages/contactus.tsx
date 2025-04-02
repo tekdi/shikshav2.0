@@ -22,9 +22,9 @@ export default function Contactus() {
         <Typography
           variant="h4"
           sx={{
+            fontSize: { xs: '24px', md: '64px' },
             textAlign: 'center',
             fontWeight: { xs: 400, md: 500 },
-            fontSize: { xs: '24px', md: '64px' },
             mt: 4,
           }}
         >
