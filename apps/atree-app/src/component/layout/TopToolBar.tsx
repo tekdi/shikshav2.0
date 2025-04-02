@@ -101,7 +101,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
   ];
   const [selectedLanguage, setSelectedLanguage] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('language') || 'English';
+      return localStorage.getItem('language') ?? 'English';
     }
     return 'English';
   });
@@ -109,7 +109,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
     if (window.location.pathname === '/') {
       localStorage.removeItem('language');
     }
-    const storedLang = localStorage.getItem('language') || 'English';
+    const storedLang = localStorage.getItem('language') ?? 'English';
     setSelectedLanguage(storedLang);
   }, []);
   useEffect(() => {
