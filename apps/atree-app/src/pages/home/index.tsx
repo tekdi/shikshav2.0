@@ -232,7 +232,7 @@ export default function Index() {
   ) => {
     const accessValue = event.target.checked ? 'Full Access' : 'all'; // Set 'full' or 'all' based on switch state
     setFullAccess(event.target.checked);
-
+    localStorage.setItem('access', accessValue);
     if (accessValue) {
       const newFilters =
         accessValue === 'Full Access'

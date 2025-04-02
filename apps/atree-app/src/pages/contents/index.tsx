@@ -25,6 +25,8 @@ const List: React.FC<ListProps> = () => {
     typeof window !== 'undefined' ? localStorage.getItem('category') : null;
   const selectedLanguage =
     typeof window !== 'undefined' ? localStorage.getItem('language') : null;
+    const selectedAccess =
+    typeof window !== 'undefined' ? localStorage.getItem('access') : null;
   useEffect(() => {
     const init = async () => {
       setIsLoadingChildren(false);
@@ -57,6 +59,7 @@ const List: React.FC<ListProps> = () => {
                   ? { subTopic: subCategory }
                   : { topic: storedCategory }),
                 ...(selectedLanguage ? { language: selectedLanguage } : {}),
+                ...(selectedAccess ? { access: selectedAccess } : {}),
                 // status: ['Live'],
               },
             },
