@@ -12,14 +12,19 @@ export default function Aboutus() {
         container
         spacing={2}
         direction="column"
-        alignItems="center"
+        alignItems="left"
         // justifyContent="center"
         marginBottom={'25px'}
-        padding={'10px'}
+        padding={{ xs: '15px', md: '100px' }}
       >
         {/* About Us Title */}
         <Typography
-          sx={{ textAlign: 'left', fontWeight: 500, fontSize: '57px', mt: 2 }}
+          sx={{
+            textAlign: 'center',
+            fontWeight: { xs: 400, md: 500 },
+            fontSize: { xs: '24px', md: '64px' },
+            mt: 2,
+          }}
         >
           Terms and Conditions
         </Typography>

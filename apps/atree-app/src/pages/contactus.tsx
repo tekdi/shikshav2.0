@@ -21,7 +21,12 @@ export default function Contactus() {
         {/* Contact Us Title */}
         <Typography
           variant="h4"
-          sx={{ textAlign: 'center', fontWeight: 400, fontSize: '24px', mt: 4 }}
+          sx={{
+            textAlign: 'center',
+            fontWeight: { xs: 400, md: 500 },
+            fontSize: { xs: '24px', md: '64px' },
+            mt: 4,
+          }}
         >
           Contact Us
         </Typography>
@@ -37,10 +42,13 @@ export default function Contactus() {
             gap: 3,
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <SvgIcon
               component="svg"
-              sx={{ width: 48, height: 48 }}
+              sx={{
+                width: { xs: '18px', md: '37.33px' },
+                height: { xs: '18px', md: '53.33px' },
+              }}
               viewBox="0 0 24 24"
             >
               <defs>
@@ -57,7 +65,15 @@ export default function Contactus() {
               </defs>
               <LocalPhoneOutlinedIcon sx={{ fill: 'url(#gradient1)' }} />
             </SvgIcon>
-            <Typography variant="body1" sx={{ color: '#333' }}>
+            <Typography
+              variant="body1"
+              sx={{
+                color: '#333',
+                fontWeight: { xs: 400, md: 400 },
+                fontSize: { xs: '15px', md: '24px' },
+                marginLeft: '10px',
+              }}
+            >
               +91-80-23635555
             </Typography>
           </Box>
@@ -65,7 +81,10 @@ export default function Contactus() {
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <SvgIcon
               component="svg"
-              sx={{ width: 48, height: 48 }}
+              sx={{
+                width: { xs: '18px', md: '37.33px' },
+                height: { xs: '18px', md: '53.33px' },
+              }}
               viewBox="0 0 24 24"
             >
               <defs>
@@ -83,7 +102,15 @@ export default function Contactus() {
               <AlternateEmailOutlinedIcon sx={{ fill: 'url(#gradient1)' }} />
             </SvgIcon>
 
-            <Typography variant="body1" sx={{ color: '#333' }}>
+            <Typography
+              variant="body1"
+              sx={{
+                color: '#333',
+                fontWeight: { xs: 400, md: 400 },
+                fontSize: { xs: '15px', md: '24px' },
+                marginLeft: '10px',
+              }}
+            >
               envedu@atree.org
             </Typography>
           </Box>
@@ -93,12 +120,15 @@ export default function Contactus() {
               display: 'flex',
               alignItems: 'center',
               mb: 2,
-              width: '250px',
+              width: '400px',
             }}
           >
             <SvgIcon
               component="svg"
-              sx={{ width: 48, height: 48 }}
+              sx={{
+                width: { xs: '18px', md: '37.33px' },
+                height: { xs: '18px', md: '53.33px' },
+              }}
               viewBox="0 0 24 24"
             >
               <defs>
@@ -115,14 +145,29 @@ export default function Contactus() {
               </defs>
               <LocationOnOutlinedIcon sx={{ fill: 'url(#gradient1)' }} />
             </SvgIcon>
-            <Typography variant="body1" sx={{ color: '#333' }}>
+            <Typography
+              variant="body1"
+              sx={{
+                color: '#333',
+                fontWeight: { xs: 400, md: 400 },
+                fontSize: { xs: '15px', md: '24px' },
+                marginLeft: '10px',
+              }}
+            >
               Royal Enclave, Srirampura, Jakkur, Bengaluru, Karnataka 560064
             </Typography>
           </Box>
         </Box>
 
         {/* Embedded Map */}
-        <Typography variant="body1" sx={{ color: '#000000', fontSize: '24px' }}>
+        <Typography
+          variant="body1"
+          sx={{
+            color: '#000000',
+            fontWeight: { xs: 400, md: 500 },
+            fontSize: { xs: '24px', md: '57px' },
+          }}
+        >
           Reach Us
         </Typography>
         <Box sx={{ width: '100%', textAlign: 'center', mt: 3 }}>

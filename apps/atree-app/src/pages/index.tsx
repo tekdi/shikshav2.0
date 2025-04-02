@@ -163,7 +163,7 @@ const LandingPage = () => {
                   textAlign: 'left',
                   fontWeight: 700,
                     width: '100%',
-                  marginLeft:'77px'
+                  padding: { xs: '0 20px', md: '0 90px' },
                 }}
               >
                 A digital hub of Environment Education resources contextual to
