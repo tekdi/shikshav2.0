@@ -71,7 +71,7 @@ export default function Content() {
     }
   };
   const handleOnDownload = async () => {
-    if (contentData?.previewUrl && contentData.previewUrl.endsWith('.pdf')) {
+    if (contentData?.previewUrl.endsWith('.pdf')) {
       try {
         const response = await fetch(contentData.previewUrl);
         const blob = await response.blob();
@@ -251,11 +251,7 @@ export default function Content() {
                     sx={{
                       borderRadius: '50px',
                       height: '40px',
-                      flex:
-                        contentData?.url ||
-                        !contentData?.previewUrl?.endsWith('.pdf')
-                          ? 0.3
-                          : 0.3,
+                      flex: 0.3,
                     }}
                     onClick={handleOnCLick}
                   >
@@ -272,7 +268,7 @@ export default function Content() {
                           height: '40px',
                           flex: 0.3,
                           backgroundColor: 'white',
-                          borderColor: (theme) => theme.palette.secondary.main, 
+                          borderColor: (theme) => theme.palette.secondary.main,
                           color: 'black',
                         }}
                         onClick={handleOnDownload}
