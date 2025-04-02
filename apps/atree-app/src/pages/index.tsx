@@ -178,7 +178,7 @@ const LandingPage = () => {
                   // borderRadius: '8px',
                   width: '100vw',
                   maxWidth: '100%',
-                  height: { xs: '63px', md: '178px' },
+                  height: { xs: '63px', md: '170px' },
                   display: 'flex',
                   justifyContent: { xs: 'space-around', md: 'center' },
                   flexWrap: 'wrap',

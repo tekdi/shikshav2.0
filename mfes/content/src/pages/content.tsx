@@ -42,13 +42,15 @@ export default function Content(props: ContentProps) {
   const [isPageLoading, setPageIsLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
-  const [localFilters, setLocalFilters] = useState<any>({ limit: 10, offset: 0 });
+  const [localFilters, setLocalFilters] = useState<any>({
+    limit: 10,
+    offset: 0,
+  });
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [frameworkFilter, setFrameworkFilter] = useState(false);
   const [trackData, setTrackData] = useState<[]>([]);
   const [filterShow, setFilterShow] = useState(false);
   const [propData, setPropData] = useState<ContentProps>();
-  const [filterValue, setFilterValue] = useState(false); // or any other initial value
   const [fullAccess, setFullAccess] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -221,7 +223,7 @@ export default function Content(props: ContentProps) {
     } else {
       const { limit, offset, ...selectedValuesWithoutLimitOffset } =
         selectedValues;
-        setLocalFilters((prevFilters: any) => ({
+      setLocalFilters((prevFilters: any) => ({
         ...prevFilters,
         filters: {
           ...prevFilters.filters,
@@ -252,6 +254,12 @@ export default function Content(props: ContentProps) {
     fetchFramework();
   }, [router]);
 
+  useEffect(() => {
+    const accessShow = localStorage.getItem('access');
+    if (accessShow) {
+      setFullAccess(accessShow === 'Full Access' ? true : false);
+    }
+  }, []);
   const handleToggleFullAccess = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
