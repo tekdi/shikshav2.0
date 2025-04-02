@@ -14,6 +14,7 @@ import {
   InputBase,
   Menu,
   MenuItem,
+  Select,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
@@ -90,6 +91,16 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isAuthPage =
     router.pathname === '/signin' || router.pathname === '/register';
+  const languages = [
+    'English',
+    'Hindi',
+    'Bengali',
+    'Assamese',
+    'Kannada',
+    'Tamil',
+    'Malayalam',
+  ];
+  const [selectedLanguage, setSelectedLanguage] = useState('English');
   useEffect(() => {
     if (framework) {
       if (frameworkFilter) {
@@ -230,7 +241,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                         borderRadius: '28px',
                         border: '1px solid #ccc',
                         paddingLeft: '12px',
-                        backgroundColor: '#fff',
+                        backgroundColor: '#E9E7EF',
                       }}
                     >
                       <SearchIcon
@@ -244,29 +255,44 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                         sx={{ flex: 1 }}
                       />
                     </Box>
-                    <Box display="flex" alignItems="center">
-                      <Chip
-                        label={
-                          <Box display="flex" alignItems="center" gap={1}>
-                            <span>English</span>
-                            <ArrowDropDownIcon
-                              sx={{ color: '#42474E', fontSize: '20px' }}
-                            />
-                          </Box>
-                        }
-                        // onClick={() => setFilterShow(true)}
+
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      gap={1}
+                      sx={{
+                        width: '102px',
+                        height: '32px',
+                        border: '1px solid #ccc',
+                        borderRadius: '8px',
+                        padding: '4px',
+                        marginTop: '8px',
+                      }}
+                    >
+                      <Select
+                        value={selectedLanguage}
+                        onChange={(e) => setSelectedLanguage(e.target.value)}
+                        displayEmpty
                         sx={{
-                          color: '#000000',
-                          borderRadius: '8px',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          cursor: 'pointer',
-                          backgroundColor: '#FFFFFF',
-                          border: '1px solid #C2C7CF',
-                          paddingX: '8px',
+                          color: '#42474E',
+                          fontSize: '16px',
+                          '.MuiOutlinedInput-notchedOutline': { border: 0 }, // Remove border
+                          '&:hover .MuiOutlinedInput-notchedOutline': {
+                            border: 0,
+                          },
+                          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                            border: 0,
+                          },
                         }}
-                      />
+                      >
+                        {languages.map((lang) => (
+                          <MenuItem key={lang} value={lang}>
+                            {lang}
+                          </MenuItem>
+                        ))}
+                      </Select>
                     </Box>
+
                     <IconButton
                       size="large"
                       edge="start"

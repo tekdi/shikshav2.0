@@ -32,7 +32,12 @@ const TermsAndCondition: React.FC<CommonDialogProps> = ({
       <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
         {' '}
         <Box display="flex" alignItems="center" justifyContent="space-between">
-          <Typography sx={{ fontSize: '22px' }}>
+          <Typography
+            sx={{
+              fontWeight: { xs: 400, md: 500 },
+              fontSize: { xs: '24px', md: '64px' },
+            }}
+          >
             Terms and Conditions
           </Typography>
           <IconButton aria-label="close" onClick={onClose} sx={{ ml: 2 }}>

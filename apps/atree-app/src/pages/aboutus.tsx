@@ -19,7 +19,12 @@ export default function Aboutus() {
         {/* About Us Title */}
         <Typography
           variant="h4"
-          sx={{ textAlign: 'center', fontWeight: 400, fontSize: '24px', mt: 2 }}
+          sx={{
+            textAlign: 'center',
+            fontWeight: { xs: 400, md: 500 },
+            fontSize: { xs: '24px', md: '64px' },
+            mt: 2,
+          }}
         >
           About Us
         </Typography>
