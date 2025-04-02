@@ -32,38 +32,58 @@ export const FrameworkFilter = ({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [selectedFramework, setSelectedFramework] = useState<string | null>(
-    () => {
-      if (typeof window !== 'undefined') {
-        return localStorage.getItem('category');
-      }
-      return null;
-    }
+    null
   );
-  console.log('cat--', selectedFramework);
+  const syncCategoryFromStorage = () => {
+    const storedCategory = localStorage.getItem('category')?.toLowerCase();
+    setSelectedFramework(storedCategory || '');
+  };
+  useEffect(() => {
+    syncCategoryFromStorage();
+  }, []);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      syncCategoryFromStorage();
+    }, 500); // Check every 500ms
+
+    return () => clearInterval(interval); // Cleanup
+  }, []);
   useEffect(() => {
     // Get stored category from localStorage
     if (window.location.pathname === '/') {
       localStorage.removeItem('category');
     }
-    const storedCategory = localStorage.getItem('category');
-    localStorage.removeItem('selectedFilters');
-    if (storedCategory) {
-      setSelectedFramework(storedCategory);
-    }
+    syncCategoryFromStorage();
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'category') {
+        syncCategoryFromStorage();
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+    // const storedCategory = localStorage.getItem('category')?.toLowerCase();
+    // localStorage.removeItem('selectedFilters');
+    // if (storedCategory) {
+    //   setSelectedFramework(storedCategory);
+    // }
   }, []);
   useEffect(() => {
-    console.log(selectedFramework);
+    console.log('Selected Framework:', selectedFramework);
   }, [selectedFramework]);
   const handleItemClick = (item: { identifier: string; name: string }) => {
+    const selectedCategory = item.name.toLowerCase();
     setFramework(item.identifier);
-    setSelectedFramework(item.name);
+    setSelectedFramework(selectedCategory);
     localStorage.removeItem('selectedFilters');
-    localStorage.setItem('category', item.name);
+    localStorage.setItem('category', selectedCategory);
     if (fromSubcategory) {
-      localStorage.setItem('subcategory', item.name);
+      localStorage.setItem('subcategory', selectedCategory);
       router.push(`/contents`);
     } else {
-      router.push(`/home?category=${encodeURIComponent(item.name)}`);
+      router.push(`/home?category=${encodeURIComponent(selectedCategory)}`);
     }
   };
 
@@ -83,7 +103,7 @@ export const FrameworkFilter = ({
       }
     >
       {frameworkFilter.map(({ identifier, name }) => {
-        const isSelected = selectedFramework === name;
+        const isSelected = selectedFramework === name.toLowerCase();
         const lowerCaseName = name.toLowerCase();
         return (
           <Grid key={identifier}>

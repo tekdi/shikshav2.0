@@ -142,7 +142,7 @@ const MyComponent: React.FC = () => {
   /** Handle Filter Application */
   const handleApplyFilters = (selectedValues: any) => {
     const isEmpty = Object.keys(selectedValues).length === 0;
-
+    console.log('selectedValues', selectedValues);
     if (selectedValues) {
       // Remove `isTopic` from the URL
       const { isTopic, ...updatedQuery } = router.query;
