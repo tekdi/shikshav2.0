@@ -48,6 +48,8 @@ interface ContentItem {
   license: string;
   description: string;
   publisher: string;
+  url: string;
+  previewUrl: string;
 }
 
 export default function Content() {
@@ -62,8 +64,34 @@ export default function Content() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleOnCLick = () => {
-    router.push(`/player/${identifier}`);
+    if (contentData?.url) {
+      window.open(contentData.url, '_blank');
+    } else {
+      router.push(`/player/${identifier}`);
+    }
   };
+  const handleOnDownload = async () => {
+    if (contentData?.previewUrl.endsWith('.pdf')) {
+      try {
+        const response = await fetch(contentData.previewUrl);
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = contentData.name; // Default filename
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Revoke the blob URL after download to free up memory
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+      } catch (error) {
+        console.error('Download failed:', error);
+      }
+    }
+  };
+
   const fetchContent = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -216,14 +244,39 @@ export default function Content() {
                 </Typography>
 
                 {/* Know More Button */}
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  sx={{ borderRadius: '50px', height: '40px', width: '100%' }}
-                  onClick={handleOnCLick}
-                >
-                  Know More
-                </Button>
+                <Box sx={{ display: 'flex', gap: 2, width: '100%' }}>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    sx={{
+                      borderRadius: '50px',
+                      height: '40px',
+                      flex: 0.3,
+                    }}
+                    onClick={handleOnCLick}
+                  >
+                    Know More
+                  </Button>
+
+                  {!contentData?.url &&
+                    contentData?.previewUrl?.endsWith('.pdf') && (
+                      <Button
+                        variant="outlined"
+                        color="secondary"
+                        sx={{
+                          borderRadius: '50px',
+                          height: '40px',
+                          flex: 0.3,
+                          backgroundColor: 'white',
+                          borderColor: (theme) => theme.palette.secondary.main,
+                          color: 'black',
+                        }}
+                        onClick={handleOnDownload}
+                      >
+                        Download
+                      </Button>
+                    )}
+                </Box>
 
                 {/* Year & License */}
                 <Typography variant="body1" textAlign="left">
@@ -304,18 +357,42 @@ export default function Content() {
               }
             />
           </Box>
-          <Button
-            variant="contained"
-            color="secondary"
+          <Box
             sx={{
-              borderRadius: '50px',
-              height: '40px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2,
               width: '100%',
             }}
-            onClick={handleOnCLick}
           >
-            Know More
-          </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              sx={{ borderRadius: '50px', height: '40px', width: '100%' }}
+              onClick={handleOnCLick}
+            >
+              Know More
+            </Button>
+
+            {!contentData?.url && contentData?.previewUrl?.endsWith('.pdf') && (
+              <Button
+                variant="outlined"
+                color="secondary"
+                sx={{
+                  borderRadius: '50px',
+                  height: '40px',
+                  width: '100%',
+                  backgroundColor: 'white',
+                  borderColor: (theme) => theme.palette.secondary.main,
+                  color: 'black',
+                }}
+                onClick={handleOnDownload}
+              >
+                Download
+              </Button>
+            )}
+          </Box>
+
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             {displayedKeywords?.map((label: any, index: any) => (
               <Chip
