@@ -147,12 +147,14 @@ export default function Index() {
         }
         //create filters
         const localCategory = localStorage.getItem('category');
+        let selectedCategory = 'Water';
+        if (filterCategory) {
+          selectedCategory = filterCategory;
+        } else if (localCategory) {
+          selectedCategory = localCategory;
+        }
         const newFilters = {
-          topic: filterCategory
-            ? [filterCategory]
-            : localCategory
-            ? [localCategory]
-            : ['Water'], // Default value if neither is available
+          topic: [selectedCategory],
         };
         setFilters({ request: { filters: newFilters, offset: 0, limit: 5 } });
         // Fetch content after setting filters

@@ -36,7 +36,7 @@ export const FrameworkFilter = ({
   );
   const syncCategoryFromStorage = () => {
     const storedCategory = localStorage.getItem('category')?.toLowerCase();
-    setSelectedFramework(storedCategory || '');
+    setSelectedFramework(storedCategory ?? '');
   };
   useEffect(() => {
     syncCategoryFromStorage();
@@ -64,11 +64,6 @@ export const FrameworkFilter = ({
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-    // const storedCategory = localStorage.getItem('category')?.toLowerCase();
-    // localStorage.removeItem('selectedFilters');
-    // if (storedCategory) {
-    //   setSelectedFramework(storedCategory);
-    // }
   }, []);
   useEffect(() => {
     console.log('Selected Framework:', selectedFramework);
