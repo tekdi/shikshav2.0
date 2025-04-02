@@ -100,7 +100,16 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
     'Tamil',
     'Malayalam',
   ];
-  const [selectedLanguage, setSelectedLanguage] = useState('English');
+  const [selectedLanguage, setSelectedLanguage] = useState(
+    typeof window !== 'undefined' ? localStorage.getItem('language') : 'English'
+  );
+  useEffect(() => {
+    const storedLanguage = localStorage.getItem('language');
+    if (!storedLanguage) {
+      localStorage.setItem('language', 'English');
+      setSelectedLanguage('English');
+    }
+  }, []);
   useEffect(() => {
     if (framework) {
       if (frameworkFilter) {
@@ -140,6 +149,17 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
 
   const handleSearchClose = () => {
     setIsSearchOpen(false);
+  };
+  const handleLanguageSelect = (e: any) => {
+    const lang = e.target.value;
+    console.log('lang--', lang);
+    // Always update local storage and trigger navigation
+    if (lang !== selectedLanguage) {
+      setSelectedLanguage(lang);
+      localStorage.setItem('language', lang);
+    }
+    // Redirect to contents page
+    router.push('/contents');
   };
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -266,12 +286,12 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                         border: '1px solid #ccc',
                         borderRadius: '8px',
                         padding: '4px',
-                        marginTop: '8px',
+                        marginTop: '6px',
                       }}
                     >
                       <Select
                         value={selectedLanguage}
-                        onChange={(e) => setSelectedLanguage(e.target.value)}
+                        onChange={handleLanguageSelect}
                         displayEmpty
                         sx={{
                           color: '#42474E',

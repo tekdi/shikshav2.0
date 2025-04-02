@@ -146,7 +146,7 @@ const Login: React.FC<ListProps> = () => {
               <Box key={field + '1'}>
                 <FormLabel component="legend" sx={{ color: '#4D4639' }}>
                   {field === 'email'
-                    ? 'Unloack with your Username'
+                    ? 'Unlock with your Username'
                     : 'Password'}
                   <span style={{ color: 'red' }}>*</span>
                 </FormLabel>

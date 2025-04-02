@@ -13,6 +13,8 @@ interface ListProps {}
 const Content = dynamic(() => import('@Content'), {
   ssr: false,
 });
+const selectedLanguage =
+  typeof window !== 'undefined' ? localStorage.getItem('language') : null;
 const List: React.FC<ListProps> = () => {
   const mfe_content = process.env.NEXT_PUBLIC_CONTENT;
   const [isLoadingChildren, setIsLoadingChildren] = React.useState(true);
@@ -53,6 +55,7 @@ const List: React.FC<ListProps> = () => {
                 ...(subCategory
                   ? { subTopic: subCategory }
                   : { topic: storedCategory }),
+                ...(selectedLanguage ? { language: selectedLanguage } : {}),
                 // status: ['Live'],
               },
             },
