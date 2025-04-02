@@ -6,7 +6,6 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 import {
   Chip,
@@ -100,15 +99,18 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
     'Tamil',
     'Malayalam',
   ];
-  const [selectedLanguage, setSelectedLanguage] = useState(
-    typeof window !== 'undefined' ? localStorage.getItem('language') : 'English'
-  );
-  useEffect(() => {
-    const storedLanguage = localStorage.getItem('language');
-    if (!storedLanguage) {
-      localStorage.setItem('language', 'English');
-      setSelectedLanguage('English');
+  const [selectedLanguage, setSelectedLanguage] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('language') || 'English';
     }
+    return 'English';
+  });
+  useEffect(() => {
+    if (window.location.pathname === '/') {
+      localStorage.removeItem('language');
+    }
+    const storedLang = localStorage.getItem('language') || 'English';
+    setSelectedLanguage(storedLang);
   }, []);
   useEffect(() => {
     if (framework) {
@@ -150,15 +152,16 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
   const handleSearchClose = () => {
     setIsSearchOpen(false);
   };
+
   const handleLanguageSelect = (e: any) => {
     const lang = e.target.value;
-    console.log('lang--', lang);
-    // Always update local storage and trigger navigation
-    if (lang !== selectedLanguage) {
-      setSelectedLanguage(lang);
-      localStorage.setItem('language', lang);
-    }
-    // Redirect to contents page
+
+    setSelectedLanguage(lang);
+    localStorage.setItem('language', lang);
+
+    router.push('/contents');
+  };
+  const handleLanguageClick = (e: any) => {
     router.push('/contents');
   };
   return (
@@ -273,6 +276,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                         // value={searchValue}
                         // onChange={(e) => setSearchValue(e.target.value)}
                         sx={{ flex: 1 }}
+                        readOnly
                       />
                     </Box>
 
@@ -292,6 +296,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                       <Select
                         value={selectedLanguage}
                         onChange={handleLanguageSelect}
+                        onClick={() => handleLanguageClick(selectedLanguage)}
                         displayEmpty
                         sx={{
                           color: '#42474E',

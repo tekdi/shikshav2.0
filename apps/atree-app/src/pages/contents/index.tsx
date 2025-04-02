@@ -23,7 +23,8 @@ const List: React.FC<ListProps> = () => {
     typeof window !== 'undefined' ? localStorage.getItem('subcategory') : null;
   const storedCategory =
     typeof window !== 'undefined' ? localStorage.getItem('category') : null;
-
+  const selectedLanguage =
+    typeof window !== 'undefined' ? localStorage.getItem('language') : null;
   useEffect(() => {
     const init = async () => {
       setIsLoadingChildren(false);
