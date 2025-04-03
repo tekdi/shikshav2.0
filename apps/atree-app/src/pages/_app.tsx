@@ -9,7 +9,7 @@ import { ReactKeycloakProvider, useKeycloak } from '@react-keycloak/web';
 import keycloak from '../service/keycloack';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-
+import '@fontsource/poppins';
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['400', '600', '700'], // Choose weights as needed
@@ -34,7 +34,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: 'var(--font-poppins), Arial, sans-serif',
+    fontFamily: 'Poppins'
   },
 });
 function AuthHandler() {
