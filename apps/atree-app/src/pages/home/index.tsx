@@ -93,22 +93,29 @@ export default function Index() {
   // **Update Filters and Trigger API Call in One Step**
   const handleApplyFilters = async (selectedValues: any) => {
     const { offset, limit, ...filters } = selectedValues;
-    const cleanedFilters = Object.fromEntries(
-      Object.entries(filters).filter(
-        ([_, value]) => Array.isArray(value) && value.length > 0
-      )
-    );
-    cleanedFilters.topic = filterCategory ? [filterCategory] : ['Water'];
-    const newFilters = {
-      request: {
-        filters: cleanedFilters,
-        offset: offset ?? 0,
-        limit: limit ?? 5,
-      },
-    };
+    setFilters((prevFilters) => {
+      const cleanedFilters = {
+        ...prevFilters.request.filters, // Preserve existing filters (including access)
+        ...Object.fromEntries(
+          Object.entries(filters).filter(
+            ([_, value]) => Array.isArray(value) && value.length > 0
+          )
+        ),
+      };
 
-    setFilters(newFilters); // Update filters state
-    fetchContentData(newFilters.request.filters); // Fetch content immediately
+      cleanedFilters.topic = filterCategory ? [filterCategory] : ['Water'];
+
+      const newFilters = {
+        request: {
+          filters: cleanedFilters,
+          offset: offset ?? prevFilters.request.offset ?? 0,
+          limit: limit ?? prevFilters.request.limit ?? 5,
+        },
+      };
+
+      fetchContentData(newFilters.request.filters);
+      return newFilters;
+    });
   };
 
   // **Initial Data Fetch Based on frameworkName**
@@ -233,17 +240,29 @@ export default function Index() {
     const accessValue = event.target.checked ? 'Full Access' : 'all'; // Set 'full' or 'all' based on switch state
     setFullAccess(event.target.checked);
     localStorage.setItem('access', accessValue);
-    if (accessValue) {
-      const newFilters =
-        accessValue === 'Full Access'
-          ? {
-              access: 'Full Access',
-              topic: filterCategory ? [filterCategory] : ['Water'],
-            }
-          : { topic: filterCategory ? [filterCategory] : ['Water'] };
+    setFilters((prevFilters) => {
+      const updatedFilters = {
+        ...prevFilters.request.filters, // Preserve existing filters
+        topic: filterCategory ? [filterCategory] : ['Water'],
+      };
 
-      fetchContentData(newFilters);
-    }
+      if (accessValue === 'Full Access') {
+        updatedFilters.access = 'Full Access';
+      } else {
+        delete updatedFilters.access;
+      }
+
+      const newFilters = {
+        request: {
+          filters: updatedFilters,
+          offset: prevFilters.request.offset ?? 0,
+          limit: prevFilters.request.limit ?? 5,
+        },
+      };
+
+      fetchContentData(newFilters.request.filters);
+      return newFilters;
+    });
   };
   // **Restore Consumed Content from LocalStorage**
   useEffect(() => {
@@ -258,6 +277,7 @@ export default function Index() {
     setOpenMessageDialog(false);
     router.push('/signin');
   };
+  console.log('Filters:', filters);
 
   console.log('Filters:', frameworkName);
   console.log('Content Data:', contentData);
