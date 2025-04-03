@@ -16,73 +16,88 @@ export const AtreeCard: React.FC<{
 }) {
   return (
     <Grid container spacing={2} width="100%">
-      {contents?.map((content) => (
-        <Grid
-          size={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 4 }}
+      {contents.length === 0 ? (
+        <Typography
+          variant="h6"
           sx={{
-            cursor: 'pointer',
+            textAlign: 'center',
+            width: '100%',
+            fontWeight: 500,
+            color: 'text.secondary',
+            mt: 2,
           }}
-          key={content.identifier}
-          {..._grid}
         >
-          <Card
+          No resources found
+        </Typography>
+      ) : (
+        contents?.map((content) => (
+          <Grid
+            size={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 4 }}
             sx={{
-              height: '100%',
-              boxShadow: 'none',
-              background: 'transparent',
+              cursor: 'pointer',
             }}
-            onClick={() => handleCardClick(content)}
+            key={content.identifier}
+            {..._grid}
           >
-            <CardMedia
-              component="img"
-              image={content?.posterImage || _card?.image}
-              alt={content.name}
+            <Card
               sx={{
-                objectFit: 'contain',
-                objectPosition: 'center',
-                borderRadius: '16px',
-                border: '1px solid rgba(0,0,0,0.1)',
-                aspectRatio: '176 / 118',
-                overflow: 'hidden',
-                mb: 2,
-                '& > img': {
-                  width: '100%',
-                  height: '100%',
-                  background: 'white',
-                },
+                height: '100%',
+                boxShadow: 'none',
+                background: 'transparent',
               }}
-            />
-            <CardContent
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                padding: '0 0 10px 0 !important',
-              }}
+              onClick={() => handleCardClick(content)}
             >
-              <Typography
-                variant="h6"
-                component="div"
+              <CardMedia
+                component="img"
+                image={content?.posterImage || _card?.image}
+                alt={content.name}
                 sx={{
-                  fontWeight: 700,
-                  fontSize: '16px',
-                  lineHeight: '20px',
-                  color: '#171D1E',
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
+                  objectFit: 'contain',
+                  objectPosition: 'center',
+                  borderRadius: '16px',
+                  border: '1px solid rgba(0,0,0,0.1)',
+                  aspectRatio: '176 / 118',
                   overflow: 'hidden',
-                  textOverflow: 'ellipsis',
+                  mb: 2,
+                  '& > img': {
+                    width: '100%',
+                    height: '100%',
+                    background: 'white',
+                  },
+                }}
+              />
+              <CardContent
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: '0 0 10px 0 !important',
                 }}
               >
-                {content.name}
-              </Typography>
-              <Typography color="text.secondary">
-                {`Year: ${(content as any)?.year || 'N/A'}`}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      ))}
+                <Typography
+                  variant="h6"
+                  component="div"
+                  sx={{
+                    fontWeight: 700,
+                    fontSize: '16px',
+                    lineHeight: '20px',
+                    color: '#171D1E',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {content.name}
+                </Typography>
+                <Typography color="text.secondary">
+                  {`Year: ${(content as any)?.year || 'N/A'}`}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))
+      )}
     </Grid>
   );
 });
