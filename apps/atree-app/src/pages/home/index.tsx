@@ -191,7 +191,7 @@ export default function Index() {
 
       SetFilterCategory(categoryName);
       localStorage.setItem('category', categoryName);
-
+      setFullAccess(false);
       const uniqueAssociations = Array.from(
         new Map(
           subFrameworkData?.associations?.map((item: any) => [item?.name, item])
