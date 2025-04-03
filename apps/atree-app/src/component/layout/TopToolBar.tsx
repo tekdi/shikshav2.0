@@ -6,9 +6,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-
 import {
-  Chip,
   Container,
   InputBase,
   Menu,
@@ -18,7 +16,6 @@ import {
   useTheme,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import Image from 'next/image';
 import SearchTypeModal from '../SearchTypeModal';
 import { FrameworkFilter } from '../Tags';
 import { useRouter } from 'next/router';
@@ -172,6 +169,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
         sx={{
           boxShadow: '0px 2px 2px 0px #00000040',
           ..._appBar,
+          minHeight: { xs: '10px', md: '95px' },
         }}
       >
         <Container maxWidth="xl">
@@ -197,9 +195,24 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
+                      position: 'fixed',
+                      left: 0,
+                      transform: 'translateY(-50%)',
+                      padding: '10px',
+                      zIndex: 1000,
                     }}
                   >
-                    <Image src={logoUrl} alt="logo" width={91} height={91} />
+                    <Box
+                      component="img"
+                      src={logoUrl}
+                      alt="logo"
+                      sx={{
+                        width: { xs: '64px', md: '91px' }, 
+                        height: { xs: '65px', md: '91px' },
+                        marginTop: { md: '15px' },
+                        
+                      }}
+                    />
                   </Box>
                 )}
                 {!isMobile && !isAuthPage && (
@@ -250,17 +263,23 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                 {!isMobile ? (
                   <Box
                     sx={{
+                      position: 'fixed',
+                      right: 0,
+                      marginTop: { md: '60px' },
+                      transform: 'translateY(-50%)',
                       display: 'flex',
                       gap: 2,
+                      alignItems: 'center',
+                      paddingRight: '16px',
+                      zIndex: 1100,
                     }}
                   >
                     <Box
                       sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        width: '238px',
+                        width: { xs: '180px', md: '238px' }, 
                         height: '40px',
-                        marginTop: '5px',
                         borderRadius: '28px',
                         border: '1px solid #ccc',
                         paddingLeft: '12px',
@@ -290,7 +309,6 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                         border: '1px solid #ccc',
                         borderRadius: '8px',
                         padding: '4px',
-                        marginTop: '6px',
                       }}
                     >
                       <Select
@@ -329,7 +347,18 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                     </IconButton>
                   </Box>
                 ) : (
-                  <Box>
+                  <Box
+                    sx={{
+                      position: 'fixed',
+                      right: 0,
+                      marginTop: '50px',
+                      transform: 'translateY(-50%)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      paddingRight: '16px',
+                      zIndex: 1100,
+                    }}
+                  >
                     <IconButton
                       size="large"
                       edge="start"

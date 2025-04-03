@@ -92,9 +92,14 @@ export const FrameworkFilter = ({
       sx={
         !isMobile
           ? {
-              position: 'absolute',
-              top: '30px',
-              left: '10%',
+              position: 'absolute', 
+              left: '40%', 
+              transform: 'translateX(-50%)', 
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minWidth: '100px',
+              marginTop: { md: '-10px' },
             }
           : {}
       }
