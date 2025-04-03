@@ -274,6 +274,10 @@ export default function Content(props: ContentProps) {
       offset: 0, // Reset pagination on filter change
     }));
   };
+  const handleBack = useCallback(() => {
+    localStorage.removeItem('language');
+    router.back();
+  }, [router]);
   return (
     <Loader isLoading={isPageLoading}>
       <Box sx={{ p: 2 }}>
@@ -285,7 +289,7 @@ export default function Content(props: ContentProps) {
               marginBottom: '20px',
             }}
           >
-            <ArrowBackIosIcon onClick={() => router.back()} />
+            <ArrowBackIosIcon onClick={handleBack} />
             <Typography
               sx={{ color: '#1C170D', fontSize: '22px', fontWeight: 700 }}
             >
