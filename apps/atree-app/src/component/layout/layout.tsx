@@ -21,6 +21,8 @@ import ParkOutlinedIcon from '@mui/icons-material/ParkOutlined';
 import { useRouter } from 'next/router';
 import BookmarksOutlinedIcon from '@mui/icons-material/BookmarksOutlined';
 import TermsAndCondition from '../TermsAndCondition';
+import { useKeycloak } from '@react-keycloak/web';
+
 interface LayoutProps {
   children?: React.ReactNode;
   footerComponent?: React.ReactNode | string;
@@ -113,6 +115,8 @@ export default function Layout({
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
+  const { keycloak } = useKeycloak();
+
   useEffect(() => {
     const handleResize = debounce(() => {
       const totalHeight = Object.keys(refs.current).reduce((acc, key) => {
@@ -188,6 +192,20 @@ export default function Layout({
       if (token) {
         // If logged in, clear localStorage and log out
         localStorage.clear();
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
+        Object.keys(localStorage).forEach((key) => {
+          if (key.startsWith('kc-callback-')) {
+            localStorage.removeItem(key);
+          }
+        });
+
+        keycloak.logout({
+          redirectUri: window.location.origin, // Redirect to home page after logout
+        });
+        // Clear Google OAuth session (important for some cases)
+        document.cookie =
+          'g_state=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         router.push('/'); // Redirect to home on logout
       } else {
         // If not logged in, go to sign-in page

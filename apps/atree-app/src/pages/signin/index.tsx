@@ -49,7 +49,14 @@ const Login: React.FC<ListProps> = () => {
 
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  useEffect(() => localStorage.clear(), []);
+  useEffect(() => {
+    localStorage.clear();
+    sessionStorage.removeItem('token');
+
+    // Clear Google OAuth session (important for some cases)
+    document.cookie =
+      'g_state=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+  }, []);
 
   const validateEmail = (email: string) =>
     /^[a-zA-Z][a-zA-Z0-9._]{2,}$/.test(email);
@@ -145,9 +152,7 @@ const Login: React.FC<ListProps> = () => {
             {['email', 'password'].map((field) => (
               <Box key={field + '1'}>
                 <FormLabel component="legend" sx={{ color: '#4D4639' }}>
-                  {field === 'email'
-                    ? 'Unlock with your Username'
-                    : 'Password'}
+                  {field === 'email' ? 'Unlock with your Username' : 'Password'}
                   <span style={{ color: 'red' }}>*</span>
                 </FormLabel>
                 <CommonTextField
@@ -257,6 +262,7 @@ const MyCustomGoogleLogin = () => {
       console.error('Login Failed', error);
     }
   };
+
   return (
     <Button
       variant="contained"
