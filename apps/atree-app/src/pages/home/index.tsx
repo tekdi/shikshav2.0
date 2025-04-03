@@ -249,7 +249,11 @@ export default function Index() {
   ) => {
     const accessValue = event.target.checked ? 'Full Access' : 'all'; // Set 'full' or 'all' based on switch state
     setFullAccess(event.target.checked);
-    localStorage.setItem('access', accessValue);
+    if (accessValue === 'Full Access') {
+      localStorage.setItem('access', accessValue);
+    } else {
+      localStorage.removeItem('access'); // Remove when unchecked
+    }
     setFilters((prevFilters) => {
       const updatedFilters = {
         ...prevFilters.request.filters, // Preserve existing filters
