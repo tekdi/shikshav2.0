@@ -25,7 +25,7 @@ const List: React.FC<ListProps> = () => {
     typeof window !== 'undefined' ? localStorage.getItem('category') : null;
   const selectedLanguage =
     typeof window !== 'undefined' ? localStorage.getItem('language') : null;
-    const selectedAccess =
+  const selectedAccess =
     typeof window !== 'undefined' ? localStorage.getItem('access') : null;
   useEffect(() => {
     const init = async () => {
@@ -39,9 +39,11 @@ const List: React.FC<ListProps> = () => {
       <Box
         sx={{
           padding: 0,
-          height: '100vw',
+          minHeight: '100vh', // Ensures full screen height even if the parent has constraints
           width: '100%',
-          overflow: 'hidden',
+          overflow: { md: 'hidden', xs: 'auto' }, // Prevents unwanted scrolling on desktop
+          display: 'flex', // Helps in full-height layout
+          flexDirection: 'column',
         }}
       >
         <Content
