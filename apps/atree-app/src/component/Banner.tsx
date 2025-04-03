@@ -60,7 +60,7 @@ export default function Banner() {
 
         {/* Carousel with Images */}
         <Carousel
-          navButtonsAlwaysVisible
+          
           indicators={false}
           animation="slide"
           autoPlay={true}
@@ -79,7 +79,7 @@ export default function Banner() {
         >
           {uniqueLandingImages.map((image) => (
             <Box
-              key={image.id} // ✅ Ensure this is the only key
+              key={image.id}
               sx={{
                 width: '100%',
                 height: { xs: '181px', md: '500px' },
