@@ -99,7 +99,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
 
   React.useEffect(() => {
-    const lang = localStorage.getItem('language') || 'English';
+    const lang = localStorage.getItem('language') ?? 'English';
     setSelectedLanguage(lang);
   }, []);
   useEffect(() => {
@@ -207,10 +207,9 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                       src={logoUrl}
                       alt="logo"
                       sx={{
-                        width: { xs: '64px', md: '91px' }, 
+                        width: { xs: '64px', md: '91px' },
                         height: { xs: '65px', md: '91px' },
                         marginTop: { md: '15px' },
-                        
                       }}
                     />
                   </Box>
@@ -278,7 +277,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                       sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        width: { xs: '180px', md: '238px' }, 
+                        width: { xs: '180px', md: '238px' },
                         height: '40px',
                         borderRadius: '28px',
                         border: '1px solid #ccc',
