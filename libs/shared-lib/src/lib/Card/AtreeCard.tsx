@@ -16,7 +16,7 @@ export const AtreeCard: React.FC<{
 }) {
   return (
     <Grid container spacing={2} width="100%">
-      {contents.length === 0 ? (
+      {contents?.length === 0 ? (
         <Typography
           variant="h6"
           sx={{
@@ -30,6 +30,7 @@ export const AtreeCard: React.FC<{
           No resources found
         </Typography>
       ) : (
+        contents?.length > 0 &&
         contents?.map((content) => (
           <Grid
             size={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 4 }}

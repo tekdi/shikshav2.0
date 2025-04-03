@@ -94,16 +94,26 @@ export default function Index() {
   const handleApplyFilters = async (selectedValues: any) => {
     const { offset, limit, ...filters } = selectedValues;
     setFilters((prevFilters) => {
-      const cleanedFilters = {
-        ...prevFilters.request.filters, // Preserve existing filters (including access)
+      // Create a new filters object, preserving previous filters
+      let cleanedFilters = {
+        ...prevFilters.request.filters,
         ...Object.fromEntries(
           Object.entries(filters).filter(
-            ([_, value]) => Array.isArray(value) && value.length > 0
+            ([key, value]) => Array.isArray(value) && value.length > 0
           )
         ),
       };
 
+      // Ensure topic is set correctly
       cleanedFilters.topic = filterCategory ? [filterCategory] : ['Water'];
+
+      // Explicitly remove mimeType if it's empty OR if it's inherited from prevFilters
+      if (!filters.mimeType || filters.mimeType.length === 0) {
+        delete cleanedFilters.mimeType;
+      }
+      if (!filters.resource || filters.resource.length === 0) {
+        delete cleanedFilters.resource;
+      }
 
       const newFilters = {
         request: {
@@ -277,7 +287,6 @@ export default function Index() {
     setOpenMessageDialog(false);
     router.push('/signin');
   };
-  console.log('Filters:', filters);
 
   console.log('Filters:', frameworkName);
   console.log('Content Data:', contentData);
@@ -389,9 +398,7 @@ export default function Index() {
 
                 <ContentSection
                   contents={
-                    contentData.length > 0
-                      ? contentData.slice(0, 4)
-                      : [contentData]
+                    contentData.length > 0 ? contentData.slice(0, 4) : []
                   }
                   title={t('Read, Watch, Listen')}
                   onTitleClick={() => {
@@ -467,9 +474,7 @@ export default function Index() {
                   localStorage.removeItem('subcategory');
                   router.push('/contents');
                 }}
-                contents={
-                  contentData.length > 0 ? contentData.slice(0, 4) : contentData
-                }
+                contents={contentData.length > 0 ? contentData.slice(0, 4) : []}
               />
             </Box>
             <Box
@@ -560,7 +565,7 @@ const ContentSection = ({ title, contents, onTitleClick, handleCardClick }) => (
     }}
   >
     <Title onClick={onTitleClick}>{title}</Title>
-    {contents?.length > 0 ? (
+    {contents && contents.length > 0 ? (
       <AtreeCard
         contents={contents}
         handleCardClick={handleCardClick}
