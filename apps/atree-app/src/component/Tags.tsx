@@ -73,6 +73,7 @@ export const FrameworkFilter = ({
     setFramework(item.identifier);
     setSelectedFramework(selectedCategory);
     localStorage.removeItem('selectedFilters');
+    localStorage.removeItem('language');
     localStorage.removeItem('access');
 
     localStorage.setItem('category', selectedCategory);

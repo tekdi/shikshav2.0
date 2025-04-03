@@ -285,7 +285,11 @@ export default function Content(props: ContentProps) {
               marginBottom: '20px',
             }}
           >
-            <ArrowBackIosIcon onClick={() => router.back()} />
+            <ArrowBackIosIcon
+              onClick={() => {
+                router.back(), localStorage.removeItem('language');
+              }}
+            />
             <Typography
               sx={{ color: '#1C170D', fontSize: '22px', fontWeight: 700 }}
             >
