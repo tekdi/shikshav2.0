@@ -93,9 +93,9 @@ export const FrameworkFilter = ({
       sx={
         !isMobile
           ? {
-              position: 'absolute', 
-              left: '40%', 
-              transform: 'translateX(-50%)', 
+              position: 'absolute',
+              left: '40%',
+              transform: 'translateX(-50%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -114,6 +114,11 @@ export const FrameworkFilter = ({
               variant={isSelected ? 'contained' : 'outlined'}
               sx={{
                 borderRadius: '8px',
+                fontFamily: 'Roboto',
+                fontWeight: 500,
+                textTransform: 'none',
+                fontSize: '16px',
+
                 borderColor: isSelected ? undefined : '#CEE5FF',
                 color: isSelected ? undefined : '#171D1E',
                 backgroundColor: isSelected

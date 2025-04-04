@@ -18,6 +18,7 @@ export const ImageBanner = ({
   _text,
   _textPosition = { bottom: 0, left: 0, right: 0 },
   _showAvatar = false,
+  _eventClick = false,
 }: {
   image: string;
   name: string;
@@ -25,6 +26,7 @@ export const ImageBanner = ({
   _text?: object;
   _textPosition?: object;
   _showAvatar?: boolean;
+  _eventClick?: boolean;
 }) => {
   const router = useRouter();
   const theme = useTheme();
@@ -34,7 +36,10 @@ export const ImageBanner = ({
   };
 
   return (
-    <Card sx={{ width: '100%', position: 'relative' }} onClick={handleClick}>
+    <Card
+      sx={{ width: '100%', position: 'relative' }}
+      onClick={_eventClick ? undefined : handleClick}
+    >
       <CardActionArea>
         <CardMedia
           component="img"
