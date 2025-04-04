@@ -60,7 +60,6 @@ export default function Banner() {
 
         {/* Carousel with Images */}
         <Carousel
-          
           indicators={false}
           animation="slide"
           autoPlay={true}
@@ -69,6 +68,7 @@ export default function Banner() {
           duration={4000}
           stopAutoPlayOnHover={false}
           cycleNavigation={true}
+          navButtonsAlwaysInvisible={true}
           sx={{
             width: '100%',
             minHeight: { md: '500px' }, // Full height for web

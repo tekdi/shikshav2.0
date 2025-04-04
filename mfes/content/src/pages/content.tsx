@@ -276,6 +276,8 @@ export default function Content(props: ContentProps) {
   };
   const handleBack = useCallback(() => {
     localStorage.removeItem('language');
+    localStorage.removeItem('access');
+
     router.back();
   }, [router]);
   return (
