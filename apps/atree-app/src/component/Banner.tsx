@@ -91,6 +91,7 @@ export default function Banner() {
               <ImageBanner
                 name=""
                 image={image.image}
+                _eventClick={true}
                 _image={{ height: { xs: 'auto', md: '500px' } }}
               />
             </Box>
