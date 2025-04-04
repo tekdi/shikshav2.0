@@ -2,14 +2,14 @@ import * as React from 'react';
 import Grid from '@mui/material/Grid2';
 import { ImageBanner } from '../component/layout/ImageBanner';
 import { Typography, Box } from '@mui/material';
-import landingBanner1 from '../../assets/images/banner/Arunachal ke Saaras.jpg';
-import landingBanner2 from '../../assets/images/banner/Bavre Beej.jpg';
-import landingBanner3 from '../../assets/images/banner/Current Conservation.jpg';
-import landingBanner4 from '../../assets/images/banner/I wonder who that is.jpg';
-import landingBanner5 from '../../assets/images/banner/Nisargshala.jpg';
-import landingBanner6 from '../../assets/images/banner/The Spring of Life (2).jpg';
-import landingBanner7 from '../../assets/images/banner/Travelling Seeds.jpg';
-import landingBanner8 from '../../assets/images/banner/Whoop, goes the pufferfish.jpg';
+import landingBanner1 from '../../assets/images/png/Arunachal ke Saaras.png';
+import landingBanner2 from '../../assets/images/png/Bavre Beej.png';
+import landingBanner3 from '../../assets/images/png/Current Conservation.png';
+import landingBanner4 from '../../assets/images/png/I wonder who that is.png';
+import landingBanner5 from '../../assets/images/png/Nisargshala.png';
+import landingBanner6 from '../../assets/images/png/The Spring of Life (2).png';
+import landingBanner7 from '../../assets/images/png/Travelling Seeds.png';
+import landingBanner8 from '../../assets/images/png/Whoop, goes the pufferfish.png';
 import Carousel from 'react-material-ui-carousel';
 
 export default function Banner() {
