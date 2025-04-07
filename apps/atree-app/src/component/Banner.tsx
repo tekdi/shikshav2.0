@@ -11,9 +11,9 @@ import landingBanner6 from '../../assets/images/png/The Spring of Life (2).png';
 import landingBanner7 from '../../assets/images/png/Travelling Seeds.png';
 import landingBanner8 from '../../assets/images/png/Whoop, goes the pufferfish.png';
 import Carousel from 'react-material-ui-carousel';
-type BannerProps = {
+type BannerProps = Readonly<{
   text: string;
-};
+}>;
 export default function Banner({ text }: BannerProps) {
   const landingImages = [
     { image: landingBanner1?.src, id: 1 },

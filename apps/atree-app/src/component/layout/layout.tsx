@@ -157,11 +157,7 @@ export default function Layout({
       icon: <ParkOutlinedIcon fontSize="small" />,
       to: '/aboutus',
     },
-    {
-      text: 'Contact Us',
-      icon: <AlternateEmailOutlinedIcon fontSize="small" />,
-      to: '/contactus',
-    },
+
     ...(!isMobile
       ? [
           {
