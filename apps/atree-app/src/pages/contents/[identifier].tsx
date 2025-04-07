@@ -63,7 +63,6 @@ export default function Content() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [open, setOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const handleOpen = () => setOpen(true);
   const handleOnCLick = () => {
     if (contentData?.url) {
@@ -173,7 +172,6 @@ export default function Content() {
     router.push(`/contents/${content?.identifier}`);
   };
   const selectTagOnClick = (val: any) => {
-    setSearchQuery(val);
     router.push(`/searchpage?query=${val}&tags=${true}`);
   };
   return (
