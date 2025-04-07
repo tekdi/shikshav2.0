@@ -63,14 +63,15 @@ export default function Content() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [open, setOpen] = useState(false);
-
+  const [searchQuery, setSearchQuery] = useState('');
   const handleOpen = () => setOpen(true);
   const handleOnCLick = () => {
     if (contentData?.url) {
       window.open(contentData.url, '_blank');
-    } else {
-      router.push(`/player/${identifier}`);
     }
+  };
+  const handlePreview = () => {
+    router.push(`/player/${identifier}`);
   };
   const handleOnDownload = async () => {
     if (contentData?.previewUrl.endsWith('.pdf')) {
@@ -132,6 +133,16 @@ export default function Content() {
     if (identifier) fetchContent();
   }, [identifier]);
 
+  /*************  ✨ Windsurf Command ⭐  *************/
+  /**
+   * Fetches framework data from the API and filters it to include only categories with a status of 'Live'.
+   * Constructs a URL using environment variables to specify the base URL and framework identifier.
+   * Parses the JSON response to extract the framework data, and applies filtering to keep only live categories.
+   * In case the framework data is unavailable, provides a default structure with empty categories.
+   * Logs an error message to the console if the fetch operation fails.
+   */
+
+  /*******  7ab4bfd8-d767-4480-872d-12d419e51cfb  *******/
   const fetchFrameworkData = async () => {
     try {
       const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
@@ -161,6 +172,10 @@ export default function Content() {
   const handleCardClick = (content: any) => {
     router.push(`/contents/${content?.identifier}`);
   };
+  const selectTagOnClick = (val: any) => {
+    setSearchQuery(val);
+    router.push(`/searchpage?query=${val}&tags=${true}`);
+  };
   return (
     <Layout
       showBack
@@ -188,7 +203,7 @@ export default function Content() {
             >
               {contentData?.name || ''}
             </Typography>
-            <Typography
+            {/* <Typography
               variant="subtitle1"
               color="textSecondary"
               sx={{
@@ -200,7 +215,7 @@ export default function Content() {
               }}
             >
               {contentData?.author || ''}
-            </Typography>
+            </Typography> */}
           </div>
 
           {/* Right Side - Share Button */}
@@ -228,18 +243,7 @@ export default function Content() {
               {/* {[...Array(4)].map((_, i) => ( */}
               <ImageCard
                 image={contentData?.posterImage || landingBanner?.src}
-                name={
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <Box>
-                      <Typography variant="body2" gutterBottom>
-                        {contentData?.name || ''}
-                      </Typography>
-                      <Typography variant="body2" gutterBottom>
-                        {contentData?.publisher || ''}
-                      </Typography>
-                    </Box>
-                  </Box>
-                }
+                name={''}
               />
             </Grid>
             <Grid size={{ xs: 12, md: 9 }}>
@@ -252,6 +256,7 @@ export default function Content() {
                       label={label}
                       variant="outlined"
                       sx={{ height: 32, padding: '6px 8px' }}
+                      onClick={() => selectTagOnClick(label)}
                     />
                   ))}
                   {showMoreIcon && (
@@ -299,14 +304,32 @@ export default function Content() {
                         Download
                       </Button>
                     )}
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    sx={{
+                      borderRadius: '50px',
+                      height: '40px',
+                      flex: 0.3,
+                      backgroundColor: 'white',
+                      borderColor: (theme) => theme.palette.secondary.main,
+                      color: 'black',
+                    }}
+                    onClick={handlePreview}
+                  >
+                    Preview
+                  </Button>
                 </Box>
 
                 {/* Year & License */}
                 <Typography variant="body1" textAlign="left">
-                  <b>Year:</b> {contentData?.year || ''}
+                  <b>Author:</b> {contentData?.author || ''}
                 </Typography>
                 <Typography variant="body1" textAlign="left">
-                  <b>License:</b> {contentData?.license || ''}
+                  <b>Publisher:</b> {contentData?.publisher || ''}
+                </Typography>
+                <Typography variant="body1" textAlign="left">
+                  <b>Year:</b> {contentData?.year || ''}
                 </Typography>
               </Stack>
             </Grid>
@@ -440,12 +463,14 @@ export default function Content() {
           <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
             {contentData?.description}
           </Typography>
-
           <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-            <b>Year:</b> {contentData?.year || ''}
+            <b>Author:</b> {contentData?.author || ''}
           </Typography>
           <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-            <b>License:</b> {contentData?.license || ''}
+            <b>Publisher:</b> {contentData?.publisher || ''}
+          </Typography>
+          <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
+            <b>Year:</b> {contentData?.year || ''}
           </Typography>
         </Box>
       )}
@@ -507,7 +532,7 @@ const ImageCard = ({
           sx={_image}
           image={image}
         />
-        <CardContent
+        {/* <CardContent
           sx={{
             backgroundColor: '#DDE8FF',
             alignItems: 'flex-start',
@@ -528,7 +553,7 @@ const ImageCard = ({
           >
             {name}
           </Typography>
-        </CardContent>
+        </CardContent> */}
       </CardActionArea>
     </Card>
   );

@@ -27,6 +27,56 @@ const catImages = {
   'Activity Books': ActivityBooks,
   Potpourri: ReferenceBooks,
 };
+
+type AnimatedCounterProps = {
+  target: number;
+  duration?: number;
+  restartDelay?: number;
+};
+
+const AnimatedCounter = ({
+  target = 2000,
+  duration = 20000,
+  restartDelay = 10000,
+}: AnimatedCounterProps) => {
+  const [count, setCount] = useState(0);
+  const [key, setKey] = useState(0);
+
+  const restartCounter = () => {
+    setKey((prev) => prev + 1);
+  };
+
+  const triggerRestart = () => {
+    setTimeout(restartCounter, restartDelay);
+  };
+
+  useEffect(() => {
+    let start = 0;
+    const increment = target / (duration / 10);
+
+    const updateCount = () => {
+      start += increment;
+      if (start >= target) {
+        setCount(target);
+        clearInterval(interval);
+        triggerRestart();
+      } else {
+        setCount(Math.ceil(start));
+      }
+    };
+
+    const interval = setInterval(updateCount, 10);
+
+    return () => clearInterval(interval);
+  }, [key, target, duration, restartDelay]);
+
+  return (
+    <Typography fontWeight="400" sx={{ fontSize: { xs: '24px', md: '64px' } }}>
+      {count}
+    </Typography>
+  );
+};
+
 const LandingPage = () => {
   // const { t } = useTranslation();
   const t = (data: string) => data;
@@ -45,6 +95,7 @@ const LandingPage = () => {
   ];
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   useEffect(() => {
     const init = async () => {
       try {
@@ -84,7 +135,7 @@ const LandingPage = () => {
   }, []);
 
   return (
-    <Layout footerComponent={<FooterText />}>
+    <Layout footerComponent={<FooterText page={''} />}>
       {loading ? (
         <Loader />
       ) : (
@@ -155,6 +206,21 @@ const LandingPage = () => {
                     {t(
                       'Change stems from local action. Hope stems from children’s empowerment to act upon local environmental problems.'
                     )}
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    align="center"
+                    gutterBottom
+                    sx={{
+                      fontWeight: 400,
+                      fontSize: { xs: '14px', md: '24px' },
+                      lineHeight: { xs: '24px', md: '44px' },
+                      pl: '55px',
+                      pr: '55px',
+                      textAlign: 'center',
+                      color: '#000000',
+                    }}
+                  >
                     {t(
                       'Our mission is to empower environment educators with both hope and action in times of climate change.'
                     )}
@@ -174,8 +240,6 @@ const LandingPage = () => {
               <Box
                 sx={{
                   backgroundColor: '#FCD905',
-
-                  // borderRadius: '8px',
                   width: '100vw',
                   maxWidth: '100%',
                   height: { xs: '63px', md: '170px' },
@@ -188,29 +252,34 @@ const LandingPage = () => {
                   textAlign: 'center',
                 }}
               >
-                {[
-                  { label: 'RESOURCES', value: '1000' },
-                  { label: 'CATEGORIES', value: '15' },
-                  { label: 'LANGUAGES', value: languageCount },
-                  // { label: 'Reader', value: readerCount },
-                ].map((item, index) => (
-                  <Box key={index}>
-                    <Typography
-                      fontWeight="400"
-                      sx={{ fontSize: { xs: '24px', md: '64px' } }}
-                    >
-                      {item.value}
-                    </Typography>
-                    <Typography
-                      fontWeight="400"
-                      sx={{ fontSize: { xs: '10px', md: '24px' } }}
-                    >
-                      {item.label}
-                    </Typography>
-                  </Box>
-                ))}
+                <Box>
+                  <AnimatedCounter target={1000} />
+                  <Typography
+                    fontWeight="400"
+                    sx={{ fontSize: { xs: '10px', md: '24px' } }}
+                  >
+                    RESOURCES
+                  </Typography>
+                </Box>
+                <Box>
+                  <AnimatedCounter target={15} />
+                  <Typography
+                    fontWeight="400"
+                    sx={{ fontSize: { xs: '10px', md: '24px' } }}
+                  >
+                    CATEGORIES
+                  </Typography>
+                </Box>
+                <Box>
+                  <AnimatedCounter target={8} />
+                  <Typography
+                    fontWeight="400"
+                    sx={{ fontSize: { xs: '10px', md: '24px' } }}
+                  >
+                    LANGUAGES
+                  </Typography>
+                </Box>
               </Box>
-
               {/* <Typography
                 variant="body1"
                 align="center"

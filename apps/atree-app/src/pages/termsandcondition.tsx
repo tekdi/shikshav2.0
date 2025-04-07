@@ -6,8 +6,8 @@ import Banner from '../component/Banner';
 import FooterText from '../component/FooterText';
 export default function Aboutus() {
   return (
-    <Layout footerComponent={<FooterText />}>
-      <Banner text={'Terms and Conditions'} />
+    <Layout footerComponent={<FooterText page={''} />}>
+      <Banner text="Terms and Conditions" />
       <Grid
         container
         spacing={2}
