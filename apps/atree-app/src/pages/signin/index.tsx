@@ -15,11 +15,9 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useKeycloak } from '@react-keycloak/web';
 
-import Layout from '../../component/layout/layout';
-
 import { useRouter } from 'next/router';
 import { signin } from '../../service/content';
-import Loader from '../../component/layout/LoaderComponent';
+import Loader from '../../component/layout/LoaderComponent';  
 interface ListProps {}
 const commonButtonStyle = {
   backgroundColor: '#ffffff',
@@ -120,7 +118,7 @@ const Login: React.FC<ListProps> = () => {
     }
   };
   return (
-    <Layout isFooter={false} isDrawer={false}>
+    <Box>
       {loading ? (
         <Loader />
       ) : (
@@ -149,6 +147,21 @@ const Login: React.FC<ListProps> = () => {
               backgroundColor: '#FFFFFF',
             }}
           >
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              mb={2}
+            >
+              <img
+                src="/images/atreeLogo.svg"
+                alt="Logo"
+                style={{
+                  width: '180px',
+                  height: 'auto',
+                }}
+              />
+            </Box>
             {['email', 'password'].map((field) => (
               <Box key={field + '1'}>
                 <FormLabel component="legend" sx={{ color: '#4D4639' }}>
@@ -237,7 +250,7 @@ const Login: React.FC<ListProps> = () => {
           )}
         </Grid>
       )}
-    </Layout>
+    </Box>
   );
 };
 

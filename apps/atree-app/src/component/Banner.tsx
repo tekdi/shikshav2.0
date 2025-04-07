@@ -11,8 +11,10 @@ import landingBanner6 from '../../assets/images/png/The Spring of Life (2).png';
 import landingBanner7 from '../../assets/images/png/Travelling Seeds.png';
 import landingBanner8 from '../../assets/images/png/Whoop, goes the pufferfish.png';
 import Carousel from 'react-material-ui-carousel';
-
-export default function Banner() {
+type BannerProps = {
+  text: string;
+};
+export default function Banner({ text }: BannerProps) {
   const landingImages = [
     { image: landingBanner1?.src, id: 1 },
     { image: landingBanner2?.src, id: 2 },
@@ -55,7 +57,7 @@ export default function Banner() {
             padding: { xs: '0 20px', md: '0 90px' },
           }}
         >
-          A digital hub of Environment Education resources contextual to India
+          {text}
         </Typography>
 
         {/* Carousel with Images */}

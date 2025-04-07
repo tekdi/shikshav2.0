@@ -89,7 +89,7 @@ const LandingPage = () => {
         <Loader />
       ) : (
         <Grid container spacing={4} sx={{ mb: 3 }} justifyContent={'center'}>
-          <Banner />
+          <Banner text={"A digital hub of Environment Education resources contextual to India"} />
           <Grid
             sx={{ px: 4, textAlign: 'center' }}
             container

@@ -7,28 +7,16 @@ import FooterText from '../component/FooterText';
 export default function Aboutus() {
   return (
     <Layout footerComponent={<FooterText />}>
-      <Banner />
+      <Banner text={'Terms and Conditions'} />
       <Grid
         container
         spacing={2}
         direction="column"
         alignItems="left"
         // justifyContent="center"
-        marginBottom={'25px'}
-        padding={{ xs: '15px', md: '100px' }}
+        marginBottom={'5px'}
+        padding={{ xs: '25px' }}
       >
-        {/* About Us Title */}
-        <Typography
-          sx={{
-            textAlign: 'center',
-            fontWeight: { xs: 400, md: 500 },
-            fontSize: { xs: '24px', md: '64px' },
-            mt: 2,
-          }}
-        >
-          Terms and Conditions
-        </Typography>
-
         {/* About Us Description */}
         <Typography>
           Welcome to the Jal Jungle Jameen in classrooms digital library

@@ -13,7 +13,7 @@ export default function FooterText() {
       <Typography
         align="center"
         gutterBottom
-        sx={{ fontSize: { xs: '10px', md: '24px' } }}
+        sx={{ fontSize: { xs: '10px', md: '14px' } }}
       >
         Curated by ATREE: For, Of, and By Environment Educators of India
       </Typography>

@@ -90,6 +90,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
   const languages = [
     'English',
     'Hindi',
+    'Marathi',
     'Bengali',
     'Assamese',
     'Kannada',
