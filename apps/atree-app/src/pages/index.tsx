@@ -28,39 +28,45 @@ const catImages = {
   Potpourri: ReferenceBooks,
 };
 
-const AnimatedCounter = ({
-  target = 2000,
-  duration = 20000,
-  restartDelay = 10000, // 5 minutes = 300000 ms
-}: {
+type AnimatedCounterProps = {
   target: number;
   duration?: number;
   restartDelay?: number;
-}) => {
+};
+
+const AnimatedCounter = ({
+  target = 2000,
+  duration = 20000,
+  restartDelay = 10000,
+}: AnimatedCounterProps) => {
   const [count, setCount] = useState(0);
-  const [key, setKey] = useState(0); // This will be used to re-trigger animation
+  const [key, setKey] = useState(0);
 
   useEffect(() => {
     let start = 0;
     const increment = target / (duration / 10);
 
-    const interval = setInterval(() => {
+    const updateCount = () => {
       start += increment;
       if (start >= target) {
         setCount(target);
         clearInterval(interval);
-
-        // Restart the animation after 5 minutes
-        setTimeout(() => {
-          setKey((prev) => prev + 1); // Trigger rerun
-        }, restartDelay);
+        triggerRestart();
       } else {
         setCount(Math.ceil(start));
       }
-    }, 10);
+    };
+
+    const triggerRestart = () => {
+      setTimeout(() => {
+        setKey((prev) => prev + 1);
+      }, restartDelay);
+    };
+
+    const interval = setInterval(updateCount, 10);
 
     return () => clearInterval(interval);
-  }, [key, target, duration, restartDelay]); // runs every time `key` changes
+  }, [key, target, duration, restartDelay]);
 
   return (
     <Typography fontWeight="400" sx={{ fontSize: { xs: '24px', md: '64px' } }}>
@@ -126,7 +132,7 @@ const LandingPage = () => {
   }, []);
 
   return (
-   <Layout footerComponent={<FooterText page={''} />} >
+    <Layout footerComponent={<FooterText page={''} />}>
       {loading ? (
         <Loader />
       ) : (
@@ -228,7 +234,6 @@ const LandingPage = () => {
               alignItems="center"
               justifyContent={'space-evenly'}
             >
-          
               <Box
                 sx={{
                   backgroundColor: '#FCD905',

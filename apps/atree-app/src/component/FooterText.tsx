@@ -1,6 +1,9 @@
 import { Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-export default function FooterText({ page }: { page: string }) {
+type FooterTextProps = {
+  readonly page?: string; // made optional in case it's not always passed
+};
+export default function FooterText({ page }: FooterTextProps) {
   const isAboutPage = page === 'aboutus';
 
   return (
