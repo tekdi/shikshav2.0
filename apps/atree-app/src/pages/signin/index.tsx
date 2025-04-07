@@ -152,7 +152,7 @@ const Login: React.FC<ListProps> = () => {
             {['email', 'password'].map((field) => (
               <Box key={field + '1'}>
                 <FormLabel component="legend" sx={{ color: '#4D4639' }}>
-                  {field === 'email' ? 'Unlock with your Username' : 'Password'}
+                  {field === 'email' ? 'Username' : 'Password'}
                   <span style={{ color: 'red' }}>*</span>
                 </FormLabel>
                 <CommonTextField

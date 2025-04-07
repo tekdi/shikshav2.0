@@ -278,8 +278,7 @@ export default function Registration() {
                 );
 
                 // Password validation regex
-                const passwordRegex =
-                  /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[~!@#$%^&*()_+`\-={}";'<>?,./\\]).{8,}$/;
+                const passwordRegex = /^.{6,}$/;
 
                 // Update error state based on validation
                 if (!passwordRegex.test(value)) {
@@ -291,9 +290,7 @@ export default function Registration() {
               type={showPassword ? 'text' : 'password'}
               variant="outlined"
               helperText={
-                error.password
-                  ? 'Password must be at least 8 characters, including uppercase, lowercase, number, and special character.'
-                  : ''
+                error.password ? 'Password must be at least 6 characters. ' : ''
               }
               error={error.password}
               endIcon={
