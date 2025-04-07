@@ -15,11 +15,10 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useKeycloak } from '@react-keycloak/web';
 
-import Layout from '../../component/layout/layout';
-
 import { useRouter } from 'next/router';
 import { signin } from '../../service/content';
 import Loader from '../../component/layout/LoaderComponent';
+import ImageCenter from '../../component/ImageCenter';
 interface ListProps {}
 const commonButtonStyle = {
   backgroundColor: '#ffffff',
@@ -120,7 +119,7 @@ const Login: React.FC<ListProps> = () => {
     }
   };
   return (
-    <Layout isFooter={false} isDrawer={false}>
+    <Box>
       {loading ? (
         <Loader />
       ) : (
@@ -149,10 +148,11 @@ const Login: React.FC<ListProps> = () => {
               backgroundColor: '#FFFFFF',
             }}
           >
+            <ImageCenter />
             {['email', 'password'].map((field) => (
               <Box key={field + '1'}>
                 <FormLabel component="legend" sx={{ color: '#4D4639' }}>
-                  {field === 'email' ? 'Unlock with your Username' : 'Password'}
+                  {field === 'email' ? 'Username' : 'Password'}
                   <span style={{ color: 'red' }}>*</span>
                 </FormLabel>
                 <CommonTextField
@@ -237,7 +237,7 @@ const Login: React.FC<ListProps> = () => {
           )}
         </Grid>
       )}
-    </Layout>
+    </Box>
   );
 };
 

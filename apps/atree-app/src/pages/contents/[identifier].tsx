@@ -63,14 +63,14 @@ export default function Content() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [open, setOpen] = useState(false);
-
   const handleOpen = () => setOpen(true);
   const handleOnCLick = () => {
     if (contentData?.url) {
       window.open(contentData.url, '_blank');
-    } else {
-      router.push(`/player/${identifier}`);
     }
+  };
+  const handlePreview = () => {
+    router.push(`/player/${identifier}`);
   };
   const handleOnDownload = async () => {
     if (contentData?.previewUrl.endsWith('.pdf')) {
@@ -132,6 +132,16 @@ export default function Content() {
     if (identifier) fetchContent();
   }, [identifier]);
 
+  /*************  ✨ Windsurf Command ⭐  *************/
+  /**
+   * Fetches framework data from the API and filters it to include only categories with a status of 'Live'.
+   * Constructs a URL using environment variables to specify the base URL and framework identifier.
+   * Parses the JSON response to extract the framework data, and applies filtering to keep only live categories.
+   * In case the framework data is unavailable, provides a default structure with empty categories.
+   * Logs an error message to the console if the fetch operation fails.
+   */
+
+  /*******  7ab4bfd8-d767-4480-872d-12d419e51cfb  *******/
   const fetchFrameworkData = async () => {
     try {
       const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
@@ -160,6 +170,9 @@ export default function Content() {
 
   const handleCardClick = (content: any) => {
     router.push(`/contents/${content?.identifier}`);
+  };
+  const selectTagOnClick = (val: any) => {
+    router.push(`/searchpage?query=${val}&tags=${true}`);
   };
   return (
     <Layout
@@ -241,6 +254,7 @@ export default function Content() {
                       label={label}
                       variant="outlined"
                       sx={{ height: 32, padding: '6px 8px' }}
+                      onClick={() => selectTagOnClick(label.replace('#', ''))}
                     />
                   ))}
                   {showMoreIcon && (
@@ -288,6 +302,21 @@ export default function Content() {
                         Download
                       </Button>
                     )}
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    sx={{
+                      borderRadius: '50px',
+                      height: '40px',
+                      flex: 0.3,
+                      backgroundColor: 'white',
+                      borderColor: (theme) => theme.palette.secondary.main,
+                      color: 'black',
+                    }}
+                    onClick={handlePreview}
+                  >
+                    Preview
+                  </Button>
                 </Box>
 
                 {/* Year & License */}
@@ -420,6 +449,7 @@ export default function Content() {
                   padding: '6px 8px',
                   borderRadius: '0px',
                 }}
+                onClick={() => selectTagOnClick(label.replace('#', ''))}
               />
             ))}
             {showMoreIcon && (

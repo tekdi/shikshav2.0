@@ -37,7 +37,6 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
   const [searchType, setSearchType] = useState('');
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [searchResults, setSearchResults] = useState<any[]>([]);
-
   const router = useRouter();
 
   const handleClearSearch = () => {
@@ -46,6 +45,7 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
     setSearchQuery('');
     setSearchType(''); // Clear results when clearing input
   };
+
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
     setSearchQuery(query);
@@ -135,6 +135,7 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
 
           {/* Search Input */}
           <InputBase
+            autoFocus
             placeholder="Search by..."
             value={searchQuery}
             // onChange={(e) => setSearchQuery(e.target.value)}

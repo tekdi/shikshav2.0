@@ -7,7 +7,7 @@ import FooterText from '../component/FooterText';
 export default function Aboutus() {
   return (
     <Layout footerComponent={<FooterText page="aboutus" />}>
-      <Banner />
+      <Banner text="About Us" />
       <Grid
         container
         spacing={2}
@@ -25,9 +25,7 @@ export default function Aboutus() {
             fontSize: { xs: '24px', md: '64px' },
             mt: 2,
           }}
-        >
-          About Us
-        </Typography>
+        ></Typography>
 
         {/* About Us Description */}
         <Typography

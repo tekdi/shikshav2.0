@@ -30,8 +30,10 @@ export default function Searchpage() {
   const selectedType = searchParams.get('type')?.toLowerCase();
   // Get type from URL
   const selectedquery = searchParams.get('query')?.toLowerCase();
+  const tags = searchParams.get('tags');
+  const isTagsTrue = tags === 'true';
   const [framework, setFramework] = useState(selectedType || ''); // Default to selectedType if available
-  console.log(selectedType, selectedquery);
+
   React.useEffect(() => {
     if (selectedType && selectedType !== framework) {
       console.log('Updating framework to:', selectedType); // Debugging
@@ -58,31 +60,33 @@ export default function Searchpage() {
               </Typography>
             </Grid>
           )}
-          {['Author', 'Publisher', 'Language'].map((frameworkItem) => {
-            const isSelected = frameworkItem.toLowerCase() === selectedType;
-            return (
-              <Grid key={frameworkItem}>
-                <Button
-                  variant={isSelected ? 'contained' : 'outlined'}
-                  sx={{
-                    borderRadius: '8px',
-                    borderColor: isSelected ? '' : '#CEE5FF',
-                    color: isSelected ? '#4D4639' : '#171D1E',
-                    margin: '10px',
-                    backgroundColor: isSelected
-                      ? buttonColors[
-                          frameworkItem.toLowerCase() as keyof typeof buttonColors
-                        ] || '#FFD500'
-                      : '',
-                  }}
-                  // onClick={() => handleFrameworkClick(frameworkItem)}
-                >
-                  {frameworkItem.charAt(0).toUpperCase() +
-                    frameworkItem.slice(1)}
-                </Button>
-              </Grid>
-            );
-          })}
+
+          {!isTagsTrue &&
+            ['Author', 'Publisher', 'Language'].map((frameworkItem) => {
+              const isSelected = frameworkItem.toLowerCase() === selectedType;
+              return (
+                <Grid key={frameworkItem}>
+                  <Button
+                    variant={isSelected ? 'contained' : 'outlined'}
+                    sx={{
+                      borderRadius: '8px',
+                      borderColor: isSelected ? '' : '#CEE5FF',
+                      color: isSelected ? '#4D4639' : '#171D1E',
+                      margin: '10px',
+                      backgroundColor: isSelected
+                        ? buttonColors[
+                            frameworkItem.toLowerCase() as keyof typeof buttonColors
+                          ] || '#FFD500'
+                        : '',
+                    }}
+                    // onClick={() => handleFrameworkClick(frameworkItem)}
+                  >
+                    {frameworkItem.charAt(0).toUpperCase() +
+                      frameworkItem.slice(1)}
+                  </Button>
+                </Grid>
+              );
+            })}
         </Grid>
 
         <Box
