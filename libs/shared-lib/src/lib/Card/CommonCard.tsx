@@ -151,62 +151,36 @@ export const CommonCard: React.FC<CommonCardProps> = ({
               top: 0,
               width: '100%',
               display: 'flex',
-              // justifyContent: 'center',
               alignItems: 'center',
               background: 'rgba(0, 0, 0, 0.5)',
             }}
           >
-            {type === 'Course' ? (
-              <>
-                <Progress
-                  variant="determinate"
-                  value={100}
-                  size={30}
-                  thickness={5}
-                  sx={{
-                    color: '#fff8fb',
-                    position: 'absolute',
-                    left: '10px',
-                  }}
-                />
-                <Progress
-                  variant="determinate"
-                  value={trackCompleted}
-                  size={30}
-                  thickness={5}
-                  sx={{
-                    color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
-                    position: 'absolute',
-                    left: '10px',
-                  }}
-                />
-                <Typography
-                  sx={{
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                    marginLeft: '12px',
-                    color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
-                    position: 'absolute',
-                    left: '50px',
-                  }}
-                >
+            <Box
+              sx={{
+                p: '5px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              {type === 'Course' ? (
+                <>
+                  <Progress
+                    variant="determinate"
+                    value={trackCompleted}
+                    size={30}
+                    thickness={5}
+                    sx={{
+                      color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
+                    }}
+                  />
                   {trackCompleted >= 100 ? (
                     <>
-                      {' '}
                       <CheckCircleIcon sx={{ color: '#21A400' }} />
-                      <Typography
-                        sx={{
-                          fontSize: '12px',
-                          fontWeight: 'bold',
-                          marginLeft: '12px',
-                          color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
-                          position: 'absolute',
-                          left: '50px',
-                        }}
-                      >
-                        {' '}
-                        Completed
-                      </Typography>
+                      {`Completed`}
                     </>
                   ) : trackCompleted > 0 ? (
                     `${trackProgress}In progress`
@@ -215,56 +189,19 @@ export const CommonCard: React.FC<CommonCardProps> = ({
                   ) : (
                     `Enrolled`
                   )}
-                </Typography>
-              </>
-            ) : (
-              <Box
-                sx={{
-                  position: 'absolute',
-                  height: '40px',
-                  top: 0,
-                  width: '100%',
-                  display: 'flex',
-                  // justifyContent: 'center',
-                  alignItems: 'center',
-                  background: 'rgba(0, 0, 0, 0.5)',
-                }}
-              >
-                {trackCompleted === 100 ? (
-                  <>
-                    <CheckCircleIcon sx={{ color: '#21A400' }} />
-                    <Typography
-                      sx={{
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        marginLeft: '12px',
-                        color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
-                        position: 'absolute',
-                        left: '50px',
-                      }}
-                    >
-                      Completed
-                    </Typography>
-                  </>
-                ) : (
-                  <>
-                    <ErrorIcon sx={{ color: '#FFB74D' }} />
-                    <Typography
-                      sx={{
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        marginLeft: '12px',
-                        color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
-                        position: 'absolute',
-                        left: '20px',
-                      }}
-                    >
-                      In progress
-                    </Typography>
-                  </>
-                )}
-              </Box>
-            )}
+                </>
+              ) : trackCompleted >= 100 ? (
+                <>
+                  <CheckCircleIcon sx={{ color: '#21A400' }} />
+                  {`Completed`}
+                </>
+              ) : (
+                <>
+                  <ErrorIcon sx={{ color: '#FFB74D' }} />
+                  {`Enrolled`}
+                </>
+              )}
+            </Box>
           </Box>
         )}
       </Box>
