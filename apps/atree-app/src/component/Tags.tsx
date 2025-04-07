@@ -9,7 +9,7 @@ const buttonColors: Record<string, string> = {
   land: '#8F4A50',
   forest: '#148A00',
   'climate change': '#CF3D03',
-  'activity books': '#23005A',
+  'activity books': '#FF00FF',
   'reference books': '#FFBD0D',
   general: '#FFBD0D',
   potpourri: '#FFBD0D',
@@ -118,12 +118,16 @@ export const FrameworkFilter = ({
                 fontWeight: 500,
                 textTransform: 'none',
                 fontSize: '16px',
-
-                borderColor: isSelected ? undefined : '#CEE5FF',
-                color: isSelected ? undefined : '#171D1E',
+                color:  'black',
+                borderColor: '#cee5ff',
                 backgroundColor: isSelected
-                  ? buttonColors[lowerCaseName] || undefined
-                  : '',
+                  ? buttonColors[lowerCaseName]
+                  : 'transparent',
+
+                '&:hover': {
+                  backgroundColor: buttonColors[lowerCaseName] || 'black',
+                  color: '#fff',
+                },
               }}
               onClick={() => handleItemClick({ identifier, name })}
             >

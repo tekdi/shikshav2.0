@@ -18,7 +18,7 @@ const buttonColors = {
   land: '#8F4A50',
   forest: '#148A00',
   'climate change': '#CF3D03',
-  'activity books': '#23005A',
+  'activity books': '#FF00FF',
   'reference books': '#FFBD0D',
   general: '#FFBD0D',
   potpourri: '#FFBD0D',

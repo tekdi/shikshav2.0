@@ -145,7 +145,7 @@ export default function Layout({
     console.log('Footer button clicked!');
   };
   const drawerItems = [
-    { text: 'Home', icon: <HomeOutlinedIcon fontSize="small" />, to: '/home' },
+    { text: 'Home', icon: <HomeOutlinedIcon fontSize="small" />, to: '/' },
 
     {
       text: token ? 'Logout' : 'Login',
