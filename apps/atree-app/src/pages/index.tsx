@@ -42,6 +42,14 @@ const AnimatedCounter = ({
   const [count, setCount] = useState(0);
   const [key, setKey] = useState(0);
 
+  const restartCounter = () => {
+    setKey((prev) => prev + 1);
+  };
+
+  const triggerRestart = () => {
+    setTimeout(restartCounter, restartDelay);
+  };
+
   useEffect(() => {
     let start = 0;
     const increment = target / (duration / 10);
@@ -57,12 +65,6 @@ const AnimatedCounter = ({
       }
     };
 
-    const triggerRestart = () => {
-      setTimeout(() => {
-        setKey((prev) => prev + 1);
-      }, restartDelay);
-    };
-
     const interval = setInterval(updateCount, 10);
 
     return () => clearInterval(interval);
@@ -74,6 +76,7 @@ const AnimatedCounter = ({
     </Typography>
   );
 };
+
 const LandingPage = () => {
   // const { t } = useTranslation();
   const t = (data: string) => data;
