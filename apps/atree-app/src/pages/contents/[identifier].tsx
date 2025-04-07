@@ -254,7 +254,7 @@ export default function Content() {
                       label={label}
                       variant="outlined"
                       sx={{ height: 32, padding: '6px 8px' }}
-                      onClick={() => selectTagOnClick(label)}
+                      onClick={() => selectTagOnClick(label.replace('#', ''))}
                     />
                   ))}
                   {showMoreIcon && (
@@ -449,6 +449,7 @@ export default function Content() {
                   padding: '6px 8px',
                   borderRadius: '0px',
                 }}
+                onClick={() => selectTagOnClick(label.replace('#', ''))}
               />
             ))}
             {showMoreIcon && (
