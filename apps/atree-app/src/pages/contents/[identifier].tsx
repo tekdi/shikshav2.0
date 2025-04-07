@@ -188,7 +188,7 @@ export default function Content() {
             >
               {contentData?.name || ''}
             </Typography>
-            <Typography
+            {/* <Typography
               variant="subtitle1"
               color="textSecondary"
               sx={{
@@ -200,7 +200,7 @@ export default function Content() {
               }}
             >
               {contentData?.author || ''}
-            </Typography>
+            </Typography> */}
           </div>
 
           {/* Right Side - Share Button */}
@@ -228,18 +228,7 @@ export default function Content() {
               {/* {[...Array(4)].map((_, i) => ( */}
               <ImageCard
                 image={contentData?.posterImage || landingBanner?.src}
-                name={
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <Box>
-                      <Typography variant="body2" gutterBottom>
-                        {contentData?.name || ''}
-                      </Typography>
-                      <Typography variant="body2" gutterBottom>
-                        {contentData?.publisher || ''}
-                      </Typography>
-                    </Box>
-                  </Box>
-                }
+                name={''}
               />
             </Grid>
             <Grid size={{ xs: 12, md: 9 }}>
@@ -303,10 +292,13 @@ export default function Content() {
 
                 {/* Year & License */}
                 <Typography variant="body1" textAlign="left">
-                  <b>Year:</b> {contentData?.year || ''}
+                  <b>Author:</b> {contentData?.author || ''}
                 </Typography>
                 <Typography variant="body1" textAlign="left">
-                  <b>License:</b> {contentData?.license || ''}
+                  <b>Publisher:</b> {contentData?.publisher || ''}
+                </Typography>
+                <Typography variant="body1" textAlign="left">
+                  <b>Year:</b> {contentData?.year || ''}
                 </Typography>
               </Stack>
             </Grid>
@@ -440,12 +432,14 @@ export default function Content() {
           <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
             {contentData?.description}
           </Typography>
-
           <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-            <b>Year:</b> {contentData?.year || ''}
+            <b>Author:</b> {contentData?.author || ''}
           </Typography>
           <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-            <b>License:</b> {contentData?.license || ''}
+            <b>Publisher:</b> {contentData?.publisher || ''}
+          </Typography>
+          <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
+            <b>Year:</b> {contentData?.year || ''}
           </Typography>
         </Box>
       )}
@@ -507,7 +501,7 @@ const ImageCard = ({
           sx={_image}
           image={image}
         />
-        <CardContent
+        {/* <CardContent
           sx={{
             backgroundColor: '#DDE8FF',
             alignItems: 'flex-start',
@@ -528,7 +522,7 @@ const ImageCard = ({
           >
             {name}
           </Typography>
-        </CardContent>
+        </CardContent> */}
       </CardActionArea>
     </Card>
   );

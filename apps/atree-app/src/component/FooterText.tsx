@@ -1,7 +1,8 @@
 import { Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
+export default function FooterText({ page }: { page: string }) {
+  const isAboutPage = page === 'aboutus';
 
-export default function FooterText() {
   return (
     <Grid
       sx={{
@@ -13,9 +14,17 @@ export default function FooterText() {
       <Typography
         align="center"
         gutterBottom
-        sx={{ fontSize: { xs: '10px', md: '24px' } }}
+        sx={{ fontSize: { xs: '10px', md: '14px' } }}
       >
-        Curated by ATREE: For, Of, and By Environment Educators of India
+        {isAboutPage ? (
+          <>
+            Ashoka Trust for Research in Ecology and the Environment (ATREE),
+            <br />
+            Royal Enclave, Sriramapura, Jakkur Post, Bangalore 560 064 Karnataka
+          </>
+        ) : (
+          'Curated by ATREE: For, Of, and By Environment Educators of India'
+        )}
       </Typography>
     </Grid>
   );

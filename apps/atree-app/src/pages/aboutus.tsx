@@ -6,7 +6,7 @@ import Banner from '../component/Banner';
 import FooterText from '../component/FooterText';
 export default function Aboutus() {
   return (
-    <Layout footerComponent={<FooterText />}>
+    <Layout footerComponent={<FooterText page="aboutus" />}>
       <Banner />
       <Grid
         container
