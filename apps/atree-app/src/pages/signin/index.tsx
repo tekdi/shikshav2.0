@@ -17,7 +17,8 @@ import { useKeycloak } from '@react-keycloak/web';
 
 import { useRouter } from 'next/router';
 import { signin } from '../../service/content';
-import Loader from '../../component/layout/LoaderComponent';  
+import Loader from '../../component/layout/LoaderComponent';
+import ImageCenter from '../../component/ImageCenter';
 interface ListProps {}
 const commonButtonStyle = {
   backgroundColor: '#ffffff',
@@ -147,21 +148,7 @@ const Login: React.FC<ListProps> = () => {
               backgroundColor: '#FFFFFF',
             }}
           >
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              mb={2}
-            >
-              <img
-                src="/images/atreeLogo.svg"
-                alt="Logo"
-                style={{
-                  width: '180px',
-                  height: 'auto',
-                }}
-              />
-            </Box>
+            <ImageCenter />
             {['email', 'password'].map((field) => (
               <Box key={field + '1'}>
                 <FormLabel component="legend" sx={{ color: '#4D4639' }}>

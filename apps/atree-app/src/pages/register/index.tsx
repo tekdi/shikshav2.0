@@ -21,6 +21,7 @@ import { createUser } from '../../service/content';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
 import Loader from '../../component/layout/LoaderComponent';
+import ImageCenter from '../../component/ImageCenter';
 
 const languageData = [
   {
@@ -210,21 +211,7 @@ export default function Registration() {
               backgroundColor: '#FFFFFF',
             }}
           >
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              mb={2}
-            >
-              <img
-                src="/images/atreeLogo.svg"
-                alt="Logo"
-                style={{
-                  width: '150px',
-                  height: 'auto',
-                }}
-              />
-            </Box>
+            <ImageCenter />
             <FormLabel component="legend" sx={{ color: '#4D4639' }}>
               Full Name<span style={{ color: 'red' }}>*</span>
             </FormLabel>
