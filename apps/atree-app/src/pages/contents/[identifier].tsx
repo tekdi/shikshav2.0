@@ -221,7 +221,13 @@ export default function Content() {
             <IconButton
               onClick={handleOpen}
               color="primary"
-              style={{ marginLeft: 'auto' }}
+              style={{
+                marginLeft: 'auto',
+                backgroundColor: 'white',
+                color: '#2B3133',
+                boxShadow:
+                  '-0.73px 0.73px 0.73px -1.46px rgba(255, 255, 255, 0.35) inset, 0px 8px 10px rgba(0, 0, 0, 0.05)',
+              }}
             >
               <ShareIcon />
             </IconButton>
@@ -283,22 +289,21 @@ export default function Content() {
                   >
                     Preview
                   </Button>
-                  {!contentData?.url &&
-                    contentData?.previewUrl?.endsWith('.pdf') && (
-                      <Button
-                        variant="outlined"
-                        color="secondary"
-                        sx={{
-                          borderRadius: '50px',
-                          height: '40px',
-                          flex: 0.3,
-                          color: 'black',
-                        }}
-                        onClick={handleOnDownload}
-                      >
-                        Download
-                      </Button>
-                    )}
+
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    sx={{
+                      borderRadius: '50px',
+                      height: '40px',
+                      flex: 0.3,
+                      color: 'black',
+                    }}
+                    onClick={handleOnDownload}
+                  >
+                    Download
+                  </Button>
+
                   <Button
                     variant="outlined"
                     color="secondary"
@@ -413,23 +418,21 @@ export default function Content() {
               Know More
             </Button>
 
-            {!contentData?.url && contentData?.previewUrl?.endsWith('.pdf') && (
-              <Button
-                variant="outlined"
-                color="secondary"
-                sx={{
-                  borderRadius: '50px',
-                  height: '40px',
-                  width: '100%',
-                  backgroundColor: 'white',
-                  borderColor: (theme) => theme.palette.secondary.main,
-                  color: 'black',
-                }}
-                onClick={handleOnDownload}
-              >
-                Download
-              </Button>
-            )}
+            <Button
+              variant="outlined"
+              color="secondary"
+              sx={{
+                borderRadius: '50px',
+                height: '40px',
+                width: '100%',
+                backgroundColor: 'white',
+                borderColor: (theme) => theme.palette.secondary.main,
+                color: 'black',
+              }}
+              onClick={handleOnDownload}
+            >
+              Download
+            </Button>
           </Box>
 
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>

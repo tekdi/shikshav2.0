@@ -71,7 +71,7 @@ const Login: React.FC<ListProps> = () => {
         if (!value) {
           errorMessage = 'Username is required.';
         } else if (!validateEmail(value)) {
-          errorMessage = 'Invalid username format.';
+          errorMessage = 'Enter valid username.';
         } else {
           localStorage.setItem('username', value);
         }
@@ -79,7 +79,7 @@ const Login: React.FC<ListProps> = () => {
         if (!value) {
           errorMessage = 'Password is required.';
         } else if (!validatePassword(value)) {
-          errorMessage = 'Password must be at least 6 characters.';
+          errorMessage = 'Enter valid password.';
         }
       }
       setCredentials((prev) => ({ ...prev, [field]: value }));
