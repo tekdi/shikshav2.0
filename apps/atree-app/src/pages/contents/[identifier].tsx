@@ -279,11 +279,10 @@ export default function Content() {
                       height: '40px',
                       flex: 0.3,
                     }}
-                    onClick={handleOnCLick}
+                    onClick={handlePreview}
                   >
-                    Know More
+                    Preview
                   </Button>
-
                   {!contentData?.url &&
                     contentData?.previewUrl?.endsWith('.pdf') && (
                       <Button
@@ -293,8 +292,6 @@ export default function Content() {
                           borderRadius: '50px',
                           height: '40px',
                           flex: 0.3,
-                          backgroundColor: 'white',
-                          borderColor: (theme) => theme.palette.secondary.main,
                           color: 'black',
                         }}
                         onClick={handleOnDownload}
@@ -309,13 +306,11 @@ export default function Content() {
                       borderRadius: '50px',
                       height: '40px',
                       flex: 0.3,
-                      backgroundColor: 'white',
-                      borderColor: (theme) => theme.palette.secondary.main,
                       color: 'black',
                     }}
-                    onClick={handlePreview}
+                    onClick={handleOnCLick}
                   >
-                    Preview
+                    Resource Link
                   </Button>
                 </Box>
 

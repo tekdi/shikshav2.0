@@ -57,7 +57,7 @@ const ContactInfo = ({ Icon, text }: any) => (
 export default function Contactus() {
   return (
     <Layout footerComponent={<FooterText page={''} />}>
-      <Banner />
+      <Banner text={''} />
       <Grid
         container
         spacing={2}
