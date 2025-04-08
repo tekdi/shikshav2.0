@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Box, Typography } from '@mui/material';
-import { Layout } from '@shared-lib';
+import { getLeafNodes, Layout } from '@shared-lib';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Grid from '@mui/material/Grid2';
 import CommonCollapse from '../../components/CommonCollapse'; // Adjust the import based on your folder structure
 import { hierarchyAPI } from '../../services/Hierarchy';
@@ -28,7 +25,8 @@ export default function Details({ details }: DetailsProps) {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
-    router.push(`${process.env.NEXT_PUBLIC_LOGIN}`);
+    setAnchorEl(null);
+    console.log('Menu icon clicked');
   };
 
   const handleMenuClick = () => {
@@ -49,12 +47,15 @@ export default function Details({ details }: DetailsProps) {
         const result = await hierarchyAPI(identifier);
         //@ts-ignore
         setSelectedContent(result);
-        setLoading(false);
         try {
-          const courseList = result?.childNodes ?? []; // Extract all identifiers
+          let courseList = result?.childNodes; // Extract all identifiers
+          if (!courseList) {
+            courseList = getLeafNodes(result);
+          }
+
           const userId = localStorage.getItem('subId');
           const userIdArray = userId?.split(',');
-          if (!userId || !courseList.length) return; // Ensure required values exist
+          if (!userId) return; // Ensure required values exist
           //@ts-ignore
           const course_track_data = await trackingData(userIdArray, courseList);
           if (course_track_data?.data) {
@@ -70,6 +71,8 @@ export default function Details({ details }: DetailsProps) {
         }
       } catch (error) {
         console.error('Failed to fetch content:', error);
+      } finally {
+        setLoading(false);
       }
     };
     if (identifier) getDetails(identifier as string);
@@ -100,27 +103,11 @@ export default function Details({ details }: DetailsProps) {
             onOptionClick: handleClose,
           },
           {
-            icon: <DashboardIcon />,
-            ariaLabel: 'Admin dashboard',
-            onOptionClick: handleClose,
-          },
-          {
-            icon: <BorderColorIcon />,
-            ariaLabel: 'Workspace',
-            onOptionClick: handleClose,
-          },
-          {
-            icon: <HelpOutlineIcon />,
-            ariaLabel: 'Help',
-            onOptionClick: handleClose,
-          },
-          {
             icon: <LogoutIcon />,
             ariaLabel: 'Logout',
             onOptionClick: handleLogout,
           },
         ],
-        onMenuClose: handleClose,
       }}
       isFooter={false}
       showLogo={true}

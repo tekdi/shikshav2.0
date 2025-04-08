@@ -42,7 +42,7 @@ const ContentDetails = () => {
   };
   const handleClose = () => {
     setAnchorEl(null);
-    router.push(`${process.env.NEXT_PUBLIC_LOGIN}`);
+    console.log('Menu icon clicked');
   };
 
   const handleMenuClick = () => {
@@ -123,27 +123,11 @@ const ContentDetails = () => {
             onOptionClick: handleClose,
           },
           {
-            icon: <DashboardIcon />,
-            ariaLabel: 'Admin dashboard',
-            onOptionClick: handleClose,
-          },
-          {
-            icon: <BorderColorIcon />,
-            ariaLabel: 'Workspace',
-            onOptionClick: handleClose,
-          },
-          {
-            icon: <HelpOutlineIcon />,
-            ariaLabel: 'Help',
-            onOptionClick: handleClose,
-          },
-          {
             icon: <LogoutIcon />,
             ariaLabel: 'Logout',
             onOptionClick: handleLogout,
           },
         ],
-        onMenuClose: handleClose,
       }}
       showBack={true}
       backTitle="Course Details"

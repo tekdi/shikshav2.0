@@ -3,7 +3,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { SxProps, Theme } from '@mui/material/styles';
 import { Box } from '@mui/material';
 
-interface CommonCircularProgressProps {
+export interface CommonCircularProgressProps {
   variant?: 'determinate' | 'indeterminate';
   value?: number;
   size?: number;

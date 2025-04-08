@@ -8,9 +8,9 @@ import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
 import { Box } from '@mui/material';
-import { Progress } from '../Progress/Progress';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
+import { CircularProgressWithLabel } from '../Progress/CircularProgressWithLabel';
 interface ContentItem {
   name: string;
   gradeLevel: string[];
@@ -86,15 +86,17 @@ export const CommonCard: React.FC<CommonCardProps> = ({
         //@ts-ignore
         if (TrackData) {
           const result = TrackData?.find((e) => e.courseId === item.identifier);
-          setTrackCompleted(result?.completed ? 100 : 0);
           if (type === 'Course') {
-            const leafNodes = getLeafNodes(item?.leafNodes ?? []);
+            const leafNodes = getLeafNodes(item ?? []);
             const completedCount = result?.completed_list?.length || 0;
             const percentage =
               leafNodes.length > 0
                 ? Math.round((completedCount / leafNodes.length) * 100)
                 : 0;
             setTrackProgress(percentage);
+            setTrackCompleted(percentage);
+          } else {
+            setTrackCompleted(result?.completed ? 100 : 0);
           }
         }
       } catch (e) {
@@ -157,7 +159,7 @@ export const CommonCard: React.FC<CommonCardProps> = ({
           >
             <Box
               sx={{
-                p: '5px',
+                p: '0px 5px',
                 fontSize: '12px',
                 fontWeight: 'bold',
                 color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
@@ -168,24 +170,27 @@ export const CommonCard: React.FC<CommonCardProps> = ({
             >
               {type === 'Course' ? (
                 <>
-                  <Progress
-                    variant="determinate"
-                    value={trackCompleted}
-                    size={30}
-                    thickness={5}
+                  <CircularProgressWithLabel
+                    value={trackProgress ?? 0}
+                    _text={{
+                      sx: {
+                        color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
+                        fontSize: '10px',
+                      },
+                    }}
                     sx={{
                       color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
                     }}
+                    size={35}
+                    thickness={2}
                   />
                   {trackCompleted >= 100 ? (
                     <>
                       <CheckCircleIcon sx={{ color: '#21A400' }} />
                       {`Completed`}
                     </>
-                  ) : trackCompleted > 0 ? (
-                    `${trackProgress}In progress`
                   ) : trackProgress > 0 && trackProgress < 100 ? (
-                    `${trackProgress}% In progress`
+                    `In progress`
                   ) : (
                     `Enrolled`
                   )}
