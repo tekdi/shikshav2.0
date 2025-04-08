@@ -11,7 +11,7 @@ import { Box } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import { CircularProgressWithLabel } from '../Progress/CircularProgressWithLabel';
-interface ContentItem {
+export interface ContentItem {
   name: string;
   gradeLevel: string[];
   language: string[];

@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Box, Typography } from '@mui/material';
 import { getLeafNodes, Layout } from '@shared-lib';
-import LogoutIcon from '@mui/icons-material/Logout';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Grid from '@mui/material/Grid2';
 import CommonCollapse from '../../components/CommonCollapse'; // Adjust the import based on your folder structure
 import { hierarchyAPI } from '../../services/Hierarchy';
 import { trackingData } from '../../services/TrackingService';
+import { ProfileMenu } from '../../utils/menus';
 
 interface DetailsProps {
   details: any;
@@ -16,31 +15,10 @@ interface DetailsProps {
 export default function Details({ details }: DetailsProps) {
   const router = useRouter();
   const { identifier } = router.query; // Fetch the 'id' from the URL
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [trackData, setTrackData] = useState([]);
   const [selectedContent, setSelectedContent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  const handleAccountClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-    console.log('Menu icon clicked');
-  };
-
-  const handleMenuClick = () => {
-    console.log('Menu icon clicked');
-  };
-
-  const handleLogout = () => {
-    setAnchorEl(null);
-    localStorage.removeItem('accToken');
-    localStorage.removeItem('refToken');
-    let LOGIN = process.env.NEXT_PUBLIC_LOGIN;
-    //@ts-ignore
-    window.location.href = LOGIN;
-  };
   useEffect(() => {
     const getDetails = async (identifier: string) => {
       try {
@@ -86,28 +64,8 @@ export default function Details({ details }: DetailsProps) {
       isLoadingChildren={loading}
       showTopAppBar={{
         title: 'Shiksha',
-        menuIconClick: handleMenuClick,
         actionButtonLabel: 'Action',
-        profileIcon: [
-          {
-            icon: <AccountCircleIcon />,
-            ariaLabel: 'Account',
-            onLogoutClick: (e: any) => handleAccountClick(e),
-            anchorEl: anchorEl,
-          },
-        ],
-        actionIcons: [
-          {
-            icon: <AccountCircleIcon />,
-            ariaLabel: 'Profile',
-            onOptionClick: handleClose,
-          },
-          {
-            icon: <LogoutIcon />,
-            ariaLabel: 'Logout',
-            onOptionClick: handleLogout,
-          },
-        ],
+        ...ProfileMenu(),
       }}
       isFooter={false}
       showLogo={true}

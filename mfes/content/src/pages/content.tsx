@@ -2,7 +2,6 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
-import LogoutIcon from '@mui/icons-material/Logout';
 import SearchIcon from '@mui/icons-material/Search';
 import { Box } from '@mui/material';
 import { CommonSearch, getData, Layout } from '@shared-lib';
@@ -13,8 +12,8 @@ import HelpDesk from '../components/HelpDesk';
 import { hierarchyAPI } from '../services/Hierarchy';
 import { ContentSearch, ContentSearchResponse } from '../services/Search';
 import FilterDialog from '../components/FilterDialog';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { trackingData } from '../services/TrackingService';
+import { ProfileMenu } from '../utils/menus';
 
 export interface ContentProps {
   _grid?: object;
@@ -35,7 +34,6 @@ export default function Content(props: Readonly<ContentProps>) {
   const [contentData, setContentData] = useState<ContentSearchResponse[]>([]);
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [hasMoreData, setHasMoreData] = useState(true);
   const [localFilters, setLocalFilters] = useState<any>({
     limit: 5,
@@ -46,11 +44,6 @@ export default function Content(props: Readonly<ContentProps>) {
   const [trackData, setTrackData] = useState<[]>([]);
   const [filterShow, setFilterShow] = useState(false);
   const [propData, setPropData] = useState<ContentProps>();
-
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  useEffect(() => {
-    setIsAuthenticated(!!localStorage.getItem('accToken'));
-  }, []);
 
   useEffect(() => {
     const init = async () => {
@@ -121,24 +114,6 @@ export default function Content(props: Readonly<ContentProps>) {
       ...prevFilters,
       offset: prevFilters.offset + prevFilters.limit,
     }));
-  };
-
-  const handleAccountClick = (event: React.MouseEvent<HTMLElement>) => {
-    console.log('Account clicked');
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleLogout = () => {
-    setAnchorEl(null);
-    localStorage.removeItem('accToken');
-    localStorage.removeItem('refToken');
-    let LOGIN = process.env.NEXT_PUBLIC_LOGIN;
-    //@ts-ignore
-    window.location.href = LOGIN;
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
   };
 
   const handleSearchClick = async () => {
@@ -310,31 +285,7 @@ export default function Content(props: Readonly<ContentProps>) {
         title: 'Shiksha: Home',
         showMenuIcon: true,
         actionButtonLabel: 'Action',
-        profileIcon: [
-          {
-            icon: <AccountCircleIcon />,
-            ariaLabel: 'Account',
-            onLogoutClick: (e: any) => handleAccountClick(e),
-            anchorEl: anchorEl,
-          },
-        ],
-        actionIcons: [
-          {
-            icon: <AccountCircleIcon />,
-            ariaLabel: 'Profile',
-            onOptionClick: handleClose,
-          },
-          ...(isAuthenticated
-            ? [
-                {
-                  icon: <LogoutIcon />,
-                  ariaLabel: 'Logout',
-                  onOptionClick: handleLogout,
-                },
-              ]
-            : []),
-        ],
-        onMenuClose: handleClose,
+        ...ProfileMenu(),
       }}
       showFilter={true}
       isFooter={false}

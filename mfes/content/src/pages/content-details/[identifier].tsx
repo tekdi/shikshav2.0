@@ -4,13 +4,8 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Divider, Typography } from '@mui/material';
 import { Layout } from '@shared-lib';
-import LogoutIcon from '@mui/icons-material/Logout';
 import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid2';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { useRouter } from 'next/router';
 import { fetchContent } from '../../services/Read';
 import AppConst from '../../utils/AppConst/AppConst';
@@ -19,6 +14,7 @@ import {
   createUserCertificateStatus,
   getUserCertificateStatus,
 } from '../../services/Certificate';
+import { ProfileMenu } from '../../utils/menus';
 
 interface ContentDetailsObject {
   name: string;
@@ -28,25 +24,12 @@ interface ContentDetailsObject {
 const ContentDetails = () => {
   const router = useRouter();
   const { identifier } = router.query;
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [contentDetails, setContentDetails] =
     useState<ContentDetailsObject | null>(null);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const theme = useTheme();
   const handleBackClick = () => {
     router.back(); // Navigate to the previous page
-  };
-  const handleAccountClick = (event: React.MouseEvent<HTMLElement>) => {
-    console.log('Account clicked');
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-    console.log('Menu icon clicked');
-  };
-
-  const handleMenuClick = () => {
-    console.log('Menu icon clicked');
   };
 
   useEffect(() => {
@@ -78,15 +61,6 @@ const ContentDetails = () => {
     }
   }, [identifier]);
 
-  const handleLogout = () => {
-    setAnchorEl(null);
-    localStorage.removeItem('accToken');
-    localStorage.removeItem('refToken');
-    const LOGIN = process.env.NEXT_PUBLIC_LOGIN;
-    //@ts-ignore
-    window.location.href = LOGIN;
-  };
-
   const handleClick = async () => {
     try {
       await createUserCertificateStatus({
@@ -105,29 +79,8 @@ const ContentDetails = () => {
       showTopAppBar={{
         title: 'Shiksha',
         showMenuIcon: true,
-
-        menuIconClick: handleMenuClick,
         actionButtonLabel: 'Action',
-        profileIcon: [
-          {
-            icon: <AccountCircleIcon />,
-            ariaLabel: 'Account',
-            onLogoutClick: (e: any) => handleAccountClick(e),
-            anchorEl: anchorEl,
-          },
-        ],
-        actionIcons: [
-          {
-            icon: <AccountCircleIcon />,
-            ariaLabel: 'Profile',
-            onOptionClick: handleClose,
-          },
-          {
-            icon: <LogoutIcon />,
-            ariaLabel: 'Logout',
-            onOptionClick: handleLogout,
-          },
-        ],
+        ...ProfileMenu(),
       }}
       showBack={true}
       backTitle="Course Details"
