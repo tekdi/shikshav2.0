@@ -1,4 +1,5 @@
 import { get, post } from '@shared-lib';
+import axios from 'axios';
 interface LoginParams {
   email: string;
   password: string;
@@ -16,7 +17,9 @@ interface CreateUserParams {
   lastName: string;
   tenantCohortRoleMapping: TenantCohortRoleMapping[];
 }
-
+interface AuthParams {
+  token: string;
+}
 export const getContentDetails = async (
   identifier?: string | string[]
 ): Promise<any> => {
@@ -45,6 +48,20 @@ export const signin = async ({
   } catch (error) {
     console.error('error in login', error);
     // throw error;
+    return error;
+  }
+};
+export const getUserAuthInfo = async ({ token }: AuthParams): Promise<any> => {
+  const apiUrl = `${process.env.NEXT_PUBLIC_ATREE_LOGIN_URL}/interface/v1/user/auth`;
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    const response = await axios.get(apiUrl, { headers });
+
+    return response?.data;
+  } catch (error) {
+    console.error('Error fetching user auth info:', error);
     return error;
   }
 };

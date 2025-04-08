@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+  Avatar,
   Box,
-  Divider,
   Drawer,
   IconButton,
   List,
@@ -10,7 +10,6 @@ import {
   ListItemText,
   Typography,
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import CloseIcon from '@mui/icons-material/Close';
 interface DrawerItem {
@@ -51,7 +50,20 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
   );
   const [currentSubcategory, setCurrentSubcategory] =
     useState<CategoryItem | null>(null);
+  const [role, setRole] = useState('');
+  const [username, setUsername] = useState('');
 
+  useEffect(() => {
+    const storedRole = localStorage.getItem('role');
+    const storedUsername = localStorage.getItem('username');
+
+    if (storedRole) {
+      setRole(storedRole);
+    }
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+  }, []);
   const handleCategoryClick = (category: CategoryItem) => {
     if (category.subCategories) {
       setCurrentCategory(category);
@@ -110,13 +122,14 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
           <CloseIcon />
         </IconButton>
       </Box>
+
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           height: '80%',
-          mt: -2,
+          mt: -6,
           '@media (max-width: 600px)': {
             alignItems: 'center',
           },
@@ -130,6 +143,51 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
             fontSize: '20px',
           }}
         >
+          {openDrawer === 'main' && username && (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                flexDirection: 'row',
+                gap: 2,
+                mb: 2,
+                ml: '14px',
+              }}
+            >
+              <Avatar
+                sx={{
+                  width: 36,
+                  height: 36,
+                  bgcolor: '#ffbd0d',
+                  color: '#000000',
+                }}
+              >
+                JD
+              </Avatar>
+
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: '#fff',
+                    fontWeight: 'bold',
+                    fontSize: '18px',
+                  }}
+                >
+                  {username}
+                </Typography>
+                <Typography sx={{ color: '#ccc', fontSize: '14px' }}>
+                  {role}
+                </Typography>
+              </Box>
+            </Box>
+          )}
+
           {openDrawer === 'main' &&
             items.map((item) => (
               <ListItemButton
@@ -158,9 +216,7 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
                 key={category.text}
                 onClick={() => handleCategoryClick(category)}
               >
-                <ListItemText
-                  primary={category.text}
-                />
+                <ListItemText primary={category.text} />
                 {category.subCategories && <ArrowForwardIcon />}
               </ListItemButton>
             ))}

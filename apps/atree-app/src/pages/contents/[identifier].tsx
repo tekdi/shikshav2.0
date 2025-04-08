@@ -483,6 +483,7 @@ export default function Content() {
                   padding: '6px 8px',
                   borderRadius: '0px',
                 }}
+                onClick={() => selectTagOnClick(label.replace('#', ''))}
               />
             ))}
           </Box>
