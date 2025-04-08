@@ -14,9 +14,8 @@ import Link from 'next/link';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useKeycloak } from '@react-keycloak/web';
-
 import { useRouter } from 'next/router';
-import { signin } from '../../service/content';
+import { getUserAuthInfo, signin } from '../../service/content';
 import Loader from '../../component/layout/LoaderComponent';
 import ImageCenter from '../../component/ImageCenter';
 interface ListProps {}
@@ -73,6 +72,8 @@ const Login: React.FC<ListProps> = () => {
           errorMessage = 'Username is required.';
         } else if (!validateEmail(value)) {
           errorMessage = 'Invalid username format.';
+        } else {
+          localStorage.setItem('username', value);
         }
       } else if (field === 'password') {
         if (!value) {
@@ -97,9 +98,18 @@ const Login: React.FC<ListProps> = () => {
     setLoading(true);
     try {
       const response = await signin(credentials);
+
       if (response?.result?.access_token) {
         localStorage.setItem('token', response.result.access_token);
         localStorage.setItem('refreshToken', response.result.refresh_token);
+        const authInfo = await getUserAuthInfo({
+          token: response?.result?.access_token,
+        });
+
+        localStorage.setItem(
+          'role',
+          authInfo?.result?.tenantData?.[0]?.roleName
+        );
         setAlert({ message: 'Login successful!', severity: 'success' });
         router.push('/home');
       } else {

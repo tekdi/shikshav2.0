@@ -25,16 +25,19 @@ import ImageCenter from '../../component/ImageCenter';
 
 const languageData = [
   {
-    id: 1,
-    name: 'Educators',
+    roleId: '5771c07f-2afd-4cef-b8f1-55eba2a27908',
+    title: 'Educators',
+    code: 'educators',
   },
   {
-    id: 2,
-    name: 'Parents',
+    roleId: '828b3088-9f2f-4b46-b074-8405b5a73cde',
+    title: 'Parents',
+    code: 'parents',
   },
   {
-    id: 3,
-    name: 'Others',
+    roleId: '998d5034-164a-46ca-a6a5-100f82f582e3',
+    title: 'Others',
+    code: 'others',
   },
 ];
 
@@ -106,6 +109,11 @@ export default function Registration() {
             return false;
         }
       };
+      if (field === 'name' || field === 'email') {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('username', value);
+        }
+      }
       setFormData({ ...formData, [field]: value });
       setError({
         ...error,
@@ -165,7 +173,7 @@ export default function Registration() {
     setTenantCohortRoleMapping([
       {
         tenantId: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
-        roleId: 'd5f1abf9-dd0f-43a4-aba3-3f1b70c5d425',
+        roleId: roleId,
       },
     ]);
   };
@@ -359,9 +367,9 @@ export default function Registration() {
             <CommonSelect
               value={selectedValue}
               onChange={handleRoleChange}
-              options={languageData.map(({ name }) => ({
-                label: name,
-                value: name.toLowerCase(),
+              options={languageData.map(({ title, roleId }) => ({
+                label: title,
+                value: roleId,
               }))}
             />
 
