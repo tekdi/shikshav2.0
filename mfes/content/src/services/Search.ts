@@ -112,7 +112,7 @@ interface Filters {
 export const ContentSearch = async ({
   type,
   filters,
-  limit = 8,
+  limit = 12,
   offset = 0,
   channel,
 }: {
@@ -142,9 +142,9 @@ export const ContentSearch = async ({
         filters: {
           channel,
           ...filteredFilters,
-          "contentType": {
-            "ne": "Asset"
-        }
+          contentType: {
+            ne: 'Asset',
+          },
         },
 
         query,
