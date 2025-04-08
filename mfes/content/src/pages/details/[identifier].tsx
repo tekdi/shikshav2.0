@@ -63,7 +63,7 @@ export default function Details({ details }: DetailsProps) {
     <Layout
       isLoadingChildren={loading}
       showTopAppBar={{
-        title: 'Shiksha',
+        title: 'Shiksha: Course Details',
         actionButtonLabel: 'Action',
         ...ProfileMenu(),
       }}

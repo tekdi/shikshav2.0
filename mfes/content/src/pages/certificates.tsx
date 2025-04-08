@@ -42,7 +42,7 @@ const CertificatesPage = () => {
     <Layout
       isLoadingChildren={isPageLoading}
       showTopAppBar={{
-        title: 'Shiksha: Home',
+        title: 'Shiksha: My Certificates',
         showMenuIcon: true,
         actionButtonLabel: 'Action',
         ...ProfileMenu(),
@@ -53,7 +53,6 @@ const CertificatesPage = () => {
       showBack={true}
     >
       <Box sx={{ p: 2 }}>
-        <Typography variant="h4">My Certificates</Typography>
         <Grid container spacing={2}>
           {certificates?.map((item: any) => (
             <Grid key={item?.identifier} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>

@@ -77,7 +77,7 @@ const ContentDetails = () => {
     <Layout
       isLoadingChildren={isLoading}
       showTopAppBar={{
-        title: 'Shiksha',
+        title: 'Shiksha: Learning Made Easy',
         showMenuIcon: true,
         actionButtonLabel: 'Action',
         ...ProfileMenu(),
