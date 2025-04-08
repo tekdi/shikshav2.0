@@ -10,8 +10,10 @@ export const ProfileMenu = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const handleMenuClick = (item: any) => {
-    if (item != '') {
+  const handleMenuClick = (item: any, hardRedirect?: any) => {
+    if (hardRedirect && item != '') {
+      window.location.href = item;
+    } else if (item != '') {
       router.push(item);
     }
     setAnchorEl(null);
@@ -46,11 +48,11 @@ export const ProfileMenu = () => {
       },
     ],
     actionIcons: [
-      //   {
-      //     icon: <AccountCircleIcon />,
-      //     ariaLabel: 'Profile',
-      //     onOptionClick: () => handleMenuClick('/profile'),
-      //   },
+      {
+        icon: <AccountCircleIcon />,
+        ariaLabel: 'Profile',
+        onOptionClick: () => handleMenuClick('/mfe_registration/profile', true),
+      },
       {
         icon: <ContentCopyIcon />,
         ariaLabel: 'Content',

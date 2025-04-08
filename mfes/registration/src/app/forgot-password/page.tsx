@@ -1,6 +1,4 @@
 'use client';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { AlertTitle, Box, Button } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -8,20 +6,17 @@ import Grid from '@mui/material/Grid2';
 import { CommonTextField, Layout } from '@shared-lib';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { login } from '../../services/LoginService';
+import { resetPasswordLink } from '../../services/LoginService';
 import AppConst from '../../utils/AppConst/AppConst';
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
-export default function Login() {
+export default function ForgotPassword() {
   const [formData, setFormData] = useState({
-    userName: '',
-    password: '',
+    email: '',
   });
   const [error, setError] = useState({
-    userName: false,
-    password: false,
+    email: false,
   });
-  const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -69,64 +64,32 @@ export default function Login() {
     };
 
   const handleButtonClick = async () => {
-    if (!formData.userName || !formData.password) {
+    if (!formData.email) {
       setError({
-        userName: !formData.userName,
-        password: !formData.password,
+        email: !formData.email,
       });
       return;
     }
     setLoading(true);
     try {
-      const {
-        result: response,
-        authUser,
-        tenantInfo: info,
-      } = await login({
-        username: formData.userName,
-        password: formData.password,
+      const { result: response } = await resetPasswordLink({
+        email: formData.email,
       });
-      const tenantInfo = info.find(
-        (tenant: any) => tenant.tenantId === authUser?.tenantData?.[0]?.tenantId
-      );
-
-      if (
-        response?.access_token &&
-        authUser?.tenantData?.[0]?.tenantId &&
-        tenantInfo
-      ) {
-        localStorage.setItem('accToken', response?.access_token);
-        localStorage.setItem('refToken', response?.refresh_token);
-        localStorage.setItem('userId', authUser?.userId);
-        localStorage.setItem('userName', authUser?.username);
-        const { contentFramework: framework, channelId: channel } = tenantInfo;
-        localStorage.setItem('framework', framework);
-        localStorage.setItem('tenant-code', channel);
-        localStorage.setItem('tenantId', authUser?.tenantData?.[0]?.tenantId);
-        document.cookie = `subid=${authUser?.userId}; path=/;`;
-        const redirectUrl = process.env.NEXT_PUBLIC_CONTENT;
-        if (redirectUrl) {
-          router.push(redirectUrl);
-        }
+      if (response) {
+        setErrorMessage(['Email sent successfully']);
       } else {
-        if (!response?.access_token) {
-          setErrorMessage(['Invalid tenantId or access token']);
-        } else if (!authUser?.tenantData?.[0]?.tenantId) {
-          setErrorMessage(['Invalid tenantId']);
-        } else if (!tenantInfo) {
-          setErrorMessage(['not found tenant config']);
-        }
+        setErrorMessage(['Error sending email']);
       }
     } catch (error: any) {
-      console.error('Login failed:', error);
+      console.error('Forgot Password failed:', error);
       setErrorMessage([error.message, error?.response?.data?.params?.errmsg]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleForgotPasswordClick = () => {
-    router.push('/forgot-password');
+  const handleLoginClick = () => {
+    router.push('/login');
   };
 
   return (
@@ -183,42 +146,18 @@ export default function Login() {
         >
           <CommonTextField
             InputLabelProps={{ shrink: true }}
-            label="Username"
-            value={formData.userName}
-            onChange={handleChange('userName')}
+            label="Email"
+            value={formData.email}
+            onChange={handleChange('email')}
             type="text"
             variant="outlined"
-            helperText={error.userName ? `Required username ` : ''}
-            error={error.userName}
-          />
-          <CommonTextField
-            InputLabelProps={{ shrink: true }}
-            label="Password"
-            value={formData.password}
-            onChange={handleChange('password')}
-            type={showPassword ? 'text' : 'password'}
-            variant="outlined"
-            helperText={error.password ? `Required password ` : ''}
-            error={error.password}
-            //@ts-ignore
-            InputProps={{
-              endAdornment: !showPassword ? (
-                <VisibilityOffIcon
-                  onClick={() => setShowPassword(!showPassword)}
-                  style={{ cursor: 'pointer' }}
-                />
-              ) : (
-                <VisibilityIcon
-                  onClick={() => setShowPassword(!showPassword)}
-                  style={{ cursor: 'pointer' }}
-                />
-              ),
-            }}
+            helperText={error.email ? `Required email ` : ''}
+            error={error.email}
           />
           <Box sx={{ textAlign: 'left' }}>
             <Button
               variant="text"
-              onClick={handleForgotPasswordClick}
+              onClick={handleLoginClick}
               sx={{
                 color: '#6750A4',
                 fontSize: '14px',
@@ -226,7 +165,7 @@ export default function Login() {
                 padding: 0,
               }}
             >
-              Forgot Password?
+              Back to Login
             </Button>
           </Box>
           <Button
@@ -242,7 +181,7 @@ export default function Login() {
               fontWeight: 500,
             }}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
+            {loading ? <CircularProgress size={24} color="inherit" /> : 'Send'}
           </Button>
         </Grid>
       </Grid>

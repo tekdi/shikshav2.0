@@ -71,6 +71,7 @@ interface LayoutProps {
     onMenuClose?: () => void;
     actionButtonLabel?: string;
     actionButtonClick?: () => void;
+    backIconClick?: () => void;
     actionButtonColor?: 'inherit' | 'primary' | 'secondary' | 'default';
     position?: 'fixed' | 'absolute' | 'sticky' | 'static' | 'relative';
     color?: 'primary' | 'secondary' | 'default' | 'transparent' | 'inherit';
