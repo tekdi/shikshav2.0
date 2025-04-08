@@ -162,7 +162,7 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
                   color: '#000000',
                 }}
               >
-                JD
+                {username?.charAt(0).toUpperCase() ?? ''}
               </Avatar>
 
               <Box
