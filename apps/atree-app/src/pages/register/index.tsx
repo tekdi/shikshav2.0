@@ -290,7 +290,7 @@ export default function Registration() {
               type={showPassword ? 'text' : 'password'}
               variant="outlined"
               helperText={
-                error.password ? 'Password must be at least 6 characters. ' : ''
+                error.password ? 'Password must be at least 6 characters.' : ''
               }
               error={error.password}
               endIcon={

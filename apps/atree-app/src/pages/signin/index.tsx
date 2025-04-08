@@ -59,10 +59,7 @@ const Login: React.FC<ListProps> = () => {
 
   const validateEmail = (email: string) =>
     /^[a-zA-Z][a-zA-Z0-9._]{2,}$/.test(email);
-  const validatePassword = (password: string) =>
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
-      password
-    );
+  const validatePassword = (password: string) => /^.{6,}$/.test(password);
 
   const handleChange =
     (field: 'email' | 'password') =>
@@ -81,8 +78,7 @@ const Login: React.FC<ListProps> = () => {
         if (!value) {
           errorMessage = 'Password is required.';
         } else if (!validatePassword(value)) {
-          errorMessage =
-            'Password must contain at least 8 chars, including uppercase, number & special character.';
+          errorMessage = 'Password must be at least 6 characters.';
         }
       }
       setCredentials((prev) => ({ ...prev, [field]: value }));
