@@ -21,11 +21,17 @@ export const Loader: React.FC<LoaderProps> = memo(
     const shouldSkipPadding = router.asPath === '/searchpage';
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    const paddingTop = shouldSkipPadding
-      ? '96px'
-      : router.pathname === '/contents/[identifier]'
-      ? '160px'
-      : (shouldUnsetPadding && '54px') || (isMobile && '76px') || '96px';
+    let paddingTop = '96px'; // Default
+
+    if (shouldSkipPadding) {
+      paddingTop = '96px';
+    } else if (router.pathname === '/contents/[identifier]') {
+      paddingTop = '160px';
+    } else if (shouldUnsetPadding) {
+      paddingTop = '54px';
+    } else if (isMobile) {
+      paddingTop = '76px';
+    }
     return (
       <Box>
         {isLoading && (
