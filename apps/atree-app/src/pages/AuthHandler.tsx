@@ -29,6 +29,7 @@ const AuthHandler = () => {
     username: '',
     password: '',
   });
+  const defaultPassword = process.env.NEXT_PUBLIC_DEFAULT_PASSWORD ?? '';
   const registerUser = async (data: any) => {
     try {
       const payload = data;
@@ -116,21 +117,21 @@ const AuthHandler = () => {
         }
         const username = decodedToken?.email.split('@')[0];
         const userExist = await checkUser(keycloak.token);
-        setFormData({ username: username, password: 'password123' });
+        setFormData({ username: username, password: defaultPassword });
         if (userExist?.result) {
           registerUser({
             firstName: fName,
             lastName: lName,
             username: username,
             email: decodedToken?.email,
-            password: 'password123',
+            password: defaultPassword,
             gender: 'female',
             tenantCohortRoleMapping: tenantCohortRoleMapping,
           });
         } else {
           const credentials = {
             email: username,
-            password: 'password123',
+            password: defaultPassword,
           };
           chekLogin(credentials);
           setOpenUserDetailsDialog(true);
