@@ -434,6 +434,9 @@ export default function Registration() {
                   !formData.password ||
                   !formData.gender ||
                   !selectedValue ||
+                  !languageData.some(
+                    ({ roleId }) => roleId === selectedValue
+                  ) ||
                   !termsAccepted
                 }
               >

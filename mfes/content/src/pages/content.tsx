@@ -43,7 +43,7 @@ export default function Content(props: ContentProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
   const [localFilters, setLocalFilters] = useState<any>({
-    limit: 10,
+    limit: 12,
     offset: 0,
   });
   const [showBackToTop, setShowBackToTop] = useState(false);

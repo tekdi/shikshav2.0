@@ -274,6 +274,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                       zIndex: 1100,
                     }}
                   >
+                    {/* 🔍 Search Box */}
                     <Box
                       sx={{
                         display: 'flex',
@@ -284,6 +285,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                         border: '1px solid #ccc',
                         paddingLeft: '12px',
                         backgroundColor: '#E9E7EF',
+                        flexShrink: 0, // Prevent from shrinking when sibling grows
                       }}
                     >
                       <SearchIcon
@@ -292,23 +294,23 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                       <InputBase
                         placeholder="Search for resources..."
                         onClick={handleSearchOpen}
-                        // value={searchValue}
-                        // onChange={(e) => setSearchValue(e.target.value)}
                         sx={{ flex: 1 }}
                         readOnly
                       />
                     </Box>
 
+                    {/* 🌐 Language Selector */}
                     <Box
                       display="flex"
                       alignItems="center"
-                      gap={1}
                       sx={{
-                        width: '102px',
                         height: '32px',
                         border: '1px solid #ccc',
                         borderRadius: '8px',
-                        padding: '4px',
+                        padding: '0 8px',
+                        width: '120px', // Fixed width
+                        flexShrink: 0,
+                        overflow: 'hidden',
                       }}
                     >
                       <Select
@@ -317,14 +319,21 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                         onClick={() => handleLanguageClick(selectedLanguage)}
                         displayEmpty
                         sx={{
-                          color: '#42474E',
+                          width: '100%',
                           fontSize: '16px',
-                          '.MuiOutlinedInput-notchedOutline': { border: 0 }, // Remove border
+                          color: '#42474E',
+                          '.MuiOutlinedInput-notchedOutline': { border: 0 },
                           '&:hover .MuiOutlinedInput-notchedOutline': {
                             border: 0,
                           },
                           '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                             border: 0,
+                          },
+                          '.MuiSelect-select': {
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            padding: '0px',
                           },
                         }}
                       >
@@ -336,6 +345,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                       </Select>
                     </Box>
 
+                    {/* ☰ Menu Icon */}
                     <IconButton
                       size="large"
                       edge="start"

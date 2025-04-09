@@ -3,7 +3,8 @@ import React, { memo } from 'react';
 import { ReactNode } from 'react';
 import Image from 'next/image';
 import loaderGif from '../../assets/images/snail-yellow.gif';
-import { Typography } from '@mui/material';
+import { Typography, useTheme, useMediaQuery } from '@mui/material';
+import { useRouter } from 'next/router';
 interface LoaderProps {
   isLoading: boolean;
   layoutHeight?: number;
@@ -12,6 +13,15 @@ interface LoaderProps {
 
 export const Loader: React.FC<LoaderProps> = memo(
   ({ isLoading, layoutHeight, children }) => {
+    const router = useRouter();
+    const noHeightRoutes = ['/', '/aboutus', '/termsandcondition'];
+    const noPaddingRoutes = ['/contents'];
+    const shouldUnsetHeight = noHeightRoutes.includes(router.pathname);
+    const shouldUnsetPadding = noPaddingRoutes.includes(router.pathname);
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const paddingTop =
+      (shouldUnsetPadding && '54px') || (isMobile && '76px') || '96px';
     return (
       <Box>
         {isLoading && (
@@ -49,7 +59,10 @@ export const Loader: React.FC<LoaderProps> = memo(
             width: '100%',
             overflowY: 'auto',
             display: isLoading ? 'none' : 'block',
-            height: `calc(100vh - ${layoutHeight}px)`,
+            height: shouldUnsetHeight
+              ? 'auto'
+              : `calc(100vh - ${layoutHeight}px)`,
+            paddingTop: paddingTop,
           }}
         >
           {children}

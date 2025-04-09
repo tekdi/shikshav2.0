@@ -141,9 +141,6 @@ export default function Layout({
     };
   }, [Object.keys(refs.current).length]);
 
-  const handleButtonClick = () => {
-    console.log('Footer button clicked!');
-  };
   const drawerItems = [
     { text: 'Home', icon: <HomeOutlinedIcon fontSize="small" />, to: '/' },
 
@@ -217,18 +214,11 @@ export default function Layout({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
+        minHeight: '100vh',
         ...sx,
       }}
     >
-      <Box
-        ref={(refAppBar) => {
-          if (
-            !Object.prototype.hasOwnProperty.call(refs.current, 'topAppBar')
-          ) {
-            refs.current = { ...refs.current, topAppBar: refAppBar };
-          }
-        }}
-      >
+      <Box sx={{ zIndex: 100, position: 'fixed', top: 0, left: 0, right: 0 }}>
         {showTopAppBar && (
           <Box
             sx={{

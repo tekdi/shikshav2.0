@@ -18,6 +18,7 @@ import { useRouter } from 'next/router';
 import { getUserAuthInfo, signin } from '../../service/content';
 import Loader from '../../component/layout/LoaderComponent';
 import ImageCenter from '../../component/ImageCenter';
+
 interface ListProps {}
 const commonButtonStyle = {
   backgroundColor: '#ffffff',
@@ -47,14 +48,14 @@ const Login: React.FC<ListProps> = () => {
 
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  useEffect(() => {
-    localStorage.clear();
-    sessionStorage.removeItem('token');
+  // useEffect(() => {
+  //   localStorage.clear();
+  //   sessionStorage.removeItem('token');
 
-    // Clear Google OAuth session (important for some cases)
-    document.cookie =
-      'g_state=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-  }, []);
+  //   // Clear Google OAuth session (important for some cases)
+  //   document.cookie =
+  //     'g_state=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+  // }, []);
 
   const validateEmail = (email: string) =>
     /^[a-zA-Z][a-zA-Z0-9._]{2,}$/.test(email);
@@ -71,7 +72,7 @@ const Login: React.FC<ListProps> = () => {
         if (!value) {
           errorMessage = 'Username is required.';
         } else if (!validateEmail(value)) {
-          errorMessage = 'Invalid username format.';
+          errorMessage = 'Enter valid username.';
         } else {
           localStorage.setItem('username', value);
         }
@@ -79,7 +80,7 @@ const Login: React.FC<ListProps> = () => {
         if (!value) {
           errorMessage = 'Password is required.';
         } else if (!validatePassword(value)) {
-          errorMessage = 'Password must be at least 6 characters.';
+          errorMessage = 'Enter valid password.';
         }
       }
       setCredentials((prev) => ({ ...prev, [field]: value }));
@@ -256,10 +257,12 @@ const MyCustomGoogleLogin = () => {
     try {
       await keycloak.login({
         idpHint: 'google',
+        redirectUri: `${window.location.origin}/home`,
       });
       if (keycloak.authenticated && keycloak.token) {
         localStorage.setItem('token', keycloak.token || '');
         localStorage.setItem('refreshToken', keycloak.refreshToken || '');
+
         router.push(`/home`);
       } else {
         console.error('No token received after login.');

@@ -54,15 +54,24 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
   const [username, setUsername] = useState('');
 
   useEffect(() => {
-    const storedRole = localStorage.getItem('role');
-    const storedUsername = localStorage.getItem('username');
+    const checkAndSetUsername = () => {
+      const storedRole = localStorage.getItem('role');
+      const storedUsername = localStorage.getItem('username');
 
-    if (storedRole) {
-      setRole(storedRole);
-    }
-    if (storedUsername) {
-      setUsername(storedUsername);
-    }
+      if (storedRole) {
+        setRole(storedRole);
+      }
+      if (storedUsername) {
+        setUsername(storedUsername);
+      }
+    };
+
+    checkAndSetUsername();
+
+    // Also run after a short delay if not available immediately
+    const timeout = setTimeout(checkAndSetUsername, 1100);
+
+    return () => clearTimeout(timeout);
   }, []);
   const handleCategoryClick = (category: CategoryItem) => {
     if (category.subCategories) {
@@ -162,7 +171,7 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
                   color: '#000000',
                 }}
               >
-                JD
+                {username?.charAt(0).toUpperCase() ?? ''}
               </Avatar>
 
               <Box
