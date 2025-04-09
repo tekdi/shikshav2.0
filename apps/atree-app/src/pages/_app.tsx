@@ -9,7 +9,16 @@ import { ReactKeycloakProvider, useKeycloak } from '@react-keycloak/web';
 import keycloak from '../service/keycloack';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode';
+
 import '@fontsource/poppins';
+
+interface DecodedToken {
+  name?: string;
+  preferred_username?: string;
+  email?: string;
+  [key: string]: any;
+}
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['400', '600', '700'], // Choose weights as needed
@@ -34,7 +43,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: 'Poppins'
+    fontFamily: 'Poppins',
   },
 });
 function AuthHandler() {
@@ -59,6 +68,8 @@ function AuthHandler() {
     if (initialized && keycloak.authenticated) {
       localStorage.setItem('token', keycloak.token || '');
       localStorage.setItem('refreshToken', keycloak.refreshToken || '');
+      const decodedToken = jwtDecode<DecodedToken>(keycloak.token || '');
+      localStorage.setItem('username', decodedToken.name || '');
       router.push(`/home`);
     }
   }, [initialized, keycloak.authenticated]);

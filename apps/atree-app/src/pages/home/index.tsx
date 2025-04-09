@@ -421,8 +421,10 @@ export default function Index() {
                   display: 'flex',
                 }}
               >
-                <Title>{t('Browse by Sub Categories')}</Title>
-
+                {/* <Title>{t('Browse by Sub Categories')}</Title> */}
+                {subFrameworkFilter && subFrameworkFilter.length > 0 && (
+                  <Title>{t('Browse by Sub Categories')}</Title>
+                )}
                 <SubFrameworkFilter
                   subFramework={subFramework}
                   setSubFramework={setSubFramework}
@@ -490,7 +492,9 @@ export default function Index() {
                 padding: '15px',
               }}
             >
-              <Title>{t('Browse by Sub Categories')}</Title>
+              {subFrameworkFilter && subFrameworkFilter.length > 0 && (
+                <Title>{t('Browse by Sub Categories')}</Title>
+              )}
 
               <SubFrameworkFilter
                 subFrameworkFilter={subFrameworkFilter || []}
