@@ -16,7 +16,7 @@ const AuthHandler = () => {
     {
       tenantId: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
       roleId:
-        localStorage.getItem('role') || '5771c07f-2afd-4cef-b8f1-55eba2a27908',
+        localStorage.getItem('role') ?? '5771c07f-2afd-4cef-b8f1-55eba2a27908',
     },
   ];
 
@@ -45,7 +45,6 @@ const AuthHandler = () => {
         setTimeout(() => {
           setShowAlertMsg('');
         }, 3000);
-        // router.push(`/home`);
         setOpenUserDetailsDialog(true);
       } else if (response?.response?.data?.responseCode === 400) {
         setShowAlertMsg(response?.response?.data?.params?.err);
@@ -64,10 +63,10 @@ const AuthHandler = () => {
         return authCheck;
       } else {
         console.log('User already exists, redirecting...');
-        // router.push('/home');
       }
     } catch (error) {
       console.log('User does not exist, proceeding to register...');
+      throw error;
     }
   };
   const chekLogin = async (credentials: any) => {
@@ -81,10 +80,9 @@ const AuthHandler = () => {
       });
 
       localStorage.setItem('role', authInfo?.result?.tenantData?.[0]?.roleName);
-      //   router.push('/home');
     } else {
       setShowAlertMsg(
-        response?.response?.data?.params?.errmsg || 'Login failed'
+        response?.response?.data?.params?.errmsg ?? 'Login failed'
       );
     }
   };
@@ -103,9 +101,11 @@ const AuthHandler = () => {
         const decodedToken = jwtDecode<any>(keycloak.token);
 
         localStorage.setItem('token', keycloak.token);
-        localStorage.setItem('refreshToken', keycloak.refreshToken || '');
-        localStorage.setItem('username', decodedToken.name || '');
-        const [fName, ...lastNameArr] = decodedToken?.name.trim().split(' ');
+        localStorage.setItem('refreshToken', keycloak.refreshToken ?? '');
+        localStorage.setItem('username', decodedToken.name ?? '');
+
+        const [fName, ...lastNameArr] =
+          decodedToken?.name && decodedToken?.name.trim().split(' ');
         const lName = lastNameArr.join(' ');
         const username = decodedToken?.email.split('@')[0];
         const userExist = await checkUser(keycloak.token);
