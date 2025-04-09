@@ -95,6 +95,7 @@ export default function Searchpage() {
             gap: '16px',
             display: 'flex',
             flexDirection: 'column',
+            marginTop: '-60px',
           }}
         >
           <Content

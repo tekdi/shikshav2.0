@@ -15,13 +15,25 @@ export const Loader: React.FC<LoaderProps> = memo(
   ({ isLoading, layoutHeight, children }) => {
     const router = useRouter();
     const noHeightRoutes = ['/', '/aboutus', '/termsandcondition'];
-    const noPaddingRoutes = ['/contents'];
+    const noPaddingRoutes = ['/contents', '/searchpage'];
     const shouldUnsetHeight = noHeightRoutes.includes(router.pathname);
     const shouldUnsetPadding = noPaddingRoutes.includes(router.pathname);
+    const shouldSkipPadding = router.asPath === '/searchpage';
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    const paddingTop =
-      (shouldUnsetPadding && '54px') || (isMobile && '76px') || '96px';
+    let paddingTop: string;
+
+    if (shouldSkipPadding) {
+      paddingTop = '96px';
+    } else if (router.pathname === '/contents/[identifier]') {
+      paddingTop = '160px';
+    } else if (shouldUnsetPadding) {
+      paddingTop = '54px';
+    } else if (isMobile) {
+      paddingTop = '76px';
+    } else {
+      paddingTop = '96px';
+    }
     return (
       <Box>
         {isLoading && (

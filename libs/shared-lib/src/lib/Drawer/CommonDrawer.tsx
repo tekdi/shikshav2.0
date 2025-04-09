@@ -69,7 +69,7 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
     checkAndSetUsername();
 
     // Also run after a short delay if not available immediately
-    const timeout = setTimeout(checkAndSetUsername, 1100);
+    const timeout = setTimeout(checkAndSetUsername, 300);
 
     return () => clearTimeout(timeout);
   }, []);
