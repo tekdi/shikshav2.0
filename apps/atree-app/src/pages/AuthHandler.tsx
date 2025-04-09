@@ -104,9 +104,16 @@ const AuthHandler = () => {
         localStorage.setItem('refreshToken', keycloak.refreshToken ?? '');
         localStorage.setItem('username', decodedToken.name ?? '');
 
-        const [fName, ...lastNameArr] =
-          decodedToken?.name && decodedToken?.name.trim().split(' ');
-        const lName = lastNameArr.join(' ');
+        let fName = '';
+        let lName = '';
+
+        const fullName = decodedToken?.name?.trim();
+
+        if (fullName) {
+          const [first, ...last] = fullName.split(' ');
+          fName = first;
+          lName = last.join(' ');
+        }
         const username = decodedToken?.email.split('@')[0];
         const userExist = await checkUser(keycloak.token);
         setFormData({ username: username, password: 'password123' });
