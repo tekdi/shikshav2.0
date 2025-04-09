@@ -20,6 +20,8 @@ export const Loader: React.FC<LoaderProps> = memo(
     const shouldUnsetPadding = noPaddingRoutes.includes(router.pathname);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const paddingTop =
+      (shouldUnsetPadding && '54px') || (isMobile && '76px') || '96px';
     return (
       <Box>
         {isLoading && (
@@ -60,7 +62,7 @@ export const Loader: React.FC<LoaderProps> = memo(
             height: shouldUnsetHeight
               ? 'auto'
               : `calc(100vh - ${layoutHeight}px)`,
-            paddingTop: shouldUnsetPadding ? '54px' : isMobile ? '76px' : '96px',
+            paddingTop: paddingTop,
           }}
         >
           {children}
