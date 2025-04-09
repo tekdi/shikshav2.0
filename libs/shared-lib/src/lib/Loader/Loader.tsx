@@ -21,7 +21,7 @@ export const Loader: React.FC<LoaderProps> = memo(
     const shouldSkipPadding = router.asPath === '/searchpage';
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    let paddingTop = '96px'; // Default
+    let paddingTop: string;
 
     if (shouldSkipPadding) {
       paddingTop = '96px';
@@ -31,6 +31,8 @@ export const Loader: React.FC<LoaderProps> = memo(
       paddingTop = '54px';
     } else if (isMobile) {
       paddingTop = '76px';
+    } else {
+      paddingTop = '96px';
     }
     return (
       <Box>
