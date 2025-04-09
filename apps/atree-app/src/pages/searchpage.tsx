@@ -44,7 +44,7 @@ export default function Searchpage() {
 
   return (
     <Layout>
-      <Box display="flex" flexDirection="column" gap="1rem" py="1rem" px="14px">
+      <Box display="flex" flexDirection="column" gap="1rem" py="3.5rem" px="14px">
         <IconButton
           onClick={() => router.back()}
           sx={{ justifyContent: 'flex-start', padding: '0px' }}
