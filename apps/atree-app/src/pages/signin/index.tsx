@@ -279,7 +279,6 @@ const MyCustomGoogleLogin = () => {
         localStorage.setItem('token', keycloak.token || '');
         localStorage.setItem('refreshToken', keycloak.refreshToken || '');
         console.log('keycloak.token', keycloak.token);
-        // router.push(`/home`);
       } else {
         console.error('No token received after login.');
       }
