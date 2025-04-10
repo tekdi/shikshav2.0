@@ -12,13 +12,12 @@ const AuthHandler = () => {
   const router = useRouter();
 
   const { keycloak, initialized } = useKeycloak();
-  const tenantCohortRoleMapping = [
+  const [tenantCohortRoleMapping, setTenantCohortRoleMapping] = useState([
     {
       tenantId: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
-      roleId:
-        localStorage.getItem('role') ?? '5771c07f-2afd-4cef-b8f1-55eba2a27908',
+      roleId: '5771c07f-2afd-4cef-b8f1-55eba2a27908', // default fallback
     },
-  ];
+  ]);
 
   const [showAlertMsg, setShowAlertMsg] = useState('');
   const [alertSeverity, setAlertSeverity] = useState<
@@ -30,6 +29,20 @@ const AuthHandler = () => {
     password: '',
   });
   const defaultPassword = process.env.NEXT_PUBLIC_DEFAULT_PASSWORD ?? '';
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedRole =
+        localStorage.getItem('role') ?? '5771c07f-2afd-4cef-b8f1-55eba2a27908';
+
+      setTenantCohortRoleMapping([
+        {
+          tenantId: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
+          roleId: storedRole,
+        },
+      ]);
+    }
+  }, []);
   const registerUser = async (data: any) => {
     try {
       const payload = data;
@@ -74,13 +87,20 @@ const AuthHandler = () => {
     const response = await signin(credentials);
 
     if (response?.result?.access_token) {
-      localStorage.setItem('token', response.result.access_token);
-      localStorage.setItem('refreshToken', response.result.refresh_token);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('token', response.result.access_token);
+        localStorage.setItem('refreshToken', response.result.refresh_token);
+      }
+
       const authInfo = await getUserAuthInfo({
         token: response?.result?.access_token,
       });
-
-      localStorage.setItem('role', authInfo?.result?.tenantData?.[0]?.roleName);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(
+          'role',
+          authInfo?.result?.tenantData?.[0]?.roleName
+        );
+      }
     } else {
       setShowAlertMsg(
         response?.response?.data?.params?.errmsg ?? 'Login failed'
@@ -98,6 +118,7 @@ const AuthHandler = () => {
       return;
     }
     const asyncFun = async () => {
+      if (typeof window === 'undefined') return;
       if (keycloak?.authenticated && keycloak.token) {
         const decodedToken = jwtDecode<any>(keycloak.token);
 
