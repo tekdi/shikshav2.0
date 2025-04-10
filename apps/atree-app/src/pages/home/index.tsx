@@ -28,6 +28,7 @@ import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'next/navigation';
 import Loader from '../../component/layout/LoaderComponent';
 import { RESOURCE_TYPES, MIME_TYPES } from '../../utils/constantData';
+import dynamic from 'next/dynamic';
 const buttonColors = {
   water: '#0E28AE',
   land: '#8F4A50',
@@ -38,6 +39,7 @@ const buttonColors = {
   general: '#FFBD0D',
   potpourri: '#FFBD0D',
 };
+const Content = dynamic(() => import('@Content'), { ssr: false });
 
 interface ContentSectionProps {
   contentData: ContentType[];
@@ -293,6 +295,8 @@ export default function Index() {
   };
 
   console.log('Filters:', frameworkName);
+  console.log('Filters filters:', filters);
+
   console.log('Content Data:', contentData);
   return (
     <Layout isLoadingChildren={isLoadingChildren}>
@@ -311,150 +315,257 @@ export default function Index() {
                 />
               </Box>
             </Grid>
-            <Grid size={{ xs: 9 }}>
-              <Box
-                sx={{
-                  width: '100%',
-                  gap: '16px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  padding: '12px',
-                }}
-              >
+            {filters?.request?.filters?.mimeType ||
+            filters?.request?.filters?.mimeType?.length > 0 ||
+            filters?.request?.filters?.resource ||
+            filters?.request?.filters?.resource?.length > 0 ||
+            filters?.request?.filters?.access ||
+            filters?.request?.filters?.access?.length > 0 ? (
+              <Grid size={{ xs: 9 }}>
                 <Box
-                  display="flex"
-                  alignItems="center"
-                  gap={1}
-                  marginLeft="auto"
+                  sx={{
+                    width: '100%',
+                    gap: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: '12px',
+                  }}
                 >
-                  <Typography
-                    sx={{
-                      fontSize: '14px',
-                      fontWeight: fullAccess ? '400' : '600',
-                      color: fullAccess ? '#9E9E9E' : '#000000',
-                    }}
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    gap={1}
+                    marginLeft="auto"
                   >
-                    All
-                  </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: '14px',
+                        fontWeight: fullAccess ? '400' : '600',
+                        color: fullAccess ? '#9E9E9E' : '#000000',
+                      }}
+                    >
+                      All
+                    </Typography>
 
-                  <Switch
-                    checked={fullAccess} // Controlled state for switch
-                    onChange={handleToggleFullAccess}
-                    sx={{
-                      height: 26,
-                      padding: 0,
-                      width: 42,
-                      '& .MuiSwitch-switchBase': {
-                        transitionDuration: '300ms',
+                    <Switch
+                      checked={fullAccess} // Controlled state for switch
+                      onChange={handleToggleFullAccess}
+                      sx={{
+                        height: 26,
                         padding: 0,
-                        '&.Mui-checked': {
-                          color: '#fff',
-                          transform: 'translateX(16px)',
-                          '& + .MuiSwitch-track': {
-                            background:
-                              'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
-                            opacity: 1,
-                            border: 0,
+                        width: 42,
+                        '& .MuiSwitch-switchBase': {
+                          transitionDuration: '300ms',
+                          padding: 0,
+                          '&.Mui-checked': {
+                            color: '#fff',
+                            transform: 'translateX(16px)',
+                            '& + .MuiSwitch-track': {
+                              background:
+                                'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                              opacity: 1,
+                              border: 0,
+                            },
+                            '&.Mui-disabled + .MuiSwitch-track': {
+                              opacity: 0.5,
+                            },
                           },
+                          '&.Mui-focusVisible .MuiSwitch-thumb': {
+                            border: '6px solid #fff',
+                            color: '#33cf4d',
+                          },
+
                           '&.Mui-disabled + .MuiSwitch-track': {
+                            background: '#BDBDBD', // Grey track when disabled
                             opacity: 0.5,
                           },
+                          '&.Mui-disabled .MuiSwitch-thumb': {
+                            color: '#BDBDBD', // Grey thumb when disabled
+                          },
                         },
-                        '&.Mui-focusVisible .MuiSwitch-thumb': {
-                          border: '6px solid #fff',
-                          color: '#33cf4d',
-                        },
+                        '& .MuiSwitch-thumb': {
+                          height: 25,
+                          boxSizing: 'border-box',
 
-                        '&.Mui-disabled + .MuiSwitch-track': {
-                          background: '#BDBDBD', // Grey track when disabled
-                          opacity: 0.5,
+                          width: 25,
                         },
-                        '&.Mui-disabled .MuiSwitch-thumb': {
-                          color: '#BDBDBD', // Grey thumb when disabled
+                        '& .MuiSwitch-track': {
+                          background: fullAccess
+                            ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
+                            : '#BDBDBD', // Grey when unchecked
+                          opacity: 1,
+                          borderRadius: 26 / 2,
                         },
-                      },
-                      '& .MuiSwitch-thumb': {
-                        height: 25,
-                        boxSizing: 'border-box',
+                      }}
+                    />
 
-                        width: 25,
-                      },
-                      '& .MuiSwitch-track': {
-                        background: fullAccess
-                          ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
-                          : '#BDBDBD', // Grey when unchecked
-                        opacity: 1,
-                        borderRadius: 26 / 2,
-                      },
+                    <Typography
+                      sx={{
+                        color: fullAccess ? '#000000' : '#9E9E9E',
+                        fontSize: '14px',
+                        fontWeight: fullAccess ? '600' : '400',
+                      }}
+                    >
+                      Only Full Access
+                    </Typography>
+                  </Box>
+                  <ContentSection
+                    contents={contentData.length > 0 ? contentData : []}
+                    title={''}
+                    onTitleClick={() => {
+                      localStorage.removeItem('subcategory');
+                      router.push('/contents');
                     }}
+                    handleCardClick={handleCardClick}
                   />
-
-                  <Typography
-                    sx={{
-                      color: fullAccess ? '#000000' : '#9E9E9E',
-                      fontSize: '14px',
-                      fontWeight: fullAccess ? '600' : '400',
-                    }}
-                  >
-                    Only Full Access
-                  </Typography>
                 </Box>
-
-                <ContentSection
-                  contents={
-                    contentData.length > 0 ? contentData.slice(0, 4) : []
-                  }
-                  title={t('Read, Watch, Listen')}
-                  onTitleClick={() => {
-                    localStorage.removeItem('subcategory');
-                    router.push('/contents');
+              </Grid>
+            ) : (
+              <Grid size={{ xs: 9 }}>
+                <Box
+                  sx={{
+                    width: '100%',
+                    gap: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: '12px',
                   }}
-                  handleCardClick={handleCardClick}
-                />
-              </Box>
-              <Box
-                sx={{
-                  width: '100%',
-                  padding: '12px',
-                  gap: '16px',
-                  flexDirection: 'column',
-                  display: 'flex',
-                }}
-              >
-                {/* <Title>{t('Browse by Sub Categories')}</Title> */}
-                {subFrameworkFilter && subFrameworkFilter.length > 0 && (
-                  <Title>{t('Browse by Sub Categories')}</Title>
-                )}
-                <SubFrameworkFilter
-                  subFramework={subFramework}
-                  setSubFramework={setSubFramework}
-                  lastButton={true}
-                  subFrameworkFilter={subFrameworkFilter || []}
-                />
-              </Box>
-              <Box
-                sx={{
-                  width: '100%',
-                  flexDirection: 'column',
+                >
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    gap={1}
+                    marginLeft="auto"
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: '14px',
+                        fontWeight: fullAccess ? '400' : '600',
+                        color: fullAccess ? '#9E9E9E' : '#000000',
+                      }}
+                    >
+                      All
+                    </Typography>
 
-                  padding: '15px',
-                  display: 'flex',
-                  gap: '16px',
-                }}
-              >
-                <ContentSection
-                  title={t('Related Content')}
-                  onTitleClick={() => {
-                    localStorage.removeItem('subcategory');
-                    router.push('/contents');
+                    <Switch
+                      checked={fullAccess} // Controlled state for switch
+                      onChange={handleToggleFullAccess}
+                      sx={{
+                        height: 26,
+                        padding: 0,
+                        width: 42,
+                        '& .MuiSwitch-switchBase': {
+                          transitionDuration: '300ms',
+                          padding: 0,
+                          '&.Mui-checked': {
+                            color: '#fff',
+                            transform: 'translateX(16px)',
+                            '& + .MuiSwitch-track': {
+                              background:
+                                'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                              opacity: 1,
+                              border: 0,
+                            },
+                            '&.Mui-disabled + .MuiSwitch-track': {
+                              opacity: 0.5,
+                            },
+                          },
+                          '&.Mui-focusVisible .MuiSwitch-thumb': {
+                            border: '6px solid #fff',
+                            color: '#33cf4d',
+                          },
+
+                          '&.Mui-disabled + .MuiSwitch-track': {
+                            background: '#BDBDBD', // Grey track when disabled
+                            opacity: 0.5,
+                          },
+                          '&.Mui-disabled .MuiSwitch-thumb': {
+                            color: '#BDBDBD', // Grey thumb when disabled
+                          },
+                        },
+                        '& .MuiSwitch-thumb': {
+                          height: 25,
+                          boxSizing: 'border-box',
+
+                          width: 25,
+                        },
+                        '& .MuiSwitch-track': {
+                          background: fullAccess
+                            ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
+                            : '#BDBDBD', // Grey when unchecked
+                          opacity: 1,
+                          borderRadius: 26 / 2,
+                        },
+                      }}
+                    />
+
+                    <Typography
+                      sx={{
+                        color: fullAccess ? '#000000' : '#9E9E9E',
+                        fontSize: '14px',
+                        fontWeight: fullAccess ? '600' : '400',
+                      }}
+                    >
+                      Only Full Access
+                    </Typography>
+                  </Box>
+
+                  <ContentSection
+                    contents={
+                      contentData.length > 0 ? contentData.slice(0, 4) : []
+                    }
+                    title={t('Read, Watch, Listen')}
+                    onTitleClick={() => {
+                      localStorage.removeItem('subcategory');
+                      router.push('/contents');
+                    }}
+                    handleCardClick={handleCardClick}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    width: '100%',
+                    padding: '12px',
+                    gap: '16px',
+                    flexDirection: 'column',
+                    display: 'flex',
                   }}
-                  contents={
-                    contentData.length > 4 ? contentData.slice(4, 10) : []
-                  }
-                  handleCardClick={handleCardClick}
-                />
-              </Box>
-            </Grid>
+                >
+                  {/* <Title>{t('Browse by Sub Categories')}</Title> */}
+                  {subFrameworkFilter && subFrameworkFilter.length > 0 && (
+                    <Title>{t('Browse by Sub Categories')}</Title>
+                  )}
+                  <SubFrameworkFilter
+                    subFramework={subFramework}
+                    setSubFramework={setSubFramework}
+                    lastButton={true}
+                    subFrameworkFilter={subFrameworkFilter || []}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    width: '100%',
+                    flexDirection: 'column',
+
+                    padding: '15px',
+                    display: 'flex',
+                    gap: '16px',
+                  }}
+                >
+                  <ContentSection
+                    title={t('Related Content')}
+                    onTitleClick={() => {
+                      localStorage.removeItem('subcategory');
+                      router.push('/contents');
+                    }}
+                    contents={
+                      contentData.length > 4 ? contentData.slice(4, 10) : []
+                    }
+                    handleCardClick={handleCardClick}
+                  />
+                </Box>
+              </Grid>
+            )}
           </Grid>
         ) : (
           <>

@@ -24,6 +24,7 @@ import Loader from '../../component/layout/LoaderComponent';
 import ImageCenter from '../../component/ImageCenter';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { languageData } from '../../utils/constantData';
+import { jwtDecode } from 'jwt-decode';
 
 interface ListProps {}
 const commonButtonStyle = {
@@ -54,14 +55,6 @@ const Login: React.FC<ListProps> = () => {
 
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  // useEffect(() => {
-  //   localStorage.clear();
-  //   sessionStorage.removeItem('token');
-
-  //   // Clear Google OAuth session (important for some cases)
-  //   document.cookie =
-  //     'g_state=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-  // }, []);
 
   const validateEmail = (email: string) =>
     /^[a-zA-Z][a-zA-Z0-9._]{2,}$/.test(email);
@@ -259,32 +252,74 @@ const MyCustomGoogleLogin = () => {
   const { keycloak } = useKeycloak();
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedValue, setSelectedValue] = useState('Educator');
-
-  const handleLogin = () => {
-    setOpenDialog(true);
-  };
-  const handleDialogOk = async () => {
-    if (!selectedValue) {
-      return;
-    }
-
-    // Save the role selection
-    setOpenDialog(false);
+  const defaultPassword = process.env.NEXT_PUBLIC_DEFAULT_PASSWORD ?? '';
+  const handleLogin = async () => {
+    // setOpenDialog(true);
     try {
       await keycloak.login({
         idpHint: 'google',
         // redirectUri: `${window.location.origin}/home`,
       });
       if (keycloak.authenticated && keycloak.token) {
+        const decodedToken: any = jwtDecode(keycloak.token);
+        const username = decodedToken?.email.split('@')[0];
+        const credentials = {
+          email: username,
+          password: defaultPassword,
+        };
         localStorage.setItem('token', keycloak.token || '');
         localStorage.setItem('refreshToken', keycloak.refreshToken || '');
         console.log('keycloak.token', keycloak.token);
+        const userExist = await checkUserIsregister(
+          credentials,
+          keycloak.token
+        );
+        if (userExist?.result) {
+          window.location.href = '/home';
+        } else {
+          setOpenDialog(true);
+        }
       } else {
         console.error('No token received after login.');
       }
     } catch (error) {
       console.error('Login Failed', error);
     }
+  };
+  const checkUserIsregister = async (credentials: any, data: any) => {
+    try {
+      const response = await signin(credentials);
+      console.log('response', response);
+      if (response?.result?.access_token) {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('token', response.result.access_token);
+          localStorage.setItem('refreshToken', response.result.refresh_token);
+        }
+        const authCheck = await getUserAuthInfo({ token: data });
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(
+            'role',
+            authCheck?.result?.tenantData?.[0]?.roleName
+          );
+        }
+        if (authCheck?.result) {
+          return authCheck;
+        } else {
+          console.log('User already exists, redirecting...');
+        }
+      }
+    } catch (error) {
+      console.log('User does not exist, proceeding to register...');
+      throw error;
+    }
+  };
+  const handleDialogOk = () => {
+    if (!selectedValue) {
+      return;
+    }
+
+    // Save the role selection
+    setOpenDialog(false);
   };
   const handleRoleChange = (event: SelectChangeEvent<string>) => {
     const roleId = event.target.value;
@@ -341,7 +376,7 @@ const MyCustomGoogleLogin = () => {
             onClick={handleDialogOk}
             sx={{ borderRadius: '50px', height: '40px', width: '100%' }}
           >
-            OK
+            Procced
           </Button>
         </DialogActions>
       </Dialog>

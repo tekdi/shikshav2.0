@@ -61,8 +61,8 @@ const AuthHandler = () => {
         }, 3000);
         setOpenUserDetailsDialog(true);
       } else if (response?.response?.data?.responseCode === 400) {
-        setShowAlertMsg(response?.response?.data?.params?.err);
-        setAlertSeverity('error');
+        // setShowAlertMsg(response?.response?.data?.params?.err);
+        // setAlertSeverity('error');
         console.log('error', response?.response?.data?.params?.err);
       }
     } catch (error: any) {
@@ -102,9 +102,9 @@ const AuthHandler = () => {
         );
       }
     } else {
-      setShowAlertMsg(
-        response?.response?.data?.params?.errmsg ?? 'Login failed'
-      );
+      //   setShowAlertMsg(
+      //     response?.response?.data?.params?.errmsg ?? 'Login failed'
+      //   );
     }
   };
   useEffect(() => {
@@ -209,7 +209,7 @@ const AuthHandler = () => {
                 fontWeight: 500,
               }}
             >
-              OK
+              Procced
             </Button>
           </Box>
         }
