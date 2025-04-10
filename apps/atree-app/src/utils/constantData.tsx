@@ -18,3 +18,21 @@ export const MIME_TYPES = [
   { label: 'PDF', value: 'application/pdf' },
   { label: 'Audiobooks', value: 'video/mp4' },
 ];
+
+export const languageData = [
+  {
+    roleId: '5771c07f-2afd-4cef-b8f1-55eba2a27908',
+    title: 'Educators',
+    code: 'educators',
+  },
+  {
+    roleId: '828b3088-9f2f-4b46-b074-8405b5a73cde',
+    title: 'Parents',
+    code: 'parents',
+  },
+  {
+    roleId: '998d5034-164a-46ca-a6a5-100f82f582e3',
+    title: 'Others',
+    code: 'others',
+  },
+];
