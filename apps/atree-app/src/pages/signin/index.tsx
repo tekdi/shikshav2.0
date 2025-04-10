@@ -7,13 +7,9 @@ import {
   Typography,
   Alert,
   Box,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { CommonSelect, CommonTextField } from '@shared-lib';
+import { CommonTextField } from '@shared-lib';
 import Link from 'next/link';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -22,8 +18,6 @@ import { useRouter } from 'next/router';
 import { getUserAuthInfo, signin } from '../../service/content';
 import Loader from '../../component/layout/LoaderComponent';
 import ImageCenter from '../../component/ImageCenter';
-import { SelectChangeEvent } from '@mui/material/Select';
-import { languageData } from '../../utils/constantData';
 
 interface ListProps {}
 const commonButtonStyle = {
@@ -54,14 +48,6 @@ const Login: React.FC<ListProps> = () => {
 
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  // useEffect(() => {
-  //   localStorage.clear();
-  //   sessionStorage.removeItem('token');
-
-  //   // Clear Google OAuth session (important for some cases)
-  //   document.cookie =
-  //     'g_state=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-  // }, []);
 
   const validateEmail = (email: string) =>
     /^[a-zA-Z][a-zA-Z0-9._]{2,}$/.test(email);
@@ -257,19 +243,8 @@ const Login: React.FC<ListProps> = () => {
 export default Login;
 const MyCustomGoogleLogin = () => {
   const { keycloak } = useKeycloak();
-  const [openDialog, setOpenDialog] = useState(false);
-  const [selectedValue, setSelectedValue] = useState('Educator');
 
-  const handleLogin = () => {
-    setOpenDialog(true);
-  };
-  const handleDialogOk = async () => {
-    if (!selectedValue) {
-      return;
-    }
-
-    // Save the role selection
-    setOpenDialog(false);
+  const handleLogin = async () => {
     try {
       await keycloak.login({
         idpHint: 'google',
@@ -286,11 +261,7 @@ const MyCustomGoogleLogin = () => {
       console.error('Login Failed', error);
     }
   };
-  const handleRoleChange = (event: SelectChangeEvent<string>) => {
-    const roleId = event.target.value;
-    setSelectedValue(roleId);
-    localStorage.setItem('role', roleId);
-  };
+
   return (
     <Box>
       <Button
@@ -307,44 +278,6 @@ const MyCustomGoogleLogin = () => {
           <Typography>Log in with Google</Typography>
         </Box>
       </Button>
-      {/* Role selection dialog */}
-      <Dialog
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-        disableEscapeKeyDown
-        PaperProps={{
-          style: {
-            width: '300px',
-            maxHeight: 'calc(100vh - 64px)',
-            overflow: 'auto',
-          },
-        }}
-      >
-        <DialogTitle>Select Role</DialogTitle>
-        <DialogContent>
-          <FormLabel component="legend" sx={{ color: '#4D4639' }}>
-            Select Role<span style={{ color: 'red' }}>*</span>
-          </FormLabel>
-          <CommonSelect
-            value={selectedValue}
-            onChange={handleRoleChange}
-            options={languageData.map(({ title, roleId }) => ({
-              label: title,
-              value: roleId,
-            }))}
-          />
-        </DialogContent>
-        <DialogActions sx={{ justifyContent: 'center', py: 2, px: 3 }}>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleDialogOk}
-            sx={{ borderRadius: '50px', height: '40px', width: '100%' }}
-          >
-            OK
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   );
 };

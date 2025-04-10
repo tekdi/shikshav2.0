@@ -2,11 +2,22 @@ import { useKeycloak } from '@react-keycloak/web';
 import { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { createUser, getUserAuthInfo, signin } from '../service/content';
+import { SelectChangeEvent } from '@mui/material/Select';
+import { languageData } from '../utils/constantData';
 
 import GlobalAlert from '../component/GlobalAlert';
 import { useRouter } from 'next/router';
-import { CommonDialog } from '@shared-lib';
-import { Box, Button, Typography } from '@mui/material';
+import { CommonDialog, CommonSelect } from '@shared-lib';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormLabel,
+  Typography,
+} from '@mui/material';
 
 const AuthHandler = () => {
   const router = useRouter();
@@ -20,13 +31,24 @@ const AuthHandler = () => {
   ]);
 
   const [showAlertMsg, setShowAlertMsg] = useState('');
+  const [selectedValue, setSelectedValue] = useState('Educator');
   const [alertSeverity, setAlertSeverity] = useState<
     'success' | 'error' | 'warning' | 'info'
   >('success');
   const [openUserDetailsDialog, setOpenUserDetailsDialog] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
     password: '',
+  });
+  const [registerFormData, setRegisterFormData] = useState({
+    firstName: '',
+    lastName: '',
+    username: '',
+    email: '',
+    password: '',
+    gender: '',
+    tenantCohortRoleMapping: tenantCohortRoleMapping,
   });
   const defaultPassword = process.env.NEXT_PUBLIC_DEFAULT_PASSWORD ?? '';
 
@@ -43,37 +65,13 @@ const AuthHandler = () => {
       ]);
     }
   }, []);
-  const registerUser = async (data: any) => {
-    try {
-      const payload = data;
-      const response = await createUser(payload);
-      if (response?.responseCode === 201) {
-        const credentials = {
-          email: data.email,
-          password: data.password,
-        };
-        chekLogin(credentials);
-
-        setShowAlertMsg('User Login successfully!');
-        setAlertSeverity('success');
-        setTimeout(() => {
-          setShowAlertMsg('');
-        }, 3000);
-        setOpenUserDetailsDialog(true);
-      } else if (response?.response?.data?.responseCode === 400) {
-        setShowAlertMsg(response?.response?.data?.params?.err);
-        setAlertSeverity('error');
-        console.log('error', response?.response?.data?.params?.err);
-      }
-    } catch (error: any) {
-      console.log(error);
-    }
+  const registerUser = () => {
+    setOpenDialog(true);
   };
   const checkUser = async (data: any) => {
     try {
       const authCheck = await getUserAuthInfo({ token: data });
-      console.log('userExist', authCheck);
-      if (authCheck?.result) {
+      if (authCheck?.responseCode === 200) {
         return authCheck;
       } else {
         console.log('User already exists, redirecting...');
@@ -85,7 +83,7 @@ const AuthHandler = () => {
   };
   const chekLogin = async (credentials: any) => {
     const response = await signin(credentials);
-
+    console.log('response', response);
     if (response?.result?.access_token) {
       if (typeof window !== 'undefined') {
         localStorage.setItem('token', response.result.access_token);
@@ -95,16 +93,16 @@ const AuthHandler = () => {
       const authInfo = await getUserAuthInfo({
         token: response?.result?.access_token,
       });
+      console.log('authInfo', authInfo);
       if (typeof window !== 'undefined') {
         localStorage.setItem(
           'role',
           authInfo?.result?.tenantData?.[0]?.roleName
         );
       }
+      return true;
     } else {
-      setShowAlertMsg(
-        response?.response?.data?.params?.errmsg ?? 'Login failed'
-      );
+      return false;
     }
   };
   useEffect(() => {
@@ -119,6 +117,11 @@ const AuthHandler = () => {
     }
     const asyncFun = async () => {
       if (typeof window === 'undefined') return;
+      const alreadyHandled = localStorage.getItem('userHandled');
+      if (alreadyHandled === 'true') {
+        console.log('User already handled, skipping registration/login.');
+        return;
+      }
       if (keycloak?.authenticated && keycloak.token) {
         const decodedToken = jwtDecode<any>(keycloak.token);
 
@@ -138,25 +141,31 @@ const AuthHandler = () => {
         }
         const username = decodedToken?.email.split('@')[0];
         const userExist = await checkUser(keycloak.token);
+        console.log('decodedToken', decodedToken);
         setFormData({ username: username, password: defaultPassword });
-        if (userExist?.result) {
-          registerUser({
-            firstName: fName,
-            lastName: lName,
-            username: username,
-            email: decodedToken?.email,
-            password: defaultPassword,
-            gender: 'female',
-            tenantCohortRoleMapping: tenantCohortRoleMapping,
-          });
-        } else {
+        if (userExist?.result === false) {
+          //else {
           const credentials = {
             email: username,
             password: defaultPassword,
           };
-          chekLogin(credentials);
-          setOpenUserDetailsDialog(true);
+          const loginSuccess = await chekLogin(credentials);
+          if (loginSuccess) {
+            setOpenUserDetailsDialog(true);
+          } else {
+            setRegisterFormData({
+              firstName: fName,
+              lastName: lName,
+              username: username,
+              email: decodedToken?.email,
+              password: defaultPassword,
+              gender: 'female',
+              tenantCohortRoleMapping: tenantCohortRoleMapping,
+            });
+            registerUser();
+          }
         }
+        localStorage.setItem('userHandled', 'true');
       } else {
         console.log('User not authenticated');
       }
@@ -167,6 +176,51 @@ const AuthHandler = () => {
     setOpenUserDetailsDialog(false);
     router.push('/home');
   };
+  const handleRoleChange = (event: SelectChangeEvent<string>) => {
+    const roleId = event.target.value;
+    setSelectedValue(roleId);
+    localStorage.setItem('role', roleId);
+  };
+  const handleDialogOk = async () => {
+    if (!selectedValue) {
+      return;
+    }
+
+    // Save the role selection
+    setOpenDialog(false);
+
+    try {
+      const payload = registerFormData;
+
+      const response = await createUser(payload);
+      if (response?.responseCode === 201) {
+        const credentials = {
+          email: registerFormData.username,
+          password: registerFormData.password,
+        };
+        const loginSuccess = await chekLogin(credentials);
+        console.log(loginSuccess);
+        if (loginSuccess) {
+          setOpenUserDetailsDialog(true);
+        } else {
+          router.push('/signin'); // redirect on login failure
+        }
+
+        setShowAlertMsg('User Login successfully!');
+        setAlertSeverity('success');
+        setTimeout(() => {
+          setShowAlertMsg('');
+        }, 3000);
+      } else if (response?.response?.data?.responseCode === 400) {
+        console.log('auth');
+        setShowAlertMsg(response?.response?.data?.params?.err);
+        setAlertSeverity('error');
+        console.log('error', response?.response?.data?.params?.err);
+      }
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
   return (
     <Box>
       <GlobalAlert
@@ -174,6 +228,44 @@ const AuthHandler = () => {
         severity={alertSeverity}
         onClose={() => setShowAlertMsg('')}
       />
+      {/* Role selection dialog */}
+      <Dialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        disableEscapeKeyDown
+        PaperProps={{
+          style: {
+            width: '300px',
+            maxHeight: 'calc(100vh - 64px)',
+            overflow: 'auto',
+          },
+        }}
+      >
+        <DialogTitle>Select Role</DialogTitle>
+        <DialogContent>
+          <FormLabel component="legend" sx={{ color: '#4D4639' }}>
+            Select Role<span style={{ color: 'red' }}>*</span>
+          </FormLabel>
+          <CommonSelect
+            value={selectedValue}
+            onChange={handleRoleChange}
+            options={languageData.map(({ title, roleId }) => ({
+              label: title,
+              value: roleId,
+            }))}
+          />
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: 'center', py: 2, px: 3 }}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleDialogOk}
+            sx={{ borderRadius: '50px', height: '40px', width: '100%' }}
+          >
+            Procced
+          </Button>
+        </DialogActions>
+      </Dialog>
       <CommonDialog
         isOpen={openUserDetailsDialog}
         onClose={() => setOpenUserDetailsDialog(false)}
@@ -209,7 +301,7 @@ const AuthHandler = () => {
                 fontWeight: 500,
               }}
             >
-              OK
+              Procced
             </Button>
           </Box>
         }
