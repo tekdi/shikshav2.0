@@ -118,7 +118,8 @@ export const FrameworkFilter = ({
                 fontWeight: 500,
                 textTransform: 'none',
                 fontSize: '16px',
-                color:  isSelected ? '#fff' : 'black',
+                fontStyle: 'sans-serif',
+                color: isSelected ? '#fff' : 'black',
                 borderColor: '#cee5ff',
                 backgroundColor: isSelected
                   ? buttonColors[lowerCaseName]
