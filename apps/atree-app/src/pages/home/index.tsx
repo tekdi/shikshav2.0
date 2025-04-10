@@ -299,12 +299,9 @@ export default function Index() {
 
   console.log('Content Data:', contentData);
   const hasFilter =
-    filters?.request?.filters?.mimeType ??
-    filters?.request?.filters?.mimeType?.length > 0 ??
-    filters?.request?.filters?.resource ??
-    filters?.request?.filters?.resource?.length > 0 ??
-    filters?.request?.filters?.access ??
-    filters?.request?.filters?.access?.length > 0;
+    (filters?.request?.filters?.mimeType?.length ?? 0) > 0 ||
+    (filters?.request?.filters?.resource?.length ?? 0) > 0 ||
+    (filters?.request?.filters?.access?.length ?? 0) > 0;
   return (
     <Layout isLoadingChildren={isLoadingChildren}>
       <Box display="flex" flexDirection="column" gap="1rem" py="1rem" px="8px">
