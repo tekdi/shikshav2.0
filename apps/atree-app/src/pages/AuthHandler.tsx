@@ -65,9 +65,7 @@ const AuthHandler = () => {
       ]);
     }
   }, []);
-  const registerUser = () => {
-    setOpenDialog(true);
-  };
+
   const checkUser = async (data: any) => {
     try {
       const authCheck = await getUserAuthInfo({ token: data });
@@ -154,16 +152,20 @@ const AuthHandler = () => {
           if (loginSuccess) {
             setOpenUserDetailsDialog(true);
           } else {
-            setRegisterFormData({
-              firstName: fName,
-              lastName: lName,
-              username: username,
-              email: decodedToken?.email,
-              password: defaultPassword,
-              gender: 'female',
-              tenantCohortRoleMapping: tenantCohortRoleMapping,
-            });
-            registerUser();
+            setOpenDialog(true);
+            if (tenantCohortRoleMapping) {
+              setRegisterFormData({
+                firstName: fName,
+                lastName: lName,
+                username: username,
+                email: decodedToken?.email,
+                password: defaultPassword,
+                gender: 'female',
+                tenantCohortRoleMapping: tenantCohortRoleMapping,
+              });
+            }
+
+            // registerUser();
           }
         }
         localStorage.setItem('userHandled', 'true');
@@ -179,25 +181,39 @@ const AuthHandler = () => {
   };
   const handleRoleChange = (event: SelectChangeEvent<string>) => {
     const roleId = event.target.value;
-    setSelectedValue(roleId);
     setTenantCohortRoleMapping([
       {
         tenantId: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
         roleId: roleId,
       },
     ]);
+    setSelectedValue(roleId);
+
     localStorage.setItem('role', roleId);
   };
   const handleDialogOk = async () => {
     if (!selectedValue) {
       return;
     }
-
+    const updatedMapping = [
+      {
+        tenantId: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
+        roleId: selectedValue,
+      },
+    ];
+    setTenantCohortRoleMapping(updatedMapping);
+    setRegisterFormData((prev) => ({
+      ...prev,
+      tenantCohortRoleMapping: updatedMapping,
+    }));
     // Save the role selection
     setOpenDialog(false);
 
     try {
-      const payload = registerFormData;
+      const payload = {
+        ...registerFormData,
+        tenantCohortRoleMapping: updatedMapping,
+      };
 
       const response = await createUser(payload);
       if (response?.responseCode === 201) {
