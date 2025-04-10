@@ -336,7 +336,7 @@ export default function Index() {
                   />
                   <ContentSection
                     contents={contentData.length > 0 ? contentData : []}
-                    title={''}
+                    title={!hasFilter ? '' : undefined}
                     onTitleClick={() => {
                       localStorage.removeItem('subcategory');
                       router.push('/contents');
@@ -608,7 +608,12 @@ const ContentSection = ({ title, contents, onTitleClick, handleCardClick }) => (
       padding: '15px',
     }}
   >
-    <Title onClick={onTitleClick}>{title}</Title>
+    {
+      title && (
+        <Title onClick={onTitleClick}>{title}</Title>
+      )
+    }
+   
     {contents && contents.length > 0 ? (
       <AtreeCard
         contents={contents}
