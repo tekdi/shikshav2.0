@@ -67,17 +67,12 @@ const AuthHandler = () => {
   }, []);
 
   const checkUser = async (data: any) => {
-    try {
-      const authCheck = await getUserAuthInfo({ token: data });
-      if (authCheck?.responseCode === 200) {
-        return authCheck;
-      } else {
-        console.log('User already exists, redirecting...');
-        return { result: true };
-      }
-    } catch (error) {
-      console.log('User does not exist, proceeding to register...');
-      return { result: false };
+    const authCheck = await getUserAuthInfo({ token: data });
+    if (authCheck?.responseCode === 200) {
+      return authCheck;
+    } else {
+      console.log('User already exists, redirecting...');
+      return { result: true };
     }
   };
   const chekLogin = async (credentials: any) => {
