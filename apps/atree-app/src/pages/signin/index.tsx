@@ -7,13 +7,9 @@ import {
   Typography,
   Alert,
   Box,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { CommonSelect, CommonTextField } from '@shared-lib';
+import { CommonTextField } from '@shared-lib';
 import Link from 'next/link';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -22,9 +18,6 @@ import { useRouter } from 'next/router';
 import { getUserAuthInfo, signin } from '../../service/content';
 import Loader from '../../component/layout/LoaderComponent';
 import ImageCenter from '../../component/ImageCenter';
-import { SelectChangeEvent } from '@mui/material/Select';
-import { languageData } from '../../utils/constantData';
-import { jwtDecode } from 'jwt-decode';
 
 interface ListProps {}
 const commonButtonStyle = {
@@ -250,35 +243,17 @@ const Login: React.FC<ListProps> = () => {
 export default Login;
 const MyCustomGoogleLogin = () => {
   const { keycloak } = useKeycloak();
-  const [openDialog, setOpenDialog] = useState(false);
-  const [selectedValue, setSelectedValue] = useState('Educator');
-  const defaultPassword = process.env.NEXT_PUBLIC_DEFAULT_PASSWORD ?? '';
+
   const handleLogin = async () => {
-    // setOpenDialog(true);
     try {
       await keycloak.login({
         idpHint: 'google',
         // redirectUri: `${window.location.origin}/home`,
       });
       if (keycloak.authenticated && keycloak.token) {
-        const decodedToken: any = jwtDecode(keycloak.token);
-        const username = decodedToken?.email.split('@')[0];
-        const credentials = {
-          email: username,
-          password: defaultPassword,
-        };
         localStorage.setItem('token', keycloak.token || '');
         localStorage.setItem('refreshToken', keycloak.refreshToken || '');
         console.log('keycloak.token', keycloak.token);
-        const userExist = await checkUserIsregister(
-          credentials,
-          keycloak.token
-        );
-        if (userExist?.result) {
-          window.location.href = '/home';
-        } else {
-          setOpenDialog(true);
-        }
       } else {
         console.error('No token received after login.');
       }
@@ -286,46 +261,7 @@ const MyCustomGoogleLogin = () => {
       console.error('Login Failed', error);
     }
   };
-  const checkUserIsregister = async (credentials: any, data: any) => {
-    try {
-      const response = await signin(credentials);
-      console.log('response', response);
-      if (response?.result?.access_token) {
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('token', response.result.access_token);
-          localStorage.setItem('refreshToken', response.result.refresh_token);
-        }
-        const authCheck = await getUserAuthInfo({ token: data });
-        if (typeof window !== 'undefined') {
-          localStorage.setItem(
-            'role',
-            authCheck?.result?.tenantData?.[0]?.roleName
-          );
-        }
-        if (authCheck?.result) {
-          return authCheck;
-        } else {
-          console.log('User already exists, redirecting...');
-        }
-      }
-    } catch (error) {
-      console.log('User does not exist, proceeding to register...');
-      throw error;
-    }
-  };
-  const handleDialogOk = () => {
-    if (!selectedValue) {
-      return;
-    }
 
-    // Save the role selection
-    setOpenDialog(false);
-  };
-  const handleRoleChange = (event: SelectChangeEvent<string>) => {
-    const roleId = event.target.value;
-    setSelectedValue(roleId);
-    localStorage.setItem('role', roleId);
-  };
   return (
     <Box>
       <Button
@@ -342,44 +278,6 @@ const MyCustomGoogleLogin = () => {
           <Typography>Log in with Google</Typography>
         </Box>
       </Button>
-      {/* Role selection dialog */}
-      <Dialog
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-        disableEscapeKeyDown
-        PaperProps={{
-          style: {
-            width: '300px',
-            maxHeight: 'calc(100vh - 64px)',
-            overflow: 'auto',
-          },
-        }}
-      >
-        <DialogTitle>Select Role</DialogTitle>
-        <DialogContent>
-          <FormLabel component="legend" sx={{ color: '#4D4639' }}>
-            Select Role<span style={{ color: 'red' }}>*</span>
-          </FormLabel>
-          <CommonSelect
-            value={selectedValue}
-            onChange={handleRoleChange}
-            options={languageData.map(({ title, roleId }) => ({
-              label: title,
-              value: roleId,
-            }))}
-          />
-        </DialogContent>
-        <DialogActions sx={{ justifyContent: 'center', py: 2, px: 3 }}>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleDialogOk}
-            sx={{ borderRadius: '50px', height: '40px', width: '100%' }}
-          >
-            Procced
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   );
 };

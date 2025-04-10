@@ -692,7 +692,18 @@ const ContentSection = ({ title, contents, onTitleClick, handleCardClick }) => (
         _card={{ image: atreeLogo.src }}
       />
     ) : (
-      <Typography>No data available...</Typography>
+      <Typography
+        variant="h6"
+        sx={{
+          textAlign: 'center',
+          width: '100%',
+          fontWeight: 500,
+          color: 'text.secondary',
+          mt: 2,
+        }}
+      >
+        No resources found
+      </Typography>
     )}
   </Box>
 );
