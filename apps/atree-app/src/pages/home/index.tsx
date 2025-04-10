@@ -299,11 +299,11 @@ export default function Index() {
 
   console.log('Content Data:', contentData);
   const hasFilter =
-    filters?.request?.filters?.mimeType ||
-    filters?.request?.filters?.mimeType?.length > 0 ||
-    filters?.request?.filters?.resource ||
-    filters?.request?.filters?.resource?.length > 0 ||
-    filters?.request?.filters?.access ||
+    filters?.request?.filters?.mimeType ??
+    filters?.request?.filters?.mimeType?.length > 0 ??
+    filters?.request?.filters?.resource ??
+    filters?.request?.filters?.resource?.length > 0 ??
+    filters?.request?.filters?.access ??
     filters?.request?.filters?.access?.length > 0;
   return (
     <Layout isLoadingChildren={isLoadingChildren}>
