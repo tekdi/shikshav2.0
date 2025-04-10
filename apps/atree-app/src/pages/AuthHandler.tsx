@@ -26,7 +26,7 @@ const AuthHandler = () => {
   const [tenantCohortRoleMapping, setTenantCohortRoleMapping] = useState([
     {
       tenantId: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
-      roleId: '5771c07f-2afd-4cef-b8f1-55eba2a27908', // default fallback
+      roleId: '', // default fallback
     },
   ]);
 
@@ -75,10 +75,11 @@ const AuthHandler = () => {
         return authCheck;
       } else {
         console.log('User already exists, redirecting...');
+        return { result: true };
       }
     } catch (error) {
       console.log('User does not exist, proceeding to register...');
-      throw error;
+      return { result: false };
     }
   };
   const chekLogin = async (credentials: any) => {
@@ -179,6 +180,12 @@ const AuthHandler = () => {
   const handleRoleChange = (event: SelectChangeEvent<string>) => {
     const roleId = event.target.value;
     setSelectedValue(roleId);
+    setTenantCohortRoleMapping([
+      {
+        tenantId: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
+        roleId: roleId,
+      },
+    ]);
     localStorage.setItem('role', roleId);
   };
   const handleDialogOk = async () => {
