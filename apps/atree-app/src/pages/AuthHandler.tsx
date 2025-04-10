@@ -159,8 +159,6 @@ const AuthHandler = () => {
                 tenantCohortRoleMapping: tenantCohortRoleMapping,
               });
             }
-
-            // registerUser();
           }
         }
         localStorage.setItem('userHandled', 'true');
