@@ -291,7 +291,7 @@ const MyComponent: React.FC = () => {
               </Box>
             </Box>
           )}
-          <Grid container spacing={1}>
+          <Grid container spacing={1} mt={isMobile ? '0rem' : '6rem'}>
             <Grid size={{ xs: 3, md: 3 }}>
               <FilterDialog
                 frameworkFilter={frameworkFilter}

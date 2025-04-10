@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { ContentSearchResponse } from '../Services/Content/Search';
-
+import { usePathname } from 'next/navigation';
 const ITEMS_PER_PAGE = 8;
 
 export const AtreeCard: React.FC<{
@@ -24,7 +24,8 @@ export const AtreeCard: React.FC<{
   _card,
 }) {
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
-
+  const pathname = usePathname();
+  const isHome = pathname.includes('/home');
   const handleLoadMore = () => {
     setVisibleCount((prev) => prev + ITEMS_PER_PAGE);
   };
@@ -111,7 +112,7 @@ export const AtreeCard: React.FC<{
             </Grid>
           ))}
 
-          {visibleCount < contents.length && (
+          {isHome && visibleCount < contents.length && (
             <Box width="100%" display="flex" justifyContent="center" mt={3}>
               <Button
                 variant="contained"
