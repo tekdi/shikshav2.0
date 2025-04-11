@@ -136,6 +136,15 @@ export const FilterDialog = ({
   });
 
   useEffect(() => {
+    if (!filterValues?.request?.filters?.mimeType) {
+      setSelectedValues({});
+      setSelectedFilters({
+        mimeType: [],
+        resource: [],
+      });
+    }
+  }, [filterValues]);
+  useEffect(() => {
     const savedFilters = localStorage.getItem('selectedFilters');
     if (savedFilters) {
       setSelectedFilters(JSON.parse(savedFilters));
