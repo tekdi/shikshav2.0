@@ -457,7 +457,7 @@ export const FilterDialog = ({
                     option={option}
                     filterCode="mimeType"
                     handleCheckboxChange={handleResourceCheckboxChange}
-                    currentSelectedValues={selectedFilters.mimeType || []}
+                    currentSelectedValues={selectedFilters.mimeType ?? []}
                   />
                 ))}
               </Box>
