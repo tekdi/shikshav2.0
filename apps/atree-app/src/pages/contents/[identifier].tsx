@@ -65,23 +65,23 @@ export default function Content() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleOnCLick = () => {
-    if (contentData?.url) {
-      window.open(contentData.url, '_blank');
+    if (contentData?.url === 'string') {
+      window.open(contentData?.url, '_blank');
     }
   };
   const handlePreview = () => {
     router.push(`/player/${identifier}`);
   };
   const handleOnDownload = async () => {
-    if (contentData?.previewUrl.endsWith('.pdf')) {
+    if (contentData?.previewUrl?.endsWith('.pdf')) {
       try {
-        const response = await fetch(contentData.previewUrl);
-        const blob = await response.blob();
+        const response = await fetch(contentData?.previewUrl);
+        const blob = await response?.blob();
         const blobUrl = window.URL.createObjectURL(blob);
 
         const link = document.createElement('a');
         link.href = blobUrl;
-        link.download = contentData.name; // Default filename
+        link.download = contentData?.name ?? ''; // Default filename
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -100,14 +100,14 @@ export default function Content() {
       const {
         result: { content: result },
       } = await getContentDetails(identifier as string);
-      if (result) {
+      if (result && typeof result === 'object') {
         setContentData(result);
       }
-
+      const topicFromStorage = localStorage.getItem('category');
       const data = await ContentSearch({
         channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
         filters: {
-          topic: localStorage.getItem('category'),
+          topic: topicFromStorage ?? '',
         },
       });
       console.log(data?.result?.content);
@@ -119,29 +119,24 @@ export default function Content() {
     }
   }, [identifier]);
 
-  const keywords = contentData?.keywords || [];
-  const showMoreIcon = keywords.length > 3;
+  const keywords = Array.isArray(contentData?.keywords)
+    ? contentData.keywords
+    : [];
+  const showMoreIcon = keywords && keywords.length > 3;
   const capitalizeFirstLetter = (word: string) =>
     word.charAt(0).toUpperCase() + word.slice(1);
 
-  const displayedKeywords = (
-    showMoreIcon ? keywords.slice(0, 4) : keywords
-  ).map(capitalizeFirstLetter);
+  const displayedKeywords =
+    (showMoreIcon ? keywords?.slice(0, 4) : keywords)?.map(
+      capitalizeFirstLetter
+    ) ?? [];
   const remainingKeywords = keywords.slice(3);
   useEffect(() => {
-    if (identifier) fetchContent();
+    if (identifier) {
+      fetchContent();
+    }
   }, [identifier]);
 
-  /*************  ✨ Windsurf Command ⭐  *************/
-  /**
-   * Fetches framework data from the API and filters it to include only categories with a status of 'Live'.
-   * Constructs a URL using environment variables to specify the base URL and framework identifier.
-   * Parses the JSON response to extract the framework data, and applies filtering to keep only live categories.
-   * In case the framework data is unavailable, provides a default structure with empty categories.
-   * Logs an error message to the console if the fetch operation fails.
-   */
-
-  /*******  7ab4bfd8-d767-4480-872d-12d419e51cfb  *******/
   const fetchFrameworkData = async () => {
     try {
       const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
@@ -150,16 +145,21 @@ export default function Content() {
 
       const filteredFramework = frameworkData?.result?.framework
         ? {
-            ...frameworkData.result.framework,
-            categories: frameworkData.result.framework.categories?.filter(
-              (category: any) => category.status === 'Live'
-            ),
+            ...frameworkData?.result?.framework,
+            categories: Array.isArray(
+              frameworkData?.result?.framework?.categories
+            )
+              ? frameworkData.result.framework.categories.filter(
+                  (category: any) => category.status === 'Live'
+                )
+              : [],
           }
         : { categories: [] }; // Provide a default structure if frameworkData is undefined
 
       const fdata =
-        filteredFramework.categories.find((item: any) => item.code === 'topic')
-          ?.terms || [];
+        filteredFramework?.categories?.find(
+          (item: any) => item.code === 'topic'
+        )?.terms ?? [];
     } catch (error) {
       console.error('Error fetching framework data:', error);
     }
@@ -174,6 +174,7 @@ export default function Content() {
   const selectTagOnClick = (val: any) => {
     router.push(`/searchpage?query=${val}&tags=${true}`);
   };
+  if (!contentData) return <div>Loading...</div>;
   return (
     <Layout
       showBack
@@ -246,7 +247,7 @@ export default function Content() {
             <Grid size={{ xs: 12, md: 3 }}>
               {/* {[...Array(4)].map((_, i) => ( */}
               <ImageCard
-                image={contentData?.posterImage || landingBanner?.src}
+                image={contentData?.posterImage ?? landingBanner?.src}
                 name={''}
               />
             </Grid>
@@ -272,7 +273,7 @@ export default function Content() {
 
                 {/* Description */}
                 <Typography variant="body1" textAlign="left">
-                  {contentData?.description}
+                  {contentData?.description ?? ''}
                 </Typography>
 
                 {/* Know More Button */}
@@ -321,13 +322,13 @@ export default function Content() {
 
                 {/* Year & License */}
                 <Typography variant="body1" textAlign="left">
-                  <b>Author:</b> {contentData?.author || ''}
+                  <b>Author:</b> {contentData?.author ?? ''}
                 </Typography>
                 <Typography variant="body1" textAlign="left">
-                  <b>Publisher:</b> {contentData?.publisher || ''}
+                  <b>Publisher:</b> {contentData?.publisher ?? ''}
                 </Typography>
                 <Typography variant="body1" textAlign="left">
-                  <b>Year:</b> {contentData?.year || ''}
+                  <b>Year:</b> {contentData?.year ?? ''}
                 </Typography>
               </Stack>
             </Grid>
@@ -386,15 +387,15 @@ export default function Content() {
         >
           <Box sx={{ px: 2 }}>
             <ImageCard
-              image={contentData?.posterImage || landingBanner?.src}
+              image={contentData?.posterImage ?? landingBanner?.src}
               name={
                 <Box display="flex" alignItems="center" gap={1}>
                   <Box>
                     <Typography variant="body2" gutterBottom>
-                      {contentData?.name || ''}
+                      {contentData?.name ?? ''}
                     </Typography>
                     <Typography variant="body2" gutterBottom>
-                      {contentData?.publisher || ''}
+                      {contentData?.publisher ?? ''}
                     </Typography>
                   </Box>
                 </Box>
@@ -458,16 +459,16 @@ export default function Content() {
           </Box>
 
           <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-            {contentData?.description}
+            {contentData?.description ?? ''}
           </Typography>
           <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
             <b>Author:</b> {contentData?.author || ''}
           </Typography>
           <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-            <b>Publisher:</b> {contentData?.publisher || ''}
+            <b>Publisher:</b> {contentData?.publisher ?? ''}
           </Typography>
           <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-            <b>Year:</b> {contentData?.year || ''}
+            <b>Year:</b> {contentData?.year ?? ''}
           </Typography>
         </Box>
       )}
@@ -514,7 +515,6 @@ const ImageCard = ({
   image,
   name,
   _image,
-  _text,
 }: {
   image: string;
   name: React.ReactNode | string;
