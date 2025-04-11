@@ -93,11 +93,7 @@ export default function Registration() {
             return false;
         }
       };
-      if (field === 'name' || field === 'email') {
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('username', value);
-        }
-      }
+
       setFormData({ ...formData, [field]: value });
       setError({
         ...error,

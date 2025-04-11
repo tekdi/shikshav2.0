@@ -65,8 +65,6 @@ const Login: React.FC<ListProps> = () => {
           errorMessage = 'Username is required.';
         } else if (!validateEmail(value)) {
           errorMessage = 'Enter valid username.';
-        } else {
-          localStorage.setItem('username', value);
         }
       } else if (field === 'password') {
         if (!value) {
@@ -98,7 +96,12 @@ const Login: React.FC<ListProps> = () => {
         const authInfo = await getUserAuthInfo({
           token: response?.result?.access_token,
         });
-
+        const capitalizeFirstLetter = (word: string) =>
+          word.charAt(0).toUpperCase() + word.slice(1);
+        const user = `${capitalizeFirstLetter(
+          authInfo?.result?.firstName
+        )} ${capitalizeFirstLetter(authInfo?.result?.lastName)}`.trim();
+        localStorage.setItem('username', user);
         localStorage.setItem(
           'role',
           authInfo?.result?.tenantData?.[0]?.roleName
