@@ -273,7 +273,7 @@ export default function Content() {
 
                 {/* Description */}
                 <Typography variant="body1" textAlign="left">
-                  {contentData?.description}
+                  {contentData?.description ?? ''}
                 </Typography>
 
                 {/* Know More Button */}
@@ -322,14 +322,13 @@ export default function Content() {
 
                 {/* Year & License */}
                 <Typography variant="body1" textAlign="left">
-                  <b>Author:</b> {(contentData && contentData?.author) || ''}
+                  <b>Author:</b> {contentData?.author ?? ''}
                 </Typography>
                 <Typography variant="body1" textAlign="left">
-                  <b>Publisher:</b>{' '}
-                  {(contentData && contentData?.publisher) || ''}
+                  <b>Publisher:</b> {contentData?.publisher ?? ''}
                 </Typography>
                 <Typography variant="body1" textAlign="left">
-                  <b>Year:</b> {(contentData && contentData?.year) || ''}
+                  <b>Year:</b> {contentData?.year ?? ''}
                 </Typography>
               </Stack>
             </Grid>
@@ -393,7 +392,7 @@ export default function Content() {
                 <Box display="flex" alignItems="center" gap={1}>
                   <Box>
                     <Typography variant="body2" gutterBottom>
-                      {(contentData && contentData?.name) || ''}
+                      {contentData?.name ?? ''}
                     </Typography>
                     <Typography variant="body2" gutterBottom>
                       {contentData?.publisher ?? ''}
