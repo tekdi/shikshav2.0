@@ -65,23 +65,23 @@ export default function Content() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleOnCLick = () => {
-    if (contentData && contentData?.url === 'string') {
-      window.open(contentData && contentData.url, '_blank');
+    if (contentData?.url === 'string') {
+      window.open(contentData?.url, '_blank');
     }
   };
   const handlePreview = () => {
     router.push(`/player/${identifier}`);
   };
   const handleOnDownload = async () => {
-    if (contentData && contentData?.previewUrl?.endsWith('.pdf')) {
+    if (contentData?.previewUrl?.endsWith('.pdf')) {
       try {
-        const response = await fetch(contentData && contentData.previewUrl);
+        const response = await fetch(contentData?.previewUrl);
         const blob = await response?.blob();
         const blobUrl = window.URL.createObjectURL(blob);
 
         const link = document.createElement('a');
         link.href = blobUrl;
-        link.download = contentData && contentData.name; // Default filename
+        link.download = contentData?.name ?? ''; // Default filename
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -159,7 +159,7 @@ export default function Content() {
       const fdata =
         filteredFramework?.categories?.find(
           (item: any) => item.code === 'topic'
-        )?.terms || [];
+        )?.terms ?? [];
     } catch (error) {
       console.error('Error fetching framework data:', error);
     }
@@ -247,10 +247,7 @@ export default function Content() {
             <Grid size={{ xs: 12, md: 3 }}>
               {/* {[...Array(4)].map((_, i) => ( */}
               <ImageCard
-                image={
-                  (contentData && contentData?.posterImage) ||
-                  landingBanner?.src
-                }
+                image={contentData?.posterImage ?? landingBanner?.src}
                 name={''}
               />
             </Grid>
