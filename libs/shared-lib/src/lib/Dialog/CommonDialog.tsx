@@ -31,9 +31,18 @@ export const CommonDialog: React.FC<CommonDialogProps> = ({
   return (
     <Dialog
       open={isOpen}
-      onClose={disableCloseOnBackdropClick ? undefined : onClose}
+      onClose={(event, reason) => {
+        if (
+          disableCloseOnBackdropClick &&
+          (reason === 'backdropClick' || reason === 'escapeKeyDown')
+        ) {
+          return;
+        }
+        onClose?.();
+      }}
       aria-labelledby="common-dialog-title"
       aria-describedby="common-dialog-description"
+      disableEscapeKeyDown={disableCloseOnBackdropClick}
       PaperProps={{ sx }}
     >
       {header && (

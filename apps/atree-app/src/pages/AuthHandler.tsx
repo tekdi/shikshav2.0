@@ -285,6 +285,7 @@ const AuthHandler = () => {
       <CommonDialog
         isOpen={openUserDetailsDialog}
         onClose={() => setOpenUserDetailsDialog(false)}
+        disableCloseOnBackdropClick={true}
         header="User Details"
         hideCloseButton={true}
         content={
