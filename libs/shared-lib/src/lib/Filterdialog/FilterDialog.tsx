@@ -457,7 +457,7 @@ export const FilterDialog = ({
                     option={option}
                     filterCode="mimeType"
                     handleCheckboxChange={handleResourceCheckboxChange}
-                    currentSelectedValues={selectedFilters.mimeType}
+                    currentSelectedValues={selectedFilters.mimeType || []}
                   />
                 ))}
               </Box>
@@ -523,6 +523,8 @@ export const FilterDialog = ({
               variant="outlined"
               onClick={() => {
                 setSelectedValues({});
+                selectedFilters.mimeType = [];
+                selectedFilters.resource = [];
                 localStorage.removeItem('selectedFilters');
                 onApply?.({});
               }}
