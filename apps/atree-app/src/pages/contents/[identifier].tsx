@@ -391,9 +391,7 @@ export default function Content() {
         >
           <Box sx={{ px: 2 }}>
             <ImageCard
-              image={
-                (contentData && contentData?.posterImage) || landingBanner?.src
-              }
+              image={contentData?.posterImage ?? landingBanner?.src}
               name={
                 <Box display="flex" alignItems="center" gap={1}>
                   <Box>
@@ -401,7 +399,7 @@ export default function Content() {
                       {(contentData && contentData?.name) || ''}
                     </Typography>
                     <Typography variant="body2" gutterBottom>
-                      {(contentData && contentData?.publisher) || ''}
+                      {contentData?.publisher ?? ''}
                     </Typography>
                   </Box>
                 </Box>
@@ -443,21 +441,20 @@ export default function Content() {
           </Box>
 
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-            {displayedKeywords &&
-              displayedKeywords?.map((label: any, index: any) => (
-                <Chip
-                  key={index}
-                  label={label}
-                  variant="outlined"
-                  sx={{
-                    height: '32px',
-                    gap: '2px',
-                    padding: '6px 8px',
-                    borderRadius: '0px',
-                  }}
-                  onClick={() => selectTagOnClick(label.replace('#', ''))}
-                />
-              ))}
+            {displayedKeywords?.map((label: any, index: any) => (
+              <Chip
+                key={index}
+                label={label}
+                variant="outlined"
+                sx={{
+                  height: '32px',
+                  gap: '2px',
+                  padding: '6px 8px',
+                  borderRadius: '0px',
+                }}
+                onClick={() => selectTagOnClick(label.replace('#', ''))}
+              />
+            ))}
             {showMoreIcon && (
               <IconButton onClick={() => setOpenPopup(true)} size="small">
                 <MoreVertIcon />
@@ -466,16 +463,16 @@ export default function Content() {
           </Box>
 
           <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-            {contentData && contentData?.description}
+            {contentData?.description ?? ''}
           </Typography>
           <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-            <b>Author:</b> contentData &&{contentData?.author || ''}
+            <b>Author:</b> {contentData?.author || ''}
           </Typography>
           <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-            <b>Publisher:</b> {(contentData && contentData?.publisher) || ''}
+            <b>Publisher:</b> {contentData?.publisher ?? ''}
           </Typography>
           <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-            <b>Year:</b> {(contentData && contentData?.year) || ''}
+            <b>Year:</b> {contentData?.year ?? ''}
           </Typography>
         </Box>
       )}
