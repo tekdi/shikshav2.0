@@ -136,6 +136,21 @@ export const FilterDialog = ({
   });
 
   useEffect(() => {
+    const mimeType = filterValues?.request?.filters?.mimeType;
+    const resource = filterValues?.request?.filters?.resource;
+
+    const isMimeTypeEmpty = !mimeType || mimeType.length === 0;
+    const isResourceEmpty = !resource || resource.length === 0;
+
+    if (isMimeTypeEmpty && isResourceEmpty) {
+      setSelectedValues({});
+      setSelectedFilters({
+        mimeType: [],
+        resource: [],
+      });
+    }
+  }, [filterValues]);
+  useEffect(() => {
     const savedFilters = localStorage.getItem('selectedFilters');
     if (savedFilters) {
       setSelectedFilters(JSON.parse(savedFilters));
