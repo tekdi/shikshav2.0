@@ -27,6 +27,9 @@ const nextConfig = {
   },
 
   basePath, // This should match the path set in Nginx
+  images: {
+    domains: ['sunbirdsaasdev.blob.core.windows.net'],
+  },
 
   async rewrites() {
     return [

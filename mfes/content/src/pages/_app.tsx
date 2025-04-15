@@ -12,7 +12,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       const accToken = localStorage.getItem('accToken');
       const refToken = localStorage.getItem('refToken');
 
-      if (!accToken || !refToken) {
+      if (!accToken) {
         if (typeof URL_LOGIN === 'string') {
           window.location.href = URL_LOGIN;
         }

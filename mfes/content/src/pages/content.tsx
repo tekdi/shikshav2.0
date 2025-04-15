@@ -2,7 +2,6 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
-import LogoutIcon from '@mui/icons-material/Logout';
 import SearchIcon from '@mui/icons-material/Search';
 import { Box } from '@mui/material';
 import { CommonSearch, getData, Layout } from '@shared-lib';
@@ -13,8 +12,8 @@ import HelpDesk from '../components/HelpDesk';
 import { hierarchyAPI } from '../services/Hierarchy';
 import { ContentSearch, ContentSearchResponse } from '../services/Search';
 import FilterDialog from '../components/FilterDialog';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { trackingData } from '../services/TrackingService';
+import { ProfileMenu } from '../utils/menus';
 
 export interface ContentProps {
   _grid?: object;
@@ -35,7 +34,6 @@ export default function Content(props: Readonly<ContentProps>) {
   const [contentData, setContentData] = useState<ContentSearchResponse[]>([]);
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [hasMoreData, setHasMoreData] = useState(true);
   const [localFilters, setLocalFilters] = useState<any>({
     limit: 5,
@@ -46,13 +44,31 @@ export default function Content(props: Readonly<ContentProps>) {
   const [trackData, setTrackData] = useState<[]>([]);
   const [filterShow, setFilterShow] = useState(false);
   const [propData, setPropData] = useState<ContentProps>();
+  const getCookie = (name: any) => {
+    const cookies = document.cookie.split('; ');
+    const cookie = cookies.find((row) => row.startsWith(name + '='));
+    const value = cookie ? cookie.split('=')[1] : null;
+    return value && value !== 'null' && value !== 'undefined' ? value : null;
+  };
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   useEffect(() => {
-    setIsAuthenticated(!!localStorage.getItem('accToken'));
-  }, []);
+    const token = getCookie('token');
+    const tenantId = getCookie('tenantId');
+    const userId = getCookie('userId');
+    const redirectPath = getCookie('postLoginRedirect');
 
-  useEffect(() => {
+    if (token !== null) {
+      localStorage.setItem('accToken', token);
+    }
+    if (tenantId !== null) {
+      localStorage.setItem('tenantId', tenantId);
+    }
+    if (userId !== null) {
+      localStorage.setItem('userId', userId);
+    }
+    if (redirectPath !== null) {
+      router.push(redirectPath);
+    }
     const init = async () => {
       const newData = await getData('mfes_content_pages_content');
       setPropData({
@@ -60,7 +76,7 @@ export default function Content(props: Readonly<ContentProps>) {
         showFilter: true,
         ...(props || newData),
       });
-      setTabValue(0);
+      // setTabValue(0);
       setIsPageLoading(false);
     };
     init();
@@ -75,7 +91,7 @@ export default function Content(props: Readonly<ContentProps>) {
       } else {
         data = await ContentSearch(filters);
       }
-      return data;
+      return data?.result?.content ?? [];
     } catch (error) {
       console.error('Failed to fetch content:', error);
       return [];
@@ -109,11 +125,11 @@ export default function Content(props: Readonly<ContentProps>) {
     if (tabValue !== undefined && tabs?.[tabValue]?.type) {
       setLocalFilters((prevFilters: any) => ({
         ...prevFilters,
-        type: tabs?.[tabValue]?.type,
+        // type: tabs?.[tabValue]?.type,
         offset: 0,
       }));
     }
-  }, [tabValue, tabs]);
+  }, [tabs]);
 
   const handleLoadMore = (event: any) => {
     event.preventDefault();
@@ -121,24 +137,6 @@ export default function Content(props: Readonly<ContentProps>) {
       ...prevFilters,
       offset: prevFilters.offset + prevFilters.limit,
     }));
-  };
-
-  const handleAccountClick = (event: React.MouseEvent<HTMLElement>) => {
-    console.log('Account clicked');
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleLogout = () => {
-    setAnchorEl(null);
-    localStorage.removeItem('accToken');
-    localStorage.removeItem('refToken');
-    let LOGIN = process.env.NEXT_PUBLIC_LOGIN;
-    //@ts-ignore
-    window.location.href = LOGIN;
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
   };
 
   const handleSearchClick = async () => {
@@ -158,6 +156,7 @@ export default function Content(props: Readonly<ContentProps>) {
   };
 
   const handleCardClickLocal = async (content: ContentSearchResponse) => {
+    // router.push(`/content-details/${content?.identifier}`);
     try {
       if (
         [
@@ -172,6 +171,7 @@ export default function Content(props: Readonly<ContentProps>) {
           'application/vnd.sunbird.questionset',
         ].includes(content?.mimeType as string)
       ) {
+        console.log('propData', propData);
         if (propData?.handleCardClick) {
           propData.handleCardClick(content);
         } else {
@@ -228,32 +228,34 @@ export default function Content(props: Readonly<ContentProps>) {
     const init = async () => {
       setIsLoading(true);
       try {
-        if (
-          localFilters.type &&
-          localFilters.limit &&
-          localFilters.offset !== undefined
-        ) {
-          const { result } = await fetchContent(localFilters);
-          const newContentData = Object.values(result)
-            .filter((e): e is ContentSearchResponse[] => Array.isArray(e))
-            .flat();
-          const userTrackData = await fetchDataTrack(newContentData || []);
-          if (localFilters.offset === 0) {
-            setContentData((newContentData as ContentSearchResponse[]) || []);
-            setTrackData(userTrackData);
-          } else {
-            setContentData((prevState: any) => [
-              ...prevState,
-              ...(newContentData || []),
-            ]);
-            setTrackData(
-              (prevState: []) => [...prevState, ...(userTrackData || [])] as []
-            );
-          }
-          setHasMoreData(
-            result?.count > localFilters.offset + newContentData?.length
-          );
-        }
+        // if (
+        //   localFilters.type &&
+        //   localFilters.limit &&
+        //   localFilters.offset !== undefined
+        // ) {
+        const result = await fetchContent(localFilters);
+        // const newContentData = Object.values(result);
+        const newContentData = Array.from(
+          new Map(result.map((item: any) => [item.identifier, item])).values()
+        );
+
+        const userTrackData = await fetchDataTrack(newContentData || []);
+        // if (localFilters.offset === 0) {
+        setContentData((newContentData as ContentSearchResponse[]) || []);
+        setTrackData(userTrackData);
+        // } else {
+        //   setContentData((prevState: any) => [
+        //     ...prevState,
+        //     ...(newContentData || []),
+        //   ]);
+        //   setTrackData(
+        //     (prevState: []) => [...prevState, ...(userTrackData || [])] as []
+        //   );
+        // }
+        setHasMoreData(
+          result?.count > localFilters.offset + newContentData?.length
+        );
+        // }
       } catch (error) {
         console.error(error);
       } finally {
@@ -310,31 +312,7 @@ export default function Content(props: Readonly<ContentProps>) {
         title: 'Shiksha: Home',
         showMenuIcon: true,
         actionButtonLabel: 'Action',
-        profileIcon: [
-          {
-            icon: <AccountCircleIcon />,
-            ariaLabel: 'Account',
-            onLogoutClick: (e: any) => handleAccountClick(e),
-            anchorEl: anchorEl,
-          },
-        ],
-        actionIcons: [
-          {
-            icon: <AccountCircleIcon />,
-            ariaLabel: 'Profile',
-            onOptionClick: handleClose,
-          },
-          ...(isAuthenticated
-            ? [
-                {
-                  icon: <LogoutIcon />,
-                  ariaLabel: 'Logout',
-                  onOptionClick: handleLogout,
-                },
-              ]
-            : []),
-        ],
-        onMenuClose: handleClose,
+        ...ProfileMenu(),
       }}
       showFilter={true}
       isFooter={false}

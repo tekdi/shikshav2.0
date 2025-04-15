@@ -8,10 +8,10 @@ import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
 import { Box } from '@mui/material';
-import { Progress } from '../Progress/Progress';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
-interface ContentItem {
+import { CircularProgressWithLabel } from '../Progress/CircularProgressWithLabel';
+export interface ContentItem {
   name: string;
   gradeLevel: string[];
   language: string[];
@@ -86,15 +86,17 @@ export const CommonCard: React.FC<CommonCardProps> = ({
         //@ts-ignore
         if (TrackData) {
           const result = TrackData?.find((e) => e.courseId === item.identifier);
-          setTrackCompleted(result?.completed ? 100 : 0);
           if (type === 'Course') {
-            const leafNodes = getLeafNodes(item?.leafNodes ?? []);
+            const leafNodes = getLeafNodes(item ?? []);
             const completedCount = result?.completed_list?.length || 0;
             const percentage =
               leafNodes.length > 0
                 ? Math.round((completedCount / leafNodes.length) * 100)
                 : 0;
             setTrackProgress(percentage);
+            setTrackCompleted(percentage);
+          } else {
+            setTrackCompleted(result?.completed ? 100 : 0);
           }
         }
       } catch (e) {
@@ -151,120 +153,60 @@ export const CommonCard: React.FC<CommonCardProps> = ({
               top: 0,
               width: '100%',
               display: 'flex',
-              // justifyContent: 'center',
               alignItems: 'center',
               background: 'rgba(0, 0, 0, 0.5)',
             }}
           >
-            {type === 'Course' ? (
-              <>
-                <Progress
-                  variant="determinate"
-                  value={100}
-                  size={30}
-                  thickness={5}
-                  sx={{
-                    color: '#fff8fb',
-                    position: 'absolute',
-                    left: '10px',
-                  }}
-                />
-                <Progress
-                  variant="determinate"
-                  value={trackCompleted}
-                  size={30}
-                  thickness={5}
-                  sx={{
-                    color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
-                    position: 'absolute',
-                    left: '10px',
-                  }}
-                />
-                <Typography
-                  sx={{
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                    marginLeft: '12px',
-                    color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
-                    position: 'absolute',
-                    left: '50px',
-                  }}
-                >
+            <Box
+              sx={{
+                p: '0px 5px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              {type === 'Course' ? (
+                <>
+                  <CircularProgressWithLabel
+                    value={trackProgress ?? 0}
+                    _text={{
+                      sx: {
+                        color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
+                        fontSize: '10px',
+                      },
+                    }}
+                    sx={{
+                      color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
+                    }}
+                    size={35}
+                    thickness={2}
+                  />
                   {trackCompleted >= 100 ? (
                     <>
-                      {' '}
                       <CheckCircleIcon sx={{ color: '#21A400' }} />
-                      <Typography
-                        sx={{
-                          fontSize: '12px',
-                          fontWeight: 'bold',
-                          marginLeft: '12px',
-                          color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
-                          position: 'absolute',
-                          left: '50px',
-                        }}
-                      >
-                        {' '}
-                        Completed
-                      </Typography>
+                      {`Completed`}
                     </>
-                  ) : trackCompleted > 0 ? (
-                    `${trackProgress}In progress`
                   ) : trackProgress > 0 && trackProgress < 100 ? (
-                    `${trackProgress}% In progress`
+                    `In progress`
                   ) : (
                     `Enrolled`
                   )}
-                </Typography>
-              </>
-            ) : (
-              <Box
-                sx={{
-                  position: 'absolute',
-                  height: '40px',
-                  top: 0,
-                  width: '100%',
-                  display: 'flex',
-                  // justifyContent: 'center',
-                  alignItems: 'center',
-                  background: 'rgba(0, 0, 0, 0.5)',
-                }}
-              >
-                {trackCompleted === 100 ? (
-                  <>
-                    <CheckCircleIcon sx={{ color: '#21A400' }} />
-                    <Typography
-                      sx={{
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        marginLeft: '12px',
-                        color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
-                        position: 'absolute',
-                        left: '50px',
-                      }}
-                    >
-                      Completed
-                    </Typography>
-                  </>
-                ) : (
-                  <>
-                    <ErrorIcon sx={{ color: '#FFB74D' }} />
-                    <Typography
-                      sx={{
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        marginLeft: '12px',
-                        color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
-                        position: 'absolute',
-                        left: '20px',
-                      }}
-                    >
-                      In progress
-                    </Typography>
-                  </>
-                )}
-              </Box>
-            )}
+                </>
+              ) : trackCompleted >= 100 ? (
+                <>
+                  <CheckCircleIcon sx={{ color: '#21A400' }} />
+                  {`Completed`}
+                </>
+              ) : (
+                <>
+                  <ErrorIcon sx={{ color: '#FFB74D' }} />
+                  {`Enrolled`}
+                </>
+              )}
+            </Box>
           </Box>
         )}
       </Box>

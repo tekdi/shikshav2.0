@@ -134,35 +134,14 @@ export const ContentSearch = async ({
     const data = {
       request: {
         filters: {
-          // identifier: 'do_114228944942358528173',
-          // identifier: 'do_1141652605790289921389',
-          //need below after login user channel for dynamic load content
-          // channel: '0135656861912678406',
-          ...filters,
-          status: ['live'],
-          primaryCategory:
-            type?.toLowerCase() === 'course'
-              ? ['Course']
-              : ['Learning Resource', 'Practice Question Set'],
-          channel: localStorage.getItem('tenant-code'),
+          status: [],
+
+          // channel: localStorage.getItem('tenant-code'),
         },
-        fields: [
-          'name',
-          'appIcon',
-          'description',
-          'posterImage',
-          'mimeType',
-          'identifier',
-          'resourceType',
-          'primaryCategory',
-          'contentType',
-          'trackable',
-          'children',
-          'leafNodes',
-        ],
-        query,
-        limit,
-        offset,
+
+        // query,
+        // limit,
+        // offset,
       },
     };
 
