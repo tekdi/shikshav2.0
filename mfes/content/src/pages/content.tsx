@@ -54,13 +54,21 @@ export default function Content(props: Readonly<ContentProps>) {
   useEffect(() => {
     const token = getCookie('token');
     const tenantId = getCookie('tenantId');
+    const userId = getCookie('userId');
+    const redirectPath = getCookie('postLoginRedirect');
+
     if (token !== null) {
       localStorage.setItem('accToken', token);
     }
     if (tenantId !== null) {
       localStorage.setItem('tenantId', tenantId);
     }
-
+    if (userId !== null) {
+      localStorage.setItem('userId', userId);
+    }
+    if (redirectPath !== null) {
+      router.push(redirectPath);
+    }
     const init = async () => {
       const newData = await getData('mfes_content_pages_content');
       setPropData({

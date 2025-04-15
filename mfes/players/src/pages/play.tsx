@@ -35,6 +35,17 @@ const Players: React.FC<SunbirdPlayerProps> = ({
     propPlayerConfig
   );
   const [loading, setLoading] = useState(!propPlayerConfig);
+  useEffect(() => {
+    const tenantId = localStorage.getItem('tenantId');
+    const accToken = localStorage.getItem('accToken');
+
+    if (!tenantId || !accToken) {
+      // Save current URL to redirect after login
+      const redirectUrl = window.location.href;
+      console.log('postLoginRedirect', redirectUrl);
+      document.cookie = `postLoginRedirect=${redirectUrl}; path=/;`;
+    }
+  }, [router]);
 
   useEffect(() => {
     if (playerConfig || !identifier) return;
