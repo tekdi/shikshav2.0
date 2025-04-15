@@ -62,12 +62,12 @@ instance.interceptors.response.use(
         originalRequest._retry = true;
         try {
           const accessToken = await refreshToken();
-          if (!accessToken) {
-            window.location.href = '/logout';
-          } else {
-            originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-            return instance(originalRequest);
-          }
+          // if (!accessToken) {
+          //   window.location.href = '/logout';
+          // } else {
+          //   originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+          //   return instance(originalRequest);
+          // }
         } catch (refreshError) {
           return Promise.reject(refreshError);
         }

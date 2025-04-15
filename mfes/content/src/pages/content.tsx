@@ -44,8 +44,23 @@ export default function Content(props: Readonly<ContentProps>) {
   const [trackData, setTrackData] = useState<[]>([]);
   const [filterShow, setFilterShow] = useState(false);
   const [propData, setPropData] = useState<ContentProps>();
+  const getCookie = (name: any) => {
+    const cookies = document.cookie.split('; ');
+    const cookie = cookies.find((row) => row.startsWith(name + '='));
+    const value = cookie ? cookie.split('=')[1] : null;
+    return value && value !== 'null' && value !== 'undefined' ? value : null;
+  };
 
   useEffect(() => {
+    const token = getCookie('token');
+    const tenantId = getCookie('tenantId');
+    if (token !== null) {
+      localStorage.setItem('accToken', token);
+    }
+    if (tenantId !== null) {
+      localStorage.setItem('tenantId', tenantId);
+    }
+
     const init = async () => {
       const newData = await getData('mfes_content_pages_content');
       setPropData({
@@ -53,7 +68,7 @@ export default function Content(props: Readonly<ContentProps>) {
         showFilter: true,
         ...(props || newData),
       });
-      setTabValue(0);
+      // setTabValue(0);
       setIsPageLoading(false);
     };
     init();
@@ -68,7 +83,7 @@ export default function Content(props: Readonly<ContentProps>) {
       } else {
         data = await ContentSearch(filters);
       }
-      return data;
+      return data?.result?.content ?? [];
     } catch (error) {
       console.error('Failed to fetch content:', error);
       return [];
@@ -102,11 +117,11 @@ export default function Content(props: Readonly<ContentProps>) {
     if (tabValue !== undefined && tabs?.[tabValue]?.type) {
       setLocalFilters((prevFilters: any) => ({
         ...prevFilters,
-        type: tabs?.[tabValue]?.type,
+        // type: tabs?.[tabValue]?.type,
         offset: 0,
       }));
     }
-  }, [tabValue, tabs]);
+  }, [tabs]);
 
   const handleLoadMore = (event: any) => {
     event.preventDefault();
@@ -133,6 +148,7 @@ export default function Content(props: Readonly<ContentProps>) {
   };
 
   const handleCardClickLocal = async (content: ContentSearchResponse) => {
+    // router.push(`/content-details/${content?.identifier}`);
     try {
       if (
         [
@@ -147,6 +163,7 @@ export default function Content(props: Readonly<ContentProps>) {
           'application/vnd.sunbird.questionset',
         ].includes(content?.mimeType as string)
       ) {
+        console.log('propData', propData);
         if (propData?.handleCardClick) {
           propData.handleCardClick(content);
         } else {
@@ -203,32 +220,34 @@ export default function Content(props: Readonly<ContentProps>) {
     const init = async () => {
       setIsLoading(true);
       try {
-        if (
-          localFilters.type &&
-          localFilters.limit &&
-          localFilters.offset !== undefined
-        ) {
-          const { result } = await fetchContent(localFilters);
-          const newContentData = Object.values(result)
-            .filter((e): e is ContentSearchResponse[] => Array.isArray(e))
-            .flat();
-          const userTrackData = await fetchDataTrack(newContentData || []);
-          if (localFilters.offset === 0) {
-            setContentData((newContentData as ContentSearchResponse[]) || []);
-            setTrackData(userTrackData);
-          } else {
-            setContentData((prevState: any) => [
-              ...prevState,
-              ...(newContentData || []),
-            ]);
-            setTrackData(
-              (prevState: []) => [...prevState, ...(userTrackData || [])] as []
-            );
-          }
-          setHasMoreData(
-            result?.count > localFilters.offset + newContentData?.length
-          );
-        }
+        // if (
+        //   localFilters.type &&
+        //   localFilters.limit &&
+        //   localFilters.offset !== undefined
+        // ) {
+        const result = await fetchContent(localFilters);
+        // const newContentData = Object.values(result);
+        const newContentData = Array.from(
+          new Map(result.map((item: any) => [item.identifier, item])).values()
+        );
+
+        const userTrackData = await fetchDataTrack(newContentData || []);
+        // if (localFilters.offset === 0) {
+        setContentData((newContentData as ContentSearchResponse[]) || []);
+        setTrackData(userTrackData);
+        // } else {
+        //   setContentData((prevState: any) => [
+        //     ...prevState,
+        //     ...(newContentData || []),
+        //   ]);
+        //   setTrackData(
+        //     (prevState: []) => [...prevState, ...(userTrackData || [])] as []
+        //   );
+        // }
+        setHasMoreData(
+          result?.count > localFilters.offset + newContentData?.length
+        );
+        // }
       } catch (error) {
         console.error(error);
       } finally {

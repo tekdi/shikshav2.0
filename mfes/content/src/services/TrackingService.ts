@@ -16,9 +16,10 @@ export const trackingData = (subIds: string[], courseIds: string[]) => {
   const config: AxiosRequestConfig = {
     method: 'post',
     maxBodyLength: Infinity,
-    url: `${trackingApiUrl}/tracking/content/course/status`,
+    url: `${trackingApiUrl}/tracking/user_certificate/status/update`,
     headers: {
       'Content-Type': 'application/json',
+      tenantId: localStorage.getItem('tenantId') || '',
     },
     data,
   };

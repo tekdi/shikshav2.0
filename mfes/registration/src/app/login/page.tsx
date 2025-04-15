@@ -100,11 +100,16 @@ export default function Login() {
         localStorage.setItem('userId', authUser?.userId);
         localStorage.setItem('userName', authUser?.username);
         const { contentFramework: framework, channelId: channel } = tenantInfo;
+        console.log('response', channel);
         localStorage.setItem('framework', framework);
         localStorage.setItem('tenant-code', channel);
         localStorage.setItem('tenantId', authUser?.tenantData?.[0]?.tenantId);
         document.cookie = `subid=${authUser?.userId}; path=/;`;
+        document.cookie = `token=${response?.access_token}; path=/;`;
+        document.cookie = `tenantId=${authUser?.tenantData?.[0]?.tenantId}; path=/;`;
+
         const redirectUrl = process.env.NEXT_PUBLIC_CONTENT;
+
         if (redirectUrl) {
           router.push(redirectUrl);
         }

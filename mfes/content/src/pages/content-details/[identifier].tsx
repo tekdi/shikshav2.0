@@ -36,18 +36,18 @@ const ContentDetails = () => {
     const fetchContentDetails = async () => {
       try {
         const result = await fetchContent(identifier as string);
-        const data = await getUserCertificateStatus({
-          userId: localStorage.getItem('userId') || '',
-          courseId: identifier as string,
-        });
-        if (
-          data?.result?.status === 'enrolled' ||
-          data?.result?.status === 'completed'
-        ) {
-          router.replace(`/details/${identifier}`);
-        } else {
-          setContentDetails(result);
-        }
+        // const data = await getUserCertificateStatus({
+        //   userId: localStorage.getItem('userId') || '',
+        //   courseId: identifier as string,
+        // });
+        // if (
+        //   data?.result?.status === 'enrolled' ||
+        //   data?.result?.status === 'completed'
+        // ) {
+        //   router.replace(`/details/${identifier}`);
+        // } else {
+        setContentDetails(result);
+        // }
       } catch (error) {
         console.error('Failed to fetch content:', error);
       } finally {
@@ -63,11 +63,11 @@ const ContentDetails = () => {
 
   const handleClick = async () => {
     try {
-      await createUserCertificateStatus({
-        userId: localStorage.getItem('userId') || '',
-        courseId: identifier as string,
-      });
-      router.replace(`/details/${identifier}`);
+      // await createUserCertificateStatus({
+      //   userId: localStorage.getItem('userId') || '',
+      //   courseId: identifier as string,
+      // });
+      router.replace(`/player/${identifier}`);
     } catch (error) {
       console.error('Failed to create user certificate:', error);
     }
