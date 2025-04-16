@@ -299,7 +299,8 @@ export const FilterDialog = ({
                           ?.find((cat: any) => cat.code === 'topic') // Find topic category
                           ?.terms?.find(
                             (term: any) =>
-                              term.code === selectedValues?.topic?.[0]
+                              term.code.replace(/\s/g, '') ===
+                              selectedValues?.topic?.[0].replace(/\s/g, '')
                           )
                           ?.associations?.filter(
                             (association: any) => association.status === 'Live'

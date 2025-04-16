@@ -65,9 +65,7 @@ export default function Content() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleOnCLick = () => {
-    if (contentData?.url === 'string') {
-      window.open(contentData?.url, '_blank');
-    }
+    window.open(contentData?.url, '_blank');
   };
   const handlePreview = () => {
     router.push(`/player/${identifier}`);
@@ -300,6 +298,7 @@ export default function Content() {
                       flex: 0.3,
                       color: 'black',
                     }}
+                    disabled={!contentData?.previewUrl?.endsWith('.pdf')}
                     onClick={handleOnDownload}
                   >
                     Download
@@ -314,6 +313,7 @@ export default function Content() {
                       flex: 0.3,
                       color: 'black',
                     }}
+                    disabled={!contentData?.url}
                     onClick={handleOnCLick}
                   >
                     Resource Link
@@ -413,10 +413,14 @@ export default function Content() {
             <Button
               variant="contained"
               color="secondary"
-              sx={{ borderRadius: '50px', height: '40px', width: '100%' }}
-              onClick={handleOnCLick}
+              sx={{
+                borderRadius: '50px',
+                height: '40px',
+                flex: 0.3,
+              }}
+              onClick={handlePreview}
             >
-              Know More
+              Preview
             </Button>
 
             <Button
@@ -425,14 +429,28 @@ export default function Content() {
               sx={{
                 borderRadius: '50px',
                 height: '40px',
-                width: '100%',
-                backgroundColor: 'white',
-                borderColor: (theme) => theme.palette.secondary.main,
+                flex: 0.3,
                 color: 'black',
               }}
               onClick={handleOnDownload}
+              disabled={!contentData?.previewUrl?.endsWith('.pdf')}
             >
               Download
+            </Button>
+
+            <Button
+              variant="outlined"
+              color="secondary"
+              sx={{
+                borderRadius: '50px',
+                height: '40px',
+                flex: 0.3,
+                color: 'black',
+              }}
+              disabled={!contentData?.url}
+              onClick={handleOnCLick}
+            >
+              Resource Link
             </Button>
           </Box>
 
