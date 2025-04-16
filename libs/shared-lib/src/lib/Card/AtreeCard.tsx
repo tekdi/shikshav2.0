@@ -30,8 +30,7 @@ export const AtreeCard: React.FC<{
     setVisibleCount((prev) => prev + ITEMS_PER_PAGE);
   };
 
-  const visibleContents = contents.slice(0, visibleCount);
-
+  const visibleContents = contents?.slice(0, visibleCount);
   return (
     <Grid container spacing={2} width="100%">
       {contents?.length === 0 ? (
@@ -49,7 +48,7 @@ export const AtreeCard: React.FC<{
         </Typography>
       ) : (
         <>
-          {visibleContents.map((content) => (
+          {(isHome ? visibleContents : contents).map((content) => (
             <Grid
               size={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 4 }}
               sx={{
