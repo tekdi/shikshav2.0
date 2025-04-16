@@ -149,6 +149,8 @@ export const FilterDialog = ({
       });
     }
     if (filterValues?.filters?.topic) {
+      localStorage.setItem('category', filterValues?.filters?.topic);
+
       setSelectedTopic(filterValues?.filters?.topic);
       setSelectedValues({
         topic: filterValues?.filters?.topic,
