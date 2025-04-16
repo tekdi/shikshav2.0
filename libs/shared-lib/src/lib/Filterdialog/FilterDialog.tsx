@@ -134,7 +134,6 @@ export const FilterDialog = ({
     resource: [] as string[],
     mimeType: [] as string[],
   });
-
   useEffect(() => {
     const mimeType = filterValues?.request?.filters?.mimeType;
     const resource = filterValues?.request?.filters?.resource;
@@ -147,6 +146,13 @@ export const FilterDialog = ({
       setSelectedFilters({
         mimeType: [],
         resource: [],
+      });
+    }
+    if (filterValues?.filters?.topic) {
+      setSelectedTopic(filterValues?.filters?.topic);
+      setSelectedValues({
+        topic: filterValues?.filters?.topic,
+        subTopic: filterValues?.filters?.subTopic,
       });
     }
   }, [filterValues]);
