@@ -306,7 +306,8 @@ export default function Index() {
   return (
     <Layout
       isLoadingChildren={isLoadingChildren}
-      footerComponent={<FooterText page={''} />}
+      isFooter={isMobile} // add this when on mobile
+      footerComponent={!isMobile ? <FooterText page="" /> : undefined}
     >
       <Box display="flex" flexDirection="column" gap="1rem" py="1rem" px="8px">
         {!isMobile ? (
