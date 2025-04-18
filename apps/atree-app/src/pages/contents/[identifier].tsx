@@ -32,6 +32,7 @@ import atreeLogo from '../../../assets/images/placeholder.jpg';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { AtreeCard, ContentSearch } from '@shared-lib';
 import ShareDialog from '../../component/ShareDialog';
+import FooterText from '../../component/FooterText';
 
 interface ContentItem {
   name: string;
@@ -176,6 +177,8 @@ export default function Content() {
   return (
     <Layout
       showBack
+      isFooter={isMobile} // add this when on mobile
+      footerComponent={!isMobile ? <FooterText page="" /> : undefined}
       isLoadingChildren={isLoading}
       backIconClick={() => router.back()}
       backTitle={

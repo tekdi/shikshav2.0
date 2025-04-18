@@ -10,7 +10,7 @@ import Carousel from 'react-material-ui-carousel';
 type BannerProps = Readonly<{
   text: string;
 }>;
-export default function Banner({ text }: BannerProps) {
+export default function Banner() {
   const landingImages = [
     { image: landingBanner1?.src, id: 1 },
     { image: landingBanner2?.src, id: 2 },
@@ -34,21 +34,6 @@ export default function Banner({ text }: BannerProps) {
         }}
       >
         {/* Fixed Text */}
-        <Typography
-          sx={{
-            position: 'absolute',
-            bottom: '10%', // Adjust the position as needed
-            zIndex: 2,
-            color: 'white', // Adjust text color if needed
-            fontSize: { xs: '16px', md: '48px' },
-            textAlign: 'left',
-            fontWeight: 700,
-            width: '100%',
-            padding: { xs: '0 20px', md: '0 90px' },
-          }}
-        >
-          {text}
-        </Typography>
 
         {/* Carousel with Images */}
         <Carousel

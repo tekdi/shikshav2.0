@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { ContentSearchResponse } from '@shared-lib';
 import Layout from '../../component/layout/layout';
-import { Box } from '@mui/material';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
 import atreeLogo from '../../../assets/images/placeholder.jpg';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
@@ -34,11 +34,13 @@ const List: React.FC<ListProps> = () => {
     };
     init();
   }, [mfe_content]);
-
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <Layout
       isLoadingChildren={isLoadingChildren}
-      footerComponent={<FooterText page={''} />}
+      isFooter={isMobile} // add this when on mobile
+      footerComponent={!isMobile ? <FooterText page="" /> : undefined}
     >
       <Box
         sx={{

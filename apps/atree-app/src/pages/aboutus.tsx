@@ -1,13 +1,18 @@
 import * as React from 'react';
 import Grid from '@mui/material/Grid2';
 import Layout from '../component/layout/layout';
-import { Typography } from '@mui/material';
+import { Typography, useMediaQuery, useTheme } from '@mui/material';
 import Banner from '../component/Banner';
 import FooterText from '../component/FooterText';
 export default function Aboutus() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   return (
-    <Layout footerComponent={<FooterText page="aboutus" />}>
-      <Banner text="About Us" />
+    <Layout
+      isFooter={isMobile} // add this when on mobile
+      footerComponent={!isMobile ? <FooterText page="" /> : undefined}
+    >
+      <Banner />
       <Grid
         container
         spacing={2}
@@ -25,7 +30,9 @@ export default function Aboutus() {
             fontSize: { xs: '24px', md: '64px' },
             mt: 2,
           }}
-        ></Typography>
+        >
+          About Us
+        </Typography>
 
         {/* About Us Description */}
         <Typography

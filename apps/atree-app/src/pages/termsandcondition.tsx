@@ -1,13 +1,18 @@
 import * as React from 'react';
 import Grid from '@mui/material/Grid2';
 import Layout from '../component/layout/layout';
-import { Typography } from '@mui/material';
+import { Typography, useMediaQuery, useTheme } from '@mui/material';
 import Banner from '../component/Banner';
 import FooterText from '../component/FooterText';
 export default function Aboutus() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   return (
-    <Layout footerComponent={<FooterText page={''} />}>
-      <Banner text="Terms and Conditions" />
+    <Layout
+      isFooter={isMobile} // add this when on mobile
+      footerComponent={!isMobile ? <FooterText page="" /> : undefined}
+    >
+      <Banner />
       <Grid
         container
         spacing={2}
@@ -18,6 +23,17 @@ export default function Aboutus() {
         padding={{ xs: '25px' }}
       >
         {/* About Us Description */}
+        <Typography
+          variant="h4"
+          sx={{
+            textAlign: 'center',
+            fontWeight: { xs: 400, md: 500 },
+            fontSize: { xs: '24px', md: '64px' },
+            mt: 2,
+          }}
+        >
+          Terms and Conditions
+        </Typography>
         <Typography>
           Welcome to the Jal Jungle Jameen in classrooms digital library
           platform (herein after referred to as “Platform”). Please read the

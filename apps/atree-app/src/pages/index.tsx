@@ -37,7 +37,7 @@ type AnimatedCounterProps = {
 const AnimatedCounter = ({
   target = 2000,
   duration = 20000,
-  restartDelay = 10000,
+  restartDelay = 2000,
 }: AnimatedCounterProps) => {
   const [count, setCount] = useState(0);
   const [key, setKey] = useState(0);
@@ -144,11 +144,7 @@ const LandingPage = () => {
         <Loader />
       ) : (
         <Grid container spacing={4} sx={{ mb: 3 }} justifyContent={'center'}>
-          <Banner
-            text={
-              'A digital hub of Environment Education resources contextual to India'
-            }
-          />
+          <Banner />
           <Grid
             sx={{ px: 4, textAlign: 'center' }}
             container
@@ -176,12 +172,46 @@ const LandingPage = () => {
                     }}
                   >
                     {t(
+                      'A digital hub of Environment Education resources contextual to India.'
+                    )}
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    align="center"
+                    gutterBottom
+                    sx={{
+                      fontWeight: 400,
+                      fontSize: { xs: '14px', md: '24px' },
+                      lineHeight: { xs: '24px', md: '44px' },
+                      textAlign: 'center',
+                      color: '#000000',
+                    }}
+                  >
+                    {t(
                       'Change stems from local action. Hope stems from children’s empowerment to act upon local environmental problems. Our mission is to empower environment educators with both hope and action in times of climate change.'
                     )}
                   </Typography>
                 </Box>
               ) : (
                 <Box>
+                  <Typography
+                    variant="body1"
+                    align="center"
+                    gutterBottom
+                    sx={{
+                      fontWeight: 400,
+                      fontSize: { xs: '14px', md: '24px' },
+                      lineHeight: { xs: '24px', md: '44px' },
+                      pl: '55px',
+                      pr: '55px',
+                      textAlign: 'center',
+                      color: '#000000',
+                    }}
+                  >
+                    {t(
+                      'A digital hub of Environment Education resources contextual to India.'
+                    )}
+                  </Typography>
                   <Typography
                     variant="body1"
                     align="center"
