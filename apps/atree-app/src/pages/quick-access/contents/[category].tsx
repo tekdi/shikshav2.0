@@ -262,7 +262,7 @@ const MyComponent: React.FC = () => {
         <Box
           display="flex"
           flexDirection="column"
-          py="1rem"
+          py={isMobile ? '3rem' : '1rem'}
           px="8px"
           gap="1rem"
         >

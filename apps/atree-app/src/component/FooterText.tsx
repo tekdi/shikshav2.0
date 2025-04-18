@@ -19,15 +19,7 @@ export default function FooterText({ page }: FooterTextProps) {
         gutterBottom
         sx={{ fontSize: { xs: '10px', md: '14px' } }}
       >
-        {isAboutPage ? (
-          <>
-            Ashoka Trust for Research in Ecology and the Environment (ATREE),
-            <br />
-            Royal Enclave, Sriramapura, Jakkur Post, Bangalore 560 064 Karnataka
-          </>
-        ) : (
-          'Curated by ATREE: For, Of, and By Environment Educators of India'
-        )}
+        Curated by ATREE: For, Of, and By Environment Educators of India
       </Typography>
     </Grid>
   );

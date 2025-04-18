@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { ContentSearchResponse } from '@shared-lib';
 import Layout from '../../component/layout/layout';
 import { Box } from '@mui/material';
 import atreeLogo from '../../../assets/images/placeholder.jpg';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
+import FooterText from '../../component/FooterText';
 
 interface ListProps {}
 
@@ -35,7 +36,10 @@ const List: React.FC<ListProps> = () => {
   }, [mfe_content]);
 
   return (
-    <Layout isLoadingChildren={isLoadingChildren}>
+    <Layout
+      isLoadingChildren={isLoadingChildren}
+      footerComponent={<FooterText page={''} />}
+    >
       <Box
         sx={{
           padding: 0,

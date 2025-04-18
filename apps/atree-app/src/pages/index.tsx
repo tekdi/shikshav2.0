@@ -51,21 +51,25 @@ const AnimatedCounter = ({
   };
 
   useEffect(() => {
-    let start = 0;
-    const increment = target / (duration / 10);
+    const totalSteps = duration / 10;
+    const increment = target / totalSteps;
 
-    const updateCount = () => {
-      start += increment;
-      if (start >= target) {
+    let current = 0;
+    const interval = setInterval(() => {
+      current += increment;
+      if (current >= target) {
         setCount(target);
         clearInterval(interval);
-        triggerRestart();
-      } else {
-        setCount(Math.ceil(start));
-      }
-    };
 
-    const interval = setInterval(updateCount, 10);
+        // Wait for restartDelay and restart
+        setTimeout(() => {
+          setCount(0);
+          setKey((prev) => prev + 1);
+        }, restartDelay);
+      } else {
+        setCount(Math.ceil(current));
+      }
+    }, 10);
 
     return () => clearInterval(interval);
   }, [key, target, duration, restartDelay]);
@@ -140,7 +144,11 @@ const LandingPage = () => {
         <Loader />
       ) : (
         <Grid container spacing={4} sx={{ mb: 3 }} justifyContent={'center'}>
-          <Banner text={"A digital hub of Environment Education resources contextual to India"} />
+          <Banner
+            text={
+              'A digital hub of Environment Education resources contextual to India'
+            }
+          />
           <Grid
             sx={{ px: 4, textAlign: 'center' }}
             container
@@ -168,22 +176,7 @@ const LandingPage = () => {
                     }}
                   >
                     {t(
-                      'Change stems from local action. Hope stems from children’s empowerment to act upon local environmental problems.'
-                    )}
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    align="center"
-                    sx={{
-                      fontWeight: 400,
-                      fontSize: { xs: '14px', md: '24px' },
-                      lineHeight: { xs: '24px', md: '44px' },
-                      textAlign: 'center',
-                      color: '#000000',
-                    }}
-                  >
-                    {t(
-                      'Our mission is to empower environment educators with both hope and action in times of climate change.'
+                      'Change stems from local action. Hope stems from children’s empowerment to act upon local environmental problems. Our mission is to empower environment educators with both hope and action in times of climate change.'
                     )}
                   </Typography>
                 </Box>
@@ -204,25 +197,7 @@ const LandingPage = () => {
                     }}
                   >
                     {t(
-                      'Change stems from local action. Hope stems from children’s empowerment to act upon local environmental problems.'
-                    )}
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    align="center"
-                    gutterBottom
-                    sx={{
-                      fontWeight: 400,
-                      fontSize: { xs: '14px', md: '24px' },
-                      lineHeight: { xs: '24px', md: '44px' },
-                      pl: '55px',
-                      pr: '55px',
-                      textAlign: 'center',
-                      color: '#000000',
-                    }}
-                  >
-                    {t(
-                      'Our mission is to empower environment educators with both hope and action in times of climate change.'
+                      'Change stems from local action. Hope stems from children’s empowerment to act upon local environmental problems. Our mission is to empower environment educators with both hope and action in times of climate change.'
                     )}
                   </Typography>
                 </Box>
@@ -253,7 +228,7 @@ const LandingPage = () => {
                 }}
               >
                 <Box>
-                  <AnimatedCounter target={1000} />
+                  <AnimatedCounter target={1000} duration={2000} />
                   <Typography
                     fontWeight="400"
                     sx={{ fontSize: { xs: '10px', md: '24px' } }}
@@ -262,7 +237,7 @@ const LandingPage = () => {
                   </Typography>
                 </Box>
                 <Box>
-                  <AnimatedCounter target={15} />
+                  <AnimatedCounter target={15} duration={2000} />
                   <Typography
                     fontWeight="400"
                     sx={{ fontSize: { xs: '10px', md: '24px' } }}
@@ -271,7 +246,7 @@ const LandingPage = () => {
                   </Typography>
                 </Box>
                 <Box>
-                  <AnimatedCounter target={8} />
+                  <AnimatedCounter target={8} duration={2000} />
                   <Typography
                     fontWeight="400"
                     sx={{ fontSize: { xs: '10px', md: '24px' } }}

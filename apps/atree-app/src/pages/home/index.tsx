@@ -29,6 +29,7 @@ import { useSearchParams } from 'next/navigation';
 import Loader from '../../component/layout/LoaderComponent';
 import { RESOURCE_TYPES, MIME_TYPES } from '../../utils/constantData';
 import dynamic from 'next/dynamic';
+import FooterText from '../../component/FooterText';
 const buttonColors = {
   water: '#0E28AE',
   land: '#8F4A50',
@@ -303,7 +304,10 @@ export default function Index() {
     (filters?.request?.filters?.resource?.length ?? 0) > 0 ||
     (filters?.request?.filters?.access?.length ?? 0) > 0;
   return (
-    <Layout isLoadingChildren={isLoadingChildren}>
+    <Layout
+      isLoadingChildren={isLoadingChildren}
+      footerComponent={<FooterText page={''} />}
+    >
       <Box display="flex" flexDirection="column" gap="1rem" py="1rem" px="8px">
         {!isMobile ? (
           <Grid container spacing={2}>
@@ -608,12 +612,8 @@ const ContentSection = ({ title, contents, onTitleClick, handleCardClick }) => (
       padding: '15px',
     }}
   >
-    {
-      title && (
-        <Title onClick={onTitleClick}>{title}</Title>
-      )
-    }
-   
+    {title && <Title onClick={onTitleClick}>{title}</Title>}
+
     {contents && contents.length > 0 ? (
       <AtreeCard
         contents={contents}
