@@ -14,10 +14,17 @@ interface LoaderProps {
 export const Loader: React.FC<LoaderProps> = memo(
   ({ isLoading, layoutHeight, children }) => {
     const router = useRouter();
-    const noHeightRoutes = ['/', '/aboutus', '/termsandcondition'];
-    const noPaddingRoutes = [
+    const noHeightRoutes = [
+      '/',
+      '/aboutus',
+      '/termsandcondition',
+      '/home',
       '/contents',
       '/searchpage',
+    ];
+    const noPaddingRoutes = [
+      '/contents',
+      // '/searchpage',
       '/quick-access/contents/[category]',
     ];
     const paddingQuickAccess = [
@@ -38,10 +45,12 @@ export const Loader: React.FC<LoaderProps> = memo(
       paddingTop = '96px';
     } else if (shouldAddPadding) {
       paddingTop = '160px';
-    } else if (shouldUnsetPadding) {
+    } else if (shouldUnsetPadding && !isMobile) {
       paddingTop = '54px';
-    } else if (isMobile) {
+    } else if (isMobile && !shouldUnsetPadding) {
       paddingTop = '76px';
+    } else if (isMobile && shouldUnsetPadding) {
+      paddingTop = '34px';
     } else {
       paddingTop = '96px';
     }

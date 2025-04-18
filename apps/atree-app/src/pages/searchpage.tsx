@@ -1,6 +1,13 @@
 'use client';
 
-import { Box, Button, Grid, IconButton, Typography } from '@mui/material';
+import {
+  Box,
+  Grid,
+  IconButton,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useState } from 'react';
 import atreeLogo from '../../assets/images/placeholder.jpg';
@@ -8,21 +15,11 @@ import Layout from '../component/layout/layout';
 import dynamic from 'next/dynamic';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ContentSearchResponse } from '@shared-lib';
+import FooterText from '../component/FooterText';
 
 const Content = dynamic(() => import('@Content'), {
   ssr: false,
 });
-
-const buttonColors = {
-  water: '#0E28AE',
-  land: '#8F4A50',
-  forest: '#148A00',
-  'climate change': '#CF3D03',
-  'activity books': '#FF00FF',
-  'reference books': '#FFBD0D',
-  general: '#FFBD0D',
-  potpourri: '#FFBD0D',
-};
 
 export default function Searchpage() {
   const router = useRouter();
@@ -31,9 +28,9 @@ export default function Searchpage() {
   // Get type from URL
   const selectedquery = searchParams.get('query')?.toLowerCase();
   const tags = searchParams.get('tags');
-  const isTagsTrue = tags === 'true';
   const [framework, setFramework] = useState(selectedType || ''); // Default to selectedType if available
-
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   React.useEffect(() => {
     if (selectedType && selectedType !== framework) {
       console.log('Updating framework to:', selectedType); // Debugging
@@ -43,11 +40,21 @@ export default function Searchpage() {
   }, [selectedType]);
 
   return (
-    <Layout>
-      <Box display="flex" flexDirection="column" gap="1rem" py="3.5rem" px="14px">
+    <Layout footerComponent={<FooterText page={''} />}>
+      <Box display="flex" flexDirection="column" gap="1rem" py="1rem" px="14px">
         <IconButton
           onClick={() => router.back()}
-          sx={{ justifyContent: 'flex-start', padding: '0px' }}
+          sx={{
+            justifyContent: 'flex-start',
+            padding: '0px',
+            backgroundColor: 'transparent',
+            '&:hover': {
+              backgroundColor: 'transparent',
+            },
+            '&:focus': {
+              outline: 'none',
+            },
+          }}
         >
           <ArrowBackIcon />
         </IconButton>
@@ -60,33 +67,6 @@ export default function Searchpage() {
               </Typography>
             </Grid>
           )}
-
-          {!isTagsTrue &&
-            ['Author', 'Publisher', 'Language'].map((frameworkItem) => {
-              const isSelected = frameworkItem.toLowerCase() === selectedType;
-              return (
-                <Grid key={frameworkItem}>
-                  <Button
-                    variant={isSelected ? 'contained' : 'outlined'}
-                    sx={{
-                      borderRadius: '8px',
-                      borderColor: isSelected ? '' : '#CEE5FF',
-                      color: isSelected ? '#4D4639' : '#171D1E',
-                      margin: '10px',
-                      backgroundColor: isSelected
-                        ? buttonColors[
-                            frameworkItem.toLowerCase() as keyof typeof buttonColors
-                          ] || '#FFD500'
-                        : '',
-                    }}
-                    // onClick={() => handleFrameworkClick(frameworkItem)}
-                  >
-                    {frameworkItem.charAt(0).toUpperCase() +
-                      frameworkItem.slice(1)}
-                  </Button>
-                </Grid>
-              );
-            })}
         </Grid>
 
         <Box
@@ -95,7 +75,7 @@ export default function Searchpage() {
             gap: '16px',
             display: 'flex',
             flexDirection: 'column',
-            marginTop: '-60px',
+            marginTop: isMobile ? '-120px' : '-127px',
           }}
         >
           <Content

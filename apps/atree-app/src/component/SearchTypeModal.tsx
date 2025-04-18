@@ -158,12 +158,7 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
         {filteredSearchTypes.map((item) => (
           <ListItem
             key={item.type}
-            onClick={() => {
-              setSelectedType(item.type);
-              setSearchType(item.type);
-            }}
             sx={{
-              cursor: selectedType === item.type ? 'not-allowed' : 'pointer',
               backgroundColor:
                 selectedType === item.type ? '#FFBD0D' : 'transparent',
               opacity: selectedType === item.type ? 1 : 0.6,
