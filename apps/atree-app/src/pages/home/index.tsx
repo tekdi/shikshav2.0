@@ -303,14 +303,21 @@ export default function Index() {
     (filters?.request?.filters?.mimeType?.length ?? 0) > 0 ||
     (filters?.request?.filters?.resource?.length ?? 0) > 0 ||
     (filters?.request?.filters?.access?.length ?? 0) > 0;
+  const renderFooterComponent = () => {
+    if (!isMobile) {
+      return <FooterText page="" />;
+    }
+    return undefined;
+  };
+
   return (
     <Layout
       isLoadingChildren={isLoadingChildren}
       isFooter={isMobile} // add this when on mobile
-      footerComponent={!isMobile ? <FooterText page="" /> : undefined}
+      footerComponent={renderFooterComponent()}
     >
       <Box display="flex" flexDirection="column" gap="1rem" py="1rem" px="8px">
-        {!isMobile ? (
+        {!isMobile && (
           <Grid container spacing={2}>
             <Grid size={{ xs: 3 }}>
               <Box>
@@ -423,7 +430,8 @@ export default function Index() {
               </Grid>
             )}
           </Grid>
-        ) : (
+        )}
+        {isMobile && (
           <>
             <FrameworkFilter
               frameworkFilter={frameworkFilter || []}

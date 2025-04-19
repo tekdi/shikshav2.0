@@ -14,16 +14,6 @@ interface LoaderProps {
 export const Loader: React.FC<LoaderProps> = memo(
   ({ isLoading, layoutHeight, children }) => {
     const router = useRouter();
-    const noHeightRoutesMobile = [
-      '/',
-      // '/aboutus',
-      // '/termsandcondition',
-      // '/home',
-      // '/contents',
-      // '/searchpage',
-      // '/quick-access/contents/[category]',
-      // '/contents/[identifier]',
-    ];
     const noHeightRoutes = [
       '/',
       '/aboutus',
@@ -40,9 +30,6 @@ export const Loader: React.FC<LoaderProps> = memo(
       '/quick-access/[category]',
       '/contents/[identifier]',
     ];
-    const shouldUnsetHeightForMobile = noHeightRoutesMobile.includes(
-      router.pathname
-    );
 
     const shouldUnsetHeight = noHeightRoutes.includes(router.pathname);
     const shouldUnsetPadding = noPaddingRoutes.includes(router.pathname);
@@ -50,21 +37,8 @@ export const Loader: React.FC<LoaderProps> = memo(
     const shouldSkipPadding = router.asPath === '/searchpage';
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    let paddingTop = '96px';
-    console.log('isMobile', isMobile && !shouldUnsetPadding);
-    // if (shouldSkipPadding) {
-    //   paddingTop = '96px';
-    // } else if (shouldAddPadding && !isMobile) {
-    //   paddingTop = '160px';
-    // } else if (shouldUnsetPadding && !isMobile) {
-    //   paddingTop = '54px';
-    // } else if (isMobile && !shouldUnsetPadding) {
-    //   paddingTop = '76px';
-    // } else if (isMobile && shouldUnsetPadding) {
-    //   paddingTop = '34px';
-    // } else {
-    //   paddingTop = '96px';
-    // }
+    let paddingTop = '97px';
+
     if (isMobile) {
       if (shouldSkipPadding) {
         paddingTop = '96px';
