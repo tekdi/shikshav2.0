@@ -156,28 +156,35 @@ export default function Index() {
           ),
         });
         //condition if category from URL
+        let selectedFramework = fdata[0];
         if (frameworkName) {
-          const selectedFramework = fdata.find(
+          const foundFramework = fdata.find(
             (item: any) =>
               item.name.toLowerCase() === frameworkName.toLowerCase()
           );
-          if (selectedFramework) {
-            setFramework(selectedFramework.identifier);
+          if (foundFramework) {
+            selectedFramework = foundFramework;
           }
         }
-        //create filters
-        const localCategory = localStorage.getItem('category');
-        let selectedCategory = 'Water';
-        if (filterCategory) {
-          selectedCategory = filterCategory;
-        } else if (localCategory) {
-          selectedCategory = localCategory;
-        }
+        const selectedCategory = selectedFramework?.name;
+        const selectedIdentifier = selectedFramework?.identifier;
+
+        setFramework(selectedIdentifier);
+        SetFilterCategory(selectedCategory);
+        localStorage.setItem('category', selectedCategory);
+
         const newFilters = {
           topic: [selectedCategory],
         };
-        setFilters({ request: { filters: newFilters, offset: 0, limit: 5 } });
-        // Fetch content after setting filters
+
+        setFilters({
+          request: {
+            filters: newFilters,
+            offset: 0,
+            limit: 5,
+          },
+        });
+
         fetchContentData(newFilters);
       } catch (error) {
         console.error('Error fetching board data:', error);
