@@ -317,7 +317,7 @@ export default function Index() {
       footerComponent={renderFooterComponent()}
     >
       <Box display="flex" flexDirection="column" gap="1rem" py="1rem" px="8px">
-        {!isMobile && (
+        {!isMobile ? (
           <Grid container spacing={2}>
             <Grid size={{ xs: 3 }}>
               <Box>
@@ -430,8 +430,7 @@ export default function Index() {
               </Grid>
             )}
           </Grid>
-        )}
-        {isMobile && (
+        ) : (
           <>
             <FrameworkFilter
               frameworkFilter={frameworkFilter || []}
