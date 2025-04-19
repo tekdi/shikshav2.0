@@ -236,12 +236,17 @@ const MyComponent: React.FC = () => {
       ))}
     </Grid>
   );
-
+  const renderFooterComponent = () => {
+    if (!isMobile) {
+      return <FooterText page="" />;
+    }
+    return undefined;
+  };
   return (
     <Layout
       _backButton={{ alignItems: 'center' }}
       isFooter={isMobile} // add this when on mobile
-      footerComponent={!isMobile ? <FooterText page="" /> : undefined}
+      footerComponent={renderFooterComponent()}
       backTitle={
         <Box
           sx={{
