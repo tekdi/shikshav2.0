@@ -69,13 +69,6 @@ export default function Login() {
     };
 
   const handleButtonClick = async () => {
-    // if (!formData.userName || !formData.password) {
-    //   setError({
-    //     userName: !formData.userName,
-    //     password: !formData.password,
-    //   });
-    //   return;
-    // }
     setLoading(true);
     try {
       const {

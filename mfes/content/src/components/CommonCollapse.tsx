@@ -48,7 +48,7 @@ const getIconByMimeType = (mimeType?: string): React.ReactNode => {
     'application/epub': <AutoStoriesIcon />,
   };
   //@ts-ignore
-  return icons[mimeType] || <TextSnippetOutlinedIcon />;
+  return icons[mimeType] ?? <TextSnippetOutlinedIcon />;
 };
 
 const RenderNestedData: React.FC<{
@@ -65,7 +65,6 @@ const RenderNestedData: React.FC<{
   const router = useRouter();
   return data?.map((item) => {
     let progress = 0;
-    // const isExpanded = expandedItems.has(item.identifier);
     const isUnit =
       item.mimeType === 'application/vnd.ekstep.content-collection';
     if (isUnit) {
@@ -73,14 +72,14 @@ const RenderNestedData: React.FC<{
       const completedTrackData = trackData?.filter(
         (e: any) => leafNodes?.includes(e.courseId) && e.completed
       );
-      const completedCount = completedTrackData?.length || 0;
+      const completedCount = completedTrackData?.length ?? 0;
       const percentage =
         leafNodes.length > 0
           ? Math.round((completedCount / leafNodes.length) * 100)
           : 0;
       progress = percentage;
     }
-    const childrenCount = item.children?.length || 0;
+    const childrenCount = item.children?.length ?? 0;
     const newTrack = trackData?.find((e) => e?.courseId == item?.identifier);
     const handleItemClick = (identifier: string) => {
       localStorage.setItem('unitId', identifier);
@@ -111,7 +110,7 @@ const RenderNestedData: React.FC<{
         <Stack sx={{ width: '100%' }}>
           <RowContent
             title={item.name}
-            data={item.children || []}
+            data={item.children ?? []}
             mimeType={item.mimeType}
             expandedItems={expandedItems}
             trackCompleted={newTrack?.completed ? 100 : 0}
@@ -121,17 +120,6 @@ const RenderNestedData: React.FC<{
             showUnits={isUnit}
           />
         </Stack>
-
-        {/* {isExpanded && item.children?.length && (
-          <Stack sx={{ marginTop: '8px', paddingLeft: '16px', width: '100%' }}>
-            <RenderNestedData
-              data={item.children}
-              expandedItems={expandedItems}
-              toggleExpanded={toggleExpanded}
-              trackData={trackData}
-            />
-          </Stack>
-        )} */}
       </Stack>
     );
   });
@@ -162,7 +150,7 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
             setTrackCompleted(
               completedTrackData?.length === leafNodes?.length ? 100 : 0
             );
-            const completedCount = completedTrackData?.length || 0;
+            const completedCount = completedTrackData?.length ?? 0;
             const percentage =
               leafNodes.length > 0
                 ? Math.round((completedCount / leafNodes.length) * 100)
@@ -229,7 +217,7 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
           <Stack sx={{ width: '100%' }}>
             <RowContent
               title={item?.name}
-              data={item?.children || []}
+              data={item?.children ?? []}
               mimeType={item?.mimeType}
               expandedItems={expandedItems}
               trackCompleted={trackCompleted}

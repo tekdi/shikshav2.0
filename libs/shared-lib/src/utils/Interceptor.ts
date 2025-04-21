@@ -35,8 +35,7 @@ instance.interceptors.request.use(
         config.headers.academicyearid = academicYearId;
       }
     }
-    // config.headers.tenantid = '4783a636-1191-487a-8b09-55eca51b5036';
-    // config.headers.tenantid = 'fbe108db-e236-48a7-8230-80d34c370800';
+
     config.headers.tenantid = tenantId;
     return config;
   },
@@ -61,13 +60,6 @@ instance.interceptors.response.use(
       } else {
         originalRequest._retry = true;
         try {
-          const accessToken = await refreshToken();
-          // if (!accessToken) {
-          //   window.location.href = '/logout';
-          // } else {
-          //   originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-          //   return instance(originalRequest);
-          // }
         } catch (refreshError) {
           return Promise.reject(refreshError);
         }

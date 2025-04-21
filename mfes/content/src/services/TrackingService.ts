@@ -21,7 +21,7 @@ export const trackingData = (subIds: string[], courseIds: string[]) => {
       'Content-Type': 'application/json',
       tenantId:
         typeof window !== 'undefined'
-          ? localStorage.getItem('tenantId') || ''
+          ? localStorage.getItem('tenantId') ?? ''
           : '',
     },
     data,

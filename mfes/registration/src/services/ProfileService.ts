@@ -90,7 +90,7 @@ export const myCourseDetails = async ({
       {
         headers: {
           Authorization: `Bearer ${token}`,
-          tenantId: localStorage.getItem('tenantId') || '',
+          tenantId: localStorage.getItem('tenantId') ?? '',
         },
       }
     );
@@ -115,11 +115,11 @@ export const renderCertificate = async (
       apiUrl,
       {
         credentialId,
-        templateId: templateId || 'cm99rsd380000pg0iift4she7',
+        templateId: templateId ?? 'cm99rsd380000pg0iift4she7',
       },
       {
         headers: {
-          tenantId: localStorage.getItem('tenantId') || '',
+          tenantId: localStorage.getItem('tenantId') ?? '',
           'Content-Type': 'application/json',
         },
       }

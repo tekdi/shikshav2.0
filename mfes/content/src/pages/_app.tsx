@@ -10,7 +10,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const accToken = localStorage.getItem('accToken');
-      const refToken = localStorage.getItem('refToken');
 
       if (!accToken) {
         if (typeof URL_LOGIN === 'string') {

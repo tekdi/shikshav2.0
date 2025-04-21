@@ -79,7 +79,6 @@ export default function Content(props: Readonly<ContentProps>) {
         showFilter: true,
         ...(props || newData),
       });
-      // setTabValue(0);
       setIsPageLoading(false);
     };
     init();
@@ -116,7 +115,7 @@ export default function Content(props: Readonly<ContentProps>) {
 
         return (
           course_track_data.data.find((course: any) => course.userId === userId)
-            ?.course || []
+            ?.course ?? []
         );
       }
     } catch (error) {
@@ -128,7 +127,6 @@ export default function Content(props: Readonly<ContentProps>) {
     if (tabValue !== undefined && tabs?.[tabValue]?.type) {
       setLocalFilters((prevFilters: any) => ({
         ...prevFilters,
-        // type: tabs?.[tabValue]?.type,
         offset: 0,
       }));
     }
@@ -159,7 +157,6 @@ export default function Content(props: Readonly<ContentProps>) {
   };
 
   const handleCardClickLocal = async (content: ContentSearchResponse) => {
-    // router.push(`/content-details/${content?.identifier}`);
     try {
       if (
         [
@@ -221,7 +218,7 @@ export default function Content(props: Readonly<ContentProps>) {
       setTabs(filteredTabs);
       setLocalFilters((prevFilters: any) => ({
         ...prevFilters,
-        ...(propData?.filters || {}),
+        ...(propData?.filters ?? {}),
       }));
     };
     init();
@@ -231,34 +228,18 @@ export default function Content(props: Readonly<ContentProps>) {
     const init = async () => {
       setIsLoading(true);
       try {
-        // if (
-        //   localFilters.type &&
-        //   localFilters.limit &&
-        //   localFilters.offset !== undefined
-        // ) {
         const result = await fetchContent(localFilters);
-        // const newContentData = Object.values(result);
         const newContentData = Array.from(
           new Map(result.map((item: any) => [item.identifier, item])).values()
         );
 
         const userTrackData = await fetchDataTrack(newContentData || []);
-        // if (localFilters.offset === 0) {
         setContentData((newContentData as ContentSearchResponse[]) || []);
         setTrackData(userTrackData);
-        // } else {
-        //   setContentData((prevState: any) => [
-        //     ...prevState,
-        //     ...(newContentData || []),
-        //   ]);
-        //   setTrackData(
-        //     (prevState: []) => [...prevState, ...(userTrackData || [])] as []
-        //   );
-        // }
+
         setHasMoreData(
           result?.count > localFilters.offset + newContentData?.length
         );
-        // }
       } catch (error) {
         console.error(error);
       } finally {
@@ -336,7 +317,7 @@ export default function Content(props: Readonly<ContentProps>) {
                 placeholder={'Search content..'}
                 rightIcon={<SearchIcon />}
                 onRightIconClick={handleSearchClick}
-                inputValue={searchValue || ''}
+                inputValue={searchValue ?? ''}
                 onInputChange={handleSearchChange}
                 onKeyPress={(ev: any) => {
                   if (ev.key === 'Enter') {
@@ -396,9 +377,9 @@ export default function Content(props: Readonly<ContentProps>) {
           value={tabValue}
           onChange={handleTabChange}
           contentData={contentData}
-          _grid={propData?._grid || {}}
-          trackData={trackData || []}
-          type={localFilters?.type || ''}
+          _grid={propData?._grid ?? {}}
+          trackData={trackData ?? []}
+          type={localFilters?.type ?? ''}
           handleCardClick={handleCardClickLocal}
           hasMoreData={hasMoreData}
           handleLoadMore={handleLoadMore}

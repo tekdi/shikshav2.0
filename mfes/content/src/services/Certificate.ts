@@ -15,8 +15,8 @@ export const getUserCertificateStatus = async ({
       courseId,
     },
     {
-      tenantId: localStorage.getItem('tenantId') || '',
-      Authorization: `Bearer ${localStorage.getItem('accToken') || ''}`,
+      tenantId: localStorage.getItem('tenantId') ?? '',
+      Authorization: `Bearer ${localStorage.getItem('accToken') ?? ''}`,
     }
   );
   return response?.data ?? {};
@@ -39,8 +39,8 @@ export const createUserCertificateStatus = async ({
       courseId,
     },
     {
-      tenantId: localStorage.getItem('tenantId') || '',
-      Authorization: `Bearer ${localStorage.getItem('accToken') || ''}`,
+      tenantId: localStorage.getItem('tenantId') ?? '',
+      Authorization: `Bearer ${localStorage.getItem('accToken') ?? ''}`,
     }
   );
   return response?.data ?? {};
@@ -101,8 +101,8 @@ export const courseUpdate = async ({
       courseId,
     },
     {
-      tenantId: localStorage.getItem('tenantId') || '',
-      Authorization: `Bearer ${localStorage.getItem('accToken') || ''}`,
+      tenantId: localStorage.getItem('tenantId') ?? '',
+      Authorization: `Bearer ${localStorage.getItem('accToken') ?? ''}`,
     }
   );
   return response?.data ?? {};
@@ -120,8 +120,8 @@ export const courseIssue = async (data: {
     `${process.env.NEXT_PUBLIC_MIDDLEWARE_TRACKING_URL}/tracking/certificate/issue`,
     data,
     {
-      tenantId: localStorage.getItem('tenantId') || '',
-      Authorization: `Bearer ${localStorage.getItem('accToken') || ''}`,
+      tenantId: localStorage.getItem('tenantId') ?? '',
+      Authorization: `Bearer ${localStorage.getItem('accToken') ?? ''}`,
     }
   );
   return response?.data ?? {};
@@ -158,8 +158,8 @@ export const showCertificate = async ({
       templateId,
     },
     {
-      tenantId: localStorage.getItem('tenantId') || '',
-      Authorization: `Bearer ${localStorage.getItem('accToken') || ''}`,
+      tenantId: localStorage.getItem('tenantId') ?? '',
+      Authorization: `Bearer ${localStorage.getItem('accToken') ?? ''}`,
     }
   );
   return response?.data ?? {};

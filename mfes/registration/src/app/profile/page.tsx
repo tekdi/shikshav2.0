@@ -31,12 +31,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string>('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmNewPassword, setConfirmNewPassword] = useState('');
-  const [passwordSameAsOld, setPasswordSameAsOld] = useState(false);
-  const [currentPasswordNotMatched, setCurrentPasswordNotMatched] =
-    useState(false);
-  const [passwordResetLinkSent, setPasswordResetLinkSent] = useState(false);
+
   const [courseDetails, setCourseDetails] = useState<any>(null);
   const URL_LOGIN = process.env.NEXT_PUBLIC_LOGIN;
 
@@ -70,47 +65,6 @@ export default function Profile() {
     handleMyCourses();
   }, []);
 
-  const handleResetPassword = async () => {
-    if (newPassword !== confirmNewPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-    try {
-      const response = await resetPasswordLink({ token });
-      if (response.data.success) {
-        setPasswordResetLinkSent(true);
-      } else {
-        setError(response.data.error);
-      }
-    } catch (err) {
-      setError(err as string);
-    }
-  };
-
-  const handleUpdatePassword = async () => {
-    if (newPassword !== confirmNewPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-    try {
-      // const response = await post(`/user/v1/update-password`, {
-      //   token,
-      //   newPassword,
-      // });
-      // if (response.data.success) {
-      //   setPasswordSameAsOld(false);
-      //   setCurrentPasswordNotMatched(false);
-      // } else if (response.data.error === 'currentPasswordNotMatched') {
-      //   setCurrentPasswordNotMatched(true);
-      // } else if (response.data.error === 'passwordSameAsOld') {
-      //   setPasswordSameAsOld(true);
-      // }
-      setPasswordSameAsOld(false);
-      setCurrentPasswordNotMatched(false);
-    } catch (err) {
-      setError(err as string);
-    }
-  };
   const handleMyCourses = async () => {
     const token = localStorage.getItem('accToken');
     if (token) {
@@ -139,8 +93,9 @@ export default function Profile() {
         'noopener'
       );
       if (newWindow) {
-        newWindow.document.write(response);
-        newWindow.document.close();
+        const div = newWindow.document.createElement('div');
+        div.innerHTML = response; // make sure `response` is safe to inject
+        newWindow.document.body.appendChild(div);
       }
     } catch (error) {
       console.error('Failed to render certificate:', error);

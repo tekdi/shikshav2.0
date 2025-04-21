@@ -105,6 +105,28 @@ export const CommonCard: React.FC<CommonCardProps> = ({
     };
     init();
   }, [TrackData, item, type]);
+
+  let statusIcon;
+  let statusText;
+
+  if (type === 'Course') {
+    if (trackCompleted >= 100) {
+      statusIcon = <CheckCircleIcon sx={{ color: '#21A400' }} />;
+      statusText = 'Completed';
+    } else if (trackProgress > 0 && trackProgress < 100) {
+      statusText = 'In progress';
+    } else {
+      statusText = 'Enrolled';
+    }
+  } else {
+    if (trackCompleted >= 100) {
+      statusIcon = <CheckCircleIcon sx={{ color: '#21A400' }} />;
+      statusText = 'Completed';
+    } else {
+      statusIcon = <ErrorIcon sx={{ color: '#FFB74D' }} />;
+      statusText = 'Enrolled';
+    }
+  }
   return (
     <Card
       sx={{
@@ -167,44 +189,24 @@ export const CommonCard: React.FC<CommonCardProps> = ({
                 gap: '8px',
               }}
             >
-              {type === 'Course' ? (
-                <>
-                  <CircularProgressWithLabel
-                    value={trackProgress ?? 0}
-                    _text={{
-                      sx: {
-                        color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
-                        fontSize: '10px',
-                      },
-                    }}
-                    sx={{
+              {type === 'Course' && (
+                <CircularProgressWithLabel
+                  value={trackProgress ?? 0}
+                  _text={{
+                    sx: {
                       color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
-                    }}
-                    size={35}
-                    thickness={2}
-                  />
-                  {trackCompleted >= 100 ? (
-                    <>
-                      <CheckCircleIcon sx={{ color: '#21A400' }} />
-                      {`Completed`}
-                    </>
-                  ) : trackProgress > 0 && trackProgress < 100 ? (
-                    `In progress`
-                  ) : (
-                    `Enrolled`
-                  )}
-                </>
-              ) : trackCompleted >= 100 ? (
-                <>
-                  <CheckCircleIcon sx={{ color: '#21A400' }} />
-                  {`Completed`}
-                </>
-              ) : (
-                <>
-                  <ErrorIcon sx={{ color: '#FFB74D' }} />
-                  {`Enrolled`}
-                </>
+                      fontSize: '10px',
+                    },
+                  }}
+                  sx={{
+                    color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
+                  }}
+                  size={35}
+                  thickness={2}
+                />
               )}
+              {statusIcon}
+              {statusText}
             </Box>
           </Box>
         )}

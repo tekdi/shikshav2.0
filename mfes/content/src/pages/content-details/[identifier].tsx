@@ -11,7 +11,6 @@ import { fetchContent } from '../../services/Read';
 import AppConst from '../../utils/AppConst/AppConst';
 import Image from 'next/image';
 import {
-  courseUpdate,
   createUserCertificateStatus,
   getUserCertificateStatus,
 } from '../../services/Certificate';
@@ -70,20 +69,11 @@ const ContentDetails = () => {
   const handleClick = async () => {
     try {
       const data = await createUserCertificateStatus({
-        userId: localStorage.getItem('userId') || '',
+        userId: localStorage.getItem('userId') ?? '',
         courseId: identifier as string,
       });
       console.log('createUserCertificateStatus', data);
 
-      // if (data) {
-      //   const updateCourseData = await courseUpdate({
-      //     userId: localStorage.getItem('userId') || '',
-      //     courseId: identifier as string,
-      //   });
-      //   console.log('updateCourseData', updateCourseData);
-      // if (updateCourseData) {
-      //   router.push(`/details/${identifier}`);
-      // }
       router.replace(`/details/${identifier}`);
       // }
     } catch (error) {
@@ -148,9 +138,7 @@ const ContentDetails = () => {
           Description
         </Typography>
         <Typography fontSize={'14px'} fontWeight={400}>
-          {contentDetails?.description
-            ? contentDetails.description
-            : 'No description available'}
+          {contentDetails?.description ?? 'No description available'}
         </Typography>
       </Grid>
       <Grid
@@ -164,7 +152,7 @@ const ContentDetails = () => {
             Language
           </Typography>
           <Typography fontSize={'14px'} fontWeight={400}>
-            {contentDetails?.language?.join(', ') || 'No language available'}
+            {contentDetails?.language?.join(', ') ?? 'No language available'}
           </Typography>
         </Grid>
 
@@ -173,7 +161,7 @@ const ContentDetails = () => {
             Author
           </Typography>
           <Typography fontSize={'14px'} fontWeight={400}>
-            {contentDetails?.author || 'No author available'}
+            {contentDetails?.author ?? 'No author available'}
           </Typography>
         </Grid>
 
@@ -182,7 +170,7 @@ const ContentDetails = () => {
             License
           </Typography>
           <Typography fontSize={'14px'} fontWeight={400}>
-            {contentDetails?.license || 'No license available'}
+            {contentDetails?.license ?? 'No license available'}
           </Typography>
         </Grid>
 

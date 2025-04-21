@@ -152,9 +152,7 @@ const FilterDialog = ({
   filterValues: any;
 }) => {
   // Manage the selected values for each category
-  const [selectedValues, setSelectedValues] = useState(
-    filterValues ? filterValues : {}
-  ); // Initialize as an empty object
+  const [selectedValues, setSelectedValues] = useState(filterValues ?? {}); // Initialize as an empty object
 
   const handleChange = (event: any, filterCode: any) => {
     const { value } = event.target;
@@ -203,7 +201,7 @@ const FilterDialog = ({
               }));
 
               // Get the selected values for the current category
-              const currentSelectedValues = selectedValues[filterCode] || [];
+              const currentSelectedValues = selectedValues[filterCode] ?? [];
 
               return (
                 <FormControl
@@ -294,7 +292,7 @@ const FilterDialog = ({
             </Typography>
             <FormControl>
               <RadioGroup
-                value={sort?.sortBy || 'asc'}
+                value={sort?.sortBy ?? 'asc'}
                 onChange={(e) => {
                   const value = e.target.value;
                   onSortChange?.(value);
@@ -557,21 +555,19 @@ export const Layout: React.FC<LayoutProps> = ({
             }}
           >
             <CommonSearch
-              placeholder={showSearch.placeholder || ''}
-              leftIcon={showSearch.leftIcon ? showSearch.leftIcon : undefined}
-              rightIcon={
-                showSearch.rightIcon ? showSearch.rightIcon : undefined
-              }
+              placeholder={showSearch.placeholder ?? ''}
+              leftIcon={showSearch.leftIcon ?? undefined}
+              rightIcon={showSearch.rightIcon ?? undefined}
               onLeftIconClick={
                 showSearch.leftIcon ? showSearch.onLeftIconClick : undefined
               }
               onRightIconClick={
                 showSearch.rightIcon ? showSearch.onRightIconClick : undefined
               }
-              inputValue={showSearch.inputValue || ''}
+              inputValue={showSearch.inputValue ?? ''}
               onInputChange={showSearch.onInputChange}
               sx={
-                showSearch.sx || {
+                showSearch.sx ?? {
                   width: 400,
                   marginTop: '8px',
                   marginLeft: '10px',

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { getUserCertificates, showCertificate } from '../services/Certificate';
 import { CommonCard, ContentItem, Layout } from '@shared-lib';
@@ -21,7 +21,7 @@ const CertificatesPage = () => {
     const fetchCertificates = async () => {
       try {
         const response = await getUserCertificates({
-          userId: localStorage.getItem('userId') || '',
+          userId: localStorage.getItem('userId') ?? '',
           limit: 3,
           offset,
         });
@@ -71,13 +71,13 @@ const CertificatesPage = () => {
             <Grid key={item?.identifier} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
               <CommonCard
                 minheight="100%"
-                title={(item?.name || '').trim()}
+                title={(item?.name ?? '').trim()}
                 image={
                   item?.posterImage && item?.posterImage !== 'undefined'
                     ? item?.posterImage
                     : `${AppConst.BASEPATH}/assets/images/image_ver.png`
                 }
-                content={item?.description || '-'}
+                content={item?.description ?? '-'}
                 actions={item?.contentType}
                 // subheader={item?.contentType}
                 orientation="horizontal"
