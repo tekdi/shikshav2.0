@@ -8,10 +8,10 @@ import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
 import { Box } from '@mui/material';
-import { Progress } from '../Progress/Progress';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
-interface ContentItem {
+import { CircularProgressWithLabel } from '../Progress/CircularProgressWithLabel';
+export interface ContentItem {
   name: string;
   gradeLevel: string[];
   language: string[];
@@ -86,15 +86,17 @@ export const CommonCard: React.FC<CommonCardProps> = ({
         //@ts-ignore
         if (TrackData) {
           const result = TrackData?.find((e) => e.courseId === item.identifier);
-          setTrackCompleted(result?.completed ? 100 : 0);
           if (type === 'Course') {
-            const leafNodes = getLeafNodes(item?.leafNodes ?? []);
-            const completedCount = result?.completed_list?.length || 0;
+            const leafNodes = getLeafNodes(item ?? []);
+            const completedCount = result?.completed_list?.length ?? 0;
             const percentage =
               leafNodes.length > 0
                 ? Math.round((completedCount / leafNodes.length) * 100)
                 : 0;
             setTrackProgress(percentage);
+            setTrackCompleted(percentage);
+          } else {
+            setTrackCompleted(result?.completed ? 100 : 0);
           }
         }
       } catch (e) {
@@ -104,12 +106,33 @@ export const CommonCard: React.FC<CommonCardProps> = ({
     init();
   }, [TrackData, item, type]);
 
+  let statusIcon;
+  let statusText;
+
+  if (type === 'Course') {
+    if (trackCompleted >= 100) {
+      statusIcon = <CheckCircleIcon sx={{ color: '#21A400' }} />;
+      statusText = 'Completed';
+    } else if (trackProgress > 0 && trackProgress < 100) {
+      statusText = 'In progress';
+    } else {
+      statusText = 'Enrolled';
+    }
+  } else {
+    if (trackCompleted >= 100) {
+      statusIcon = <CheckCircleIcon sx={{ color: '#21A400' }} />;
+      statusText = 'Completed';
+    } else {
+      statusIcon = <ErrorIcon sx={{ color: '#FFB74D' }} />;
+      statusText = 'Enrolled';
+    }
+  }
   return (
     <Card
       sx={{
         display: 'flex',
         flexDirection: orientation === 'horizontal' ? 'column' : 'row',
-        height: minheight || 'auto',
+        height: minheight ?? 'auto',
         cursor: onClick ? 'pointer' : 'default',
         borderRadius: '12px',
         bgcolor: '#FEF7FF',
@@ -129,8 +152,8 @@ export const CommonCard: React.FC<CommonCardProps> = ({
         {image && (
           <CardMedia
             component="img"
-            image={image || '/assets/images/default.png'}
-            alt={imageAlt || 'Image'}
+            image={image ?? '/assets/images/default.png'}
+            alt={imageAlt ?? 'Image'}
             sx={{
               width: '100%',
               height: orientation === 'horizontal' ? '297px' : 'auto',
@@ -151,120 +174,40 @@ export const CommonCard: React.FC<CommonCardProps> = ({
               top: 0,
               width: '100%',
               display: 'flex',
-              // justifyContent: 'center',
               alignItems: 'center',
               background: 'rgba(0, 0, 0, 0.5)',
             }}
           >
-            {type === 'Course' ? (
-              <>
-                <Progress
-                  variant="determinate"
-                  value={100}
-                  size={30}
-                  thickness={5}
-                  sx={{
-                    color: '#fff8fb',
-                    position: 'absolute',
-                    left: '10px',
+            <Box
+              sx={{
+                p: '0px 5px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              {type === 'Course' && (
+                <CircularProgressWithLabel
+                  value={trackProgress ?? 0}
+                  _text={{
+                    sx: {
+                      color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
+                      fontSize: '10px',
+                    },
                   }}
-                />
-                <Progress
-                  variant="determinate"
-                  value={trackCompleted}
-                  size={30}
-                  thickness={5}
                   sx={{
                     color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
-                    position: 'absolute',
-                    left: '10px',
                   }}
+                  size={35}
+                  thickness={2}
                 />
-                <Typography
-                  sx={{
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                    marginLeft: '12px',
-                    color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
-                    position: 'absolute',
-                    left: '50px',
-                  }}
-                >
-                  {trackCompleted >= 100 ? (
-                    <>
-                      {' '}
-                      <CheckCircleIcon sx={{ color: '#21A400' }} />
-                      <Typography
-                        sx={{
-                          fontSize: '12px',
-                          fontWeight: 'bold',
-                          marginLeft: '12px',
-                          color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
-                          position: 'absolute',
-                          left: '50px',
-                        }}
-                      >
-                        {' '}
-                        Completed
-                      </Typography>
-                    </>
-                  ) : trackCompleted > 0 ? (
-                    `${trackProgress}In progress`
-                  ) : trackProgress > 0 && trackProgress < 100 ? (
-                    `${trackProgress}% In progress`
-                  ) : (
-                    `Enrolled`
-                  )}
-                </Typography>
-              </>
-            ) : (
-              <Box
-                sx={{
-                  position: 'absolute',
-                  height: '40px',
-                  top: 0,
-                  width: '100%',
-                  display: 'flex',
-                  // justifyContent: 'center',
-                  alignItems: 'center',
-                  background: 'rgba(0, 0, 0, 0.5)',
-                }}
-              >
-                {trackCompleted === 100 ? (
-                  <>
-                    <CheckCircleIcon sx={{ color: '#21A400' }} />
-                    <Typography
-                      sx={{
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        marginLeft: '12px',
-                        color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
-                        position: 'absolute',
-                        left: '50px',
-                      }}
-                    >
-                      Completed
-                    </Typography>
-                  </>
-                ) : (
-                  <>
-                    <ErrorIcon sx={{ color: '#FFB74D' }} />
-                    <Typography
-                      sx={{
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        marginLeft: '12px',
-                        color: trackCompleted === 100 ? '#21A400' : '#FFB74D',
-                        position: 'absolute',
-                        left: '20px',
-                      }}
-                    >
-                      In progress
-                    </Typography>
-                  </>
-                )}
-              </Box>
-            )}
+              )}
+              {statusIcon}
+              {statusText}
+            </Box>
           </Box>
         )}
       </Box>

@@ -120,7 +120,11 @@ export const hierarchyAPI = async (
     const config: AxiosRequestConfig = {
       method: 'get',
       maxBodyLength: Infinity,
-      url: `${searchApiUrl}/interface/v1/api/course/v1/hierarchy/${doId}`,
+      url: `${searchApiUrl}/interface/v1/action/content/v3/hierarchy/${doId}`,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('accToken')}`,
+        tenantId: localStorage.getItem('tenantId'), // Replace with your actual tenantId
+      },
     };
 
     // Execute the request

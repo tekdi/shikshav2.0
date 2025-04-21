@@ -4,17 +4,17 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Divider, Typography } from '@mui/material';
 import { Layout } from '@shared-lib';
-import LogoutIcon from '@mui/icons-material/Logout';
 import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid2';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { useRouter } from 'next/router';
 import { fetchContent } from '../../services/Read';
 import AppConst from '../../utils/AppConst/AppConst';
 import Image from 'next/image';
+import {
+  createUserCertificateStatus,
+  getUserCertificateStatus,
+} from '../../services/Certificate';
+import { ProfileMenu } from '../../utils/menus';
 
 interface ContentDetailsObject {
   name: string;
@@ -24,7 +24,6 @@ interface ContentDetailsObject {
 const ContentDetails = () => {
   const router = useRouter();
   const { identifier } = router.query;
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [contentDetails, setContentDetails] =
     useState<ContentDetailsObject | null>(null);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
@@ -32,24 +31,28 @@ const ContentDetails = () => {
   const handleBackClick = () => {
     router.back(); // Navigate to the previous page
   };
-  const handleAccountClick = (event: React.MouseEvent<HTMLElement>) => {
-    console.log('Account clicked');
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-    router.push(`${process.env.NEXT_PUBLIC_LOGIN}`);
-  };
-
-  const handleMenuClick = () => {
-    console.log('Menu icon clicked');
-  };
 
   useEffect(() => {
     const fetchContentDetails = async () => {
       try {
         const result = await fetchContent(identifier as string);
-        setContentDetails(result);
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+          setContentDetails(result);
+          return;
+        }
+        const data = await getUserCertificateStatus({
+          userId: userId,
+          courseId: identifier as string,
+        });
+        if (
+          data?.result?.status === 'enrolled' ||
+          data?.result?.status === 'completed'
+        ) {
+          router.replace(`/details/${identifier}`);
+        } else {
+          setContentDetails(result);
+        }
       } catch (error) {
         console.error('Failed to fetch content:', error);
       } finally {
@@ -63,60 +66,29 @@ const ContentDetails = () => {
     }
   }, [identifier]);
 
-  const handleLogout = () => {
-    setAnchorEl(null);
-    localStorage.removeItem('accToken');
-    localStorage.removeItem('refToken');
-    const LOGIN = process.env.NEXT_PUBLIC_LOGIN;
-    //@ts-ignore
-    window.location.href = LOGIN;
+  const handleClick = async () => {
+    try {
+      const data = await createUserCertificateStatus({
+        userId: localStorage.getItem('userId') ?? '',
+        courseId: identifier as string,
+      });
+      console.log('createUserCertificateStatus', data);
+
+      router.replace(`/details/${identifier}`);
+      // }
+    } catch (error) {
+      console.error('Failed to create user certificate:', error);
+    }
   };
 
   return (
     <Layout
       isLoadingChildren={isLoading}
       showTopAppBar={{
-        title: 'Shiksha',
+        title: 'Shiksha: Learning Made Easy',
         showMenuIcon: true,
-
-        menuIconClick: handleMenuClick,
         actionButtonLabel: 'Action',
-        profileIcon: [
-          {
-            icon: <AccountCircleIcon />,
-            ariaLabel: 'Account',
-            onLogoutClick: (e: any) => handleAccountClick(e),
-            anchorEl: anchorEl,
-          },
-        ],
-        actionIcons: [
-          {
-            icon: <AccountCircleIcon />,
-            ariaLabel: 'Profile',
-            onOptionClick: handleClose,
-          },
-          {
-            icon: <DashboardIcon />,
-            ariaLabel: 'Admin dashboard',
-            onOptionClick: handleClose,
-          },
-          {
-            icon: <BorderColorIcon />,
-            ariaLabel: 'Workspace',
-            onOptionClick: handleClose,
-          },
-          {
-            icon: <HelpOutlineIcon />,
-            ariaLabel: 'Help',
-            onOptionClick: handleClose,
-          },
-          {
-            icon: <LogoutIcon />,
-            ariaLabel: 'Logout',
-            onOptionClick: handleLogout,
-          },
-        ],
-        onMenuClose: handleClose,
+        ...ProfileMenu(),
       }}
       showBack={true}
       backTitle="Course Details"
@@ -166,9 +138,7 @@ const ContentDetails = () => {
           Description
         </Typography>
         <Typography fontSize={'14px'} fontWeight={400}>
-          {contentDetails?.description
-            ? contentDetails.description
-            : 'No description available'}
+          {contentDetails?.description ?? 'No description available'}
         </Typography>
       </Grid>
       <Grid
@@ -182,7 +152,7 @@ const ContentDetails = () => {
             Language
           </Typography>
           <Typography fontSize={'14px'} fontWeight={400}>
-            {contentDetails?.language?.join(', ') || 'No language available'}
+            {contentDetails?.language?.join(', ') ?? 'No language available'}
           </Typography>
         </Grid>
 
@@ -191,7 +161,7 @@ const ContentDetails = () => {
             Author
           </Typography>
           <Typography fontSize={'14px'} fontWeight={400}>
-            {contentDetails?.author || 'No author available'}
+            {contentDetails?.author ?? 'No author available'}
           </Typography>
         </Grid>
 
@@ -200,7 +170,7 @@ const ContentDetails = () => {
             License
           </Typography>
           <Typography fontSize={'14px'} fontWeight={400}>
-            {contentDetails?.license || 'No license available'}
+            {contentDetails?.license ?? 'No license available'}
           </Typography>
         </Grid>
 
@@ -249,7 +219,7 @@ const ContentDetails = () => {
             textTransform: 'none',
             boxShadow: 'none',
           }}
-          onClick={() => router.push(`/details/${identifier}`)}
+          onClick={handleClick}
         >
           Join Now/Start Course
         </Button>

@@ -30,11 +30,25 @@ const Players: React.FC<SunbirdPlayerProps> = ({
 }) => {
   const router = useRouter();
   const queryIdentifier = router.query.identifier as string; // Get identifier from the query
-  const identifier = propIdentifier || queryIdentifier; // Prefer prop over query
+  const identifier = propIdentifier ?? queryIdentifier; // Prefer prop over query
   const [playerConfig, setPlayerConfig] = useState<PlayerConfig | undefined>(
     propPlayerConfig
   );
   const [loading, setLoading] = useState(!propPlayerConfig);
+  useEffect(() => {
+    const tenantId = localStorage.getItem('tenantId');
+    const accToken = localStorage.getItem('accToken');
+
+    if (!tenantId || !accToken) {
+      // Save current URL to redirect after login
+      const redirectUrl = window.location.href;
+      if (!document.cookie.includes('postLoginRedirect=')) {
+        const secure = window.location.protocol === 'https:' ? '; secure' : '';
+        const expiry = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
+        document.cookie = `postLoginRedirect=${redirectUrl}; path=/; expires=${expiry.toUTCString()}${secure}`;
+      }
+    }
+  }, [router]);
 
   useEffect(() => {
     if (playerConfig || !identifier) return;
@@ -52,7 +66,7 @@ const Players: React.FC<SunbirdPlayerProps> = ({
           const metadata = { ...Q1?.questionset, ...Q2?.questionset };
           config.metadata = metadata;
         } else if (MIME_TYPE.INTERACTIVE_MIME_TYPE.includes(data?.mimeType)) {
-          config = { ...V1PlayerConfig, metadata: data, data: data.body || {} };
+          config = { ...V1PlayerConfig, metadata: data, data: data.body ?? {} };
           //@ts-ignore
           config.context['contentId'] = identifier;
         } else {

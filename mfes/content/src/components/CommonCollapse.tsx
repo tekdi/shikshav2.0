@@ -48,27 +48,39 @@ const getIconByMimeType = (mimeType?: string): React.ReactNode => {
     'application/epub': <AutoStoriesIcon />,
   };
   //@ts-ignore
-  return icons[mimeType] || <TextSnippetOutlinedIcon />;
+  return icons[mimeType] ?? <TextSnippetOutlinedIcon />;
 };
 
 const RenderNestedData: React.FC<{
   data: NestedItem[];
   expandedItems: Set<string>;
   trackData?: any[];
-  toggleExpanded: (identifier: string) => void;
+  // toggleExpanded: (identifier: string) => void;
 }> = React.memo(function RenderNestedData({
   data,
   expandedItems,
-  toggleExpanded,
+  // toggleExpanded,
   trackData,
 }) {
   const router = useRouter();
-
   return data?.map((item) => {
-    const isExpanded = expandedItems.has(item.identifier);
-    const childrenCount = item.children?.length || 0;
+    let progress = 0;
+    const isUnit =
+      item.mimeType === 'application/vnd.ekstep.content-collection';
+    if (isUnit) {
+      const leafNodes = getLeafNodes(item);
+      const completedTrackData = trackData?.filter(
+        (e: any) => leafNodes?.includes(e.courseId) && e.completed
+      );
+      const completedCount = completedTrackData?.length ?? 0;
+      const percentage =
+        leafNodes.length > 0
+          ? Math.round((completedCount / leafNodes.length) * 100)
+          : 0;
+      progress = percentage;
+    }
+    const childrenCount = item.children?.length ?? 0;
     const newTrack = trackData?.find((e) => e?.courseId == item?.identifier);
-
     const handleItemClick = (identifier: string) => {
       localStorage.setItem('unitId', identifier);
       const path =
@@ -98,23 +110,16 @@ const RenderNestedData: React.FC<{
         <Stack sx={{ width: '100%' }}>
           <RowContent
             title={item.name}
-            data={item.children || []}
+            data={item.children ?? []}
             mimeType={item.mimeType}
             expandedItems={expandedItems}
             trackCompleted={newTrack?.completed ? 100 : 0}
-            showStatus
+            trackProgress={progress}
+            showStatus={!isUnit}
+            showProgress={isUnit}
+            showUnits={isUnit}
           />
         </Stack>
-
-        {isExpanded && item.children?.length && (
-          <Stack sx={{ marginTop: '8px', paddingLeft: '16px', width: '100%' }}>
-            <RenderNestedData
-              data={item.children}
-              expandedItems={expandedItems}
-              toggleExpanded={toggleExpanded}
-            />
-          </Stack>
-        )}
       </Stack>
     );
   });
@@ -137,19 +142,26 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
       try {
         //@ts-ignore
         if (TrackData) {
-          const completedTrackData = TrackData.filter(
-            (e: any) => e.courseId !== item.identifier && e.completed
-          );
           const leafNodes = getLeafNodes(item);
-          setTrackCompleted(
-            completedTrackData?.length === leafNodes?.length ? 100 : 0
-          );
-          const completedCount = completedTrackData?.length || 0;
-          const percentage =
-            leafNodes.length > 0
-              ? Math.round((completedCount / leafNodes.length) * 100)
-              : 0;
-          setTrackProgress(percentage);
+          if (item?.children && item.children.length > 0) {
+            const completedTrackData = TrackData.filter(
+              (e: any) => e.courseId !== item.identifier && e.completed
+            );
+            setTrackCompleted(
+              completedTrackData?.length === leafNodes?.length ? 100 : 0
+            );
+            const completedCount = completedTrackData?.length ?? 0;
+            const percentage =
+              leafNodes.length > 0
+                ? Math.round((completedCount / leafNodes.length) * 100)
+                : 0;
+            setTrackProgress(percentage);
+          } else {
+            const completedTrackData = TrackData.find(
+              (e: any) => e.courseId === item.identifier
+            );
+            setTrackCompleted(completedTrackData?.completed ? 100 : 0);
+          }
         }
       } catch (e) {
         console.log('error', e);
@@ -174,12 +186,12 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
     const path = `/player/${identifier}`;
     router.push(path);
   };
+
   return (
     <>
       {item?.children && item.children.length > 0 ? (
         <AccordionWrapper
-          title={item?.name}
-          data={item?.children || []}
+          item={item}
           expandedItems={expandedItems}
           toggleExpanded={toggleExpanded}
           trackProgress={trackProgress}
@@ -205,7 +217,7 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
           <Stack sx={{ width: '100%' }}>
             <RowContent
               title={item?.name}
-              data={item?.children || []}
+              data={item?.children ?? []}
               mimeType={item?.mimeType}
               expandedItems={expandedItems}
               trackCompleted={trackCompleted}
@@ -235,16 +247,14 @@ export const CommonCollapse: React.FC<CommonAccordionProps> = ({
 export default CommonCollapse;
 
 const AccordionWrapper = ({
-  title,
-  data,
+  item,
   expandedItems,
   toggleExpanded,
   trackProgress,
   trackCompleted,
   trackData,
 }: {
-  title: string;
-  data: NestedItem[];
+  item: NestedItem;
   expandedItems: Set<string>;
   toggleExpanded: (identifier: string) => void;
   trackProgress: number;
@@ -255,15 +265,15 @@ const AccordionWrapper = ({
 
   return (
     <Accordion
-      expanded={expandedItems.has(data[0].identifier)}
-      onChange={() => toggleExpanded(data[0].identifier)}
+      expanded={expandedItems.has(item?.identifier)}
+      onChange={() => toggleExpanded(item?.identifier)}
     >
       <AccordionSummary
         sx={{
           backgroundColor: theme.palette.custom?.secondaryBackground,
         }}
         expandIcon={
-          expandedItems.has(data[0].identifier) ? (
+          expandedItems.has(item?.identifier) ? (
             <ArrowDropDownIcon sx={{ fontSize: '2rem' }} />
           ) : (
             <ArrowDropUpIcon sx={{ fontSize: '2rem' }} />
@@ -271,8 +281,8 @@ const AccordionWrapper = ({
         }
       >
         <RowContent
-          title={title}
-          data={data}
+          title={item?.name}
+          data={item?.children || []}
           expandedItems={expandedItems}
           trackProgress={trackProgress}
           trackCompleted={trackCompleted}
@@ -281,9 +291,9 @@ const AccordionWrapper = ({
       </AccordionSummary>
       <AccordionDetails sx={{ p: 0 }}>
         <RenderNestedData
-          data={data}
+          data={item?.children || []}
           expandedItems={expandedItems}
-          toggleExpanded={toggleExpanded}
+          // toggleExpanded={toggleExpanded}
           trackData={trackData}
         />
       </AccordionDetails>
@@ -300,6 +310,7 @@ export const RowContent = ({
   trackCompleted,
   showProgress = false,
   showStatus = false,
+  showUnits = false,
 }: {
   title: string;
   data: NestedItem[];
@@ -309,6 +320,7 @@ export const RowContent = ({
   trackCompleted?: number;
   showProgress?: boolean;
   showStatus?: boolean;
+  showUnits?: boolean;
 }) => {
   return (
     <Stack
@@ -326,7 +338,7 @@ export const RowContent = ({
         <Typography variant="body2" fontWeight={500}>
           {title}
         </Typography>
-        {Boolean(showStatus && data?.length) && (
+        {Boolean(showUnits) && (
           <Typography
             variant="caption"
             color="textSecondary"
@@ -343,6 +355,7 @@ export const RowContent = ({
       </Stack>
       {showProgress && (
         <CircularProgressWithLabel
+          color2={'#e8d7b4'}
           value={trackProgress ?? 0}
           _text={{
             sx: {

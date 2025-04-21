@@ -19,6 +19,10 @@ export const trackingData = (subIds: string[], courseIds: string[]) => {
     url: `${trackingApiUrl}/tracking/content/course/status`,
     headers: {
       'Content-Type': 'application/json',
+      tenantId:
+        typeof window !== 'undefined'
+          ? localStorage.getItem('tenantId') ?? ''
+          : '',
     },
     data,
   };
