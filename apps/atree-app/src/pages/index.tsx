@@ -143,7 +143,7 @@ const LandingPage = () => {
       {loading ? (
         <Loader />
       ) : (
-        <Grid container sx={{ mb: 3 }} justifyContent={'center'}>
+        <Grid container sx={{ mb: 3 }} justifyContent={'center'} spacing={4}>
           <Banner />
           <Grid
             sx={{ px: 4, textAlign: 'center' }}
@@ -257,6 +257,7 @@ const LandingPage = () => {
               flexDirection="column"
               alignItems="center"
               justifyContent={'space-evenly'}
+              sx={{ paddingBottom: '10px' }}
             >
               <Box
                 sx={{

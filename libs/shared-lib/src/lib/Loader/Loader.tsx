@@ -44,7 +44,7 @@ export const Loader: React.FC<LoaderProps> = memo(
       } else if (shouldUnsetPadding) {
         paddingTop = '34px';
       } else if (shouldUnsetHeight) {
-        paddingTop = '64px';
+        paddingTop = '57px';
       } else if (shouldAddPadding) {
         paddingTop = '130px';
       } else {
@@ -92,20 +92,34 @@ export const Loader: React.FC<LoaderProps> = memo(
             </Typography>
           </Box>
         )}
-        <Box
-          style={{
-            width: '100%',
-            overflowY: 'auto',
-            display: isLoading ? 'none' : 'block',
-            height:
-              shouldUnsetHeight && !isMobile
+        {isMobile && (
+          <Box
+            style={{
+              width: '100%',
+              overflowY: 'auto',
+              display: isLoading ? 'none' : 'block',
+              height: `calc(100vh - ${paddingTop}px)`,
+              paddingTop: paddingTop,
+            }}
+          >
+            {children}
+          </Box>
+        )}
+        {!isMobile && (
+          <Box
+            style={{
+              width: '100%',
+              overflowY: 'auto',
+              display: isLoading ? 'none' : 'block',
+              height: shouldUnsetHeight
                 ? 'auto'
-                : `calc(100vh - ${layoutHeight}px)`,
-            paddingTop: paddingTop,
-          }}
-        >
-          {children}
-        </Box>
+                : `calc(100vh - ${paddingTop}px)`,
+              paddingTop: paddingTop,
+            }}
+          >
+            {children}
+          </Box>
+        )}
       </Box>
     );
   }
