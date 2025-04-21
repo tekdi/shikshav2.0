@@ -143,7 +143,7 @@ export const ContentSearch = async ({
           primaryCategory:
             type?.toLowerCase() === 'course'
               ? ['Course']
-              : ['Learning Resource', 'Practice Question Set'],
+              : ['Course', 'Practice Question Set'],
           channel: localStorage.getItem('tenant-code'),
         },
         fields: [

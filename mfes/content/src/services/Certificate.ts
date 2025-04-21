@@ -33,7 +33,7 @@ export const createUserCertificateStatus = async ({
     throw new Error('Cannot access localStorage in server environment');
   }
   const response = await post(
-    `${process.env.NEXT_PUBLIC_MIDDLEWARE_TRACKING_URL}/tracking/user_certificate/status/create`,
+    `${process.env.NEXT_PUBLIC_MIDDLEWARE_URL}/tracking/user_certificate/status/create`,
     {
       userId,
       courseId,
@@ -57,7 +57,7 @@ export const getUserCertificates = async ({
 }): Promise<any> => {
   try {
     // Ensure the environment variable is defined
-    const searchApiUrl = process.env.NEXT_PUBLIC_MIDDLEWARE_TRACKING_URL;
+    const searchApiUrl = process.env.NEXT_PUBLIC_MIDDLEWARE_URL;
     if (!searchApiUrl) {
       throw new Error('Search API URL environment variable is not configured');
     }
@@ -95,7 +95,7 @@ export const courseUpdate = async ({
     throw new Error('Cannot access localStorage in server environment');
   }
   const response = await post(
-    `${process.env.NEXT_PUBLIC_MIDDLEWARE_TRACKING_URL}/tracking/user_certificate/status/update`,
+    `${process.env.NEXT_PUBLIC_MIDDLEWARE_URL}/tracking/user_certificate/status/update`,
     {
       userId,
       courseId,
@@ -117,7 +117,7 @@ export const courseIssue = async (data: {
     throw new Error('Cannot access localStorage in server environment');
   }
   const response = await post(
-    `${process.env.NEXT_PUBLIC_MIDDLEWARE_TRACKING_URL}/tracking/certificate/issue`,
+    `${process.env.NEXT_PUBLIC_MIDDLEWARE_URL}/tracking/certificate/issue`,
     data,
     {
       tenantId: localStorage.getItem('tenantId') ?? '',
@@ -152,7 +152,7 @@ export const showCertificate = async ({
     throw new Error('Cannot access localStorage in a server environment');
   }
   const response = await post(
-    `${process.env.NEXT_PUBLIC_MIDDLEWARE_TRACKING_URL}/tracking/certificate/render`,
+    `${process.env.NEXT_PUBLIC_MIDDLEWARE_URL}/tracking/certificate/render`,
     {
       credentialId,
       templateId,

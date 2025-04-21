@@ -7,7 +7,11 @@ import CommonCollapse from '../../components/CommonCollapse'; // Adjust the impo
 import { hierarchyAPI } from '../../services/Hierarchy';
 import { trackingData } from '../../services/TrackingService';
 import { ProfileMenu } from '../../utils/menus';
-import { courseUpdate, getUserByToken } from '../../services/Certificate';
+import {
+  courseIssue,
+  courseUpdate,
+  getUserByToken,
+} from '../../services/Certificate';
 
 interface DetailsProps {
   details: any;
@@ -43,7 +47,7 @@ export default function Details({ details }: DetailsProps) {
               course_track_data.data.find(
                 (course: any) => course.userId === userId
               )?.course ?? [];
-            console.log('userTrackData', userTrackData);
+            console.log('userTrackData', result);
             if (userTrackData.length > 0) {
               const updateCourseData = await courseUpdate({
                 userId: localStorage.getItem('userId') ?? '',
@@ -58,6 +62,19 @@ export default function Details({ details }: DetailsProps) {
                   const today = new Date();
                   const expiration = new Date();
                   expiration.setDate(today.getDate() + 8);
+                  const payload = {
+                    issuanceDate: new Date().toISOString(),
+                    expirationDate: expiration.toISOString(),
+                    credentialId: '12345',
+                    firstName: response?.firstName,
+                    middleName: response?.middleName,
+                    lastName: response?.lastName,
+                    userId: updateCourseData?.result?.usercertificateId ?? '',
+                    courseId: updateCourseData?.result?.courseId ?? '',
+                    courseName: result?.name ?? '',
+                  };
+                  const issueData = await courseIssue(payload);
+                  console.log('issueCertificateData', issueData);
                 }
               }
             }

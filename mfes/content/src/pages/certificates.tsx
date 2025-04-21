@@ -18,6 +18,7 @@ const CertificatesPage = () => {
   const [hasMoreData, setHasMoreData] = useState(true);
 
   useEffect(() => {
+    console.log('certificate');
     const fetchCertificates = async () => {
       try {
         const response = await getUserCertificates({

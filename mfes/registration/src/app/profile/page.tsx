@@ -82,24 +82,17 @@ export default function Profile() {
 
     try {
       const response = await renderCertificate(certificateId);
-      console.log('Certificate HTML:', response);
-
-      // You can now use the response (HTML) to open a modal, new tab, etc.
-      // Example: open in a new tab
-      const blob = new Blob([response], { type: 'text/html' });
-      const newWindow = window.open(
-        URL.createObjectURL(blob),
-        '_blank',
-        'noopener'
-      );
-      if (newWindow) {
-        const div = newWindow.document.createElement('div');
-        div.innerHTML = response; // make sure `response` is safe to inject
-        newWindow.document.body.appendChild(div);
-      }
-    } catch (error) {
-      console.error('Failed to render certificate:', error);
+      console.log('Certificate HTML:', typeof response, response);
+    
+      const certificateHtml = response?.result; // <-- grab HTML from the 'result' field
+    
+      const blob = new Blob([certificateHtml], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+    } catch (err) {
+      console.error('Error rendering certificate:', err);
     }
+    
   };
 
   console.log(user);
@@ -187,37 +180,33 @@ export default function Profile() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {courseDetails?.data?.map((course: any) => (
-                    <TableRow
-                      key={course.usercertificateId}
-                      hover
-                      sx={{
-                        transition: '0.3s',
-                        '&:hover': { backgroundColor: '#f9f9f9' },
-                      }}
-                    >
-                      <TableCell>{course.courseId}</TableCell>
-                      <TableCell>{course.status}</TableCell>
-                      <TableCell>
-                        {course.status?.toLowerCase() === 'completed' ? (
+                  {courseDetails?.data
+                    ?.filter(
+                      (course: any) => course.status === 'viewCertificate'
+                    )
+                    .map((course: any) => (
+                      <TableRow
+                        key={course.usercertificateId}
+                        hover
+                        sx={{
+                          transition: '0.3s',
+                          '&:hover': { backgroundColor: '#f9f9f9' },
+                        }}
+                      >
+                        <TableCell>{course.courseId}</TableCell>
+                        <TableCell>{course.status}</TableCell>
+                        <TableCell>
                           <Link
                             component="button"
                             variant="body2"
                             underline="hover"
-                            onClick={() =>
-                              handleViewTest(course.usercertificateId)
-                            }
+                            onClick={() => handleViewTest(course.certificateId)}
                           >
                             View Certificate
                           </Link>
-                        ) : (
-                          <Typography variant="body2" color="text.secondary">
-                            —
-                          </Typography>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                        </TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </TableContainer>

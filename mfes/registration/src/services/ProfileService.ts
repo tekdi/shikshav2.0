@@ -115,7 +115,7 @@ export const renderCertificate = async (
       apiUrl,
       {
         credentialId,
-        templateId: templateId ?? 'cm99rsd380000pg0iift4she7',
+        templateId: 'cm9r175dm0000qa0ijqfdvlgv',
       },
       {
         headers: {
