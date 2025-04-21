@@ -143,7 +143,7 @@ const LandingPage = () => {
       {loading ? (
         <Loader />
       ) : (
-        <Grid container spacing={4} sx={{ mb: 3 }} justifyContent={'center'}>
+        <Grid container sx={{ mb: 3 }} justifyContent={'center'}>
           <Banner />
           <Grid
             sx={{ px: 4, textAlign: 'center' }}
@@ -188,7 +188,23 @@ const LandingPage = () => {
                     }}
                   >
                     {t(
-                      'Change stems from local action. Hope stems from children’s empowerment to act upon local environmental problems. Our mission is to empower environment educators with both hope and action in times of climate change.'
+                      'Change stems from local action. Hope stems from children’s empowerment to act upon local environmental problems.'
+                    )}
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    align="center"
+                    gutterBottom
+                    sx={{
+                      fontWeight: 400,
+                      fontSize: { xs: '14px', md: '24px' },
+                      lineHeight: { xs: '24px', md: '44px' },
+                      textAlign: 'center',
+                      color: '#000000',
+                    }}
+                  >
+                    {t(
+                      'Our mission is to empower environment educators with both hope and action in times of climate change.'
                     )}
                   </Typography>
                 </Box>

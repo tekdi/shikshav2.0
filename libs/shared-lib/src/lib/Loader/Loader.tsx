@@ -22,7 +22,6 @@ export const Loader: React.FC<LoaderProps> = memo(
       '/contents',
       '/searchpage',
       '/quick-access/contents/[category]',
-      '/contents/[identifier]',
     ];
     const noPaddingRoutes = ['/contents', '/quick-access/contents/[category]'];
     const paddingQuickAccess = [
