@@ -88,7 +88,7 @@ export const CommonCard: React.FC<CommonCardProps> = ({
           const result = TrackData?.find((e) => e.courseId === item.identifier);
           if (type === 'Course') {
             const leafNodes = getLeafNodes(item ?? []);
-            const completedCount = result?.completed_list?.length || 0;
+            const completedCount = result?.completed_list?.length ?? 0;
             const percentage =
               leafNodes.length > 0
                 ? Math.round((completedCount / leafNodes.length) * 100)
@@ -105,13 +105,12 @@ export const CommonCard: React.FC<CommonCardProps> = ({
     };
     init();
   }, [TrackData, item, type]);
-
   return (
     <Card
       sx={{
         display: 'flex',
         flexDirection: orientation === 'horizontal' ? 'column' : 'row',
-        height: minheight || 'auto',
+        height: minheight ?? 'auto',
         cursor: onClick ? 'pointer' : 'default',
         borderRadius: '12px',
         bgcolor: '#FEF7FF',
@@ -131,8 +130,8 @@ export const CommonCard: React.FC<CommonCardProps> = ({
         {image && (
           <CardMedia
             component="img"
-            image={image || '/assets/images/default.png'}
-            alt={imageAlt || 'Image'}
+            image={image ?? '/assets/images/default.png'}
+            alt={imageAlt ?? 'Image'}
             sx={{
               width: '100%',
               height: orientation === 'horizontal' ? '297px' : 'auto',

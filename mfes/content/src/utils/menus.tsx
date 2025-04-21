@@ -51,7 +51,11 @@ export const ProfileMenu = () => {
       {
         icon: <AccountCircleIcon />,
         ariaLabel: 'Profile',
-        onOptionClick: () => handleMenuClick('/mfe_registration/profile', true),
+        onOptionClick: () =>
+          handleMenuClick(
+            'http://localhost:4104/mfe_registration/profile',
+            true
+          ),
       },
       {
         icon: <ContentCopyIcon />,

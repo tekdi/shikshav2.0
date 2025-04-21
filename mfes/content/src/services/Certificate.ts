@@ -1,4 +1,5 @@
 import { post } from '@shared-lib';
+import axios from 'axios';
 
 export const getUserCertificateStatus = async ({
   userId,
@@ -29,7 +30,7 @@ export const createUserCertificateStatus = async ({
   courseId: string;
 }) => {
   const response = await post(
-    `${process.env.NEXT_PUBLIC_MIDDLEWARE_URL}/tracking/user_certificate/status/create`,
+    `${process.env.NEXT_PUBLIC_MIDDLEWARE_TRACKING_URL}/tracking/user_certificate/status/create`,
     {
       userId,
       courseId,
@@ -53,7 +54,7 @@ export const getUserCertificates = async ({
 }): Promise<any> => {
   try {
     // Ensure the environment variable is defined
-    const searchApiUrl = process.env.NEXT_PUBLIC_MIDDLEWARE_URL;
+    const searchApiUrl = process.env.NEXT_PUBLIC_MIDDLEWARE_TRACKING_URL;
     if (!searchApiUrl) {
       throw new Error('Search API URL environment variable is not configured');
     }
@@ -78,4 +79,72 @@ export const getUserCertificates = async ({
     console.error('Error in getUserCertificates:', error);
     throw error;
   }
+};
+
+export const courseUpdate = async ({
+  userId,
+  courseId,
+}: {
+  userId: string;
+  courseId: string;
+}) => {
+  const response = await post(
+    `${process.env.NEXT_PUBLIC_MIDDLEWARE_TRACKING_URL}/tracking/user_certificate/status/update`,
+    {
+      userId,
+      courseId,
+    },
+    {
+      tenantId: localStorage.getItem('tenantId') || '',
+      Authorization: `Bearer ${localStorage.getItem('accToken') || ''}`,
+    }
+  );
+  return response?.data ?? {};
+};
+
+export const courseIssue = async (data: any) => {
+  const response = await post(
+    `${process.env.NEXT_PUBLIC_MIDDLEWARE_TRACKING_URL}/tracking/certificate/issue`,
+    data,
+    {
+      tenantId: localStorage.getItem('tenantId') || '',
+      Authorization: `Bearer ${localStorage.getItem('accToken') || ''}`,
+    }
+  );
+  return response?.data ?? {};
+};
+export const getUserByToken = async (token: string): Promise<any> => {
+  const apiUrl = `${process.env.NEXT_PUBLIC_MIDDLEWARE_URL}/user/auth`;
+  try {
+    const response = await axios.get(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response?.data?.result;
+  } catch (error) {
+    console.error('error in fetching user details', error);
+    throw error;
+  }
+};
+
+export const showCertificate = async ({
+  credentialId,
+  templateId,
+}: {
+  credentialId: string;
+  templateId: string;
+}) => {
+  const response = await post(
+    `${process.env.NEXT_PUBLIC_MIDDLEWARE_TRACKING_URL}/tracking/certificate/render`,
+    {
+      credentialId,
+      templateId,
+    },
+    {
+      tenantId: localStorage.getItem('tenantId') || '',
+      Authorization: `Bearer ${localStorage.getItem('accToken') || ''}`,
+    }
+  );
+  return response?.data ?? {};
 };

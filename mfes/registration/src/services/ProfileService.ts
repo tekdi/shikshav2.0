@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { get, patch } from '@shared-lib';
-
+interface MyCourseDetailsProps {
+  token: string | null;
+  userId: string | null;
+}
 export const getUserId = async (): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_MIDDLEWARE_URL}/user/v1/auth`;
 
@@ -64,6 +67,60 @@ export const getUserByToken = async (token: string): Promise<any> => {
     return response?.data?.result;
   } catch (error) {
     console.error('error in fetching user details', error);
+    throw error;
+  }
+};
+
+export const myCourseDetails = async ({
+  token,
+  userId,
+}: MyCourseDetailsProps): Promise<any> => {
+  const apiUrl = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/interface/v1/tracking/user_certificate/status/search`;
+  try {
+    const response = await axios.post(
+      apiUrl,
+      {
+        filters: {
+          userId: userId,
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          tenantId: localStorage.getItem('tenantId') || '',
+        },
+      }
+    );
+    return response?.data;
+  } catch (error) {
+    console.error('error in reset', error);
+    throw error;
+  }
+};
+
+export const renderCertificate = async (
+  credentialId: string
+): Promise<string> => {
+  const apiUrl = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/interface/v1/tracking/certificate/render`;
+
+  try {
+    const response = await axios.post(
+      apiUrl,
+      {
+        credentialId,
+        templateId: 'cm99rsd380000pg0iift4she7', // You may make this dynamic if needed
+      },
+      {
+        headers: {
+          tenantId: localStorage.getItem('tenantId') || '',
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error('Error rendering certificate:', error);
     throw error;
   }
 };

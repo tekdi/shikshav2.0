@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getUserByToken } from '../../services/ProfileService';
+import { getUserByToken, myCourseDetails,renderCertificate } from '../../services/ProfileService';
 import { resetPasswordLink } from '../../services/LoginService';
 import {
   AlertTitle,
@@ -10,10 +10,19 @@ import {
   Card,
   Divider,
   Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Link
 } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import Grid from '@mui/material/Grid2';
 import { CommonTextField, Layout } from '@shared-lib';
+import axios from 'axios';
 
 export default function Profile() {
   const [user, setUser] = useState<any>(null);
@@ -26,6 +35,7 @@ export default function Profile() {
   const [currentPasswordNotMatched, setCurrentPasswordNotMatched] =
     useState(false);
   const [passwordResetLinkSent, setPasswordResetLinkSent] = useState(false);
+  const [courseDetails, setCourseDetails] = useState<any>(null);
   const URL_LOGIN = process.env.NEXT_PUBLIC_LOGIN;
 
   useEffect(() => {
@@ -55,6 +65,7 @@ export default function Profile() {
       }
     };
     fetchUser();
+    handleMyCourses();
   }, []);
 
   const handleResetPassword = async () => {
@@ -98,187 +109,139 @@ export default function Profile() {
       setError(err as string);
     }
   };
+  const handleMyCourses = async () => {
+    const token = localStorage.getItem('accToken');
+    if (token) {
+      const userId = localStorage.getItem('userId');
+      const detailsResponse = await myCourseDetails({
+        token,
+        userId,
+      });
+      setCourseDetails(detailsResponse?.result);
+      console.log('detailsResponse', detailsResponse);
+    }
+  };const handleViewTest = async (certificateId: string) => {
+    console.log("View Test clicked for course:", certificateId);
+  
+    try {
+      const response = await renderCertificate(certificateId);
+      console.log('Certificate HTML:', response);
+  
+      // You can now use the response (HTML) to open a modal, new tab, etc.
+      // Example: open in a new tab
+      const newWindow = window.open();
+      if (newWindow) {
+        newWindow.document.write(response);
+        newWindow.document.close();
+      }
+    } catch (error) {
+      console.error('Failed to render certificate:', error);
+    }
+  };
+
   console.log(user);
   return (
     <Layout
-      showTopAppBar={{
-        title: 'Profile',
-        showMenuIcon: false,
-        showBackIcon: true,
-        actionButtonLabel: 'Action',
-        backIconClick: () => window.history.back(),
-      }}
-      isLoadingChildren={loading}
-    >
-      <Box sx={{ p: 2 }}>
-        {error && (
-          <Alert severity="error">
-            <AlertTitle>Error</AlertTitle>
-            {error}
-          </Alert>
-        )}
-        <Card sx={{ p: 3, mb: 3 }}>
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12 }}>
-              <Typography variant="h4" gutterBottom>
-                User Profile
-              </Typography>
-              <Divider sx={{ my: 2 }} />
-            </Grid>
-            <Grid
-              size={{ xs: 12 }}
-              sx={{
-                display: 'flex',
-                gap: '8px',
-                alignItems: 'center',
-              }}
-            >
-              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                Name:
-              </Typography>
-              <Typography variant="body1">
-                {[user?.firstName, user?.middleName, user?.lastName]
-                  .filter(Boolean)
-                  .join(' ')}
-              </Typography>
-            </Grid>
-            <Grid
-              size={{ xs: 12 }}
-              sx={{
-                display: 'flex',
-                gap: '8px',
-                alignItems: 'center',
-              }}
-            >
-              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                Username:
-              </Typography>
-              <Typography variant="body1">{user?.username}</Typography>
-            </Grid>
-            <Grid
-              size={{ xs: 12 }}
-              sx={{
-                display: 'flex',
-                gap: '8px',
-                alignItems: 'center',
-              }}
-            >
-              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                Gender:
-              </Typography>
-              <Typography variant="body1">{user?.gender}</Typography>
-            </Grid>
-            <Grid
-              size={{ xs: 12 }}
-              sx={{
-                display: 'flex',
-                gap: '8px',
-                alignItems: 'center',
-              }}
-            >
-              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                Temporary Password:
-              </Typography>
-              <Typography variant="body1">
-                {user?.temporaryPassword ? 'Yes' : 'No'}
-              </Typography>
-            </Grid>
-            <Grid
-              size={{ xs: 12 }}
-              sx={{
-                display: 'flex',
-                gap: '8px',
-                alignItems: 'center',
-              }}
-            >
-              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                Tenant Name:
-              </Typography>
-              <Typography variant="body1">
-                {user?.tenantData?.[0]?.tenantName}
-              </Typography>
-            </Grid>
-            <Grid
-              size={{ xs: 12 }}
-              sx={{
-                display: 'flex',
-                gap: '8px',
-                alignItems: 'center',
-              }}
-            >
-              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                Role Name:
-              </Typography>
-              <Typography variant="body1">
-                {user?.tenantData?.[0]?.roleName}
-              </Typography>
-            </Grid>
-          </Grid>
-        </Card>
-        <Card sx={{ p: 3, mb: 3 }}>
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12 }}>
-              <Typography variant="h4" gutterBottom>
-                Reset Password
-              </Typography>
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              <CommonTextField
-                type="password"
-                label="New Password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                fullWidth
-              />
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              <CommonTextField
-                type="password"
-                label="Confirm New Password"
-                value={confirmNewPassword}
-                onChange={(e) => setConfirmNewPassword(e.target.value)}
-                fullWidth
-              />
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleResetPassword}
-                sx={{ mt: 2, mr: 2 }}
+    showTopAppBar={{
+      title: 'Profile',
+      showMenuIcon: false,
+      showBackIcon: true,
+      actionButtonLabel: 'Action',
+      backIconClick: () => window.history.back(),
+    }}
+    isLoadingChildren={loading}
+  >
+   <Box sx={{ p: 3 }}>
+  {error && (
+    <Alert severity="error" sx={{ mb: 2 }}>
+      <AlertTitle>Error</AlertTitle>
+      {error}
+    </Alert>
+  )}
+
+  {/* Profile Card */}
+  <Card sx={{ p: 4, mb: 4, borderRadius: 3, boxShadow: 3 }}>
+    <Typography variant="h5" fontWeight="bold" gutterBottom color="black">
+      👤 User Profile
+    </Typography>
+    <Divider sx={{ mb: 3 }} />
+    <Grid container spacing={2}>
+      <Grid xs={12} sm={6}>
+        <Typography variant="subtitle2" color="text.secondary">Name</Typography>
+        <Typography variant="body1">
+          {[user?.firstName, user?.middleName, user?.lastName].filter(Boolean).join(' ')}
+        </Typography>
+      </Grid>
+      <Grid xs={12} sm={6}>
+        <Typography variant="subtitle2" color="text.secondary">Username</Typography>
+        <Typography variant="body1">{user?.username}</Typography>
+      </Grid>
+      <Grid xs={12} sm={6}>
+        <Typography variant="subtitle2" color="text.secondary">Gender</Typography>
+        <Typography variant="body1">{user?.gender}</Typography>
+      </Grid>
+      <Grid xs={12} sm={6}>
+        <Typography variant="subtitle2" color="text.secondary">Tenant</Typography>
+        <Typography variant="body1">{user?.tenantData?.[0]?.tenantName}</Typography>
+      </Grid>
+      <Grid xs={12} sm={6}>
+        <Typography variant="subtitle2" color="text.secondary">Role</Typography>
+        <Typography variant="body1">{user?.tenantData?.[0]?.roleName}</Typography>
+      </Grid>
+    </Grid>
+  </Card>
+
+  {/* Courses Card */}
+  <Card sx={{ p: 4, borderRadius: 3, boxShadow: 3 }}>
+    <Typography variant="h5" fontWeight="bold" gutterBottom color="black">
+      📘 My Courses
+    </Typography>
+    <Divider sx={{ mb: 3 }} />
+    {courseDetails?.data?.length > 0 ? (
+      <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell sx={{ fontWeight: 'bold' }}>Course ID</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>View</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {courseDetails?.data?.map((course: any) => (
+              <TableRow
+                key={course.usercertificateId}
+                hover
+                sx={{ transition: '0.3s', '&:hover': { backgroundColor: '#f9f9f9' } }}
               >
-                Send Reset Password Link
-              </Button>
-              {passwordResetLinkSent && (
-                <Alert severity="success" sx={{ mt: 2 }}>
-                  <AlertTitle>Success</AlertTitle>
-                  Password reset link sent
-                </Alert>
-              )}
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleUpdatePassword}
-                sx={{ mt: 2 }}
+                <TableCell>{course.courseId}</TableCell>
+                <TableCell>{course.status}</TableCell>
+                <TableCell>
+            {course.status?.toLowerCase() === 'completed' ? (
+              <Link
+                component="button"
+                variant="body2"
+                underline="hover"
+                onClick={() => handleViewTest(course.usercertificateId)}
               >
-                Update Password
-              </Button>
-              {passwordSameAsOld && (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                  <AlertTitle>Error</AlertTitle>
-                  Password same as old
-                </Alert>
-              )}
-              {currentPasswordNotMatched && (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                  <AlertTitle>Error</AlertTitle>
-                  Current Password Not Matched
-                </Alert>
-              )}
-            </Grid>
-          </Grid>
-        </Card>
-      </Box>
-    </Layout>
+                View Certificate
+              </Link>
+            ) : (
+              <Typography variant="body2" color="text.secondary">—</Typography>
+            )}
+          </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    ) : (
+      <Typography variant="body2" color="text.secondary">
+        No course data found.
+      </Typography>
+    )}
+  </Card>
+</Box>
+  </Layout>
   );
 }

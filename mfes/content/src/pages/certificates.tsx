@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { getUserCertificates } from '../services/Certificate';
+import { getUserCertificates, showCertificate } from '../services/Certificate';
 import { CommonCard, ContentItem, Layout } from '@shared-lib';
 import AppConst from '../utils/AppConst/AppConst';
 import { ProfileMenu } from '../utils/menus';
@@ -28,6 +28,7 @@ const CertificatesPage = () => {
       if (result) {
         setCertificates((prev) => [...prev, ...result.data]);
       }
+      console.log('response', result.data);
       setHasMoreData(response.result?.data.length > 0);
       setIsPageLoading(false);
     };
@@ -37,7 +38,13 @@ const CertificatesPage = () => {
   const handleLoadMore = () => {
     setOffset((prev) => prev + 3);
   };
-
+  const handleShowCertificateClick = async (item: any) => {
+    const showCertificateData = await showCertificate({
+      credentialId: item?.certificateId,
+      templateId: item?.usercertificateId,
+    });
+    console.log('showCertificateData', showCertificateData);
+  };
   return (
     <Layout
       isLoadingChildren={isPageLoading}
@@ -71,7 +78,7 @@ const CertificatesPage = () => {
                 item={item}
                 TrackData={[]}
                 type={'Course'}
-                // onClick={() => handleCardClick(item)}
+                onClick={() => handleShowCertificateClick(item)}
               />
             </Grid>
           ))}

@@ -56,7 +56,7 @@ export default function Content(props: Readonly<ContentProps>) {
     const tenantId = getCookie('tenantId');
     const userId = getCookie('userId');
     const redirectPath = getCookie('postLoginRedirect');
-
+    const channel = getCookie('tenant-code');
     if (token !== null) {
       localStorage.setItem('accToken', token);
     }
@@ -68,6 +68,9 @@ export default function Content(props: Readonly<ContentProps>) {
     }
     if (redirectPath !== null) {
       router.push(redirectPath);
+    }
+    if (channel !== null) {
+      localStorage.setItem('tenant-code', channel);
     }
     const init = async () => {
       const newData = await getData('mfes_content_pages_content');

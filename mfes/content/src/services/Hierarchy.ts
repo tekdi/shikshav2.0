@@ -123,7 +123,7 @@ export const hierarchyAPI = async (
       url: `${searchApiUrl}/interface/v1/action/content/v3/hierarchy/${doId}`,
       headers: {
         Authorization: `Bearer ${localStorage.getItem('accToken')}`,
-        'X-Channel-Id': localStorage.getItem('tenantId'), // Replace with your actual tenantId
+        tenantId: localStorage.getItem('tenantId'), // Replace with your actual tenantId
       },
     };
 

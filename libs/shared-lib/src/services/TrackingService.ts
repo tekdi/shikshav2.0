@@ -6,7 +6,7 @@ export const trackingData = (subIds: string[], courseIds: string[]) => {
     courseId: courseIds,
   });
 
-  const trackingApiUrl = process.env.NEXT_PUBLIC_TRACKING_BASE_URL;
+  const trackingApiUrl = process.env.NEXT_PUBLIC_MIDDLEWARE_TRACKING_URL;
 
   if (!trackingApiUrl) {
     console.error('Tracking API URL is not defined in environment variables.');

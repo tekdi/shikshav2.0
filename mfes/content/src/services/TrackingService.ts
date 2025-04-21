@@ -6,7 +6,7 @@ export const trackingData = (subIds: string[], courseIds: string[]) => {
     courseId: courseIds,
   });
 
-  const trackingApiUrl = process.env.NEXT_PUBLIC_MIDDLEWARE_URL;
+  const trackingApiUrl = process.env.NEXT_PUBLIC_MIDDLEWARE_TRACKING_URL;
 
   if (!trackingApiUrl) {
     console.error('Tracking API URL is not defined in environment variables.');
@@ -16,7 +16,7 @@ export const trackingData = (subIds: string[], courseIds: string[]) => {
   const config: AxiosRequestConfig = {
     method: 'post',
     maxBodyLength: Infinity,
-    url: `${trackingApiUrl}/tracking/user_certificate/status/update`,
+    url: `${trackingApiUrl}/tracking/content/course/status`,
     headers: {
       'Content-Type': 'application/json',
       tenantId: localStorage.getItem('tenantId') || '',

@@ -11,6 +11,7 @@ import { fetchContent } from '../../services/Read';
 import AppConst from '../../utils/AppConst/AppConst';
 import Image from 'next/image';
 import {
+  courseUpdate,
   createUserCertificateStatus,
   getUserCertificateStatus,
 } from '../../services/Certificate';
@@ -36,18 +37,18 @@ const ContentDetails = () => {
     const fetchContentDetails = async () => {
       try {
         const result = await fetchContent(identifier as string);
-        // const data = await getUserCertificateStatus({
-        //   userId: localStorage.getItem('userId') || '',
-        //   courseId: identifier as string,
-        // });
-        // if (
-        //   data?.result?.status === 'enrolled' ||
-        //   data?.result?.status === 'completed'
-        // ) {
-        //   router.replace(`/details/${identifier}`);
-        // } else {
-        setContentDetails(result);
-        // }
+        const data = await getUserCertificateStatus({
+          userId: localStorage.getItem('userId') || '',
+          courseId: identifier as string,
+        });
+        if (
+          data?.result?.status === 'enrolled' ||
+          data?.result?.status === 'completed'
+        ) {
+          router.replace(`/details/${identifier}`);
+        } else {
+          setContentDetails(result);
+        }
       } catch (error) {
         console.error('Failed to fetch content:', error);
       } finally {
@@ -63,11 +64,23 @@ const ContentDetails = () => {
 
   const handleClick = async () => {
     try {
-      // await createUserCertificateStatus({
-      //   userId: localStorage.getItem('userId') || '',
-      //   courseId: identifier as string,
-      // });
-      router.replace(`/player/${identifier}`);
+      const data = await createUserCertificateStatus({
+        userId: localStorage.getItem('userId') || '',
+        courseId: identifier as string,
+      });
+      console.log('createUserCertificateStatus', data);
+
+      // if (data) {
+      //   const updateCourseData = await courseUpdate({
+      //     userId: localStorage.getItem('userId') || '',
+      //     courseId: identifier as string,
+      //   });
+      //   console.log('updateCourseData', updateCourseData);
+      // if (updateCourseData) {
+      //   router.push(`/details/${identifier}`);
+      // }
+      router.replace(`/details/${identifier}`);
+      // }
     } catch (error) {
       console.error('Failed to create user certificate:', error);
     }

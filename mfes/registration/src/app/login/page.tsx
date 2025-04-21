@@ -69,13 +69,13 @@ export default function Login() {
     };
 
   const handleButtonClick = async () => {
-    if (!formData.userName || !formData.password) {
-      setError({
-        userName: !formData.userName,
-        password: !formData.password,
-      });
-      return;
-    }
+    // if (!formData.userName || !formData.password) {
+    //   setError({
+    //     userName: !formData.userName,
+    //     password: !formData.password,
+    //   });
+    //   return;
+    // }
     setLoading(true);
     try {
       const {
@@ -89,7 +89,6 @@ export default function Login() {
       const tenantInfo = info.find(
         (tenant: any) => tenant.tenantId === authUser?.tenantData?.[0]?.tenantId
       );
-
       if (
         response?.access_token &&
         authUser?.tenantData?.[0]?.tenantId &&
@@ -107,6 +106,8 @@ export default function Login() {
         document.cookie = `subid=${authUser?.userId}; path=/;`;
         document.cookie = `token=${response?.access_token}; path=/;`;
         document.cookie = `tenantId=${authUser?.tenantData?.[0]?.tenantId}; path=/;`;
+        document.cookie = `userId=${authUser?.userId}; path=/;`;
+        document.cookie = `tenant-code=${channel}; path=/;`;
 
         const redirectUrl = process.env.NEXT_PUBLIC_CONTENT;
 

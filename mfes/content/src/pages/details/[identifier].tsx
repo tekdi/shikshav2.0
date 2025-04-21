@@ -7,6 +7,11 @@ import CommonCollapse from '../../components/CommonCollapse'; // Adjust the impo
 import { hierarchyAPI } from '../../services/Hierarchy';
 import { trackingData } from '../../services/TrackingService';
 import { ProfileMenu } from '../../utils/menus';
+import {
+  courseIssue,
+  courseUpdate,
+  getUserByToken,
+} from '../../services/Certificate';
 
 interface DetailsProps {
   details: any;
@@ -18,6 +23,7 @@ export default function Details({ details }: DetailsProps) {
   const [trackData, setTrackData] = useState([]);
   const [selectedContent, setSelectedContent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     const getDetails = async (identifier: string) => {
@@ -42,6 +48,39 @@ export default function Details({ details }: DetailsProps) {
               course_track_data.data.find(
                 (course: any) => course.userId === userId
               )?.course || [];
+            console.log('userTrackData', userTrackData);
+            if (userTrackData.length > 0) {
+              // userTrackData[0].status = 'Completed';
+              const updateCourseData = await courseUpdate({
+                userId: localStorage.getItem('userId') || '',
+                courseId: identifier as string,
+              });
+              const accessToken = localStorage.getItem('accToken');
+
+              if (updateCourseData?.result?.status === 'completed') {
+                if (accessToken) {
+                  const response = await getUserByToken(accessToken);
+                  setUser(response);
+                  console.log('setUser', response);
+                  const today = new Date();
+                  const expiration = new Date();
+                  expiration.setDate(today.getDate() + 8);
+                  const payload = {
+                    issuanceDate: new Date().toISOString(),
+                    expirationDate: expiration.toISOString(),
+                    credentialId: '12345',
+                    firstName: response?.firstName,
+                    middleName: response?.middleName,
+                    lastName: response?.lastName,
+                    userId: updateCourseData?.result?.usercertificateId ?? '',
+                    courseId: updateCourseData?.result?.courseId ?? '',
+                    courseName: 'course',
+                  };
+                  // const issueCertificateData = await courseIssue(payload);
+                  // console.log('issueCertificateData', issueCertificateData);
+                }
+              }
+            }
             setTrackData(userTrackData);
           }
         } catch (error) {
