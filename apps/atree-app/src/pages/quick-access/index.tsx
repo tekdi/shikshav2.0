@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import Layout from '../../component/layout/layout';
 import FolderComponent from '../../component/FolderComponent';
 import { useRouter } from 'next/router';
-
+import FooterText from '../../component/FooterText';
+import { useMediaQuery, useTheme } from '@mui/material';
 const MyComponent: React.FC = () => {
   const router = useRouter();
   const [categories, setCategories] = useState<Array<any>>([]);
   const [isLoadingChildren, setIsLoadingChildren] = useState(true);
-
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   useEffect(() => {
     const init = async () => {
       const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
@@ -48,7 +50,12 @@ const MyComponent: React.FC = () => {
   };
 
   return (
-    <Layout isLoadingChildren={isLoadingChildren} backTitle={'Quick Access'}>
+    <Layout
+      isLoadingChildren={isLoadingChildren}
+      backTitle={'Quick Access'}
+      isFooter={isMobile} // add this when on mobile
+      footerComponent={!isMobile ? <FooterText page="" /> : undefined}
+    >
       <FolderComponent
         categories={categories}
         onClick={handleClick}

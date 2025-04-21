@@ -2,13 +2,16 @@ import React, { useEffect, useState } from 'react';
 import Layout from '../../component/layout/layout';
 import FolderComponent from '../../component/FolderComponent';
 import { useRouter } from 'next/router';
-import { Typography } from '@mui/material';
+import { Typography, useMediaQuery, useTheme } from '@mui/material';
 import { ContentSearch } from '@shared-lib';
+import FooterText from '../../component/FooterText';
 interface Term {
   name: string;
   associations: any[];
 }
 const MyComponent: React.FC = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [categories, setCategories] = useState<Array<any>>([]);
   const [isLoadingChildren, setIsLoadingChildren] = useState(true);
   const router = useRouter();
@@ -68,6 +71,8 @@ const MyComponent: React.FC = () => {
   return (
     <Layout
       isLoadingChildren={isLoadingChildren}
+      isFooter={isMobile} // add this when on mobile
+      footerComponent={!isMobile ? <FooterText page="" /> : undefined}
       _backButton={{ alignItems: 'center' }}
       backTitle={
         <Typography

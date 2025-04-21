@@ -40,16 +40,32 @@ export default function Searchpage() {
   }, [selectedType]);
 
   return (
-    <Layout footerComponent={<FooterText page={''} />}>
-      <Box display="flex" flexDirection="column" gap="1rem" py="1rem" px="14px">
+    <Layout
+      isFooter={isMobile} // add this when on mobile
+      footerComponent={!isMobile ? <FooterText page="" /> : undefined}
+    >
+      <Box
+        display="flex"
+        flexDirection="column"
+        gap="1rem"
+        py="1rem"
+        px="14px"
+        sx={{ width: 'fit-content' }}
+      >
         <IconButton
-          onClick={() => router.back()}
+          onClick={(e) => {
+            e.stopPropagation(); // prevent bubbling to parent
+            router.back();
+          }}
           sx={{
-            justifyContent: 'flex-start',
-            padding: '0px',
+            width: 'fit-content',
+            height: 'fit-content',
+            padding: '4px',
+            alignSelf: 'flex-start',
             backgroundColor: 'transparent',
+            borderRadius: '50%',
             '&:hover': {
-              backgroundColor: 'transparent',
+              backgroundColor: 'rgba(0,0,0,0.04)', // Optional: subtle feedback
             },
             '&:focus': {
               outline: 'none',

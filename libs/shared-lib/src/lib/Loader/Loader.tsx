@@ -21,39 +21,46 @@ export const Loader: React.FC<LoaderProps> = memo(
       '/home',
       '/contents',
       '/searchpage',
-    ];
-    const noPaddingRoutes = [
-      '/contents',
-      // '/searchpage',
       '/quick-access/contents/[category]',
+      '/contents/[identifier]',
     ];
+    const noPaddingRoutes = ['/contents', '/quick-access/contents/[category]'];
     const paddingQuickAccess = [
       '/quick-access',
       '/quick-access/[category]',
-
       '/contents/[identifier]',
     ];
+
     const shouldUnsetHeight = noHeightRoutes.includes(router.pathname);
     const shouldUnsetPadding = noPaddingRoutes.includes(router.pathname);
     const shouldAddPadding = paddingQuickAccess.includes(router.pathname);
     const shouldSkipPadding = router.asPath === '/searchpage';
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    let paddingTop: string;
+    let paddingTop = '97px';
 
-    if (shouldSkipPadding) {
-      paddingTop = '96px';
-    } else if (shouldAddPadding) {
-      paddingTop = '160px';
-    } else if (shouldUnsetPadding && !isMobile) {
-      paddingTop = '54px';
-    } else if (isMobile && !shouldUnsetPadding) {
-      paddingTop = '76px';
-    } else if (isMobile && shouldUnsetPadding) {
-      paddingTop = '34px';
+    if (isMobile) {
+      if (shouldSkipPadding) {
+        paddingTop = '96px';
+      } else if (shouldUnsetPadding) {
+        paddingTop = '34px';
+      } else if (shouldUnsetHeight) {
+        paddingTop = '64px';
+      } else if (shouldAddPadding) {
+        paddingTop = '130px';
+      } else {
+        paddingTop = '76px';
+      }
     } else {
-      paddingTop = '96px';
+      if (shouldSkipPadding) {
+        paddingTop = '96px';
+      } else if (shouldAddPadding) {
+        paddingTop = '160px';
+      } else if (shouldUnsetPadding) {
+        paddingTop = '54px';
+      }
     }
+
     return (
       <Box>
         {isLoading && (
@@ -91,9 +98,10 @@ export const Loader: React.FC<LoaderProps> = memo(
             width: '100%',
             overflowY: 'auto',
             display: isLoading ? 'none' : 'block',
-            height: shouldUnsetHeight
-              ? 'auto'
-              : `calc(100vh - ${layoutHeight}px)`,
+            height:
+              shouldUnsetHeight && !isMobile
+                ? 'auto'
+                : `calc(100vh - ${layoutHeight}px)`,
             paddingTop: paddingTop,
           }}
         >
