@@ -10,7 +10,7 @@ export default function Aboutus() {
   return (
     <Layout
       isFooter={isMobile} // add this when on mobile
-      footerComponent={!isMobile ? <FooterText page="" /> : undefined}
+      footerComponent={  <FooterText page="" />}
     >
       <Banner />
       <Grid
