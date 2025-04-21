@@ -29,6 +29,9 @@ export const createUserCertificateStatus = async ({
   userId: string;
   courseId: string;
 }) => {
+  if (typeof window === 'undefined') {
+    throw new Error('Cannot access localStorage in server environment');
+  }
   const response = await post(
     `${process.env.NEXT_PUBLIC_MIDDLEWARE_TRACKING_URL}/tracking/user_certificate/status/create`,
     {
@@ -88,6 +91,9 @@ export const courseUpdate = async ({
   userId: string;
   courseId: string;
 }) => {
+  if (typeof window === 'undefined') {
+    throw new Error('Cannot access localStorage in server environment');
+  }
   const response = await post(
     `${process.env.NEXT_PUBLIC_MIDDLEWARE_TRACKING_URL}/tracking/user_certificate/status/update`,
     {
@@ -102,7 +108,14 @@ export const courseUpdate = async ({
   return response?.data ?? {};
 };
 
-export const courseIssue = async (data: any) => {
+export const courseIssue = async (data: {
+  userId: string;
+  courseId: string;
+  [key: string]: any;
+}) => {
+  if (typeof window === 'undefined') {
+    throw new Error('Cannot access localStorage in server environment');
+  }
   const response = await post(
     `${process.env.NEXT_PUBLIC_MIDDLEWARE_TRACKING_URL}/tracking/certificate/issue`,
     data,
@@ -135,6 +148,9 @@ export const showCertificate = async ({
   credentialId: string;
   templateId: string;
 }) => {
+  if (typeof window === 'undefined') {
+    throw new Error('Cannot access localStorage in a server environment');
+  }
   const response = await post(
     `${process.env.NEXT_PUBLIC_MIDDLEWARE_TRACKING_URL}/tracking/certificate/render`,
     {

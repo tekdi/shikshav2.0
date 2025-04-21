@@ -1,12 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getUserByToken, myCourseDetails,renderCertificate } from '../../services/ProfileService';
+import {
+  getUserByToken,
+  myCourseDetails,
+  renderCertificate,
+} from '../../services/ProfileService';
 import { resetPasswordLink } from '../../services/LoginService';
 import {
   AlertTitle,
   Box,
-  Button,
   Card,
   Divider,
   Typography,
@@ -17,12 +20,11 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Link
+  Link,
 } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import Grid from '@mui/material/Grid2';
-import { CommonTextField, Layout } from '@shared-lib';
-import axios from 'axios';
+import { Layout } from '@shared-lib';
 
 export default function Profile() {
   const [user, setUser] = useState<any>(null);
@@ -120,16 +122,22 @@ export default function Profile() {
       setCourseDetails(detailsResponse?.result);
       console.log('detailsResponse', detailsResponse);
     }
-  };const handleViewTest = async (certificateId: string) => {
-    console.log("View Test clicked for course:", certificateId);
-  
+  };
+  const handleViewTest = async (certificateId: string) => {
+    console.log('View Test clicked for course:', certificateId);
+
     try {
       const response = await renderCertificate(certificateId);
       console.log('Certificate HTML:', response);
-  
+
       // You can now use the response (HTML) to open a modal, new tab, etc.
       // Example: open in a new tab
-      const newWindow = window.open();
+      const blob = new Blob([response], { type: 'text/html' });
+      const newWindow = window.open(
+        URL.createObjectURL(blob),
+        '_blank',
+        'noopener'
+      );
       if (newWindow) {
         newWindow.document.write(response);
         newWindow.document.close();
@@ -142,106 +150,129 @@ export default function Profile() {
   console.log(user);
   return (
     <Layout
-    showTopAppBar={{
-      title: 'Profile',
-      showMenuIcon: false,
-      showBackIcon: true,
-      actionButtonLabel: 'Action',
-      backIconClick: () => window.history.back(),
-    }}
-    isLoadingChildren={loading}
-  >
-   <Box sx={{ p: 3 }}>
-  {error && (
-    <Alert severity="error" sx={{ mb: 2 }}>
-      <AlertTitle>Error</AlertTitle>
-      {error}
-    </Alert>
-  )}
+      showTopAppBar={{
+        title: 'Profile',
+        showMenuIcon: false,
+        showBackIcon: true,
+        actionButtonLabel: 'Action',
+        backIconClick: () => window.history.back(),
+      }}
+      isLoadingChildren={loading}
+    >
+      <Box sx={{ p: 3 }}>
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            <AlertTitle>Error</AlertTitle>
+            {error}
+          </Alert>
+        )}
 
-  {/* Profile Card */}
-  <Card sx={{ p: 4, mb: 4, borderRadius: 3, boxShadow: 3 }}>
-    <Typography variant="h5" fontWeight="bold" gutterBottom color="black">
-      👤 User Profile
-    </Typography>
-    <Divider sx={{ mb: 3 }} />
-    <Grid container spacing={2}>
-      <Grid xs={12} sm={6}>
-        <Typography variant="subtitle2" color="text.secondary">Name</Typography>
-        <Typography variant="body1">
-          {[user?.firstName, user?.middleName, user?.lastName].filter(Boolean).join(' ')}
-        </Typography>
-      </Grid>
-      <Grid xs={12} sm={6}>
-        <Typography variant="subtitle2" color="text.secondary">Username</Typography>
-        <Typography variant="body1">{user?.username}</Typography>
-      </Grid>
-      <Grid xs={12} sm={6}>
-        <Typography variant="subtitle2" color="text.secondary">Gender</Typography>
-        <Typography variant="body1">{user?.gender}</Typography>
-      </Grid>
-      <Grid xs={12} sm={6}>
-        <Typography variant="subtitle2" color="text.secondary">Tenant</Typography>
-        <Typography variant="body1">{user?.tenantData?.[0]?.tenantName}</Typography>
-      </Grid>
-      <Grid xs={12} sm={6}>
-        <Typography variant="subtitle2" color="text.secondary">Role</Typography>
-        <Typography variant="body1">{user?.tenantData?.[0]?.roleName}</Typography>
-      </Grid>
-    </Grid>
-  </Card>
+        {/* Profile Card */}
+        <Card sx={{ p: 4, mb: 4, borderRadius: 3, boxShadow: 3 }}>
+          <Typography variant="h5" fontWeight="bold" gutterBottom color="black">
+            👤 User Profile
+          </Typography>
+          <Divider sx={{ mb: 3 }} />
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Typography variant="subtitle2" color="text.secondary">
+                Name
+              </Typography>
+              <Typography variant="body1">
+                {[user?.firstName, user?.middleName, user?.lastName]
+                  .filter(Boolean)
+                  .join(' ')}
+              </Typography>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Typography variant="subtitle2" color="text.secondary">
+                Username
+              </Typography>
+              <Typography variant="body1">{user?.username}</Typography>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Typography variant="subtitle2" color="text.secondary">
+                Gender
+              </Typography>
+              <Typography variant="body1">{user?.gender}</Typography>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Typography variant="subtitle2" color="text.secondary">
+                Tenant
+              </Typography>
+              <Typography variant="body1">
+                {user?.tenantData?.[0]?.tenantName}
+              </Typography>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Typography variant="subtitle2" color="text.secondary">
+                Role
+              </Typography>
+              <Typography variant="body1">
+                {user?.tenantData?.[0]?.roleName}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Card>
 
-  {/* Courses Card */}
-  <Card sx={{ p: 4, borderRadius: 3, boxShadow: 3 }}>
-    <Typography variant="h5" fontWeight="bold" gutterBottom color="black">
-      📘 My Courses
-    </Typography>
-    <Divider sx={{ mb: 3 }} />
-    {courseDetails?.data?.length > 0 ? (
-      <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ fontWeight: 'bold' }}>Course ID</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>View</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {courseDetails?.data?.map((course: any) => (
-              <TableRow
-                key={course.usercertificateId}
-                hover
-                sx={{ transition: '0.3s', '&:hover': { backgroundColor: '#f9f9f9' } }}
-              >
-                <TableCell>{course.courseId}</TableCell>
-                <TableCell>{course.status}</TableCell>
-                <TableCell>
-            {course.status?.toLowerCase() === 'completed' ? (
-              <Link
-                component="button"
-                variant="body2"
-                underline="hover"
-                onClick={() => handleViewTest(course.usercertificateId)}
-              >
-                View Certificate
-              </Link>
-            ) : (
-              <Typography variant="body2" color="text.secondary">—</Typography>
-            )}
-          </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    ) : (
-      <Typography variant="body2" color="text.secondary">
-        No course data found.
-      </Typography>
-    )}
-  </Card>
-</Box>
-  </Layout>
+        {/* Courses Card */}
+        <Card sx={{ p: 4, borderRadius: 3, boxShadow: 3 }}>
+          <Typography variant="h5" fontWeight="bold" gutterBottom color="black">
+            📘 My Courses
+          </Typography>
+          <Divider sx={{ mb: 3 }} />
+          {courseDetails?.data?.length > 0 ? (
+            <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Course ID</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>View</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {courseDetails?.data?.map((course: any) => (
+                    <TableRow
+                      key={course.usercertificateId}
+                      hover
+                      sx={{
+                        transition: '0.3s',
+                        '&:hover': { backgroundColor: '#f9f9f9' },
+                      }}
+                    >
+                      <TableCell>{course.courseId}</TableCell>
+                      <TableCell>{course.status}</TableCell>
+                      <TableCell>
+                        {course.status?.toLowerCase() === 'completed' ? (
+                          <Link
+                            component="button"
+                            variant="body2"
+                            underline="hover"
+                            onClick={() =>
+                              handleViewTest(course.usercertificateId)
+                            }
+                          >
+                            View Certificate
+                          </Link>
+                        ) : (
+                          <Typography variant="body2" color="text.secondary">
+                            —
+                          </Typography>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Typography variant="body2" color="text.secondary">
+              No course data found.
+            </Typography>
+          )}
+        </Card>
+      </Box>
+    </Layout>
   );
 }

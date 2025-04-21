@@ -10,7 +10,7 @@ export const ProfileMenu = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const handleMenuClick = (item: any, hardRedirect?: any) => {
+  const handleMenuClick = (item: string, hardRedirect?: boolean) => {
     if (hardRedirect && item != '') {
       window.location.href = item;
     } else if (item != '') {

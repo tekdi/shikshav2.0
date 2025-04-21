@@ -104,8 +104,16 @@ export default function Login() {
         localStorage.setItem('tenant-code', channel);
         localStorage.setItem('tenantId', authUser?.tenantData?.[0]?.tenantId);
         document.cookie = `subid=${authUser?.userId}; path=/;`;
-        document.cookie = `token=${response?.access_token}; path=/;`;
-        document.cookie = `tenantId=${authUser?.tenantData?.[0]?.tenantId}; path=/;`;
+        document.cookie = `token=${
+          response?.access_token
+        }; path=/; SameSite=Strict; ${
+          window.location.protocol === 'https:' ? 'Secure;' : ''
+        }`;
+        document.cookie = `tenantId=${
+          authUser?.tenantData?.[0]?.tenantId
+        }; path=/; SameSite=Strict; ${
+          window.location.protocol === 'https:' ? 'Secure;' : ''
+        }`;
         document.cookie = `userId=${authUser?.userId}; path=/;`;
         document.cookie = `tenant-code=${channel}; path=/;`;
 

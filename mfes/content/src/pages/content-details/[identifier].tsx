@@ -37,8 +37,13 @@ const ContentDetails = () => {
     const fetchContentDetails = async () => {
       try {
         const result = await fetchContent(identifier as string);
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+          setContentDetails(result);
+          return;
+        }
         const data = await getUserCertificateStatus({
-          userId: localStorage.getItem('userId') || '',
+          userId: userId,
           courseId: identifier as string,
         });
         if (

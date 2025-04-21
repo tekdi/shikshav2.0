@@ -19,18 +19,24 @@ const CertificatesPage = () => {
 
   useEffect(() => {
     const fetchCertificates = async () => {
-      const response = await getUserCertificates({
-        userId: localStorage.getItem('userId') || '',
-        limit: 3,
-        offset,
-      });
-      const { result } = response;
-      if (result) {
-        setCertificates((prev) => [...prev, ...result.data]);
+      try {
+        const response = await getUserCertificates({
+          userId: localStorage.getItem('userId') || '',
+          limit: 3,
+          offset,
+        });
+        const { result } = response;
+        if (result) {
+          setCertificates((prev) => [...prev, ...result.data]);
+        }
+        console.log('response', result.data);
+        setHasMoreData(response.result?.data.length > 0);
+        setIsPageLoading(false);
+      } catch (error) {
+        console.error('Failed to fetch certificates:', error);
+      } finally {
+        setIsPageLoading(false);
       }
-      console.log('response', result.data);
-      setHasMoreData(response.result?.data.length > 0);
-      setIsPageLoading(false);
     };
     fetchCertificates();
   }, [offset]);
@@ -69,7 +75,7 @@ const CertificatesPage = () => {
                 image={
                   item?.posterImage && item?.posterImage !== 'undefined'
                     ? item?.posterImage
-                    : `${AppConst.BASEPATH}/assests/images/image_ver.png`
+                    : `${AppConst.BASEPATH}/assets/images/image_ver.png`
                 }
                 content={item?.description || '-'}
                 actions={item?.contentType}

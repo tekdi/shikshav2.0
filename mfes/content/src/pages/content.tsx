@@ -67,7 +67,7 @@ export default function Content(props: Readonly<ContentProps>) {
       localStorage.setItem('userId', userId);
     }
     if (redirectPath !== null) {
-      router.push(redirectPath);
+      router.push(decodeURIComponent(redirectPath));
     }
     if (channel !== null) {
       localStorage.setItem('tenant-code', channel);

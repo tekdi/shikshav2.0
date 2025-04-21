@@ -42,8 +42,11 @@ const Players: React.FC<SunbirdPlayerProps> = ({
     if (!tenantId || !accToken) {
       // Save current URL to redirect after login
       const redirectUrl = window.location.href;
-      console.log('postLoginRedirect', redirectUrl);
-      document.cookie = `postLoginRedirect=${redirectUrl}; path=/;`;
+      if (!document.cookie.includes('postLoginRedirect=')) {
+        const secure = window.location.protocol === 'https:' ? '; secure' : '';
+        const expiry = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
+        document.cookie = `postLoginRedirect=${redirectUrl}; path=/; expires=${expiry.toUTCString()}${secure}`;
+      }
     }
   }, [router]);
 

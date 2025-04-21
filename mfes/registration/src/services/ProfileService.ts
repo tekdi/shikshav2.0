@@ -8,6 +8,9 @@ export const getUserId = async (): Promise<any> => {
   const apiUrl: string = `${process.env.NEXT_PUBLIC_MIDDLEWARE_URL}/user/v1/auth`;
 
   try {
+    if (typeof window === 'undefined') {
+      throw new Error('Cannot access localStorage in server environment');
+    }
     const token = localStorage.getItem('token');
     if (!token) {
       throw new Error('Authorization token not found');
@@ -26,7 +29,7 @@ export const getUserId = async (): Promise<any> => {
   }
 };
 
-export const editEditUser = async (
+export const editUser = async (
   userId?: string | string[],
   userDetails?: object
 ): Promise<any> => {
@@ -52,7 +55,7 @@ export const getUserDetails = async (
     return response?.data;
   } catch (error) {
     console.error('error in fetching user details', error);
-    return error;
+    throw error;
   }
 };
 
@@ -99,16 +102,20 @@ export const myCourseDetails = async ({
 };
 
 export const renderCertificate = async (
-  credentialId: string
+  credentialId: string,
+  templateId?: string
 ): Promise<string> => {
   const apiUrl = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/interface/v1/tracking/certificate/render`;
 
   try {
+    if (typeof window === 'undefined') {
+      throw new Error('Cannot access localStorage in server environment');
+    }
     const response = await axios.post(
       apiUrl,
       {
         credentialId,
-        templateId: 'cm99rsd380000pg0iift4she7', // You may make this dynamic if needed
+        templateId: templateId || 'cm99rsd380000pg0iift4she7',
       },
       {
         headers: {
