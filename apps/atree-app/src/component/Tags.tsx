@@ -114,7 +114,7 @@ export const FrameworkFilter = ({
               variant={isSelected ? 'contained' : 'outlined'}
               sx={{
                 borderRadius: '8px',
-                fontFamily: 'Roboto',
+                fontFamily: 'sans-serif',
                 fontWeight: 500,
                 textTransform: 'none',
                 fontSize: '16px',

@@ -1,6 +1,7 @@
 //@ts-check
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-var-requires\
+
 const { composePlugins, withNx } = require('@nx/next');
 
 const PORTAL_BASE_URL = 'https://sunbird-editor.tekdinext.com';
