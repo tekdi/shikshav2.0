@@ -36,15 +36,17 @@ const Players: React.FC<SunbirdPlayerProps> = ({
   );
   const [loading, setLoading] = useState(!propPlayerConfig);
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     const tenantId = localStorage.getItem('tenantId');
     const accToken = localStorage.getItem('accToken');
 
     if (!tenantId || !accToken) {
-      // Save current URL to redirect after login
       const redirectUrl = window.location.href;
+
       if (!document.cookie.includes('postLoginRedirect=')) {
         const secure = window.location.protocol === 'https:' ? '; secure' : '';
-        const expiry = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
+        const expiry = new Date(Date.now() + 30 * 60 * 1000);
         document.cookie = `postLoginRedirect=${redirectUrl}; path=/; expires=${expiry.toUTCString()}${secure}`;
       }
     }

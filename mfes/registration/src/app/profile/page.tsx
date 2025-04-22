@@ -83,16 +83,15 @@ export default function Profile() {
     try {
       const response = await renderCertificate(certificateId);
       console.log('Certificate HTML:', typeof response, response);
-    
-      const certificateHtml = response?.result; // <-- grab HTML from the 'result' field
-    
+      const responseData = JSON.parse(response);
+      const certificateHtml = responseData?.result; // <-- grab HTML from the 'result' field
+
       const blob = new Blob([certificateHtml], { type: 'text/html' });
       const url = URL.createObjectURL(blob);
       window.open(url, '_blank');
     } catch (err) {
       console.error('Error rendering certificate:', err);
     }
-    
   };
 
   console.log(user);
