@@ -13,7 +13,7 @@ import {
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import CloseIcon from '@mui/icons-material/Close';
 interface DrawerItem {
-  text: string;
+  text: string | React.ReactNode | null;
   icon?: React.ReactNode;
   to: string;
 }
@@ -200,7 +200,7 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
           {openDrawer === 'main' &&
             items.map((item) => (
               <ListItemButton
-                key={item.text}
+                key={`${item.text}-${item.to}`}
                 onClick={() => onItemClick(item.to)}
               >
                 {item.icon && (

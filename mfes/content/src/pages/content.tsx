@@ -20,6 +20,7 @@ import { hierarchyAPI } from '../services/Hierarchy';
 import { ContentSearch, ContentSearchResponse } from '../services/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { RESOURCE_TYPES, MIME_TYPES } from '../utils/constantData';
 export interface ContentProps {
   _grid?: object;
   filters?: object;
@@ -295,9 +296,10 @@ export default function Content(props: ContentProps) {
             <Typography
               sx={{ color: '#1C170D', fontSize: '22px', fontWeight: 700 }}
             >
-              {localStorage.getItem('category')
-                ? localStorage.getItem('category')
-                : ''}
+              {(() => {
+                const category = localStorage.getItem('category') || '';
+                return category.charAt(0).toUpperCase() + category.slice(1);
+              })()}
             </Typography>
           </Box>
         )}
@@ -481,6 +483,8 @@ export default function Content(props: ContentProps) {
                   filterValues={localFilters}
                   onApply={handleApplyFilters}
                   isMobile={true}
+                  resources={RESOURCE_TYPES}
+                  mimeType={MIME_TYPES}
                 />
               </Box>
             )}

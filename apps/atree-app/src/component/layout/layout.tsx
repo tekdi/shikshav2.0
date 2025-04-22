@@ -7,14 +7,14 @@ import {
   useTheme,
 } from '@mui/material';
 import Box from '@mui/material/Box';
-import { CommonDrawer, Loader } from '@shared-lib';
+import { CommonDialog, CommonDrawer, Loader } from '@shared-lib';
 import React, { useEffect, useRef, useState } from 'react';
 import atreeLogo from '../../../assets/images/atreeLogo.svg';
 import TopAppBar from './TopToolBar';
 import Footer from './Footer';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlined';
-import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import ParkOutlinedIcon from '@mui/icons-material/ParkOutlined';
@@ -22,6 +22,7 @@ import { useRouter } from 'next/router';
 import BookmarksOutlinedIcon from '@mui/icons-material/BookmarksOutlined';
 import TermsAndCondition from '../TermsAndCondition';
 import { useKeycloak } from '@react-keycloak/web';
+import { deleteUserAccount } from '../../service/content';
 
 interface LayoutProps {
   children?: React.ReactNode;
@@ -109,6 +110,9 @@ export default function Layout({
   const refs = useRef({});
   const [searchQuery, setSearchQuery] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [openDeleteMessageDialog, setOpenDeleteMessageDialog] = useState(false); // [openDeleteMessageDialog]
   const router = useRouter();
   const token =
     typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -174,8 +178,39 @@ export default function Layout({
       icon: <ContactSupportOutlinedIcon fontSize="small" />,
       to: '/termsandcondition',
     },
+    {
+      text: token ? (
+        <Typography
+          sx={{ color: '#ff0000', fontWeight: 700, fontSize: '20px' }}
+        >
+          Delete My Account
+        </Typography>
+      ) : null,
+      icon: token ? (
+        <DeleteOutlineOutlinedIcon sx={{ color: '#ff0000' }} fontSize="small" />
+      ) : null,
+      to: 'delete-account',
+    },
   ];
-  const handleItemClick = (to: string) => {
+  const handleItemClick = async (to: string) => {
+    if (to === 'delete-account') {
+      setOpenDeleteDialog(true);
+      return; // prevent navigation!
+    }
+    if (to === 'delete-account') {
+      setOpenDeleteDialog(true);
+      const accToken = localStorage.getItem('token') || '';
+      if (confirmDelete) {
+        try {
+          await deleteUserAccount({
+            token: accToken,
+          });
+        } catch (error) {
+          console.error('Error updating user status:', error);
+          return error;
+        }
+      }
+    }
     if (to.startsWith('http')) {
       // Open external links in a new tab
       window.open(to, '_blank');
@@ -206,6 +241,30 @@ export default function Layout({
       }
     } else {
       router.push(to);
+    }
+  };
+  const handleCloseDeleteDialog = async () => {
+    setOpenDeleteDialog(false);
+    const accToken = localStorage.getItem('token') || '';
+    try {
+      await deleteUserAccount({ token: accToken });
+
+      // On success, show confirmation
+      setOpenDeleteMessageDialog(true);
+
+      // Perform logout cleanup
+      // localStorage.clear();
+      // sessionStorage.clear();
+      // Object.keys(localStorage).forEach((key) => {
+      //   if (key.startsWith('kc-callback-')) {
+      //     localStorage.removeItem(key);
+      //   }
+      // });
+
+      // keycloak.logout({ redirectUri: window.location.origin });
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      // Optional: show an error dialog
     }
   };
   return (
@@ -342,6 +401,102 @@ export default function Layout({
           {footerComponent}
         </Box>
       )}
+      <CommonDialog
+        isOpen={openDeleteDialog}
+        onClose={() => setOpenDeleteDialog(false)}
+        disableCloseOnBackdropClick={true}
+        header="User Details"
+        hideCloseButton={true}
+        content={
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Typography variant="body1">
+              Are you sure you want to delete your account?{' '}
+            </Typography>
+          </Box>
+        }
+        actions={
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Button
+              onClick={handleCloseDeleteDialog}
+              sx={{
+                color: '#2B3133',
+                width: '100%',
+                height: '40px',
+                marginRight: '20px',
+                background:
+                  'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                borderRadius: '50px',
+                fontSize: '14px',
+                fontWeight: 500,
+              }}
+            >
+              Yes
+            </Button>
+            <Button
+              onClick={() => setOpenDeleteDialog(false)}
+              sx={{
+                color: '#2B3133',
+                width: '100%',
+                height: '40px',
+
+                background:
+                  'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                borderRadius: '50px',
+                fontSize: '14px',
+                fontWeight: 500,
+              }}
+            >
+              No
+            </Button>
+          </Box>
+        }
+        sx={{
+          width: '500px',
+          height: '300px',
+          padding: '10px',
+          borderRadius: '16px',
+        }}
+      />
+      <CommonDialog
+        isOpen={openDeleteMessageDialog}
+        onClose={() => setOpenDeleteMessageDialog(false)}
+        disableCloseOnBackdropClick={true}
+        header="User Details"
+        hideCloseButton={true}
+        content={
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Typography variant="body1">
+              User account deleted successfully !
+            </Typography>
+          </Box>
+        }
+        actions={
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Button
+              onClick={() => setOpenDeleteMessageDialog(false)}
+              sx={{
+                color: '#2B3133',
+                width: '100%',
+                height: '40px',
+
+                background:
+                  'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                borderRadius: '50px',
+                fontSize: '14px',
+                fontWeight: 500,
+              }}
+            >
+              Okay
+            </Button>
+          </Box>
+        }
+        sx={{
+          width: '500px',
+          height: '300px',
+          padding: '10px',
+          borderRadius: '16px',
+        }}
+      />
       {openDialog && (
         <TermsAndCondition
           isOpen={openDialog}

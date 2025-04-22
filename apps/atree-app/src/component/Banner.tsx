@@ -1,10 +1,14 @@
 import * as React from 'react';
 import Grid from '@mui/material/Grid2';
 import { ImageBanner } from '../component/layout/ImageBanner';
-import { Typography, Box } from '@mui/material';
+import { Box } from '@mui/material';
 
-import landingBanner1 from '../../assets/images/png/Banner-2.png';
-import landingBanner2 from '../../assets/images/png/Set-1.png';
+import landingBanner1 from '../../assets/images/png/1.png';
+import landingBanner2 from '../../assets/images/png/2.png';
+import landingBanner3 from '../../assets/images/png/3.png';
+import landingBanner4 from '../../assets/images/png/4.png';
+import landingBanner5 from '../../assets/images/png/5.png';
+import landingBanner6 from '../../assets/images/png/6.png';
 
 import Carousel from 'react-material-ui-carousel';
 type BannerProps = Readonly<{
@@ -14,6 +18,10 @@ export default function Banner() {
   const landingImages = [
     { image: landingBanner1?.src, id: 1 },
     { image: landingBanner2?.src, id: 2 },
+    { image: landingBanner3?.src, id: 3 },
+    { image: landingBanner4?.src, id: 4 },
+    { image: landingBanner5?.src, id: 5 },
+    { image: landingBanner6?.src, id: 6 },
   ];
 
   // Remove duplicate images (if any)

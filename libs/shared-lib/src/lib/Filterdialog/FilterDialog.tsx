@@ -81,7 +81,6 @@ const CustomResourceCheckbox = ({
 // Reusable Radio Component
 const CustomRadio = ({ option }: any) => (
   <FormControlLabel
-    key={option.value}
     value={option.value}
     control={
       <Radio sx={{ color: '#1D1B20', '&.Mui-checked': { color: '#FFBD0D' } }} />
@@ -147,6 +146,16 @@ export const FilterDialog = ({
         mimeType: [],
         resource: [],
       });
+    } else {
+      setSelectedValues({
+        mimeType: mimeType || [],
+        resource: resource || [],
+      });
+
+      setSelectedFilters({
+        mimeType: mimeType || [],
+        resource: resource || [],
+      });
     }
     if (filterValues?.filters?.topic) {
       localStorage.setItem('category', filterValues?.filters?.topic);
@@ -158,6 +167,7 @@ export const FilterDialog = ({
       });
     }
   }, [filterValues]);
+
   useEffect(() => {
     const savedFilters = localStorage.getItem('selectedFilters');
     if (savedFilters) {
@@ -201,24 +211,27 @@ export const FilterDialog = ({
     filterType: 'resource' | 'mimeType'
   ) => {
     const { checked, value } = event.target;
-    setSelectedFilters((prev: any) => {
-      const currentValues = prev[filterType] || [];
-      return {
-        ...prev,
-        [filterType]: checked
-          ? [...currentValues, value]
-          : currentValues.filter((v: string) => v !== value),
-      };
-    });
-    setSelectedValues((prev: any) => {
-      const currentValues = prev[filterType] || [];
-      const updatedValues = checked
-        ? [...currentValues, value]
-        : currentValues.filter((v: string) => v !== value);
-      onApply?.({ ...prev, [filterType]: updatedValues });
-      return { ...prev, [filterType]: updatedValues };
-    });
+
+    const currentValues = selectedFilters[filterType] || [];
+    const updatedValues = checked
+      ? [...currentValues, value]
+      : currentValues.filter((v: string) => v !== value);
+
+    const updatedFilters = {
+      ...selectedFilters,
+      [filterType]: updatedValues,
+    };
+
+    setSelectedFilters(updatedFilters);
+    setSelectedValues((prev: any) => ({
+      ...prev,
+      [filterType]: updatedValues,
+    }));
+
+    localStorage.setItem('selectedFilters', JSON.stringify(updatedFilters));
+    onApply?.(updatedFilters);
   };
+
   useEffect(() => {
     console.log(
       'Updated Filters (inside useEffect)==',
@@ -236,10 +249,21 @@ export const FilterDialog = ({
           fullWidth
           sx={{
             borderRadius: '16px',
-            '& .MuiDialog-paper': { backgroundColor: '#FEF7FF' },
+            '& .MuiDialog-paper': {
+              backgroundColor: '#FEF7FF',
+              display: 'flex',
+              flexDirection: 'column',
+              height: '80vh',
+            },
           }}
         >
-          <DialogContent dividers>
+          <DialogContent
+            dividers
+            sx={{
+              flex: 1,
+              overflowY: 'auto',
+            }}
+          >
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {/* new filter frameworkFilter */}
               {frameworkFilter?.categories
@@ -255,8 +279,16 @@ export const FilterDialog = ({
                     })) ?? [];
 
                   // Get selected values for the current category
-                  const currentSelectedValues =
-                    selectedValues?.[filterCode] ?? [];
+
+                  const normalizedSelectedTopic = Array.isArray(
+                    selectedValues?.topic
+                  )
+                    ? selectedValues.topic.map((val: any) =>
+                        val.replace(/\s/g, '').toLowerCase()
+                      )
+                    : typeof selectedValues?.topic === 'string'
+                    ? selectedValues.topic.replace(/\s/g, '').toLowerCase()
+                    : '';
 
                   return (
                     <FormControl
@@ -269,21 +301,35 @@ export const FilterDialog = ({
                         sx={{
                           fontSize: '18px',
                           fontWeight: 600,
-                          color: '#181D27',
+                          color: '#000000',
+                          '&.Mui-focused': {
+                            color: '#000000', // Prevent color change on focus
+                          },
                         }}
                       >
-                        {category?.name}{' '}
+                        Select {category?.name}{' '}
                       </FormLabel>
 
                       {/* Topic - RadioGroup */}
                       {filterCode === 'topic' && (
                         <RadioGroup
-                          value={currentSelectedValues?.[0] ?? ''}
+                          value={normalizedSelectedTopic}
                           onChange={(event) => handleChange(event, filterCode)}
                         >
-                          {options?.map((option: any) => (
-                            <CustomRadio key={option?.value} option={option} />
-                          ))}
+                          {options?.map((option: any) => {
+                            const normalizedOptionValue = option.value
+                              .replace(/\s/g, '')
+                              .toLowerCase();
+                            return (
+                              <CustomRadio
+                                key={option?.value}
+                                option={{
+                                  ...option,
+                                  value: normalizedOptionValue,
+                                }}
+                              />
+                            );
+                          })}
                         </RadioGroup>
                       )}
                     </FormControl>
@@ -296,42 +342,110 @@ export const FilterDialog = ({
                 <FormControl fullWidth key="subTopic" sx={formControlStyles}>
                   <FormLabel
                     component="legend"
-                    sx={{ fontSize: '18px', fontWeight: 600, color: '#181D27' }}
+                    sx={{
+                      fontSize: '18px',
+                      fontWeight: 600,
+                      color: '#000000',
+                      '&.Mui-focused': {
+                        color: '#000000', // Prevent color change on focus
+                      },
+                    }}
                   >
-                    SubTopic
+                    Select Sub Category
                   </FormLabel>
-                  <Box>
-                    {[
-                      ...new Map(
-                        frameworkFilter.categories
-                          ?.find((cat: any) => cat.code === 'topic') // Find topic category
-                          ?.terms?.find(
-                            (term: any) =>
-                              term.code.replace(/\s/g, '') ===
-                              selectedValues?.topic?.[0].replace(/\s/g, '')
-                          )
-                          ?.associations?.filter(
-                            (association: any) => association.status === 'Live'
-                          )
-                          ?.map((association: any) => [
-                            association.code,
-                            association,
-                          ]) ?? []
-                      ).values(),
-                    ]?.map((option: any) => (
-                      <CustomCheckbox
-                        key={option.code}
-                        option={{ label: option.name, value: option.code }}
-                        filterCode="subTopic"
-                        handleCheckboxChange={handleCheckboxChange}
-                        currentSelectedValues={selectedValues?.subTopic ?? []}
+                  <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                    {(() => {
+                      const selectedTopicCode = Array.isArray(
+                        selectedValues?.topic
+                      )
+                        ? selectedValues.topic[0]
+                            ?.replace(/\s/g, '')
+                            .toLowerCase()
+                        : selectedValues?.topic
+                            ?.replace(/\s/g, '')
+                            .toLowerCase();
+
+                      const topicTerm = frameworkFilter.categories
+                        ?.find((cat: any) => cat.code === 'topic')
+                        ?.terms?.find(
+                          (term: any) =>
+                            term.code.replace(/\s/g, '').toLowerCase() ===
+                            selectedTopicCode
+                        );
+
+                      const associations =
+                        topicTerm?.associations?.filter(
+                          (a: any) => a.status === 'Live'
+                        ) ?? [];
+
+                      const uniqueAssociations = [
+                        ...new Map(
+                          associations.map((a: any) => [a.code, a])
+                        ).values(),
+                      ];
+
+                      return uniqueAssociations.map((option: any) => (
+                        <CustomCheckbox
+                          key={option.code}
+                          option={{ label: option.name, value: option.code }}
+                          filterCode="subTopic"
+                          handleCheckboxChange={handleCheckboxChange}
+                          currentSelectedValues={selectedValues?.subTopic ?? []}
+                        />
+                      ));
+                    })()}
+                  </Box>
+                </FormControl>
+              )}
+
+              {/* <Box sx={{ flexDirection: 'column', gap: 2 }}>
+                <FormControl fullWidth sx={formControlStyles}>
+                  {resources?.length > 0 && (
+                    <Box sx={{ display: 'grid' }}>
+                      <Typography
+                        sx={{
+                          fontSize: '18px',
+                          fontWeight: 600,
+                          color: '#181D27',
+                        }}
+                      >
+                        Select Resource Type
+                      </Typography>
+                      {resources?.map((option: any) => (
+                        <CustomResourceCheckbox
+                          key={option?.label}
+                          option={option}
+                          filterCode="resource"
+                          handleCheckboxChange={handleResourceCheckboxChange}
+                          currentSelectedValues={selectedFilters.resource}
+                        />
+                      ))}
+                    </Box>
+                  )}
+
+                  <Box sx={{ display: 'grid' }}>
+                    <Typography
+                      sx={{
+                        fontSize: '18px',
+                        fontWeight: 600,
+                        color: '#181D27',
+                      }}
+                    >
+                      Select Content Type
+                    </Typography>
+                    {mimeType?.map((option: any) => (
+                      <CustomResourceCheckbox
+                        key={option?.label}
+                        option={option}
+                        filterCode="mimeType"
+                        handleCheckboxChange={handleResourceCheckboxChange}
+                        currentSelectedValues={selectedFilters.mimeType ?? []}
                       />
                     ))}
                   </Box>
                 </FormControl>
-              )}
+              </Box> */}
             </Box>
-            <Divider sx={{ marginTop: 4 }} />
 
             {/* Subject */}
             {filter?.subject && filter.subject.length > 0 && (
@@ -389,45 +503,48 @@ export const FilterDialog = ({
             )}
 
             {/* Buttons */}
-            <DialogActions sx={{ justifyContent: 'center' }}>
-              <Box sx={{ display: 'flex', mt: 2 }}>
-                <Button
-                  variant="outlined"
-                  onClick={() => {
-                    onApply?.({});
-                    setSelectedValues({});
-                    onClose?.();
-                  }}
-                  sx={{
-                    borderRadius: '100px',
-                    color: '#414651',
-                    textTransform: 'none',
-                    border: '1px solid #D5D7DA',
-                    width: '132px',
-                  }}
-                >
-                  Reset
-                </Button>
-                <Button
-                  variant="contained"
-                  onClick={() => {
-                    onApply?.(selectedValues);
-                    onClose?.();
-                  }}
-                  sx={{
-                    borderRadius: '100px',
-                    bgcolor: '#FFBD0D',
-                    color: '#2B3133',
-                    marginLeft: 2,
-                    textTransform: 'none',
-                    width: '132px',
-                  }}
-                >
-                  Apply
-                </Button>
-              </Box>
-            </DialogActions>
           </DialogContent>
+          <DialogActions sx={{ justifyContent: 'center' }}>
+            <Box sx={{ display: 'flex', mt: 2 }}>
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  onApply?.({});
+                  setSelectedValues({});
+                  // selectedFilters.mimeType = [];
+                  // selectedFilters.resource = [];
+                  localStorage.removeItem('selectedFilters');
+                  onClose?.();
+                }}
+                sx={{
+                  borderRadius: '100px',
+                  color: '#414651',
+                  textTransform: 'none',
+                  border: '1px solid #D5D7DA',
+                  width: '132px',
+                }}
+              >
+                Reset
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  onApply?.(selectedValues);
+                  onClose?.();
+                }}
+                sx={{
+                  borderRadius: '100px',
+                  bgcolor: '#FFBD0D',
+                  color: '#2B3133',
+                  marginLeft: 2,
+                  textTransform: 'none',
+                  width: '132px',
+                }}
+              >
+                Apply
+              </Button>
+            </Box>
+          </DialogActions>
         </Dialog>
       ) : (
         <Box
