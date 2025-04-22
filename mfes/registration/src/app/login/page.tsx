@@ -25,19 +25,18 @@ export default function Login() {
   const [errorMessage, setErrorMessage] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const URL_CONTENT = process.env.NEXT_PUBLIC_CONTENT;
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const accToken = localStorage.getItem('accToken');
-      const refToken = localStorage.getItem('refToken');
-      if (accToken && refToken) {
-        if (URL_CONTENT) {
-          router.replace(URL_CONTENT);
-        }
-      }
-    }
-  }, []);
+  // const URL_CONTENT = process.env.NEXT_PUBLIC_CONTENT;
+  // useEffect(() => {
+  //   if (typeof window !== 'undefined') {
+  //     const accToken = localStorage.getItem('accToken');
+  //     const refToken = localStorage.getItem('refToken');
+  //     if (accToken && refToken) {
+  //       if (URL_CONTENT) {
+  //         router.replace(URL_CONTENT);
+  //       }
+  //     }
+  //   }
+  // }, []);
 
   useEffect(() => {
     const init = async () => {
@@ -69,6 +68,13 @@ export default function Login() {
     };
 
   const handleButtonClick = async () => {
+    if (!formData.userName || !formData.password) {
+      setError({
+        userName: !formData.userName,
+        password: !formData.password,
+      });
+      return;
+    }
     setLoading(true);
     try {
       const {
@@ -92,7 +98,6 @@ export default function Login() {
         localStorage.setItem('userId', authUser?.userId);
         localStorage.setItem('userName', authUser?.username);
         const { contentFramework: framework, channelId: channel } = tenantInfo;
-        console.log('response', channel);
         localStorage.setItem('framework', framework);
         localStorage.setItem('tenant-code', channel);
         localStorage.setItem('tenantId', authUser?.tenantData?.[0]?.tenantId);
