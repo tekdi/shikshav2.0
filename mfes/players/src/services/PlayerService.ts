@@ -1,7 +1,8 @@
 import { URL_CONFIG } from '../utils/url.config';
 import axios from 'axios';
 import { ContentCreate } from '../utils/Interface';
-function getCookie(name: any) {
+function getCookie(name: string) {
+  if (typeof document === 'undefined') return null;
   const cookies = document.cookie.split('; ');
   const cookie = cookies.find((row) => row.startsWith(name + '='));
   return cookie ? cookie.split('=')[1] : null;
