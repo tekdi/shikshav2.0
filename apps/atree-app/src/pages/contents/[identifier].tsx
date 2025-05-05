@@ -33,6 +33,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { AtreeCard, ContentSearch } from '@shared-lib';
 import ShareDialog from '../../component/ShareDialog';
 import FooterText from '../../component/FooterText';
+import Loader from '../../component/layout/LoaderComponent';
 
 interface ContentItem {
   name: string;
@@ -64,6 +65,7 @@ export default function Content() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [open, setOpen] = useState(false);
+  const [relatedContent, setRelatedContent] = useState<any>([]);
   const handleOpen = () => setOpen(true);
   const handleOnCLick = () => {
     window.open(contentData?.url, '_blank');
@@ -102,15 +104,17 @@ export default function Content() {
       if (result && typeof result === 'object') {
         setContentData(result);
       }
-      const topicFromStorage = localStorage.getItem('category');
-      const data = await ContentSearch({
+
+      const keyword = result?.keywords[0] || [];
+      const keywordFilteredResults = await ContentSearch({
         channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
-        filters: {
-          topic: topicFromStorage ?? '',
-        },
+        query: keyword,
       });
-      console.log(data?.result?.content);
-      setContentResultData(data?.result?.content || []);
+      const filteredRelatedContent =
+        keywordFilteredResults?.result?.content?.filter(
+          (item: any) => item.identifier !== result.identifier
+        ) || [];
+      setRelatedContent(filteredRelatedContent || []);
     } catch (error) {
       console.error('Failed to fetch content:', error);
     } finally {
@@ -173,362 +177,384 @@ export default function Content() {
   const selectTagOnClick = (val: any) => {
     router.push(`/searchpage?query=${val}&tags=${true}`);
   };
-  if (!contentData) return <div>Loading...</div>;
   return (
-    <Layout
-      showBack
-      isFooter={isMobile} // add this when on mobile
-      footerComponent={!isMobile ? <FooterText page="" /> : undefined}
-      isLoadingChildren={isLoading}
-      backIconClick={() => router.back()}
-      backTitle={
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            width: '100%',
-          }}
-        >
-          {/* Left Side - Name and Author */}
-          <div style={{ flexGrow: 1 }}>
-            <Typography
-              sx={{
-                fontWeight: 700,
-                fontSize: '22px',
-                lineHeight: '28px',
-                textAlign: 'left',
-              }}
-              gutterBottom
-            >
-              {contentData?.name || ''}
-            </Typography>
-            {/* <Typography
-              variant="subtitle1"
-              color="textSecondary"
-              sx={{
-                fontWeight: 500,
-                fontSize: '16px',
-                lineHeight: '24px',
-                letterSpacing: '0.15px',
-                textAlign: 'left',
-              }}
-            >
-              {contentData?.author || ''}
-            </Typography> */}
-          </div>
-
-          {/* Right Side - Share Button */}
-          {!isMobile && (
-            <IconButton
-              onClick={handleOpen}
-              color="primary"
+    <>
+      {contentData ? (
+        <Layout
+          showBack
+          isFooter={isMobile} // add this when on mobile
+          footerComponent={!isMobile ? <FooterText page="" /> : undefined}
+          isLoadingChildren={isLoading}
+          backIconClick={() => router.back()}
+          backTitle={
+            <div
               style={{
-                marginLeft: 'auto',
-                backgroundColor: 'white',
-                color: '#2B3133',
-                boxShadow:
-                  '-0.73px 0.73px 0.73px -1.46px rgba(255, 255, 255, 0.35) inset, 0px 8px 10px rgba(0, 0, 0, 0.05)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                width: '100%',
               }}
             >
-              <ShareIcon />
-            </IconButton>
-          )}
-          {/* Share Dialog */}
-
-          <ShareDialog open={open} handleClose={() => setOpen(false)} />
-        </div>
-      }
-    >
-      {!isMobile ? (
-        // Desktop View (Carousel on Right, Content on Left)
-        <>
-          <Grid container spacing={2} sx={{ padding: 2 }}>
-            {/* Left Side (Content) */}
-            <Grid size={{ xs: 12, md: 3 }}>
-              {/* {[...Array(4)].map((_, i) => ( */}
-              <ImageCard
-                image={contentData?.posterImage ?? landingBanner?.src}
-                name={''}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 9 }}>
-              <Stack spacing={2}>
-                {/* Keywords */}
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                  {displayedKeywords.map((label) => (
-                    <Chip
-                      key={label}
-                      label={label}
-                      variant="outlined"
-                      sx={{ height: 32, padding: '6px 8px' }}
-                      onClick={() => selectTagOnClick(label.replace('#', ''))}
-                    />
-                  ))}
-                  {showMoreIcon && (
-                    <IconButton onClick={() => setOpenPopup(true)} size="small">
-                      <MoreVertIcon />
-                    </IconButton>
-                  )}
-                </Box>
-
-                {/* Description */}
-                <Typography variant="body1" textAlign="left">
-                  {contentData?.description ?? ''}
+              {/* Left Side - Name and Author */}
+              <div style={{ flexGrow: 1 }}>
+                <Typography
+                  sx={{
+                    fontWeight: 700,
+                    fontSize: '22px',
+                    lineHeight: '28px',
+                    textAlign: 'left',
+                  }}
+                  gutterBottom
+                >
+                  {contentData?.name || ''}
                 </Typography>
-
-                {/* Know More Button */}
-                <Box sx={{ display: 'flex', gap: 2, width: '100%' }}>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    sx={{
-                      borderRadius: '50px',
-                      height: '40px',
-                      flex: 0.3,
-                    }}
-                    onClick={handlePreview}
-                  >
-                    Preview
-                  </Button>
-
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    sx={{
-                      borderRadius: '50px',
-                      height: '40px',
-                      flex: 0.3,
-                      color: 'black',
-                    }}
-                    disabled={!contentData?.previewUrl?.endsWith('.pdf')}
-                    onClick={handleOnDownload}
-                  >
-                    Download
-                  </Button>
-
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    sx={{
-                      borderRadius: '50px',
-                      height: '40px',
-                      flex: 0.3,
-                      color: 'black',
-                    }}
-                    disabled={!contentData?.url}
-                    onClick={handleOnCLick}
-                  >
-                    Resource Link
-                  </Button>
-                </Box>
-
-                {/* Year & License */}
-                <Typography variant="body1" textAlign="left">
-                  <b>Author:</b> {contentData?.author ?? ''}
-                </Typography>
-                <Typography variant="body1" textAlign="left">
-                  <b>Publisher:</b> {contentData?.publisher ?? ''}
-                </Typography>
-                <Typography variant="body1" textAlign="left">
-                  <b>Year:</b> {contentData?.year ?? ''}
-                </Typography>
-              </Stack>
-            </Grid>
-
-            {/* Right Side (Carousel) */}
-          </Grid>
-          <Box
-            sx={{
-              width: '100%',
-              gap: '16px',
-              display: 'flex',
-              flexDirection: 'column',
-              padding: '20px',
-            }}
-          >
-            <Box
-              display="flex"
-              flexDirection="row"
-              justifyContent="space-between"
-              alignItems="center"
-              width="100%"
-            >
-              <Typography
-                sx={{ fontSize: '22px', fontWeight: 700 }}
-                onClick={() => router.push('/contents')}
+                {/* <Typography
+                variant="subtitle1"
+                color="textSecondary"
+                sx={{
+                  fontWeight: 500,
+                  fontSize: '16px',
+                  lineHeight: '24px',
+                  letterSpacing: '0.15px',
+                  textAlign: 'left',
+                }}
               >
-                Related Content
-              </Typography>
-              <IconButton onClick={() => router.push('/contents')}>
-                <ChevronRightIcon />
-              </IconButton>
-            </Box>
-            <AtreeCard
-              contents={
-                contentResultData?.length > 0
-                  ? contentResultData?.slice(0, 4)
-                  : []
-              }
-              handleCardClick={handleCardClick}
-              _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-              _card={{ image: atreeLogo.src }}
-            />
-          </Box>
-        </>
-      ) : (
-        <Box
-          sx={{
-            padding: 2,
-            margin: '0 auto',
-            textAlign: 'center',
-            borderRadius: 2,
-            gap: 2.5,
-            display: 'flex',
-            flexDirection: 'column',
-          }}
+                {contentData?.author || ''}
+              </Typography> */}
+              </div>
+
+              {/* Right Side - Share Button */}
+              {!isMobile && (
+                <IconButton
+                  onClick={handleOpen}
+                  color="primary"
+                  style={{
+                    marginLeft: 'auto',
+                    backgroundColor: 'white',
+                    color: '#2B3133',
+                    boxShadow:
+                      '-0.73px 0.73px 0.73px -1.46px rgba(255, 255, 255, 0.35) inset, 0px 8px 10px rgba(0, 0, 0, 0.05)',
+                  }}
+                >
+                  <ShareIcon />
+                </IconButton>
+              )}
+              {/* Share Dialog */}
+
+              <ShareDialog open={open} handleClose={() => setOpen(false)} />
+            </div>
+          }
         >
-          <Box sx={{ px: 2 }}>
-            <ImageCard
-              image={contentData?.posterImage ?? landingBanner?.src}
-              name={
-                <Box display="flex" alignItems="center" gap={1}>
-                  <Box>
-                    <Typography variant="body2" gutterBottom>
-                      {contentData?.name ?? ''}
+          {!isMobile ? (
+            // Desktop View (Carousel on Right, Content on Left)
+            <>
+              <Grid container spacing={2} sx={{ padding: 2 }}>
+                {/* Left Side (Content) */}
+                <Grid size={{ xs: 12, md: 3 }}>
+                  {/* {[...Array(4)].map((_, i) => ( */}
+                  <ImageCard
+                    image={contentData?.posterImage ?? landingBanner?.src}
+                    name={''}
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, md: 9 }}>
+                  <Stack spacing={2}>
+                    {/* Keywords */}
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                      {displayedKeywords.map((label) => (
+                        <Chip
+                          key={label}
+                          label={label}
+                          variant="outlined"
+                          sx={{
+                            height: 22,
+                            padding: '4px 6px',
+                            '& .MuiChip-label': {
+                              fontSize: '10px', // or any desired size, like '0.875rem'
+                            },
+                          }}
+                          onClick={() =>
+                            selectTagOnClick(label.replace('#', ''))
+                          }
+                        />
+                      ))}
+                      {/* {showMoreIcon && (
+                        <IconButton
+                          onClick={() => setOpenPopup(true)}
+                          size="small"
+                        >
+                          <MoreVertIcon />
+                        </IconButton>
+                      )} */}
+                    </Box>
+
+                    {/* Description */}
+                    <Typography variant="body1" textAlign="left">
+                      {contentData?.description ?? ''}
                     </Typography>
-                    <Typography variant="body2" gutterBottom>
-                      {contentData?.publisher ?? ''}
-                    </Typography>
-                  </Box>
+
+                    {/* Know More Button */}
+                    <Box sx={{ display: 'flex', gap: 1, width: '50%' }}>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        sx={{
+                          borderRadius: '50px',
+                          height: '40px',
+                          flex: 0.2,
+                          padding: '3px',
+                          fontSize: '14px',
+                        }}
+                        onClick={handlePreview}
+                      >
+                        Preview
+                      </Button>
+
+                      <Button
+                        variant="outlined"
+                        color="secondary"
+                        sx={{
+                          borderRadius: '50px',
+                          height: '40px',
+                          flex: 0.3,
+                          color: 'black',
+                          padding: '3px',
+                        }}
+                        disabled={!contentData?.previewUrl?.endsWith('.pdf')}
+                        onClick={handleOnDownload}
+                      >
+                        Download
+                      </Button>
+
+                      <Button
+                        variant="outlined"
+                        color="secondary"
+                        sx={{
+                          borderRadius: '50px',
+                          height: '40px',
+                          flex: 0.3,
+                          color: 'black',
+                          padding: '3px',
+                        }}
+                        disabled={!contentData?.url}
+                        onClick={handleOnCLick}
+                      >
+                        Resource Link
+                      </Button>
+                    </Box>
+
+                    {/* Year & License */}
+                    <Stack spacing={0.5}>
+                      <Typography variant="body1" textAlign="left">
+                        <b>Author:</b> {contentData?.author ?? ''}
+                      </Typography>
+                      <Typography variant="body1" textAlign="left">
+                        <b>Publisher:</b> {contentData?.publisher ?? ''}
+                      </Typography>
+                      <Typography variant="body1" textAlign="left">
+                        <b>Year:</b> {contentData?.year ?? ''}
+                      </Typography>
+                    </Stack>
+                  </Stack>
+                </Grid>
+
+                {/* Right Side (Carousel) */}
+              </Grid>
+              <Box
+                sx={{
+                  width: '100%',
+                  gap: '16px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: '20px',
+                }}
+              >
+                <Box
+                  display="flex"
+                  flexDirection="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  width="100%"
+                >
+                  <Typography
+                    sx={{ fontSize: '22px', fontWeight: 700 }}
+                    onClick={() => router.push('/contents')}
+                  >
+                    Related Content
+                  </Typography>
+                  <IconButton onClick={() => router.push('/contents')}>
+                    <ChevronRightIcon />
+                  </IconButton>
                 </Box>
-              }
-            />
-          </Box>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 2,
-              width: '100%',
-            }}
-          >
-            <Button
-              variant="contained"
-              color="secondary"
+                <AtreeCard
+                  contents={
+                    relatedContent?.length > 0
+                      ? relatedContent?.slice(0, 12)
+                      : []
+                  }
+                  handleCardClick={handleCardClick}
+                  _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
+                  _card={{ image: atreeLogo.src }}
+                />
+              </Box>
+            </>
+          ) : (
+            <Box
               sx={{
-                borderRadius: '50px',
-                height: '40px',
-                flex: 0.3,
+                padding: 2,
+                margin: '0 auto',
+                textAlign: 'center',
+                borderRadius: 2,
+                gap: 2.5,
+                display: 'flex',
+                flexDirection: 'column',
               }}
-              onClick={handlePreview}
             >
-              Preview
-            </Button>
-
-            <Button
-              variant="outlined"
-              color="secondary"
-              sx={{
-                borderRadius: '50px',
-                height: '40px',
-                flex: 0.3,
-                color: 'black',
-              }}
-              onClick={handleOnDownload}
-              disabled={!contentData?.previewUrl?.endsWith('.pdf')}
-            >
-              Download
-            </Button>
-
-            <Button
-              variant="outlined"
-              color="secondary"
-              sx={{
-                borderRadius: '50px',
-                height: '40px',
-                flex: 0.3,
-                color: 'black',
-              }}
-              disabled={!contentData?.url}
-              onClick={handleOnCLick}
-            >
-              Resource Link
-            </Button>
-          </Box>
-
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-            {displayedKeywords?.map((label: any, index: any) => (
-              <Chip
-                key={index}
-                label={label}
-                variant="outlined"
+              <Box sx={{ px: 2 }}>
+                <ImageCard
+                  image={contentData?.posterImage ?? landingBanner?.src}
+                  name={
+                    <Box display="flex" alignItems="center" gap={1}>
+                      <Box>
+                        <Typography variant="body2" gutterBottom>
+                          {contentData?.name ?? ''}
+                        </Typography>
+                        <Typography variant="body2" gutterBottom>
+                          {contentData?.publisher ?? ''}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  }
+                />
+              </Box>
+              <Box
                 sx={{
-                  height: '32px',
-                  gap: '2px',
-                  padding: '6px 8px',
-                  borderRadius: '0px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 2,
+                  width: '100%',
                 }}
-                onClick={() => selectTagOnClick(label.replace('#', ''))}
-              />
-            ))}
-            {showMoreIcon && (
-              <IconButton onClick={() => setOpenPopup(true)} size="small">
-                <MoreVertIcon />
-              </IconButton>
-            )}
-          </Box>
+              >
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  sx={{
+                    borderRadius: '50px',
+                    height: '40px',
+                    flex: 0.3,
+                  }}
+                  onClick={handlePreview}
+                >
+                  Preview
+                </Button>
 
-          <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-            {contentData?.description ?? ''}
-          </Typography>
-          <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-            <b>Author:</b> {contentData?.author || ''}
-          </Typography>
-          <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-            <b>Publisher:</b> {contentData?.publisher ?? ''}
-          </Typography>
-          <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-            <b>Year:</b> {contentData?.year ?? ''}
-          </Typography>
-        </Box>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  sx={{
+                    borderRadius: '50px',
+                    height: '40px',
+                    flex: 0.3,
+                    color: 'black',
+                  }}
+                  onClick={handleOnDownload}
+                  disabled={!contentData?.previewUrl?.endsWith('.pdf')}
+                >
+                  Download
+                </Button>
+
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  sx={{
+                    borderRadius: '50px',
+                    height: '40px',
+                    flex: 0.3,
+                    color: 'black',
+                  }}
+                  disabled={!contentData?.url}
+                  onClick={handleOnCLick}
+                >
+                  Resource Link
+                </Button>
+              </Box>
+
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                {displayedKeywords?.map((label: any, index: any) => (
+                  <Chip
+                    key={index}
+                    label={label}
+                    variant="outlined"
+                    sx={{
+                      height: '32px',
+                      gap: '2px',
+                      padding: '4px 6px',
+                      borderRadius: '8px',
+                    }}
+                    onClick={() => selectTagOnClick(label.replace('#', ''))}
+                  />
+                ))}
+                {/* {showMoreIcon && (
+                  <IconButton onClick={() => setOpenPopup(true)} size="small">
+                    <MoreVertIcon />
+                  </IconButton>
+                )} */}
+              </Box>
+
+              <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
+                {contentData?.description ?? ''}
+              </Typography>
+              <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
+                <b>Author:</b> {contentData?.author || ''}
+              </Typography>
+              <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
+                <b>Publisher:</b> {contentData?.publisher ?? ''}
+              </Typography>
+              <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
+                <b>Year:</b> {contentData?.year ?? ''}
+              </Typography>
+            </Box>
+          )}
+          <Dialog open={openPopup} onClose={() => setOpenPopup(false)}>
+            <DialogTitle>More Keywords</DialogTitle>
+            <DialogContent>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                {remainingKeywords.map((label: any) => (
+                  <Chip
+                    key={label}
+                    label={label.charAt(0).toUpperCase() + label.slice(1)}
+                    variant="outlined"
+                    sx={{
+                      height: '32px',
+                      gap: '8px',
+                      padding: '6px 8px',
+                      borderRadius: '0px',
+                    }}
+                    onClick={() => selectTagOnClick(label.replace('#', ''))}
+                  />
+                ))}
+              </Box>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                onClick={() => setOpenPopup(false)}
+                variant="contained"
+                color="secondary"
+                sx={{
+                  borderRadius: '50px',
+                  height: '40px',
+                  width: '100%',
+                }}
+              >
+                Close
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Layout>
+      ) : (
+        <Loader />
       )}
-      <Dialog open={openPopup} onClose={() => setOpenPopup(false)}>
-        <DialogTitle>More Keywords</DialogTitle>
-        <DialogContent>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-            {remainingKeywords.map((label: any) => (
-              <Chip
-                key={label}
-                label={label.charAt(0).toUpperCase() + label.slice(1)}
-                variant="outlined"
-                sx={{
-                  height: '32px',
-                  gap: '8px',
-                  padding: '6px 8px',
-                  borderRadius: '0px',
-                }}
-                onClick={() => selectTagOnClick(label.replace('#', ''))}
-              />
-            ))}
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => setOpenPopup(false)}
-            variant="contained"
-            color="secondary"
-            sx={{
-              borderRadius: '50px',
-              height: '40px',
-              width: '100%',
-            }}
-          >
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Layout>
+    </>
   );
 }
 

@@ -8,7 +8,13 @@ import {
 } from '@mui/material';
 import Box from '@mui/material/Box';
 import { CommonDialog, CommonDrawer, Loader } from '@shared-lib';
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  createContext,
+  useContext,
+} from 'react';
 import atreeLogo from '../../../assets/images/atreeLogo.svg';
 import TopAppBar from './TopToolBar';
 import Footer from './Footer';
@@ -23,7 +29,6 @@ import BookmarksOutlinedIcon from '@mui/icons-material/BookmarksOutlined';
 import TermsAndCondition from '../TermsAndCondition';
 import { useKeycloak } from '@react-keycloak/web';
 import { deleteUserAccount } from '../../service/content';
-
 interface LayoutProps {
   children?: React.ReactNode;
   footerComponent?: React.ReactNode | string;
@@ -84,6 +89,11 @@ interface LayoutProps {
   _footer?: object;
   isDrawer?: boolean;
 }
+export const FrameworkContext = createContext<any>(null);
+
+export function useFramework() {
+  return useContext(FrameworkContext);
+}
 
 export default function Layout({
   children,
@@ -120,6 +130,36 @@ export default function Layout({
     setSearchQuery(event.target.value);
   };
   const { keycloak } = useKeycloak();
+  const [frameworkData, setFrameworkData] = useState<any>(null);
+  const [frameworkFilter, setFrameworkFilter] = useState<any[]>([]);
+  const [framework, setFramework] = useState<string>('');
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchFrameworkData = async () => {
+      try {
+        const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
+        const frameworkData = await fetch(url).then((res) => res.json());
+        if (isMounted) {
+          const frameworks = frameworkData?.result?.framework?.categories;
+          const fdata =
+            frameworks.find((item: any) => item.code === 'topic')?.terms || [];
+          setFramework(fdata[0]?.identifier || '');
+          setFrameworkFilter(fdata);
+          setFrameworkData(frameworkData);
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Error fetching board data:', error);
+        }
+      }
+    };
+
+    fetchFrameworkData();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     const handleResize = debounce(() => {
@@ -200,10 +240,12 @@ export default function Layout({
     if (to === 'delete-account') {
       setOpenDeleteDialog(true);
       const accToken = localStorage.getItem('token') || '';
+      const userId = localStorage.getItem('userId') ?? '';
       if (confirmDelete) {
         try {
           await deleteUserAccount({
             token: accToken,
+            userId: userId,
           });
         } catch (error) {
           console.error('Error updating user status:', error);
@@ -246,8 +288,9 @@ export default function Layout({
   const handleCloseDeleteDialog = async () => {
     setOpenDeleteDialog(false);
     const accToken = localStorage.getItem('token') || '';
+    const userId = localStorage.getItem('userId') ?? '';
     try {
-      await deleteUserAccount({ token: accToken });
+      await deleteUserAccount({ token: accToken, userId: userId });
 
       // On success, show confirmation
       setOpenDeleteMessageDialog(true);
@@ -268,258 +311,270 @@ export default function Layout({
     }
   };
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        minHeight: '100vh',
-        ...sx,
-      }}
+    <FrameworkContext.Provider
+      value={{ frameworkData, frameworkFilter, framework }}
     >
-      <Box sx={{ zIndex: 100, position: 'fixed', top: 0, left: 0, right: 0 }}>
-        {showTopAppBar && (
-          <Box
-            sx={{
-              display: 'center',
-              justifyContent: 'center',
-              alignItems: 'center',
-              flexDirection: 'column',
-            }}
-          >
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          minHeight: '100vh',
+          ...sx,
+        }}
+      >
+        <Box sx={{ zIndex: 100, position: 'fixed', top: 0, left: 0, right: 0 }}>
+          {showTopAppBar && (
+            <Box
+              sx={{
+                display: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'column',
+              }}
+            >
+              <Box
+                sx={{
+                  width: '100%',
+                  bgcolor: '#FFFFFF',
+                }}
+                minHeight={'64px'}
+              >
+                <TopAppBar
+                  logoUrl={atreeLogo?.src || ''}
+                  _appBar={{
+                    py: '8.5px',
+                    backgroundColor: '#fff',
+                  }}
+                  // title="Jal-Jungle-Jameen"
+                  _title={{
+                    fontSize: '14px',
+                    lineHeight: '16px',
+                    color: 'text.secondary',
+                    fontWeight: 400,
+                  }}
+                  _isDrawer={isDrawer}
+                  // subTitle="In Classrooms"
+                  _subTitle={{
+                    fontSize: '14px',
+                    lineHeight: '16px',
+                    color: 'text.primary',
+                    fontWeight: 700,
+                  }}
+                  actionButtonColor="secondary"
+                  //@ts-ignore
+                  actionIcons={topAppBarIcons}
+                  menuIconClick={() => setIsDrawerOpen(true)}
+                  searchQuery={searchQuery} // Pass the search value
+                  onSearchChange={handleSearchChange}
+                  frameworkData={frameworkData}
+                  frameworkFilter={frameworkFilter}
+                  framework={framework}
+                  setFramework={setFramework}
+                  {...showTopAppBar}
+                />
+              </Box>
+            </Box>
+          )}
+          {(showBack || backTitle) && (
             <Box
               sx={{
                 width: '100%',
+                display: 'flex',
+                alignItems: 'flex-start',
+                p: 2,
                 bgcolor: '#FFFFFF',
+                gap: 2,
+                ...(_backButton || {}),
               }}
-              minHeight={'64px'}
             >
-              <TopAppBar
-                logoUrl={atreeLogo?.src || ''}
-                _appBar={{
-                  py: '8.5px',
-                  backgroundColor: '#fff',
-                }}
-                // title="Jal-Jungle-Jameen"
-                _title={{
-                  fontSize: '14px',
-                  lineHeight: '16px',
-                  color: 'text.secondary',
-                  fontWeight: 400,
-                }}
-                _isDrawer={isDrawer}
-                // subTitle="In Classrooms"
-                _subTitle={{
-                  fontSize: '14px',
-                  lineHeight: '16px',
-                  color: 'text.primary',
-                  fontWeight: 700,
-                }}
-                actionButtonColor="secondary"
-                //@ts-ignore
-                actionIcons={topAppBarIcons}
-                menuIconClick={() => setIsDrawerOpen(true)}
-                searchQuery={searchQuery} // Pass the search value
-                onSearchChange={handleSearchChange}
-                {...showTopAppBar}
-              />
+              {showBack && (
+                <ArrowBackIcon onClick={backIconClick || console.log} />
+              )}
+              {typeof backTitle === 'string' ? (
+                <Typography fontSize={'22px'} fontWeight={400}>
+                  {backTitle}
+                </Typography>
+              ) : (
+                backTitle
+              )}
             </Box>
-          </Box>
+          )}
+        </Box>
+        {isDrawer && (
+          <CommonDrawer
+            anchor="right"
+            open={isDrawerOpen}
+            onDrawerClose={() => setIsDrawerOpen(false)}
+            items={drawerItems}
+            categories={categorieItems}
+            onItemClick={(to) => {
+              handleItemClick?.(to || '');
+              setIsDrawerOpen(false);
+            }}
+          />
         )}
-        {(showBack || backTitle) && (
+
+        <Loader isLoading={isLoadingChildren} layoutHeight={layoutHeight}>
+          {children}
+        </Loader>
+
+        {isMobile && isFooter && (
           <Box
+            ref={(refFoot) => {
+              if (
+                !Object.prototype.hasOwnProperty.call(refs.current, 'footer')
+              ) {
+                refs.current = { ...refs.current, footer: refFoot };
+              }
+            }}
             sx={{
               width: '100%',
-              display: 'flex',
-              alignItems: 'flex-start',
-              p: 2,
-              bgcolor: '#FFFFFF',
-              gap: 2,
-              ...(_backButton || {}),
+              bgcolor: 'white',
+              ..._footer,
             }}
           >
-            {showBack && (
-              <ArrowBackIcon onClick={backIconClick || console.log} />
-            )}
-            {typeof backTitle === 'string' ? (
-              <Typography fontSize={'22px'} fontWeight={400}>
-                {backTitle}
-              </Typography>
-            ) : (
-              backTitle
-            )}
+            {footerComponent || <Footer />}
           </Box>
         )}
-      </Box>
-      {isDrawer && (
-        <CommonDrawer
-          anchor="right"
-          open={isDrawerOpen}
-          onDrawerClose={() => setIsDrawerOpen(false)}
-          items={drawerItems}
-          categories={categorieItems}
-          onItemClick={(to) => {
-            handleItemClick?.(to || '');
-            setIsDrawerOpen(false);
-          }}
-        />
-      )}
-
-      <Loader isLoading={isLoadingChildren} layoutHeight={layoutHeight}>
-        {children}
-      </Loader>
-
-      {isMobile && isFooter && (
-        <Box
-          ref={(refFoot) => {
-            if (!Object.prototype.hasOwnProperty.call(refs.current, 'footer')) {
-              refs.current = { ...refs.current, footer: refFoot };
-            }
-          }}
-          sx={{
-            width: '100%',
-            bgcolor: 'white',
-            ..._footer,
-          }}
-        >
-          {footerComponent || <Footer />}
-        </Box>
-      )}
-      {!isMobile && footerComponent && (
-        <Box
-          ref={(refFoot) => {
-            if (!Object.prototype.hasOwnProperty.call(refs.current, 'footer')) {
-              refs.current = { ...refs.current, footer: refFoot };
-            }
-          }}
-          sx={{
-            width: '100%',
-            bgcolor: 'white',
-            ..._footer,
-          }}
-        >
-          {footerComponent}
-        </Box>
-      )}
-      <CommonDialog
-        isOpen={openDeleteDialog}
-        onClose={() => setOpenDeleteDialog(false)}
-        disableCloseOnBackdropClick={true}
-        header="User Details"
-        hideCloseButton={true}
-        content={
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Typography variant="body1">
-              Are you sure you want to delete your account?{' '}
-            </Typography>
+        {!isMobile && footerComponent && (
+          <Box
+            ref={(refFoot) => {
+              if (
+                !Object.prototype.hasOwnProperty.call(refs.current, 'footer')
+              ) {
+                refs.current = { ...refs.current, footer: refFoot };
+              }
+            }}
+            sx={{
+              width: '100%',
+              bgcolor: 'white',
+              ..._footer,
+            }}
+          >
+            {footerComponent}
           </Box>
-        }
-        actions={
-          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Button
-              onClick={handleCloseDeleteDialog}
-              sx={{
-                color: '#2B3133',
-                width: '100%',
-                height: '40px',
-                marginRight: '20px',
-                background:
-                  'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
-                borderRadius: '50px',
-                fontSize: '14px',
-                fontWeight: 500,
-              }}
-            >
-              Yes
-            </Button>
-            <Button
-              onClick={() => setOpenDeleteDialog(false)}
-              sx={{
-                color: '#2B3133',
-                width: '100%',
-                height: '40px',
-
-                background:
-                  'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
-                borderRadius: '50px',
-                fontSize: '14px',
-                fontWeight: 500,
-              }}
-            >
-              No
-            </Button>
-          </Box>
-        }
-        sx={{
-          width: '500px',
-          height: '300px',
-          padding: '10px',
-          borderRadius: '16px',
-        }}
-      />
-      <CommonDialog
-        isOpen={openDeleteMessageDialog}
-        onClose={() => setOpenDeleteMessageDialog(false)}
-        disableCloseOnBackdropClick={true}
-        header="User Details"
-        hideCloseButton={true}
-        content={
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Typography variant="body1">
-              User account deleted successfully !
-            </Typography>
-          </Box>
-        }
-        actions={
-          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Button
-              onClick={() => setOpenDeleteMessageDialog(false)}
-              sx={{
-                color: '#2B3133',
-                width: '100%',
-                height: '40px',
-
-                background:
-                  'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
-                borderRadius: '50px',
-                fontSize: '14px',
-                fontWeight: 500,
-              }}
-            >
-              Okay
-            </Button>
-          </Box>
-        }
-        sx={{
-          width: '500px',
-          height: '300px',
-          padding: '10px',
-          borderRadius: '16px',
-        }}
-      />
-      {openDialog && (
-        <TermsAndCondition
-          isOpen={openDialog}
-          onClose={() => setOpenDialog(false)}
-          actions={
-            <Button
-              onClick={() => setOpenDialog(false)}
-              sx={{
-                color: '#2B3133',
-                width: '100%',
-                height: '40px',
-                background:
-                  'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
-                borderRadius: '50px',
-                fontSize: '14px',
-                fontWeight: 500,
-              }}
-            >
-              Close
-            </Button>
+        )}
+        <CommonDialog
+          isOpen={openDeleteDialog}
+          onClose={() => setOpenDeleteDialog(false)}
+          disableCloseOnBackdropClick={true}
+          header="User Details"
+          hideCloseButton={true}
+          content={
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Typography variant="body1">
+                Are you sure you want to delete your account?{' '}
+              </Typography>
+            </Box>
           }
+          actions={
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <Button
+                onClick={handleCloseDeleteDialog}
+                sx={{
+                  color: '#2B3133',
+                  width: '100%',
+                  height: '40px',
+                  marginRight: '20px',
+                  background:
+                    'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                  borderRadius: '50px',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                }}
+              >
+                Yes
+              </Button>
+              <Button
+                onClick={() => setOpenDeleteDialog(false)}
+                sx={{
+                  color: '#2B3133',
+                  width: '100%',
+                  height: '40px',
+
+                  background:
+                    'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                  borderRadius: '50px',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                }}
+              >
+                No
+              </Button>
+            </Box>
+          }
+          sx={{
+            width: '500px',
+            padding: '10px',
+            borderRadius: '16px',
+            height: '206px',
+          }}
         />
-      )}
-    </Box>
+        <CommonDialog
+          isOpen={openDeleteMessageDialog}
+          onClose={() => setOpenDeleteMessageDialog(false)}
+          disableCloseOnBackdropClick={true}
+          header="User Details"
+          hideCloseButton={true}
+          content={
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Typography variant="body1">
+                User account deleted successfully !
+              </Typography>
+            </Box>
+          }
+          actions={
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <Button
+                onClick={() => setOpenDeleteMessageDialog(false)}
+                sx={{
+                  color: '#2B3133',
+                  width: '100%',
+                  height: '40px',
+
+                  background:
+                    'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                  borderRadius: '50px',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                }}
+              >
+                Okay
+              </Button>
+            </Box>
+          }
+          sx={{
+            width: '500px',
+            height: '190px',
+            padding: '10px',
+            borderRadius: '16px',
+          }}
+        />
+        {openDialog && (
+          <TermsAndCondition
+            isOpen={openDialog}
+            onClose={() => setOpenDialog(false)}
+            actions={
+              <Button
+                onClick={() => setOpenDialog(false)}
+                sx={{
+                  color: '#2B3133',
+                  width: '100%',
+                  height: '40px',
+                  background:
+                    'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                  borderRadius: '50px',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                }}
+              >
+                Close
+              </Button>
+            }
+          />
+        )}
+      </Box>
+    </FrameworkContext.Provider>
   );
 }

@@ -50,7 +50,7 @@ export default function Searchpage() {
         gap="1rem"
         py="1rem"
         px="14px"
-        sx={{ width: 'fit-content' }}
+        sx={{ width: 'fit-content', marginTop: '1rem' }}
       >
         <IconButton
           onClick={(e) => {
@@ -91,7 +91,7 @@ export default function Searchpage() {
             gap: '16px',
             display: 'flex',
             flexDirection: 'column',
-            marginTop: isMobile ? '-120px' : '-127px',
+            marginTop: isMobile ? '-90px' : '-127px',
           }}
         >
           <Content

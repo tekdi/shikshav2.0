@@ -30,10 +30,12 @@ export const Loader: React.FC<LoaderProps> = memo(
       '/contents/[identifier]',
     ];
 
+    const paddingPlayer = ['/player/[identifier]'];
     const shouldUnsetHeight = noHeightRoutes.includes(router.pathname);
     const shouldUnsetPadding = noPaddingRoutes.includes(router.pathname);
     const shouldAddPadding = paddingQuickAccess.includes(router.pathname);
     const shouldSkipPadding = router.asPath === '/searchpage';
+    const addPaddingPlayer = paddingPlayer.includes(router.asPath);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     let paddingTop = '97px';
@@ -43,12 +45,12 @@ export const Loader: React.FC<LoaderProps> = memo(
         paddingTop = '96px';
       } else if (shouldUnsetPadding) {
         paddingTop = '34px';
-      } else if (shouldUnsetHeight) {
-        paddingTop = '64px';
       } else if (shouldAddPadding) {
-        paddingTop = '130px';
+        paddingTop = '160px';
+      } else if (addPaddingPlayer) {
+        paddingTop = '140px';
       } else {
-        paddingTop = '76px';
+        paddingTop = '146px';
       }
     } else {
       if (shouldSkipPadding) {
@@ -76,20 +78,6 @@ export const Loader: React.FC<LoaderProps> = memo(
             }}
           >
             <Image src={loaderGif} alt="Loading..." />
-            <Typography
-              variant="body1"
-              color="textSecondary"
-              fontSize={'1.5rem'}
-              sx={{
-                position: 'absolute',
-                top: { xs: '400px', md: '550px' }, // Responsive positioning
-                zIndex: 1,
-                bgcolor: 'rgba(255, 255, 255, 0.5)', // Optional: Background for readability
-                px: 1, // Padding for visibility
-              }}
-            >
-              Loading...
-            </Typography>
           </Box>
         )}
         <Box
@@ -98,8 +86,8 @@ export const Loader: React.FC<LoaderProps> = memo(
             overflowY: 'auto',
             display: isLoading ? 'none' : 'block',
             height:
-              shouldUnsetHeight && !isMobile
-                ? 'auto'
+              !isMobile && shouldUnsetHeight
+                ? 'unset'
                 : `calc(100vh - ${layoutHeight}px)`,
             paddingTop: paddingTop,
           }}

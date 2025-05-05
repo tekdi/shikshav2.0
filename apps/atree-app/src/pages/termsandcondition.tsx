@@ -20,16 +20,15 @@ export default function Aboutus() {
         alignItems="left"
         // justifyContent="center"
         marginBottom={'5px'}
-        padding={{ xs: '25px' }}
+        padding={{ xs: '16px' }}
+        mt={-3}
       >
         {/* About Us Description */}
         <Typography
-          variant="h4"
           sx={{
             textAlign: 'center',
             fontWeight: { xs: 400, md: 500 },
             fontSize: { xs: '24px', md: '64px' },
-            mt: 2,
           }}
         >
           Terms and Conditions

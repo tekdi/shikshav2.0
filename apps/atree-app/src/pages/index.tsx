@@ -46,10 +46,6 @@ const AnimatedCounter = ({
     setKey((prev) => prev + 1);
   };
 
-  const triggerRestart = () => {
-    setTimeout(restartCounter, restartDelay);
-  };
-
   useEffect(() => {
     const totalSteps = duration / 10;
     const increment = target / totalSteps;
@@ -89,6 +85,7 @@ const LandingPage = () => {
   const [readerCount, setReaderCount] = useState(0);
   const [bookCount, setBookCount] = useState(0);
   const [loading, setLoading] = useState(true);
+
   const customOrder = [
     'Water',
     'Forest',
@@ -143,7 +140,7 @@ const LandingPage = () => {
       {loading ? (
         <Loader />
       ) : (
-        <Grid container sx={{ mb: 3 }} justifyContent={'center'}>
+        <Grid container justifyContent={'center'}>
           <Banner />
           <Grid
             sx={{ px: 4, textAlign: 'center' }}
@@ -267,7 +264,7 @@ const LandingPage = () => {
                   display: 'flex',
                   justifyContent: { xs: 'space-around', md: 'center' },
                   flexWrap: 'wrap',
-                  gap: 8,
+                  gap: isMobile ? 4 : 8,
                   alignItems: 'center',
                   color: '#2B3133',
                   textAlign: 'center',
@@ -358,7 +355,8 @@ const LandingPage = () => {
               display: 'flex',
               alignItems: 'center',
               flexDirection: 'column',
-              gap: 2,
+              padding: '0px 15px',
+              // gap: 2,
             }}
           >
             <Typography

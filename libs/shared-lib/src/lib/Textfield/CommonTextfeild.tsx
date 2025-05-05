@@ -68,11 +68,12 @@ export const CommonTextField: React.FC<CommonTextFieldProps> = ({
         sx={{
           width: width,
           '&:hover .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#FFBD0D', // Change color on hover
+            borderColor: '#4D4639', // Change color on hover
           },
-          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#E68907', // Change color when focused
-          },
+          '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline':
+            {
+              borderColor: '#4D4639', // Change color when focused
+            },
           '& .MuiInputLabel-root': {
             color: error ? '#f44336' : '#4D4639', // Label color change on error
           },

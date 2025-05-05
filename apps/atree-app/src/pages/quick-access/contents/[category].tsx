@@ -321,7 +321,7 @@ const MyComponent: React.FC = () => {
                     onClick={handleClick}
                     _title={{ fontWeight: 700, fontSize: '14px' }}
                     _item={{
-                      width: { xs: '335px', md: '445px' },
+                      width: { xs: '285px', md: '445px' },
                       border: 0,
                       justifyContent: 'space-between',
                       py: 2,

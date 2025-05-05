@@ -54,11 +54,12 @@ export default function Index() {
   const [contentData, setContentData] = useState<any>([]);
 
   const [consumedContent, setConsumedContent] = useState<string[]>([]);
-  const [frameworkFilter, setFrameworkFilter] = useState();
-
-  const [framework, setFramework] = useState('');
-  const [subFrameworkFilter, setSubFrameworkFilter] = useState<any[]>([]);
-  const [subFramework, setSubFramework] = useState('');
+  const {
+    frameworkData,
+    frameworkFilter: contextFrameworkFilter,
+    framework: contextFramework,
+    setFramework,
+  } = useFramework();
   const [filterCategory, SetFilterCategory] = useState<string>('');
   const [isLoadingChildren, setIsLoadingChildren] = useState(true);
   const [openMessageDialog, setOpenMessageDialog] = useState(false);
@@ -74,7 +75,17 @@ export default function Index() {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const frameworkName = searchParams.get('category')?.toLocaleUpperCase();
+  const [frameworkFilter, setFrameworkFilter] = useState(
+    contextFrameworkFilter
+  );
+  const [framework, setLocalFramework] = useState(contextFramework);
 
+  useEffect(() => {
+    setFrameworkFilter(contextFrameworkFilter);
+    setLocalFramework(contextFramework);
+  }, [contextFrameworkFilter, contextFramework]);
+  const [subFrameworkFilter, setSubFrameworkFilter] = useState<any[]>([]);
+  const [subFramework, setSubFramework] = useState('');
   // **Handle API Calls with Updated Filters**
   const fetchContentData = async (updatedFilters: any) => {
     try {
@@ -133,69 +144,34 @@ export default function Index() {
 
   // **Initial Data Fetch Based on frameworkName**
   useEffect(() => {
-    const init = async () => {
-      try {
-        //Framework URL
-        const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
-        //response from API
-        const frameworkData = await fetch(url).then((res) => res.json());
-        //category data
-        const frameworks = frameworkData?.result?.framework?.categories;
-        //Framework topic wise data
+    if (framework && frameworkFilter) {
+      const subFrameworkData = frameworkFilter.find(
+        (item: any) => item.identifier === framework
+      );
 
-        const fdata =
-          frameworks.find((item: any) => item.code === 'topic')?.terms || [];
-        setFramework(fdata[0]?.identifier || '');
-        setFrameworkFilter(fdata);
+      const categoryName = subFrameworkData?.name
+        ? subFrameworkData.name.charAt(0).toUpperCase() +
+          subFrameworkData.name.slice(1).toLowerCase()
+        : '';
 
-        // Filter live categories
-        setFilterData({
-          ...frameworkData?.result?.framework,
-          categories: frameworkData?.result?.framework.categories.filter(
-            (category: any) => category.status === 'Live'
-          ),
-        });
-        //condition if category from URL
-        let selectedFramework = fdata[0];
-        if (frameworkName) {
-          const foundFramework = fdata.find(
-            (item: any) =>
-              item.name.toLowerCase() === frameworkName.toLowerCase()
-          );
-          if (foundFramework) {
-            selectedFramework = foundFramework;
-          }
-        }
-        const selectedCategory = selectedFramework?.name;
-        const selectedIdentifier = selectedFramework?.identifier;
+      SetFilterCategory(categoryName);
+      localStorage.setItem('category', categoryName);
 
-        setFramework(selectedIdentifier);
-        SetFilterCategory(selectedCategory);
-        localStorage.setItem('category', selectedCategory);
+      const uniqueAssociations = Array.from(
+        new Map(
+          subFrameworkData?.associations?.map((item: any) => [item?.name, item])
+        ).values()
+      );
 
-        const newFilters = {
-          topic: [selectedCategory],
-        };
+      setSubFrameworkFilter(uniqueAssociations);
 
+      if (filterCategory !== categoryName) {
         setFilters({
-          request: {
-            filters: newFilters,
-            offset: 0,
-            limit: 5,
-          },
+          request: { filters: { topic: [categoryName] }, offset: 0, limit: 5 },
         });
-
-        fetchContentData(newFilters);
-      } catch (error) {
-        console.error('Error fetching board data:', error);
-      } finally {
-        setIsLoadingChildren(false);
       }
-    };
-
-    init();
-  }, [frameworkName]);
-
+    }
+  }, [framework, frameworkFilter]);
   // **Update FilterCategory When Framework Changes**
   useEffect(() => {
     if (framework && frameworkFilter) {
@@ -342,7 +318,7 @@ export default function Index() {
               <Grid size={{ xs: 9 }}>
                 <Box
                   sx={{
-                    width: '100%',
+                    width: '80%',
                     gap: '16px',
                     display: 'flex',
                     flexDirection: 'column',
@@ -375,10 +351,40 @@ export default function Index() {
                     padding: '12px',
                   }}
                 >
-                  <SwitchAccess
-                    fullAccess={fullAccess}
-                    handleToggleFullAccess={handleToggleFullAccess}
-                  />
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    {subFrameworkFilter && subFrameworkFilter.length > 0 && (
+                      <Title>{t('Browse by Sub Categories')}</Title>
+                    )}
+                    <SwitchAccess
+                      fullAccess={fullAccess}
+                      handleToggleFullAccess={handleToggleFullAccess}
+                    />
+                  </Box>
+
+                  <Box
+                    sx={{
+                      width: '100%',
+                      padding: '12px',
+                      gap: '16px',
+                      flexDirection: 'column',
+                      display: 'flex',
+                    }}
+                  >
+                    {/* <Title>{t('Browse by Sub Categories')}</Title> */}
+
+                    <SubFrameworkFilter
+                      subFramework={subFramework}
+                      setSubFramework={setSubFramework}
+                      lastButton={true}
+                      subFrameworkFilter={subFrameworkFilter || []}
+                    />
+                  </Box>
 
                   <ContentSection
                     contents={
@@ -392,26 +398,7 @@ export default function Index() {
                     handleCardClick={handleCardClick}
                   />
                 </Box>
-                <Box
-                  sx={{
-                    width: '100%',
-                    padding: '12px',
-                    gap: '16px',
-                    flexDirection: 'column',
-                    display: 'flex',
-                  }}
-                >
-                  {/* <Title>{t('Browse by Sub Categories')}</Title> */}
-                  {subFrameworkFilter && subFrameworkFilter.length > 0 && (
-                    <Title>{t('Browse by Sub Categories')}</Title>
-                  )}
-                  <SubFrameworkFilter
-                    subFramework={subFramework}
-                    setSubFramework={setSubFramework}
-                    lastButton={true}
-                    subFrameworkFilter={subFrameworkFilter || []}
-                  />
-                </Box>
+
                 <Box
                   sx={{
                     width: '100%',
@@ -429,7 +416,7 @@ export default function Index() {
                       router.push('/contents');
                     }}
                     contents={
-                      contentData.length > 4 ? contentData.slice(4, 10) : []
+                      contentData.length > 4 ? contentData.slice(4, 20) : []
                     }
                     handleCardClick={handleCardClick}
                   />
@@ -438,32 +425,13 @@ export default function Index() {
             )}
           </Grid>
         ) : (
-          <>
+          <Box sx={{ marginTop: '1rem' }}>
             <FrameworkFilter
               frameworkFilter={frameworkFilter || []}
               framework={framework}
               setFramework={setFramework}
               fromSubcategory={false}
             />
-            <Box
-              sx={{
-                flexDirection: 'column',
-                width: '100%',
-                gap: '16px',
-                padding: '15px',
-                display: 'flex',
-              }}
-            >
-              <ContentSection
-                title={t('Read, Watch, Listen')}
-                handleCardClick={handleCardClick}
-                onTitleClick={() => {
-                  localStorage.removeItem('subcategory');
-                  router.push('/contents');
-                }}
-                contents={contentData.length > 0 ? contentData.slice(0, 4) : []}
-              />
-            </Box>
             <Box
               sx={{
                 display: 'flex',
@@ -486,6 +454,26 @@ export default function Index() {
             </Box>
             <Box
               sx={{
+                flexDirection: 'column',
+                width: '100%',
+                gap: '16px',
+                padding: '15px',
+                display: 'flex',
+              }}
+            >
+              <ContentSection
+                title={t('Read, Watch, Listen')}
+                handleCardClick={handleCardClick}
+                onTitleClick={() => {
+                  localStorage.removeItem('subcategory');
+                  router.push('/contents');
+                }}
+                contents={contentData.length > 0 ? contentData.slice(0, 4) : []}
+              />
+            </Box>
+
+            <Box
+              sx={{
                 display: 'flex',
                 width: '100%',
                 gap: '16px',
@@ -505,7 +493,7 @@ export default function Index() {
                 }}
               />
             </Box>
-          </>
+          </Box>
         )}
       </Box>
 
@@ -829,7 +817,7 @@ const Title: React.FC<{
         sx={{
           fontStyle: 'normal',
           fontWeight: 700,
-          fontSize: '22px',
+          fontSize: { xs: '20px', md: '22px' },
           lineHeight: '28px',
           color: '#1C170D',
         }}
