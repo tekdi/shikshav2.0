@@ -254,6 +254,7 @@ const LandingPage = () => {
               flexDirection="column"
               alignItems="center"
               justifyContent={'space-evenly'}
+              sx={{ paddingBottom: '10px' }}
             >
               <Box
                 sx={{

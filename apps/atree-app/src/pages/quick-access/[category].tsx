@@ -94,7 +94,7 @@ const MyComponent: React.FC = () => {
         subLabel="resources"
         onClick={handleClick}
         length={searchResults}
-        _item={{ width: { xs: '375px', md: '100%' } }}
+        _item={{ width: { xs: '355px', md: '100%' } }}
       />
     </Layout>
   );
