@@ -14,6 +14,7 @@ import React, {
   useState,
   createContext,
   useContext,
+  useMemo,
 } from 'react';
 import atreeLogo from '../../../assets/images/atreeLogo.svg';
 import TopAppBar from './TopToolBar';
@@ -143,8 +144,8 @@ export default function Layout({
         if (isMounted) {
           const frameworks = frameworkData?.result?.framework?.categories;
           const fdata =
-            frameworks.find((item: any) => item.code === 'topic')?.terms || [];
-          setFramework(fdata[0]?.identifier || '');
+            frameworks.find((item: any) => item.code === 'topic')?.terms ?? [];
+          setFramework(fdata[0]?.identifier ?? '');
           setFrameworkFilter(fdata);
           setFrameworkData(frameworkData);
         }
@@ -310,10 +311,19 @@ export default function Layout({
       // Optional: show an error dialog
     }
   };
+  const contextValue = useMemo(
+    () => ({
+      frameworkData,
+      frameworkFilter,
+      framework,
+      setFrameworkData,
+      setFrameworkFilter,
+      setFramework,
+    }),
+    [frameworkData, frameworkFilter, framework]
+  );
   return (
-    <FrameworkContext.Provider
-      value={{ frameworkData, frameworkFilter, framework }}
-    >
+    <FrameworkContext.Provider value={contextValue}>
       <Box
         sx={{
           display: 'flex',

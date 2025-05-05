@@ -55,7 +55,6 @@ export default function Index() {
 
   const [consumedContent, setConsumedContent] = useState<string[]>([]);
   const {
-    frameworkData,
     frameworkFilter: contextFrameworkFilter,
     framework: contextFramework,
     setFramework,
@@ -78,11 +77,11 @@ export default function Index() {
   const [frameworkFilter, setFrameworkFilter] = useState(
     contextFrameworkFilter
   );
-  const [framework, setLocalFramework] = useState(contextFramework);
+  const [framework, setFramework] = useState(contextFramework);
 
   useEffect(() => {
     setFrameworkFilter(contextFrameworkFilter);
-    setLocalFramework(contextFramework);
+    setFramework(contextFramework);
   }, [contextFrameworkFilter, contextFramework]);
   const [subFrameworkFilter, setSubFrameworkFilter] = useState<any[]>([]);
   const [subFramework, setSubFramework] = useState('');
@@ -382,7 +381,7 @@ export default function Index() {
                       subFramework={subFramework}
                       setSubFramework={setSubFramework}
                       lastButton={true}
-                      subFrameworkFilter={subFrameworkFilter || []}
+                      subFrameworkFilter={subFrameworkFilter ?? []}
                     />
                   </Box>
 
@@ -446,7 +445,7 @@ export default function Index() {
               )}
 
               <SubFrameworkFilter
-                subFrameworkFilter={subFrameworkFilter || []}
+                subFrameworkFilter={subFrameworkFilter ?? []}
                 setSubFramework={setSubFramework}
                 subFramework={subFramework}
                 lastButton={true}

@@ -88,8 +88,6 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
 }) => {
   const router = useRouter();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  // const [frameworkFilter, setFrameworkFilter] = useState();
-  // const [framework, setFramework] = useState('');
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -135,7 +133,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
       }
     }
   }, [framework, frameworkFilter]);
-  // useEffect(() => {
+
   //   const init = async () => {
   //     try {
   //       const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;

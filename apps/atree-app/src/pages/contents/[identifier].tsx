@@ -105,7 +105,7 @@ export default function Content() {
         setContentData(result);
       }
 
-      const keyword = result?.keywords[0] || [];
+      const keyword = result?.keywords[0] ?? [];
       const keywordFilteredResults = await ContentSearch({
         channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
         query: keyword,
@@ -278,14 +278,6 @@ export default function Content() {
                           }
                         />
                       ))}
-                      {/* {showMoreIcon && (
-                        <IconButton
-                          onClick={() => setOpenPopup(true)}
-                          size="small"
-                        >
-                          <MoreVertIcon />
-                        </IconButton>
-                      )} */}
                     </Box>
 
                     {/* Description */}
@@ -494,11 +486,6 @@ export default function Content() {
                     onClick={() => selectTagOnClick(label.replace('#', ''))}
                   />
                 ))}
-                {/* {showMoreIcon && (
-                  <IconButton onClick={() => setOpenPopup(true)} size="small">
-                    <MoreVertIcon />
-                  </IconButton>
-                )} */}
               </Box>
 
               <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
