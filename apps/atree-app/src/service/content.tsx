@@ -20,6 +20,10 @@ interface CreateUserParams {
 interface AuthParams {
   token: string;
 }
+interface DeleteParams {
+  token: string;
+  userId: string;
+}
 export const getContentDetails = async (
   identifier?: string | string[]
 ): Promise<any> => {
@@ -98,15 +102,16 @@ export const createUser = async (payload: CreateUserParams): Promise<any> => {
 
 export const deleteUserAccount = async ({
   token,
-}: AuthParams): Promise<any> => {
-  const apiUrl = `${process.env.NEXT_PUBLIC_ATREE_LOGIN_URL}/interface/v1/user/auth`;
+  userId,
+}: DeleteParams): Promise<any> => {
+  const apiUrl = `${process.env.NEXT_PUBLIC_ATREE_LOGIN_URL}/user/v1/update${userId}`;
   const headers = {
     Authorization: `Bearer ${token}`,
     tenantid: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
   };
   const data = {
     userData: {
-      status: 'active',
+      status: 'deactive',
       reason: 'Health Issue',
     },
   };

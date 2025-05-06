@@ -342,7 +342,7 @@ export default function Index() {
               <Grid size={{ xs: 9 }}>
                 <Box
                   sx={{
-                    width: '100%',
+                    width: '80%',
                     gap: '16px',
                     display: 'flex',
                     flexDirection: 'column',
@@ -375,10 +375,40 @@ export default function Index() {
                     padding: '12px',
                   }}
                 >
-                  <SwitchAccess
-                    fullAccess={fullAccess}
-                    handleToggleFullAccess={handleToggleFullAccess}
-                  />
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    {subFrameworkFilter && subFrameworkFilter.length > 0 && (
+                      <Title>{t('Browse by Sub Categories')}</Title>
+                    )}
+                    <SwitchAccess
+                      fullAccess={fullAccess}
+                      handleToggleFullAccess={handleToggleFullAccess}
+                    />
+                  </Box>
+
+                  <Box
+                    sx={{
+                      width: '100%',
+                      padding: '12px',
+                      gap: '16px',
+                      flexDirection: 'column',
+                      display: 'flex',
+                    }}
+                  >
+                    {/* <Title>{t('Browse by Sub Categories')}</Title> */}
+
+                    <SubFrameworkFilter
+                      subFramework={subFramework}
+                      setSubFramework={setSubFramework}
+                      lastButton={true}
+                      subFrameworkFilter={subFrameworkFilter || []}
+                    />
+                  </Box>
 
                   <ContentSection
                     contents={
@@ -392,26 +422,7 @@ export default function Index() {
                     handleCardClick={handleCardClick}
                   />
                 </Box>
-                <Box
-                  sx={{
-                    width: '100%',
-                    padding: '12px',
-                    gap: '16px',
-                    flexDirection: 'column',
-                    display: 'flex',
-                  }}
-                >
-                  {/* <Title>{t('Browse by Sub Categories')}</Title> */}
-                  {subFrameworkFilter && subFrameworkFilter.length > 0 && (
-                    <Title>{t('Browse by Sub Categories')}</Title>
-                  )}
-                  <SubFrameworkFilter
-                    subFramework={subFramework}
-                    setSubFramework={setSubFramework}
-                    lastButton={true}
-                    subFrameworkFilter={subFrameworkFilter || []}
-                  />
-                </Box>
+
                 <Box
                   sx={{
                     width: '100%',
@@ -429,7 +440,7 @@ export default function Index() {
                       router.push('/contents');
                     }}
                     contents={
-                      contentData.length > 4 ? contentData.slice(4, 10) : []
+                      contentData.length > 4 ? contentData.slice(4, 20) : []
                     }
                     handleCardClick={handleCardClick}
                   />
@@ -438,32 +449,13 @@ export default function Index() {
             )}
           </Grid>
         ) : (
-          <>
+          <Box sx={{ marginTop: '1rem' }}>
             <FrameworkFilter
               frameworkFilter={frameworkFilter || []}
               framework={framework}
               setFramework={setFramework}
               fromSubcategory={false}
             />
-            <Box
-              sx={{
-                flexDirection: 'column',
-                width: '100%',
-                gap: '16px',
-                padding: '15px',
-                display: 'flex',
-              }}
-            >
-              <ContentSection
-                title={t('Read, Watch, Listen')}
-                handleCardClick={handleCardClick}
-                onTitleClick={() => {
-                  localStorage.removeItem('subcategory');
-                  router.push('/contents');
-                }}
-                contents={contentData.length > 0 ? contentData.slice(0, 4) : []}
-              />
-            </Box>
             <Box
               sx={{
                 display: 'flex',
@@ -486,6 +478,26 @@ export default function Index() {
             </Box>
             <Box
               sx={{
+                flexDirection: 'column',
+                width: '100%',
+                gap: '16px',
+                padding: '15px',
+                display: 'flex',
+              }}
+            >
+              <ContentSection
+                title={t('Read, Watch, Listen')}
+                handleCardClick={handleCardClick}
+                onTitleClick={() => {
+                  localStorage.removeItem('subcategory');
+                  router.push('/contents');
+                }}
+                contents={contentData.length > 0 ? contentData.slice(0, 4) : []}
+              />
+            </Box>
+
+            <Box
+              sx={{
                 display: 'flex',
                 width: '100%',
                 gap: '16px',
@@ -505,7 +517,7 @@ export default function Index() {
                 }}
               />
             </Box>
-          </>
+          </Box>
         )}
       </Box>
 
@@ -829,7 +841,7 @@ const Title: React.FC<{
         sx={{
           fontStyle: 'normal',
           fontWeight: 700,
-          fontSize: '22px',
+          fontSize: { xs: '20px', md: '22px' },
           lineHeight: '28px',
           color: '#1C170D',
         }}

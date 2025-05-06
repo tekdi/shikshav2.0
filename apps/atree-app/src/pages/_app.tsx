@@ -9,6 +9,7 @@ import keycloak from '../service/keycloack';
 
 import '@fontsource/poppins';
 import dynamic from 'next/dynamic';
+import Layout from '../component/layout/layout';
 const AuthHandler = dynamic(() => import('./AuthHandler'), {
   ssr: false,
 });
@@ -47,7 +48,9 @@ export default function RootLayout({ Component, pageProps }: AppProps) {
       <ThemeProvider theme={theme}>
         <CssBaseline /> {/* Normalize styles */}
         <AuthHandler />
-        <Component {...pageProps} />
+        <Layout {...pageProps}>
+          <Component {...pageProps} />
+        </Layout>
       </ThemeProvider>
     </ReactKeycloakProvider>
   );

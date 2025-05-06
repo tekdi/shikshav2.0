@@ -57,6 +57,10 @@ interface CommonAppBarProps {
   logoUrl?: string;
   _appBar?: object;
   searchQuery?: string;
+  frameworkData?: any;
+  frameworkFilter?: any[];
+  framework?: string;
+  setFramework?: (framework: string) => void;
   onSearchChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   _isDrawer?: boolean;
 }
@@ -77,11 +81,13 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
   logoUrl,
   _appBar,
   _isDrawer,
+  frameworkData,
+  frameworkFilter = [],
+  framework = '',
+  setFramework,
 }) => {
   const router = useRouter();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [frameworkFilter, setFrameworkFilter] = useState();
-  const [framework, setFramework] = useState('');
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -126,23 +132,23 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
         );
       }
     }
-  }, []);
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
-        const frameworkData = await fetch(url).then((res) => res.json());
-        const frameworks = frameworkData?.result?.framework?.categories;
-        const fdata =
-          frameworks.find((item: any) => item.code === 'topic')?.terms || [];
-        setFramework(fdata[0]?.identifier || '');
-        setFrameworkFilter(fdata);
-      } catch (error) {
-        console.error('Error fetching board data:', error);
-      }
-    };
-    init();
-  }, []);
+  }, [framework, frameworkFilter]);
+
+  //   const init = async () => {
+  //     try {
+  //       const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
+  //       const frameworkData = await fetch(url).then((res) => res.json());
+  //       const frameworks = frameworkData?.result?.framework?.categories;
+  //       const fdata =
+  //         frameworks.find((item: any) => item.code === 'topic')?.terms || [];
+  //       setFramework(fdata[0]?.identifier || '');
+  //       setFrameworkFilter(fdata);
+  //     } catch (error) {
+  //       console.error('Error fetching board data:', error);
+  //     }
+  //   };
+  //   init();
+  // }, []);
   const handleSearchOpen = () => {
     setIsSearchOpen(true);
   };
@@ -223,12 +229,14 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                       justifyContent: 'center',
                     }}
                   >
-                    <FrameworkFilter
-                      frameworkFilter={frameworkFilter || []}
-                      framework={framework}
-                      setFramework={setFramework}
-                      fromSubcategory={false}
-                    />
+                    {frameworkFilter && setFramework && (
+                      <FrameworkFilter
+                        frameworkFilter={frameworkFilter || []}
+                        framework={framework}
+                        setFramework={setFramework}
+                        fromSubcategory={false}
+                      />
+                    )}
                   </Box>
                 )}
 

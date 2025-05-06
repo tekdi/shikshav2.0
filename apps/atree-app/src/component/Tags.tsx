@@ -94,7 +94,7 @@ export const FrameworkFilter = ({
         !isMobile
           ? {
               position: 'absolute',
-              left: '40%',
+              left: '38%',
               transform: 'translateX(-50%)',
               display: 'flex',
               alignItems: 'center',
@@ -125,10 +125,10 @@ export const FrameworkFilter = ({
                   ? buttonColors[lowerCaseName]
                   : 'transparent',
 
-                '&:hover': {
-                  backgroundColor: buttonColors[lowerCaseName] || 'black',
-                  color: '#fff',
-                },
+                // '&:hover': {
+                //   backgroundColor: buttonColors[lowerCaseName] || 'black',
+                //   color: '#fff',
+                // },
               }}
               onClick={() => handleItemClick({ identifier, name })}
             >

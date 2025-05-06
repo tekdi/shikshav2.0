@@ -19,17 +19,6 @@ const PlayerPage: React.FC<PlayerPageProps> = ({ id }) => {
       backIconClick={() => router.back()}
       showBack
       _backButton={{ alignItems: 'center' }}
-      backTitle={
-        <Typography
-          style={{
-            fontSize: '22px',
-            lineHeight: '28px',
-            letterSpacing: 0,
-          }}
-        >
-          {'Content Player'}
-        </Typography>
-      }
     >
       <SunbirdPlayer identifier={id ? id : (identifier as string)} />
     </Layout>

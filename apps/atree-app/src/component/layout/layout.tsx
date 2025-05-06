@@ -8,7 +8,14 @@ import {
 } from '@mui/material';
 import Box from '@mui/material/Box';
 import { CommonDialog, CommonDrawer, Loader } from '@shared-lib';
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  createContext,
+  useContext,
+  useMemo,
+} from 'react';
 import atreeLogo from '../../../assets/images/atreeLogo.svg';
 import TopAppBar from './TopToolBar';
 import Footer from './Footer';
@@ -23,7 +30,6 @@ import BookmarksOutlinedIcon from '@mui/icons-material/BookmarksOutlined';
 import TermsAndCondition from '../TermsAndCondition';
 import { useKeycloak } from '@react-keycloak/web';
 import { deleteUserAccount } from '../../service/content';
-
 interface LayoutProps {
   children?: React.ReactNode;
   footerComponent?: React.ReactNode | string;
@@ -84,6 +90,11 @@ interface LayoutProps {
   _footer?: object;
   isDrawer?: boolean;
 }
+export const FrameworkContext = createContext<any>(null);
+
+export function useFramework() {
+  return useContext(FrameworkContext);
+}
 
 export default function Layout({
   children,
@@ -120,6 +131,35 @@ export default function Layout({
     setSearchQuery(event.target.value);
   };
   const { keycloak } = useKeycloak();
+  const [frameworkData, setFrameworkData] = useState<any>(null);
+  const [frameworkFilter, setFrameworkFilter] = useState<any[]>([]);
+  const [framework, setFramework] = useState<string>('');
+  useEffect(() => {
+    let isMounted = true;
+    const fetchFrameworkData = async () => {
+      try {
+        const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
+        const frameworkData = await fetch(url).then((res) => res.json());
+        if (isMounted) {
+          const frameworks = frameworkData?.result?.framework?.categories;
+          const fdata =
+            frameworks.find((item: any) => item.code === 'topic')?.terms ?? [];
+          setFramework(fdata[0]?.identifier ?? '');
+          setFrameworkFilter(fdata);
+          setFrameworkData(frameworkData);
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Error fetching board data:', error);
+        }
+      }
+    };
+
+    fetchFrameworkData();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     const handleResize = debounce(() => {
@@ -200,10 +240,12 @@ export default function Layout({
     if (to === 'delete-account') {
       setOpenDeleteDialog(true);
       const accToken = localStorage.getItem('token') || '';
+      const userId = localStorage.getItem('userId') ?? '';
       if (confirmDelete) {
         try {
           await deleteUserAccount({
             token: accToken,
+            userId: userId,
           });
         } catch (error) {
           console.error('Error updating user status:', error);
@@ -246,8 +288,9 @@ export default function Layout({
   const handleCloseDeleteDialog = async () => {
     setOpenDeleteDialog(false);
     const accToken = localStorage.getItem('token') || '';
+    const userId = localStorage.getItem('userId') ?? '';
     try {
-      await deleteUserAccount({ token: accToken });
+      await deleteUserAccount({ token: accToken, userId: userId });
 
       // On success, show confirmation
       setOpenDeleteMessageDialog(true);
@@ -267,6 +310,7 @@ export default function Layout({
       // Optional: show an error dialog
     }
   };
+
   return (
     <Box
       sx={{
@@ -321,6 +365,10 @@ export default function Layout({
                 menuIconClick={() => setIsDrawerOpen(true)}
                 searchQuery={searchQuery} // Pass the search value
                 onSearchChange={handleSearchChange}
+                frameworkData={frameworkData}
+                frameworkFilter={frameworkFilter}
+                framework={framework}
+                setFramework={setFramework}
                 {...showTopAppBar}
               />
             </Box>
@@ -366,7 +414,17 @@ export default function Layout({
       )}
 
       <Loader isLoading={isLoadingChildren} layoutHeight={layoutHeight}>
-        {children}
+        {React.Children.map(children, (child) => {
+          if (React.isValidElement(child)) {
+            return React.cloneElement(child as React.ReactElement<any>, {
+              frameworkData,
+              frameworkFilter,
+              framework,
+              setFramework,
+            });
+          }
+          return child;
+        })}
       </Loader>
 
       {isMobile && isFooter && (
@@ -452,9 +510,9 @@ export default function Layout({
         }
         sx={{
           width: '500px',
-          height: '300px',
           padding: '10px',
           borderRadius: '16px',
+          height: '206px',
         }}
       />
       <CommonDialog
@@ -492,7 +550,7 @@ export default function Layout({
         }
         sx={{
           width: '500px',
-          height: '300px',
+          height: '190px',
           padding: '10px',
           borderRadius: '16px',
         }}

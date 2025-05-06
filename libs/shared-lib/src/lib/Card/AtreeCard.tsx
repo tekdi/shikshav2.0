@@ -10,7 +10,7 @@ import {
 import Grid from '@mui/material/Grid2';
 import { ContentSearchResponse } from '../Services/Content/Search';
 import { usePathname } from 'next/navigation';
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 20;
 
 export const AtreeCard: React.FC<{
   contents: ContentSearchResponse[];
@@ -70,7 +70,7 @@ export const AtreeCard: React.FC<{
                   image={content?.posterImage || _card?.image}
                   alt={content.name}
                   sx={{
-                    objectFit: 'contain',
+                    objectFit: 'cover',
                     objectPosition: 'center',
                     borderRadius: '16px',
                     border: '1px solid rgba(0,0,0,0.1)',

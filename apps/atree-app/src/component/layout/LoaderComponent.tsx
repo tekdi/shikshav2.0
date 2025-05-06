@@ -15,20 +15,6 @@ const Loader: React.FC = () => {
       <Image src={loaderGif} alt="Loading..." />
 
       {/* Loading Text */}
-      <Typography
-        variant="body1"
-        color="textSecondary"
-        fontSize={'1.5rem'}
-        sx={{
-          position: 'absolute',
-          top: { xs: '400px', md: '550px' }, // Responsive positioning
-          zIndex: 1,
-          bgcolor: 'rgba(255, 255, 255, 0.5)', // Optional: Background for readability
-          px: 1, // Padding for visibility
-        }}
-      >
-        Loading...
-      </Typography>
     </Box>
   );
 };
