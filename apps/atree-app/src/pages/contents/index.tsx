@@ -8,6 +8,7 @@ import atreeLogo from '../../../assets/images/placeholder.jpg';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import FooterText from '../../component/FooterText';
+import Footer from '../../component/layout/Footer';
 
 interface ListProps {}
 
@@ -40,7 +41,7 @@ const List: React.FC<ListProps> = () => {
     <Layout
       isLoadingChildren={isLoadingChildren}
       isFooter={isMobile} // add this when on mobile
-      footerComponent={!isMobile ? <FooterText page="" /> : undefined}
+      footerComponent={!isMobile ? <FooterText page="" /> : <Footer />}
     >
       <Box
         sx={{
@@ -50,6 +51,7 @@ const List: React.FC<ListProps> = () => {
           overflow: { md: 'hidden', xs: 'auto' }, // Prevents unwanted scrolling on desktop
           display: 'flex', // Helps in full-height layout
           flexDirection: 'column',
+          marginTop: { xs: '20px', md: '-60px' },
         }}
       >
         <Content

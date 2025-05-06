@@ -22,45 +22,87 @@ export const Loader: React.FC<LoaderProps> = memo(
       '/contents',
       '/searchpage',
       '/quick-access/contents/[category]',
+      '/contents/[identifier]',
+      'home?category=*',
     ];
-    const noPaddingRoutes = ['/contents', '/quick-access/contents/[category]'];
+    const noPaddingRoutes = ['/quick-access/contents/[category]'];
     const paddingQuickAccess = [
       '/quick-access',
       '/quick-access/[category]',
       '/contents/[identifier]',
     ];
-
+    const contentPagePadding = ['/contents'];
     const paddingPlayer = ['/player/[identifier]'];
     const shouldUnsetHeight = noHeightRoutes.includes(router.pathname);
     const shouldUnsetPadding = noPaddingRoutes.includes(router.pathname);
     const shouldAddPadding = paddingQuickAccess.includes(router.pathname);
     const shouldSkipPadding = router.asPath === '/searchpage';
+    const addPaddincontent = contentPagePadding.includes(router.asPath);
     const addPaddingPlayer = paddingPlayer.includes(router.asPath);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    let paddingTop = '50px';
-
+    let paddingTop = isMobile ? '40px' : '50px';
     if (isMobile) {
-      if (shouldSkipPadding) {
-        paddingTop = '96px';
-      } else if (shouldUnsetPadding) {
-        paddingTop = '34px';
-      } else if (shouldAddPadding) {
-        paddingTop = '70px';
-      } else if (addPaddingPlayer) {
-        paddingTop = '140px';
-      } else {
-        paddingTop = '146px';
+      if (router.pathname === '/contents/[identifier]') {
+        paddingTop = '64px';
       }
-    } else {
-      if (shouldSkipPadding) {
-        paddingTop = '96px';
-      } else if (shouldAddPadding) {
+      if (router.pathname === '/contents') {
+        paddingTop = '14px';
+      }
+      if (router.pathname === '/home' && router.query.category) {
+        paddingTop = '25px';
+      }
+      if (router.pathname === '/home') {
+        paddingTop = '25px';
+      }
+      if (router.pathname === '/') {
+        paddingTop = '40px';
+      }
+      if (
+        typeof window !== 'undefined' &&
+        window.location.hash.includes('error=login_required')
+      ) {
+        paddingTop = '24px'; // You can tweak these values
+      }
+      if (router.pathname === '/quick-access') {
+        paddingTop = '65px';
+      }
+      if (router.pathname === '/quick-access/[category]') {
+        paddingTop = '65px';
+      }
+    } else if (!isMobile) {
+      if (router.pathname === '/quick-access') {
         paddingTop = '80px';
-      } else if (shouldUnsetPadding) {
-        paddingTop = '54px';
+      }
+      if (router.pathname === '/quick-access/[category]') {
+        paddingTop = '80px';
       }
     }
+    // if (isMobile) {
+    //   if (shouldSkipPadding) {
+    //     paddingTop = '96px';
+    //   } else if (shouldUnsetPadding) {
+    //     paddingTop = '34px';
+    //   } else if (shouldAddPadding) {
+    //     paddingTop = '70px';
+    //   } else if (addPaddingPlayer) {
+    //     paddingTop = '140px';
+    //   } else {
+    //     paddingTop = '146px';
+    //   }
+    // } else {
+    //   if (shouldSkipPadding) {
+    //     paddingTop = '40px';
+    //   } else if (shouldAddPadding) {
+    //     paddingTop = '80px';
+    //   } else if (shouldUnsetPadding) {
+    //     paddingTop = '54px';
+    //   } else if (shouldUnsetHeight) {
+    //     paddingTop = '50px';
+    //   }else if(addPaddincontent){
+    //     paddingTop = '50px';
+    //   }
+    // }
 
     return (
       <Box>

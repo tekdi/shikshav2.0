@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { Typography, useMediaQuery, useTheme } from '@mui/material';
 import { ContentSearch } from '@shared-lib';
 import FooterText from '../../component/FooterText';
+import Footer from '../../component/layout/Footer';
 interface Term {
   name: string;
   associations: any[];
@@ -72,7 +73,7 @@ const MyComponent: React.FC = () => {
     <Layout
       isLoadingChildren={isLoadingChildren}
       isFooter={isMobile} // add this when on mobile
-      footerComponent={!isMobile ? <FooterText page="" /> : undefined}
+      footerComponent={!isMobile ? <FooterText page="" /> : <Footer />}
       _backButton={{ alignItems: 'center' }}
       backTitle={
         <Typography
@@ -94,7 +95,7 @@ const MyComponent: React.FC = () => {
         subLabel="resources"
         onClick={handleClick}
         length={searchResults}
-        _item={{ width: { xs: '355px', md: '100%' } }}
+        _item={{ width: { xs: '298px', md: '100%' } }}
       />
     </Layout>
   );

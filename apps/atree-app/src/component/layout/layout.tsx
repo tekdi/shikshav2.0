@@ -427,7 +427,7 @@ export default function Layout({
         })}
       </Loader>
 
-      {isMobile && isFooter && (
+      {isMobile && (
         <Box
           ref={(refFoot) => {
             if (!Object.prototype.hasOwnProperty.call(refs.current, 'footer')) {
@@ -440,7 +440,7 @@ export default function Layout({
             ..._footer,
           }}
         >
-          {footerComponent || <Footer />}
+          {footerComponent}
         </Box>
       )}
       {!isMobile && footerComponent && (

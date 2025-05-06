@@ -30,6 +30,7 @@ import Loader from '../../component/layout/LoaderComponent';
 import { RESOURCE_TYPES, MIME_TYPES } from '../../utils/constantData';
 import dynamic from 'next/dynamic';
 import FooterText from '../../component/FooterText';
+import Footer from '../../component/layout/Footer';
 const buttonColors = {
   water: '#0E28AE',
   land: '#8F4A50',
@@ -321,7 +322,8 @@ export default function Index() {
     <Layout
       isLoadingChildren={isLoadingChildren}
       isFooter={isMobile} // add this when on mobile
-      footerComponent={renderFooterComponent()}
+      // footerComponent={renderFooterComponent()}
+      footerComponent={!isMobile ? <FooterText page="" /> : <Footer />}
     >
       <Box display="flex" flexDirection="column" gap="1rem" py="1rem" px="8px">
         {!isMobile ? (
@@ -555,7 +557,13 @@ export default function Index() {
   );
 }
 const SwitchAccess = ({ fullAccess, handleToggleFullAccess }: any) => (
-  <Box display="flex" alignItems="center" gap={1} marginLeft="auto">
+  <Box
+    display="flex"
+    alignItems="center"
+    gap={1}
+    marginLeft="auto"
+    width={'28%'}
+  >
     <Typography
       sx={{
         fontSize: '14px',

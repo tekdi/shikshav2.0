@@ -25,6 +25,7 @@ import CustomSwitch from '../../../component/CustomSwitch';
 import LoginDialog from '../../../component/LoginDialog';
 import useHandleCardClick from '../../../utils/useHandleCardClick';
 import FooterText from 'apps/atree-app/src/component/FooterText';
+import Footer from 'apps/atree-app/src/component/layout/Footer';
 const Content = dynamic(() => import('@Content'), { ssr: false });
 
 const MyComponent: React.FC = () => {
@@ -246,7 +247,7 @@ const MyComponent: React.FC = () => {
     <Layout
       _backButton={{ alignItems: 'center' }}
       isFooter={isMobile} // add this when on mobile
-      footerComponent={renderFooterComponent()}
+      footerComponent={!isMobile ? <FooterText page="" /> : <Footer />}
       backTitle={
         <Box
           sx={{

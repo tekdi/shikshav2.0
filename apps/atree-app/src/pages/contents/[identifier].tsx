@@ -29,11 +29,14 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ShareIcon from '@mui/icons-material/Share';
 import atreeLogo from '../../../assets/images/placeholder.jpg';
 
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
+import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined';
 import { AtreeCard, ContentSearch } from '@shared-lib';
 import ShareDialog from '../../component/ShareDialog';
 import FooterText from '../../component/FooterText';
 import Loader from '../../component/layout/LoaderComponent';
+import Footer from '../../component/layout/Footer';
 
 interface ContentItem {
   name: string;
@@ -183,7 +186,7 @@ export default function Content() {
         <Layout
           showBack
           isFooter={isMobile} // add this when on mobile
-          footerComponent={!isMobile ? <FooterText page="" /> : undefined}
+          footerComponent={!isMobile ? <FooterText page="" /> : <Footer />}
           isLoadingChildren={isLoading}
           backIconClick={() => router.back()}
           backTitle={
@@ -248,7 +251,11 @@ export default function Content() {
           {!isMobile ? (
             // Desktop View (Carousel on Right, Content on Left)
             <>
-              <Grid container spacing={2} sx={{ padding: 2 }}>
+              <Grid
+                container
+                spacing={2}
+                sx={{ padding: 2, marginTop: '60px' }}
+              >
                 {/* Left Side (Content) */}
                 <Grid size={{ xs: 12, md: 3 }}>
                   {/* {[...Array(4)].map((_, i) => ( */}
@@ -286,7 +293,7 @@ export default function Content() {
                     </Typography>
 
                     {/* Know More Button */}
-                    <Box sx={{ display: 'flex', gap: 1, width: '50%' }}>
+                    <Box sx={{ display: 'flex', gap: 1, width: '60%' }}>
                       <Button
                         variant="contained"
                         color="secondary"
@@ -298,6 +305,7 @@ export default function Content() {
                           fontSize: '14px',
                         }}
                         onClick={handlePreview}
+                        startIcon={<VisibilityOutlinedIcon />}
                       >
                         Preview
                       </Button>
@@ -312,6 +320,7 @@ export default function Content() {
                           color: 'black',
                           padding: '3px',
                         }}
+                        startIcon={<FileDownloadOutlinedIcon />}
                         disabled={!contentData?.previewUrl?.endsWith('.pdf')}
                         onClick={handleOnDownload}
                       >
@@ -328,6 +337,7 @@ export default function Content() {
                           color: 'black',
                           padding: '3px',
                         }}
+                        startIcon={<LinkOutlinedIcon />}
                         disabled={!contentData?.url}
                         onClick={handleOnCLick}
                       >
@@ -400,6 +410,7 @@ export default function Content() {
                 gap: 2.5,
                 display: 'flex',
                 flexDirection: 'column',
+                pt: '18px',
               }}
             >
               <Box sx={{ px: 2 }}>
@@ -435,6 +446,7 @@ export default function Content() {
                     height: '40px',
                     flex: 0.3,
                   }}
+                  startIcon={<VisibilityOutlinedIcon />}
                   onClick={handlePreview}
                 >
                   Preview
@@ -449,6 +461,7 @@ export default function Content() {
                     flex: 0.3,
                     color: 'black',
                   }}
+                  startIcon={<FileDownloadOutlinedIcon />}
                   onClick={handleOnDownload}
                   disabled={!contentData?.previewUrl?.endsWith('.pdf')}
                 >
@@ -464,6 +477,7 @@ export default function Content() {
                     flex: 0.3,
                     color: 'black',
                   }}
+                  startIcon={<LinkOutlinedIcon />}
                   disabled={!contentData?.url}
                   onClick={handleOnCLick}
                 >
@@ -491,15 +505,18 @@ export default function Content() {
               <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
                 {contentData?.description ?? ''}
               </Typography>
-              <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-                <b>Author:</b> {contentData?.author || ''}
-              </Typography>
-              <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-                <b>Publisher:</b> {contentData?.publisher ?? ''}
-              </Typography>
-              <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-                <b>Year:</b> {contentData?.year ?? ''}
-              </Typography>
+
+              <Stack spacing={0.5}>
+                <Typography variant="body1" textAlign="left">
+                  <b>Author:</b> {contentData?.author || ''}
+                </Typography>
+                <Typography variant="body1" textAlign="left">
+                  <b>Publisher:</b> {contentData?.publisher ?? ''}
+                </Typography>
+                <Typography variant="body1" textAlign="left">
+                  <b>Year:</b> {contentData?.year ?? ''}
+                </Typography>
+              </Stack>
             </Box>
           )}
           <Dialog open={openPopup} onClose={() => setOpenPopup(false)}>
