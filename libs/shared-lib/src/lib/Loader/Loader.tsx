@@ -38,7 +38,7 @@ export const Loader: React.FC<LoaderProps> = memo(
     const addPaddingPlayer = paddingPlayer.includes(router.asPath);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    let paddingTop = '97px';
+    let paddingTop = '50px';
 
     if (isMobile) {
       if (shouldSkipPadding) {
@@ -46,7 +46,7 @@ export const Loader: React.FC<LoaderProps> = memo(
       } else if (shouldUnsetPadding) {
         paddingTop = '34px';
       } else if (shouldAddPadding) {
-        paddingTop = '160px';
+        paddingTop = '70px';
       } else if (addPaddingPlayer) {
         paddingTop = '140px';
       } else {
@@ -56,7 +56,7 @@ export const Loader: React.FC<LoaderProps> = memo(
       if (shouldSkipPadding) {
         paddingTop = '96px';
       } else if (shouldAddPadding) {
-        paddingTop = '160px';
+        paddingTop = '80px';
       } else if (shouldUnsetPadding) {
         paddingTop = '54px';
       }

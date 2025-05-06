@@ -57,14 +57,9 @@ interface CommonAppBarProps {
   logoUrl?: string;
   _appBar?: object;
   searchQuery?: string;
-  frameworkData?: any;
-  frameworkFilter?: any[];
-  framework?: string;
-  setFramework?: (framework: string) => void;
   onSearchChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   _isDrawer?: boolean;
 }
-
 const TopAppBar: React.FC<CommonAppBarProps> = ({
   title,
   _title,
@@ -81,14 +76,11 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
   logoUrl,
   _appBar,
   _isDrawer,
-  frameworkData,
-  frameworkFilter = [],
-  framework = '',
-  setFramework,
 }) => {
   const router = useRouter();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-
+  const [frameworkFilter, setFrameworkFilter] = useState();
+  const [framework, setFramework] = useState('');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isAuthPage =
@@ -104,7 +96,6 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
     'Malayalam',
   ];
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
-
   React.useEffect(() => {
     const lang = localStorage.getItem('language') ?? 'English';
     setSelectedLanguage(lang);
@@ -122,7 +113,6 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
         const subFrameworkData = (frameworkFilter as any).find(
           (item: any) => item.identifier === framework
         );
-
         localStorage.setItem(
           'category',
           subFrameworkData?.name
@@ -132,37 +122,33 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
         );
       }
     }
-  }, [framework, frameworkFilter]);
-
-  //   const init = async () => {
-  //     try {
-  //       const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
-  //       const frameworkData = await fetch(url).then((res) => res.json());
-  //       const frameworks = frameworkData?.result?.framework?.categories;
-  //       const fdata =
-  //         frameworks.find((item: any) => item.code === 'topic')?.terms || [];
-  //       setFramework(fdata[0]?.identifier || '');
-  //       setFrameworkFilter(fdata);
-  //     } catch (error) {
-  //       console.error('Error fetching board data:', error);
-  //     }
-  //   };
-  //   init();
-  // }, []);
+  }, []);
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
+        const frameworkData = await fetch(url).then((res) => res.json());
+        const frameworks = frameworkData?.result?.framework?.categories;
+        const fdata =
+          frameworks.find((item: any) => item.code === 'topic')?.terms || [];
+        setFramework(fdata[0]?.identifier || '');
+        setFrameworkFilter(fdata);
+      } catch (error) {
+        console.error('Error fetching board data:', error);
+      }
+    };
+    init();
+  }, []);
   const handleSearchOpen = () => {
     setIsSearchOpen(true);
   };
-
   const handleSearchClose = () => {
     setIsSearchOpen(false);
   };
-
   const handleLanguageSelect = (e: any) => {
     const lang = e.target.value;
-
     setSelectedLanguage(lang);
     localStorage.setItem('language', lang);
-
     router.push('/contents');
   };
   const handleLanguageClick = (e: any) => {
@@ -229,17 +215,14 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                       justifyContent: 'center',
                     }}
                   >
-                    {frameworkFilter && setFramework && (
-                      <FrameworkFilter
-                        frameworkFilter={frameworkFilter || []}
-                        framework={framework}
-                        setFramework={setFramework}
-                        fromSubcategory={false}
-                      />
-                    )}
+                    <FrameworkFilter
+                      frameworkFilter={frameworkFilter || []}
+                      framework={framework}
+                      setFramework={setFramework}
+                      fromSubcategory={false}
+                    />
                   </Box>
                 )}
-
                 <Typography
                   component="div"
                   sx={{
@@ -306,7 +289,6 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                         readOnly
                       />
                     </Box>
-
                     {/* 🌐 Language Selector */}
                     <Box
                       display="flex"
@@ -352,7 +334,6 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                         ))}
                       </Select>
                     </Box>
-
                     {/* ☰ Menu Icon */}
                     <IconButton
                       size="large"
@@ -386,7 +367,6 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                     >
                       <SearchIcon />
                     </IconButton>
-
                     <IconButton
                       size="large"
                       edge="start"
