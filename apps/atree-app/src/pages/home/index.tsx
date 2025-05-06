@@ -236,7 +236,7 @@ export default function Index() {
     ) {
       fetchContentData(filters.request.filters);
     }
-  }, [filters, frameworkName]); // ✅ Fetch only when `filters` change
+  }, [filters]); // ✅ Fetch only when `filters` change
 
   // **Handle Content Click**
   const handleCardClick = (content: any) => {
