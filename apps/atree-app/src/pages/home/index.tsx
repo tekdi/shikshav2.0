@@ -54,11 +54,11 @@ export default function Index() {
   const [contentData, setContentData] = useState<any>([]);
 
   const [consumedContent, setConsumedContent] = useState<string[]>([]);
-  const {
-    frameworkFilter: contextFrameworkFilter,
-    framework: contextFramework,
-    setFramework,
-  } = useFramework();
+  const [frameworkFilter, setFrameworkFilter] = useState();
+
+  const [framework, setFramework] = useState('');
+  const [subFrameworkFilter, setSubFrameworkFilter] = useState<any[]>([]);
+  const [subFramework, setSubFramework] = useState('');
   const [filterCategory, SetFilterCategory] = useState<string>('');
   const [isLoadingChildren, setIsLoadingChildren] = useState(true);
   const [openMessageDialog, setOpenMessageDialog] = useState(false);
@@ -74,17 +74,7 @@ export default function Index() {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const frameworkName = searchParams.get('category')?.toLocaleUpperCase();
-  const [frameworkFilter, setFrameworkFilter] = useState(
-    contextFrameworkFilter
-  );
-  const [framework, setFramework] = useState(contextFramework);
 
-  useEffect(() => {
-    setFrameworkFilter(contextFrameworkFilter);
-    setFramework(contextFramework);
-  }, [contextFrameworkFilter, contextFramework]);
-  const [subFrameworkFilter, setSubFrameworkFilter] = useState<any[]>([]);
-  const [subFramework, setSubFramework] = useState('');
   // **Handle API Calls with Updated Filters**
   const fetchContentData = async (updatedFilters: any) => {
     try {
@@ -143,34 +133,69 @@ export default function Index() {
 
   // **Initial Data Fetch Based on frameworkName**
   useEffect(() => {
-    if (framework && frameworkFilter) {
-      const subFrameworkData = frameworkFilter.find(
-        (item: any) => item.identifier === framework
-      );
+    const init = async () => {
+      try {
+        //Framework URL
+        const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
+        //response from API
+        const frameworkData = await fetch(url).then((res) => res.json());
+        //category data
+        const frameworks = frameworkData?.result?.framework?.categories;
+        //Framework topic wise data
 
-      const categoryName = subFrameworkData?.name
-        ? subFrameworkData.name.charAt(0).toUpperCase() +
-          subFrameworkData.name.slice(1).toLowerCase()
-        : '';
+        const fdata =
+          frameworks.find((item: any) => item.code === 'topic')?.terms || [];
+        setFramework(fdata[0]?.identifier || '');
+        setFrameworkFilter(fdata);
 
-      SetFilterCategory(categoryName);
-      localStorage.setItem('category', categoryName);
-
-      const uniqueAssociations = Array.from(
-        new Map(
-          subFrameworkData?.associations?.map((item: any) => [item?.name, item])
-        ).values()
-      );
-
-      setSubFrameworkFilter(uniqueAssociations);
-
-      if (filterCategory !== categoryName) {
-        setFilters({
-          request: { filters: { topic: [categoryName] }, offset: 0, limit: 5 },
+        // Filter live categories
+        setFilterData({
+          ...frameworkData?.result?.framework,
+          categories: frameworkData?.result?.framework.categories.filter(
+            (category: any) => category.status === 'Live'
+          ),
         });
+        //condition if category from URL
+        let selectedFramework = fdata[0];
+        if (frameworkName) {
+          const foundFramework = fdata.find(
+            (item: any) =>
+              item.name.toLowerCase() === frameworkName.toLowerCase()
+          );
+          if (foundFramework) {
+            selectedFramework = foundFramework;
+          }
+        }
+        const selectedCategory = selectedFramework?.name;
+        const selectedIdentifier = selectedFramework?.identifier;
+
+        setFramework(selectedIdentifier);
+        SetFilterCategory(selectedCategory);
+        localStorage.setItem('category', selectedCategory);
+
+        const newFilters = {
+          topic: [selectedCategory],
+        };
+
+        setFilters({
+          request: {
+            filters: newFilters,
+            offset: 0,
+            limit: 5,
+          },
+        });
+
+        fetchContentData(newFilters);
+      } catch (error) {
+        console.error('Error fetching board data:', error);
+      } finally {
+        setIsLoadingChildren(false);
       }
-    }
-  }, [framework, frameworkFilter]);
+    };
+
+    init();
+  }, [frameworkName]);
+
   // **Update FilterCategory When Framework Changes**
   useEffect(() => {
     if (framework && frameworkFilter) {
@@ -381,7 +406,7 @@ export default function Index() {
                       subFramework={subFramework}
                       setSubFramework={setSubFramework}
                       lastButton={true}
-                      subFrameworkFilter={subFrameworkFilter ?? []}
+                      subFrameworkFilter={subFrameworkFilter || []}
                     />
                   </Box>
 
@@ -445,7 +470,7 @@ export default function Index() {
               )}
 
               <SubFrameworkFilter
-                subFrameworkFilter={subFrameworkFilter ?? []}
+                subFrameworkFilter={subFrameworkFilter || []}
                 setSubFramework={setSubFramework}
                 subFramework={subFramework}
                 lastButton={true}

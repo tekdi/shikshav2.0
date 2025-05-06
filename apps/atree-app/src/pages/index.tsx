@@ -18,7 +18,12 @@ import { ContentSearch } from '@shared-lib';
 import Loader from '../component/layout/LoaderComponent';
 import FooterText from '../component/FooterText';
 import Banner from '../component/Banner';
-
+interface LandingPageProps {
+  frameworkData: any;
+  frameworkFilter: any[];
+  framework: string;
+  setFramework: (framework: string) => void;
+}
 const catImages = {
   Water,
   Forest: Forests,
@@ -77,15 +82,11 @@ const AnimatedCounter = ({
   );
 };
 
-const LandingPage = () => {
-  // const { t } = useTranslation();
+const LandingPage = ({ frameworkData }: LandingPageProps) => {
   const t = (data: string) => data;
   const [categories, setCategories] = useState<Array<any>>([]);
-  const [languageCount, setLanguageCount] = useState(0);
-  const [readerCount, setReaderCount] = useState(0);
-  const [bookCount, setBookCount] = useState(0);
-  const [loading, setLoading] = useState(true);
 
+  const [loading, setLoading] = useState(true);
   const customOrder = [
     'Water',
     'Forest',
@@ -100,8 +101,10 @@ const LandingPage = () => {
   useEffect(() => {
     const init = async () => {
       try {
-        const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
-        const frameworkData = await fetch(url).then((res) => res.json());
+        if (!frameworkData) {
+          setLoading(true);
+          return;
+        }
         const frameworks = frameworkData?.result?.framework?.categories;
         const fdata =
           frameworks.find((item: any) => item.code === 'topic')?.terms || [];
@@ -114,16 +117,7 @@ const LandingPage = () => {
         const uniqueLanguages = [
           ...new Set(content.flatMap((item) => item?.language || [])),
         ];
-        setBookCount(content?.length);
-        setLanguageCount(uniqueLanguages?.length);
-        const uniqueReaders = [
-          ...new Set(
-            content
-              .map((item) => item?.reader)
-              .filter((reader) => reader !== null)
-          ),
-        ];
-        setReaderCount(uniqueReaders?.length);
+
         setCategories(fdata || []);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -133,7 +127,7 @@ const LandingPage = () => {
     };
 
     init();
-  }, []);
+  }, [frameworkData]);
 
   return (
     <Layout footerComponent={<FooterText page={''} />}>
