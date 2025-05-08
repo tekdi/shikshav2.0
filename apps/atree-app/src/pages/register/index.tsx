@@ -12,7 +12,12 @@ import {
   Box,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { CommonDialog, CommonSelect, CommonTextField } from '@shared-lib';
+import {
+  CommonDialog,
+  CommonSelect,
+  CommonTextField,
+  languageData,
+} from '@shared-lib';
 import { SelectChangeEvent } from '@mui/material/Select';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -23,7 +28,6 @@ import IconButton from '@mui/material/IconButton';
 import Loader from '../../component/layout/LoaderComponent';
 import ImageCenter from '../../component/ImageCenter';
 
-import { languageData } from '@shared-lib';
 import Layout from '../../component/layout/layout';
 
 export default function Registration() {

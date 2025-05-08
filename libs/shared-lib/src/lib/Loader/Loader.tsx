@@ -31,7 +31,6 @@ export const Loader: React.FC<LoaderProps> = memo(
       '/quick-access/[category]',
       '/contents/[identifier]',
     ];
-    const contentPagePadding = ['/contents'];
     const paddingPlayer = ['/player/[identifier]'];
     const shouldUnsetHeight = noHeightRoutes.includes(router.pathname);
     const shouldUnsetPadding = noPaddingRoutes.includes(router.pathname);

@@ -11,7 +11,14 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { CommonSearch, getData, Loader, FilterDialog } from '@shared-lib';
+import {
+  CommonSearch,
+  getData,
+  Loader,
+  FilterDialog,
+  RESOURCE_TYPES,
+  MIME_TYPES,
+} from '@shared-lib';
 import { useRouter } from 'next/navigation';
 import BackToTop from '../components/BackToTop';
 import RenderTabContent from '../components/ContentTabs';
@@ -20,7 +27,6 @@ import { hierarchyAPI } from '../services/Hierarchy';
 import { ContentSearch, ContentSearchResponse } from '../services/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import { RESOURCE_TYPES, MIME_TYPES } from '@shared-lib';
 export interface ContentProps {
   _grid?: object;
   filters?: object;

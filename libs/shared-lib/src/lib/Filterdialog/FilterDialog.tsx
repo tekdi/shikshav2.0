@@ -545,26 +545,6 @@ export const FilterDialog = ({
           </DialogContent>
           <DialogActions sx={{ justifyContent: 'center' }}>
             <Box sx={{ display: 'flex', mt: 1 }}>
-              {/* <Button
-                variant="outlined"
-                onClick={() => {
-                  onApply?.({});
-                  setSelectedValues({});
-                  // selectedFilters.mimeType = [];
-                  // selectedFilters.resource = [];
-                  localStorage.removeItem('selectedFilters');
-                  onClose?.();
-                }}
-                sx={{
-                  borderRadius: '100px',
-                  color: '#414651',
-                  textTransform: 'none',
-                  border: '1px solid #D5D7DA',
-                  width: '132px',
-                }}
-              >
-                Reset
-              </Button> */}
               <Button
                 variant="contained"
                 onClick={() => {

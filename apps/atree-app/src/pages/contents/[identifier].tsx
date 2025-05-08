@@ -125,7 +125,7 @@ export default function Content() {
             relatedContentTemp = filtered.map((item: any) => ({
               name: item.name ?? '',
               gradeLevel: item.gradeLevel ?? [],
-              language: item.language || [],
+              language: item.language ?? [],
               artifactUrl: item.artifactUrl ?? '',
               identifier: item.identifier ?? '',
               posterImage: item.posterImage ?? '',

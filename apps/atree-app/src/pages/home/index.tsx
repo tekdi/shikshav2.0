@@ -20,7 +20,13 @@ import {
   useTheme,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { AtreeCard, ContentSearch, FilterDialog } from '@shared-lib';
+import {
+  AtreeCard,
+  ContentSearch,
+  FilterDialog,
+  RESOURCE_TYPES,
+  MIME_TYPES,
+} from '@shared-lib';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import atreeLogo from '../../../assets/images/placeholder.jpg';
@@ -28,7 +34,6 @@ import Layout from '../../component/layout/layout';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'next/navigation';
 import Loader from '../../component/layout/LoaderComponent';
-import { RESOURCE_TYPES, MIME_TYPES } from '@shared-lib';
 import dynamic from 'next/dynamic';
 import FooterText from '../../component/FooterText';
 import Footer from '../../component/layout/Footer';
