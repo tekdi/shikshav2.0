@@ -15,15 +15,15 @@ export const Loader: React.FC<LoaderProps> = memo(
   ({ isLoading, layoutHeight, children }) => {
     const router = useRouter();
     const noHeightRoutes = [
-      '/',
       '/aboutus',
       '/termsandcondition',
-      '/home',
       '/contents',
       '/searchpage',
       '/quick-access/contents/[category]',
       '/contents/[identifier]',
+      '/home',
       'home?category=*',
+      '/',
     ];
     const noPaddingRoutes = ['/quick-access/contents/[category]'];
     const paddingQuickAccess = [
@@ -41,19 +41,19 @@ export const Loader: React.FC<LoaderProps> = memo(
     const addPaddingPlayer = paddingPlayer.includes(router.asPath);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    let paddingTop = isMobile ? '40px' : '50px';
+    let paddingTop = isMobile ? '40px' : '95px';
     if (isMobile) {
       if (router.pathname === '/contents/[identifier]') {
-        paddingTop = '64px';
+        paddingTop = '138px';
       }
       if (router.pathname === '/contents') {
-        paddingTop = '14px';
+        paddingTop = '25px';
       }
       if (router.pathname === '/home' && router.query.category) {
-        paddingTop = '25px';
+        paddingTop = '47px';
       }
       if (router.pathname === '/home') {
-        paddingTop = '25px';
+        paddingTop = '47px';
       }
       if (router.pathname === '/') {
         paddingTop = '40px';
@@ -62,20 +62,29 @@ export const Loader: React.FC<LoaderProps> = memo(
         typeof window !== 'undefined' &&
         window.location.hash.includes('error=login_required')
       ) {
-        paddingTop = '24px'; // You can tweak these values
+        paddingTop = '47px'; // You can tweak these values
       }
       if (router.pathname === '/quick-access') {
-        paddingTop = '65px';
+        paddingTop = '132px';
       }
       if (router.pathname === '/quick-access/[category]') {
-        paddingTop = '65px';
+        paddingTop = '132px';
       }
     } else if (!isMobile) {
       if (router.pathname === '/quick-access') {
-        paddingTop = '80px';
+        paddingTop = '160px';
       }
       if (router.pathname === '/quick-access/[category]') {
-        paddingTop = '80px';
+        paddingTop = '160px';
+      }
+      if (router.pathname === '/quick-access/contents/[category]') {
+        paddingTop = '60px';
+      }
+      if (router.pathname === '/') {
+        paddingTop = '90px';
+      }
+      if (router.pathname === '/contents') {
+        paddingTop = '90px';
       }
     }
     // if (isMobile) {

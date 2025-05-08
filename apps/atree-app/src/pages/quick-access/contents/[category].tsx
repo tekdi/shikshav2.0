@@ -352,7 +352,9 @@ const MyComponent: React.FC = () => {
                 {isMobile && <SubFrameworkButtons />}
                 <Content
                   {...{
-                    // _grid: { size: { xs: 6, sm: 6, md: 9, lg: 3 } },
+                    _grid: {
+                      size: { xs: 6, sm: 6, md: 4, lg: 3 },
+                    },
                     contentTabs: ['content'],
                     handleCardClick: (content: ContentSearchResponse) => {
                       if (content.identifier) {

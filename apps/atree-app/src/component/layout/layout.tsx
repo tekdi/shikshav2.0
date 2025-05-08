@@ -8,17 +8,9 @@ import {
 } from '@mui/material';
 import Box from '@mui/material/Box';
 import { CommonDialog, CommonDrawer, Loader } from '@shared-lib';
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  createContext,
-  useContext,
-  useMemo,
-} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import atreeLogo from '../../../assets/images/atreeLogo.svg';
 import TopAppBar from './TopToolBar';
-import Footer from './Footer';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -89,11 +81,6 @@ interface LayoutProps {
   _backButton?: object;
   _footer?: object;
   isDrawer?: boolean;
-}
-export const FrameworkContext = createContext<any>(null);
-
-export function useFramework() {
-  return useContext(FrameworkContext);
 }
 
 export default function Layout({

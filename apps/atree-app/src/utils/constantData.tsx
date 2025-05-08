@@ -16,7 +16,7 @@ export const RESOURCE_TYPES = [
 export const MIME_TYPES = [
   { label: 'Videos', value: 'video/x-youtube' },
   { label: 'PDF', value: 'application/pdf' },
-  { label: 'Audiobooks', value: 'video/mp4' },
+  // { label: 'Audiobooks', value: 'video/mp4' },
 ];
 
 export const languageData = [

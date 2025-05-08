@@ -6,10 +6,12 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogTitle,
   Divider,
   FormControl,
   FormControlLabel,
   FormLabel,
+  IconButton,
   InputLabel,
   ListItemText,
   MenuItem,
@@ -19,6 +21,7 @@ import {
   Typography,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import CloseIcon from '@mui/icons-material/Close';
 const formControlStyles = {
   '&.Mui-focused': { color: '#1D1B20' },
   '& .MuiInputLabel-root.Mui-focused': { color: '#1D1B20' },
@@ -42,8 +45,13 @@ const CustomCheckbox = ({
 }: any) => (
   <FormControlLabel
     key={option.label}
+    sx={{
+      p: '0px',
+      margin: '-5px', // Remove default margin
+    }}
     control={
       <Checkbox
+        size="small"
         checked={currentSelectedValues.includes(option.label)}
         onChange={(event) => handleCheckboxChange(event, filterCode)}
         value={option.label}
@@ -60,9 +68,14 @@ const CustomResourceCheckbox = ({
   currentSelectedValues,
 }: any) => (
   <FormControlLabel
+    sx={{
+      p: '0px',
+      margin: '-5px', // Remove default margin
+    }}
     key={option.label}
     control={
       <Checkbox
+        size="small"
         checked={
           Array.isArray(currentSelectedValues) &&
           currentSelectedValues.includes(
@@ -82,8 +95,15 @@ const CustomResourceCheckbox = ({
 const CustomRadio = ({ option }: any) => (
   <FormControlLabel
     value={option.value}
+    sx={{
+      p: '0px',
+      margin: '-5px', // Remove default margin
+    }}
     control={
-      <Radio sx={{ color: '#1D1B20', '&.Mui-checked': { color: '#FFBD0D' } }} />
+      <Radio
+        size="small"
+        sx={{ color: '#1D1B20', '&.Mui-checked': { color: '#FFBD0D' } }}
+      />
     }
     label={option.label}
   />
@@ -239,32 +259,52 @@ export const FilterDialog = ({
       selectedFilters
     );
   }, [selectedValues, selectedFilters]);
-
+  const handleCloseDialog = () => {
+    onApply?.({});
+    setSelectedValues({});
+    // selectedFilters.mimeType = [];
+    // selectedFilters.resource = [];
+    localStorage.removeItem('selectedFilters');
+    onClose?.();
+  };
   return (
     <>
       {isMobile ? (
         <Dialog
           open={open ?? false}
           onClose={onClose}
-          fullWidth
+          maxWidth="sm"
           sx={{
             borderRadius: '16px',
             '& .MuiDialog-paper': {
               backgroundColor: '#FEF7FF',
               display: 'flex',
               flexDirection: 'column',
-              height: '80vh',
+              height: '90vh',
             },
           }}
         >
+          <DialogTitle
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+              padding: '0px 16px',
+            }}
+          >
+            <IconButton onClick={handleCloseDialog}>
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
           <DialogContent
             dividers
             sx={{
               flex: 1,
               overflowY: 'auto',
+              padding: '0px 16px',
             }}
           >
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               {/* new filter frameworkFilter */}
               {frameworkFilter?.categories
                 ?.filter((category: any) => category.code !== 'subTopic') // ✅ Skip subTopic
@@ -505,8 +545,8 @@ export const FilterDialog = ({
             {/* Buttons */}
           </DialogContent>
           <DialogActions sx={{ justifyContent: 'center' }}>
-            <Box sx={{ display: 'flex', mt: 2 }}>
-              <Button
+            <Box sx={{ display: 'flex', mt: 1 }}>
+              {/* <Button
                 variant="outlined"
                 onClick={() => {
                   onApply?.({});
@@ -525,7 +565,7 @@ export const FilterDialog = ({
                 }}
               >
                 Reset
-              </Button>
+              </Button> */}
               <Button
                 variant="contained"
                 onClick={() => {
@@ -549,13 +589,13 @@ export const FilterDialog = ({
       ) : (
         <Box
           sx={{
-            p: 3,
+            padding: '8px 18px',
             borderRadius: '16px',
             border: '1px solid #DDDDDD',
             boxShadow: '0px 8px 8px -4px #0A0D120A',
           }}
         >
-          <Box sx={{ flexDirection: 'column', gap: 2 }}>
+          <Box sx={{ flexDirection: 'column' }}>
             {/* new filter frameworkFilter */}
             <FormControl fullWidth sx={formControlStyles}>
               {resources?.length > 0 && (
@@ -565,6 +605,7 @@ export const FilterDialog = ({
                       fontSize: '18px',
                       fontWeight: 600,
                       color: '#181D27',
+                      margin: '6px 0px',
                     }}
                   >
                     Select Resource Type
@@ -588,6 +629,7 @@ export const FilterDialog = ({
                     fontSize: '18px',
                     fontWeight: 600,
                     color: '#181D27',
+                    margin: '6px',
                   }}
                 >
                   Select Content Type
@@ -604,7 +646,7 @@ export const FilterDialog = ({
               </Box>
             </FormControl>
           </Box>
-          <Divider sx={{ marginTop: 4 }} />
+          <Divider />
 
           {/* Subject */}
           {filter?.subject && filter.subject.length > 0 && (
@@ -659,7 +701,7 @@ export const FilterDialog = ({
               </Select>
             </FormControl>
           )}
-          <DialogActions sx={{ justifyContent: 'center', mt: 2 }}>
+          <DialogActions sx={{ justifyContent: 'center', mt: 1 }}>
             <Button
               variant="outlined"
               onClick={() => {

@@ -17,11 +17,13 @@ export default function Aboutus() {
         container
         spacing={2}
         direction="column"
-        alignItems="left"
-        // justifyContent="center"
-        marginBottom={'5px'}
-        padding={{ xs: '16px' }}
-        mt={-3}
+        // alignItems="left"
+        justifyContent="center"
+        marginBottom={'25px'}
+        sx={{
+          pl: { xs: 2, md: 10 },
+          pr: { xs: 2, md: 10 },
+        }}
       >
         {/* About Us Description */}
         <Typography

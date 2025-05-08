@@ -10,6 +10,7 @@ import keycloak from '../service/keycloack';
 import '@fontsource/poppins';
 import dynamic from 'next/dynamic';
 import Layout from '../component/layout/layout';
+import { useEffect, useState } from 'react';
 const AuthHandler = dynamic(() => import('./AuthHandler'), {
   ssr: false,
 });
@@ -37,6 +38,42 @@ const theme = createTheme({
 });
 
 export default function RootLayout({ Component, pageProps }: AppProps) {
+  const [frameworkData, setFrameworkData] = useState<any>(null);
+  const [frameworkFilter, setFrameworkFilter] = useState<any[]>([]);
+  const [framework, setFramework] = useState<string>('');
+  useEffect(() => {
+    let isMounted = true;
+    const fetchFrameworkData = async () => {
+      try {
+        const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
+        const frameworkData = await fetch(url).then((res) => res.json());
+        if (isMounted) {
+          const frameworks = frameworkData?.result?.framework?.categories;
+          const fdata =
+            frameworks.find((item: any) => item.code === 'topic')?.terms ?? [];
+          setFramework(fdata[0]?.identifier ?? '');
+          setFrameworkFilter(fdata);
+          setFrameworkData(frameworkData);
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Error fetching board data:', error);
+        }
+      }
+    };
+
+    fetchFrameworkData();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const enhancedPageProps = {
+    ...pageProps,
+    frameworkData,
+    frameworkFilter,
+    framework,
+  };
   return (
     <ReactKeycloakProvider
       authClient={keycloak}
@@ -48,9 +85,7 @@ export default function RootLayout({ Component, pageProps }: AppProps) {
       <ThemeProvider theme={theme}>
         <CssBaseline /> {/* Normalize styles */}
         <AuthHandler />
-        <Layout {...pageProps}>
-          <Component {...pageProps} />
-        </Layout>
+        <Component {...enhancedPageProps} />
       </ThemeProvider>
     </ReactKeycloakProvider>
   );

@@ -5,6 +5,7 @@
 
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import CloseIcon from '@mui/icons-material/Close';
 import {
   Box,
   Button,
@@ -344,7 +345,7 @@ export default function Index() {
               <Grid size={{ xs: 9 }}>
                 <Box
                   sx={{
-                    width: '80%',
+                    width: '100%',
                     gap: '16px',
                     display: 'flex',
                     flexDirection: 'column',
@@ -374,7 +375,7 @@ export default function Index() {
                     gap: '16px',
                     display: 'flex',
                     flexDirection: 'column',
-                    padding: '12px',
+                    padding: '9px 0px',
                   }}
                 >
                   <Box
@@ -430,7 +431,7 @@ export default function Index() {
                     width: '100%',
                     flexDirection: 'column',
 
-                    padding: '15px',
+                    padding: '0px',
                     display: 'flex',
                     gap: '16px',
                   }}
@@ -464,7 +465,7 @@ export default function Index() {
                 width: '100%',
                 gap: '16px',
                 flexDirection: 'column',
-                padding: '15px',
+                padding: '0px',
               }}
             >
               {subFrameworkFilter && subFrameworkFilter.length > 0 && (
@@ -483,7 +484,7 @@ export default function Index() {
                 flexDirection: 'column',
                 width: '100%',
                 gap: '16px',
-                padding: '15px',
+                // padding: '15px',
                 display: 'flex',
               }}
             >
@@ -505,6 +506,7 @@ export default function Index() {
                 gap: '16px',
                 padding: '15px',
                 flexDirection: 'column',
+                padding: '0px',
               }}
             >
               <ContentSection
@@ -644,7 +646,7 @@ const ContentSection = ({ title, contents, onTitleClick, handleCardClick }) => (
       gap: '16px',
       display: 'flex',
       flexDirection: 'column',
-      padding: '15px',
+      padding: '0px',
     }}
   >
     {title && <Title onClick={onTitleClick}>{title}</Title>}
@@ -799,7 +801,7 @@ const SubFrameworkFilter = React.memo<{
         <Dialog
           open={openPopup}
           onClose={() => setOpenPopup(false)}
-          maxWidth="md"
+          maxWidth="sm"
           fullWidth
           PaperProps={{
             style: {
@@ -808,8 +810,20 @@ const SubFrameworkFilter = React.memo<{
             },
           }}
         >
-          <DialogTitle>Remaining Data</DialogTitle>
-          <DialogContent>
+          {/* <DialogTitle>Remaining Data</DialogTitle> */}
+          <IconButton
+            aria-label="close"
+            onClick={() => setOpenPopup(false)}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: '#484848',
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+          <DialogContent sx={{ padding: '45px 30px' }}>
             <FrameworkFilter
               frameworkFilter={subFrameworkFilter}
               framework={subFramework}
@@ -817,16 +831,6 @@ const SubFrameworkFilter = React.memo<{
               fromSubcategory={true}
             />
           </DialogContent>
-          <DialogActions sx={{ justifyContent: 'center', py: 2, px: 3 }}>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => setOpenPopup(false)}
-              sx={{ borderRadius: '50px', height: '40px', width: '100%' }}
-            >
-              {t('Close')}
-            </Button>
-          </DialogActions>
         </Dialog>
       )}
     </Grid>

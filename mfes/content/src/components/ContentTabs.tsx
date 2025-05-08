@@ -41,6 +41,7 @@ const RenderTabContent = memo(
     isLodingMoreData: boolean;
     _card?: any;
   }) => {
+    
     return (
       <Box sx={{ width: '100%' }}>
         {tabs?.length !== undefined && tabs?.length > 1 && (
@@ -83,7 +84,7 @@ const RenderTabContent = memo(
             </Tabs>
           </Box>
         )}
-        <Box sx={{ flexGrow: 1, mt: 2 }}>
+        <Box sx={{ flexGrow: 1, marginTop: '-30px' }}>
           {_card?.cardName === 'AtreeCard' ? (
             <AtreeCard
               _card={_card}

@@ -107,17 +107,48 @@ export default function Content() {
       if (result && typeof result === 'object') {
         setContentData(result);
       }
+      const keywords = result?.keywords?.filter((item: any) => item) || [];
+      let relatedContentTemp: ContentItem[] = [];
 
-      const keyword = result?.keywords[0] ?? [];
-      const keywordFilteredResults = await ContentSearch({
-        channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
-        query: keyword,
-      });
-      const filteredRelatedContent =
-        keywordFilteredResults?.result?.content?.filter(
-          (item: any) => item.identifier !== result.identifier
-        ) || [];
-      setRelatedContent(filteredRelatedContent || []);
+      for (const keyword of keywords) {
+        try {
+          const keywordFilteredResults = await ContentSearch({
+            channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+            query: keyword,
+          });
+          const filtered =
+            keywordFilteredResults?.result?.content?.filter(
+              (item: any) => item.identifier !== result.identifier
+            ) || [];
+
+          if (filtered.length > 0) {
+            relatedContentTemp = filtered.map((item: any) => ({
+              name: item.name || '',
+              gradeLevel: item.gradeLevel || [],
+              language: item.language || [],
+              artifactUrl: item.artifactUrl || '',
+              identifier: item.identifier || '',
+              posterImage: item.posterImage || '',
+              contentType: item.contentType || '',
+              mimeType: item.mimeType || '',
+              author: item.author || '',
+              keywords: item.keywords || [],
+              year: item.year || '',
+              license: item.license || '',
+              description: item.description || '',
+              publisher: item.publisher || '',
+              url: item.url || '',
+              previewUrl: item.previewUrl || '',
+            }));
+            break; // Stop at first successful keyword
+          }
+        } catch (error) {
+          console.error(`Search failed for keyword ${keyword}:`, error);
+          continue;
+        }
+      }
+
+      setRelatedContent(relatedContentTemp);
     } catch (error) {
       console.error('Failed to fetch content:', error);
     } finally {
@@ -177,8 +208,25 @@ export default function Content() {
   const handleCardClick = (content: any) => {
     router.push(`/contents/${content?.identifier}`);
   };
-  const selectTagOnClick = (val: any) => {
-    router.push(`/searchpage?query=${val}&tags=${true}`);
+  const selectTagOnClick = async (keyword: any) => {
+    // router.push(`/searchpage?query=${val}&tags=${true}`);
+    try {
+      setIsLoading(true);
+      const keywordFilteredResults = await ContentSearch({
+        channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+        query: keyword,
+      });
+
+      const filteredContent =
+        keywordFilteredResults?.result?.content?.filter(
+          (item: any) => item.identifier !== identifier
+        ) || [];
+      setRelatedContent(filteredContent);
+    } catch (error) {
+      console.error(`Search failed for keyword ${keyword}:`, error);
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <>
@@ -293,14 +341,27 @@ export default function Content() {
                     </Typography>
 
                     {/* Know More Button */}
-                    <Box sx={{ display: 'flex', gap: 1, width: '60%' }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        gap: 1,
+                        width: '50%',
+                        '& > button': {
+                          flex: 1,
+                          minWidth: 0,
+                          textTransform: 'none', // Disable default Material-UI uppercase
+                          '& .MuiButton-startIcon': {
+                            marginRight: '4px', // Adjust icon spacing if needed
+                          },
+                        },
+                      }}
+                    >
                       <Button
                         variant="contained"
                         color="secondary"
                         sx={{
                           borderRadius: '50px',
                           height: '40px',
-                          flex: 0.2,
                           padding: '3px',
                           fontSize: '14px',
                         }}
@@ -316,7 +377,6 @@ export default function Content() {
                         sx={{
                           borderRadius: '50px',
                           height: '40px',
-                          flex: 0.3,
                           color: 'black',
                           padding: '3px',
                         }}
@@ -333,7 +393,6 @@ export default function Content() {
                         sx={{
                           borderRadius: '50px',
                           height: '40px',
-                          flex: 0.3,
                           color: 'black',
                           padding: '3px',
                         }}
