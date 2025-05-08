@@ -17,7 +17,7 @@ export const fetchFrameworkData = async (frameworkId: string) => {
 };
 
 export const processFrameworkData = (frameworkData: any) => {
-  const frameworks = frameworkData?.result?.framework?.categories || [];
+  const frameworks = frameworkData?.result?.framework?.categories ?? [];
   const fdata =
     frameworks.find((item: any) => item.code === 'topic')?.terms ?? [];
   return {

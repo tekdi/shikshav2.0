@@ -18,25 +18,10 @@ import { useRouter } from 'next/router';
 import { getUserAuthInfo, signin } from '../../service/content';
 import Loader from '../../component/layout/LoaderComponent';
 import Layout from '../../component/layout/layout';
-
+import { commonButtonStyle } from '../../utils/commonStyle';
+import { validateEmail, validatePassword } from '../../utils/authUtils';
 interface ListProps {}
-const commonButtonStyle = {
-  backgroundColor: '#ffffff',
-  width: { xs: '80%', sm: '60%', md: '50%' },
-  border: '1px solid #FFBD0D',
-  height: '44px',
-  borderRadius: '40px',
-  color: '#000',
-  textTransform: 'none',
-  padding: '10px 20px',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '10px',
-  boxShadow: 'none',
-  alignSelf: 'center', // Centers in flex container
-  mx: 'auto',
-  '&:hover': { backgroundColor: '#f5f5f5' },
-};
+
 const Login: React.FC<ListProps> = () => {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({ email: '', password: '' });
@@ -48,13 +33,6 @@ const Login: React.FC<ListProps> = () => {
 
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-
-  const validateEmail = (email: string) =>
-    /^[a-zA-Z][a-zA-Z0-9._]{2,}$/.test(email);
-  const validatePassword = (password: string) =>
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
-      password
-    );
 
   const handleChange =
     (field: 'email' | 'password') =>

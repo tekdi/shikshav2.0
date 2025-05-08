@@ -28,6 +28,11 @@ import IconButton from '@mui/material/IconButton';
 import Loader from '../../component/layout/LoaderComponent';
 
 import Layout from '../../component/layout/layout';
+import {
+  validateEmail,
+  validatePassword,
+  validateName,
+} from '../../utils/authUtils';
 
 export default function Registration() {
   const [formData, setFormData] = useState({
@@ -63,23 +68,7 @@ export default function Registration() {
   const router = useRouter();
 
   // **Validation Functions**
-  const validateName = (name: string) => {
-    const hasNumbers = /\d/; // Regex to check if the name contains numbers
-    if (hasNumbers.test(name)) {
-      return false; // Name contains numbers
-    }
-    return name.trim().split(' ').length >= 2; // Check if the name has at least two words
-  };
 
-  const validateEmail = (email: string) => {
-    return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
-  };
-
-  const validatePwd = (password: string) => {
-    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
-      password
-    );
-  };
   const validateGender = (gender: string) => gender !== '';
   // **Handle Change**
   const handleChange =
@@ -94,7 +83,7 @@ export default function Registration() {
           case 'email':
             return !validateEmail(value);
           case 'password':
-            return !validatePwd(value);
+            return !validatePassword(value);
           case 'gender':
             return !validateGender(value);
           default:
@@ -113,13 +102,13 @@ export default function Registration() {
     if (
       !validateName(formData.name) ||
       !validateEmail(formData.email) ||
-      !validatePwd(formData.password) ||
+      !validatePassword(formData.password) ||
       !validateGender(formData.gender)
     ) {
       setError({
         name: !validateName(formData.name),
         email: !validateEmail(formData.email),
-        password: !validatePwd(formData.password),
+        password: !validatePassword(formData.password),
         gender: !validateGender(formData.gender),
       });
       return;

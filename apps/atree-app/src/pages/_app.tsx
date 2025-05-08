@@ -52,7 +52,7 @@ export default function RootLayout({ Component, pageProps }: AppProps) {
     const loadFrameworkData = async () => {
       try {
         const data = await fetchFrameworkData(
-          process.env.NEXT_PUBLIC_FRAMEWORK || ''
+          process.env.NEXT_PUBLIC_FRAMEWORK ?? ''
         );
         if (isMounted) {
           setFrameworkState(processFrameworkData(data));
