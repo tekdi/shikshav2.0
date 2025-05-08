@@ -134,7 +134,6 @@ const Login: React.FC<ListProps> = () => {
                 mt: 4,
               }}
             >
-              {/* <ImageCenter /> */}
               {['email', 'password'].map((field) => (
                 <Box key={field + '1'}>
                   <FormLabel component="legend" sx={{ color: '#4D4639' }}>

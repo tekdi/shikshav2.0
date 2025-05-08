@@ -3,13 +3,48 @@ import React, { memo } from 'react';
 import { ReactNode } from 'react';
 import Image from 'next/image';
 import loaderGif from '../../assets/images/snail-yellow.gif';
-import { Typography, useTheme, useMediaQuery } from '@mui/material';
+import { useTheme, useMediaQuery } from '@mui/material';
 import { useRouter } from 'next/router';
 interface LoaderProps {
   isLoading: boolean;
   layoutHeight?: number;
   children: ReactNode;
 }
+const MOBILE_PADDING_MAP: Record<string, string> = {
+  '/contents/[identifier]': '138px',
+  '/contents': '25px',
+  '/home': '47px',
+  '/': '40px',
+  '/quick-access': '132px',
+  '/quick-access/[category]': '132px',
+};
+
+const DESKTOP_PADDING_MAP: Record<string, string> = {
+  '/quick-access': '160px',
+  '/quick-access/[category]': '160px',
+  '/quick-access/contents/[category]': '60px',
+  '/': '90px',
+  '/contents': '90px',
+};
+
+const getPaddingTop = (isMobile: boolean, router: any): string => {
+  const defaultPadding = isMobile ? '40px' : '95px';
+
+  if (isMobile) {
+    if (
+      typeof window !== 'undefined' &&
+      window.location.hash.includes('error=login_required')
+    ) {
+      return '47px';
+    }
+    if (router.pathname === '/home' && router.query.category) {
+      return '47px';
+    }
+    return MOBILE_PADDING_MAP[router.pathname] || defaultPadding;
+  }
+
+  return DESKTOP_PADDING_MAP[router.pathname] || defaultPadding;
+};
 
 export const Loader: React.FC<LoaderProps> = memo(
   ({ isLoading, layoutHeight, children }) => {
@@ -25,66 +60,11 @@ export const Loader: React.FC<LoaderProps> = memo(
       'home?category=*',
       '/',
     ];
-    const noPaddingRoutes = ['/quick-access/contents/[category]'];
-    const paddingQuickAccess = [
-      '/quick-access',
-      '/quick-access/[category]',
-      '/contents/[identifier]',
-    ];
-    const paddingPlayer = ['/player/[identifier]'];
+
     const shouldUnsetHeight = noHeightRoutes.includes(router.pathname);
-    const shouldUnsetPadding = noPaddingRoutes.includes(router.pathname);
-    const shouldAddPadding = paddingQuickAccess.includes(router.pathname);
-    const shouldSkipPadding = router.asPath === '/searchpage';
-    const addPaddingPlayer = paddingPlayer.includes(router.asPath);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    let paddingTop = isMobile ? '40px' : '95px';
-    if (isMobile) {
-      if (router.pathname === '/contents/[identifier]') {
-        paddingTop = '138px';
-      }
-      if (router.pathname === '/contents') {
-        paddingTop = '25px';
-      }
-      if (router.pathname === '/home' && router.query.category) {
-        paddingTop = '47px';
-      }
-      if (router.pathname === '/home') {
-        paddingTop = '47px';
-      }
-      if (router.pathname === '/') {
-        paddingTop = '40px';
-      }
-      if (
-        typeof window !== 'undefined' &&
-        window.location.hash.includes('error=login_required')
-      ) {
-        paddingTop = '47px'; // You can tweak these values
-      }
-      if (router.pathname === '/quick-access') {
-        paddingTop = '132px';
-      }
-      if (router.pathname === '/quick-access/[category]') {
-        paddingTop = '132px';
-      }
-    } else if (!isMobile) {
-      if (router.pathname === '/quick-access') {
-        paddingTop = '160px';
-      }
-      if (router.pathname === '/quick-access/[category]') {
-        paddingTop = '160px';
-      }
-      if (router.pathname === '/quick-access/contents/[category]') {
-        paddingTop = '60px';
-      }
-      if (router.pathname === '/') {
-        paddingTop = '90px';
-      }
-      if (router.pathname === '/contents') {
-        paddingTop = '90px';
-      }
-    }
+    const paddingTop = getPaddingTop(isMobile, router);
 
     return (
       <Box>
