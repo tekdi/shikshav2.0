@@ -23,7 +23,7 @@ import IconButton from '@mui/material/IconButton';
 import Loader from '../../component/layout/LoaderComponent';
 import ImageCenter from '../../component/ImageCenter';
 
-import { languageData } from '../../utils/constantData';
+import { languageData } from '@shared-lib';
 import Layout from '../../component/layout/layout';
 
 export default function Registration() {

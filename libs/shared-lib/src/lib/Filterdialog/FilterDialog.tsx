@@ -262,8 +262,7 @@ export const FilterDialog = ({
   const handleCloseDialog = () => {
     onApply?.({});
     setSelectedValues({});
-    // selectedFilters.mimeType = [];
-    // selectedFilters.resource = [];
+
     localStorage.removeItem('selectedFilters');
     onClose?.();
   };

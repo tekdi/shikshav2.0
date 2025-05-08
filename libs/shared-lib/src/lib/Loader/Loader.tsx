@@ -37,7 +37,6 @@ export const Loader: React.FC<LoaderProps> = memo(
     const shouldUnsetPadding = noPaddingRoutes.includes(router.pathname);
     const shouldAddPadding = paddingQuickAccess.includes(router.pathname);
     const shouldSkipPadding = router.asPath === '/searchpage';
-    const addPaddincontent = contentPagePadding.includes(router.asPath);
     const addPaddingPlayer = paddingPlayer.includes(router.asPath);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -87,31 +86,6 @@ export const Loader: React.FC<LoaderProps> = memo(
         paddingTop = '90px';
       }
     }
-    // if (isMobile) {
-    //   if (shouldSkipPadding) {
-    //     paddingTop = '96px';
-    //   } else if (shouldUnsetPadding) {
-    //     paddingTop = '34px';
-    //   } else if (shouldAddPadding) {
-    //     paddingTop = '70px';
-    //   } else if (addPaddingPlayer) {
-    //     paddingTop = '140px';
-    //   } else {
-    //     paddingTop = '146px';
-    //   }
-    // } else {
-    //   if (shouldSkipPadding) {
-    //     paddingTop = '40px';
-    //   } else if (shouldAddPadding) {
-    //     paddingTop = '80px';
-    //   } else if (shouldUnsetPadding) {
-    //     paddingTop = '54px';
-    //   } else if (shouldUnsetHeight) {
-    //     paddingTop = '50px';
-    //   }else if(addPaddincontent){
-    //     paddingTop = '50px';
-    //   }
-    // }
 
     return (
       <Box>

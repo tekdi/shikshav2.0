@@ -20,7 +20,7 @@ import { hierarchyAPI } from '../services/Hierarchy';
 import { ContentSearch, ContentSearchResponse } from '../services/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import { RESOURCE_TYPES, MIME_TYPES } from '../utils/constantData';
+import { RESOURCE_TYPES, MIME_TYPES } from '@shared-lib';
 export interface ContentProps {
   _grid?: object;
   filters?: object;
@@ -298,8 +298,7 @@ export default function Content(props: ContentProps) {
             {(() => {
               const subcategory = localStorage.getItem('subcategory');
               const category = localStorage.getItem('category');
-              // const label = subcategory || category;
-              const label = category || subcategory;
+              const label = category ?? subcategory;
 
               return label ? (
                 <Typography
@@ -486,7 +485,7 @@ export default function Content(props: ContentProps) {
                 placeholder={'Search content..'}
                 rightIcon={<SearchIcon />}
                 onRightIconClick={handleSearchClick}
-                inputValue={searchValue || ''}
+                inputValue={searchValue ?? ''}
                 onInputChange={handleSearchChange}
                 onKeyPress={(ev: any) => {
                   if (ev.key === 'Enter') {

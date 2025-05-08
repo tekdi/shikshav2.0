@@ -107,7 +107,7 @@ export default function Content() {
       if (result && typeof result === 'object') {
         setContentData(result);
       }
-      const keywords = result?.keywords?.filter((item: any) => item) || [];
+      const keywords = result?.keywords?.filter((item: any) => item) ?? [];
       let relatedContentTemp: ContentItem[] = [];
 
       for (const keyword of keywords) {
@@ -119,26 +119,26 @@ export default function Content() {
           const filtered =
             keywordFilteredResults?.result?.content?.filter(
               (item: any) => item.identifier !== result.identifier
-            ) || [];
+            ) ?? [];
 
           if (filtered.length > 0) {
             relatedContentTemp = filtered.map((item: any) => ({
-              name: item.name || '',
-              gradeLevel: item.gradeLevel || [],
+              name: item.name ?? '',
+              gradeLevel: item.gradeLevel ?? [],
               language: item.language || [],
-              artifactUrl: item.artifactUrl || '',
-              identifier: item.identifier || '',
-              posterImage: item.posterImage || '',
-              contentType: item.contentType || '',
-              mimeType: item.mimeType || '',
-              author: item.author || '',
-              keywords: item.keywords || [],
-              year: item.year || '',
-              license: item.license || '',
-              description: item.description || '',
-              publisher: item.publisher || '',
-              url: item.url || '',
-              previewUrl: item.previewUrl || '',
+              artifactUrl: item.artifactUrl ?? '',
+              identifier: item.identifier ?? '',
+              posterImage: item.posterImage ?? '',
+              contentType: item.contentType ?? '',
+              mimeType: item.mimeType ?? '',
+              author: item.author ?? '',
+              keywords: item.keywords ?? [],
+              year: item.year ?? '',
+              license: item.license ?? '',
+              description: item.description ?? '',
+              publisher: item.publisher ?? '',
+              url: item.url ?? '',
+              previewUrl: item.previewUrl ?? '',
             }));
             break; // Stop at first successful keyword
           }
@@ -209,7 +209,6 @@ export default function Content() {
     router.push(`/contents/${content?.identifier}`);
   };
   const selectTagOnClick = async (keyword: any) => {
-    // router.push(`/searchpage?query=${val}&tags=${true}`);
     try {
       setIsLoading(true);
       const keywordFilteredResults = await ContentSearch({

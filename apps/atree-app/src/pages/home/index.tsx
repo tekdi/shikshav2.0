@@ -28,7 +28,7 @@ import Layout from '../../component/layout/layout';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'next/navigation';
 import Loader from '../../component/layout/LoaderComponent';
-import { RESOURCE_TYPES, MIME_TYPES } from '../../utils/constantData';
+import { RESOURCE_TYPES, MIME_TYPES } from '@shared-lib';
 import dynamic from 'next/dynamic';
 import FooterText from '../../component/FooterText';
 import Footer from '../../component/layout/Footer';
@@ -504,7 +504,6 @@ export default function Index() {
                 display: 'flex',
                 width: '100%',
                 gap: '16px',
-                padding: '15px',
                 flexDirection: 'column',
                 padding: '0px',
               }}
