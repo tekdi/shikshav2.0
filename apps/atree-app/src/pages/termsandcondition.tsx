@@ -16,12 +16,13 @@ export default function Aboutus() {
       <Banner />
       <Grid
         container
-        spacing={2}
         direction="column"
-        // alignItems="left"
-        justifyContent="center"
-        marginBottom={'25px'}
         sx={commonStyles.responsivePadding}
+        spacing={2}
+        // alignItems="left"
+
+        marginBottom={'25px'}
+        justifyContent="center"
       >
         {/* About Us Description */}
         <Typography

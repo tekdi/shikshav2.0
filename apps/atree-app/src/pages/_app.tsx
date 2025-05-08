@@ -9,7 +9,10 @@ import keycloak from '../service/keycloack';
 
 import '@fontsource/poppins';
 import dynamic from 'next/dynamic';
-import Layout from '../component/layout/layout';
+import {
+  fetchFrameworkData,
+  processFrameworkData,
+} from '../service/apiService';
 import { useEffect, useState } from 'react';
 const AuthHandler = dynamic(() => import('./AuthHandler'), {
   ssr: false,
@@ -38,31 +41,30 @@ const theme = createTheme({
 });
 
 export default function RootLayout({ Component, pageProps }: AppProps) {
-  const [frameworkData, setFrameworkData] = useState<any>(null);
-  const [frameworkFilter, setFrameworkFilter] = useState<any[]>([]);
-  const [framework, setFramework] = useState<string>('');
+  const [frameworkState, setFrameworkState] = useState({
+    frameworkData: null,
+    frameworkFilter: [],
+    framework: '',
+  });
   useEffect(() => {
     let isMounted = true;
-    const fetchFrameworkData = async () => {
+
+    const loadFrameworkData = async () => {
       try {
-        const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
-        const frameworkData = await fetch(url).then((res) => res.json());
+        const data = await fetchFrameworkData(
+          process.env.NEXT_PUBLIC_FRAMEWORK || ''
+        );
         if (isMounted) {
-          const frameworks = frameworkData?.result?.framework?.categories;
-          const fdata =
-            frameworks.find((item: any) => item.code === 'topic')?.terms ?? [];
-          setFramework(fdata[0]?.identifier ?? '');
-          setFrameworkFilter(fdata);
-          setFrameworkData(frameworkData);
+          setFrameworkState(processFrameworkData(data));
         }
       } catch (error) {
         if (isMounted) {
-          console.error('Error fetching board data:', error);
+          console.error('Error loading framework data:', error);
         }
       }
     };
 
-    fetchFrameworkData();
+    loadFrameworkData();
     return () => {
       isMounted = false;
     };
@@ -70,9 +72,7 @@ export default function RootLayout({ Component, pageProps }: AppProps) {
 
   const enhancedPageProps = {
     ...pageProps,
-    frameworkData,
-    frameworkFilter,
-    framework,
+    ...frameworkState,
   };
   return (
     <ReactKeycloakProvider
