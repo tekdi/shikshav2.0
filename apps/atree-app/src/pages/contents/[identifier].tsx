@@ -29,11 +29,14 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ShareIcon from '@mui/icons-material/Share';
 import atreeLogo from '../../../assets/images/placeholder.jpg';
 
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
+import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined';
 import { AtreeCard, ContentSearch } from '@shared-lib';
 import ShareDialog from '../../component/ShareDialog';
 import FooterText from '../../component/FooterText';
 import Loader from '../../component/layout/LoaderComponent';
+import Footer from '../../component/layout/Footer';
 
 interface ContentItem {
   name: string;
@@ -104,17 +107,48 @@ export default function Content() {
       if (result && typeof result === 'object') {
         setContentData(result);
       }
+      const keywords = result?.keywords?.filter((item: any) => item) ?? [];
+      let relatedContentTemp: ContentItem[] = [];
 
-      const keyword = result?.keywords[0] ?? [];
-      const keywordFilteredResults = await ContentSearch({
-        channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
-        query: keyword,
-      });
-      const filteredRelatedContent =
-        keywordFilteredResults?.result?.content?.filter(
-          (item: any) => item.identifier !== result.identifier
-        ) || [];
-      setRelatedContent(filteredRelatedContent || []);
+      for (const keyword of keywords) {
+        try {
+          const keywordFilteredResults = await ContentSearch({
+            channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+            query: keyword,
+          });
+          const filtered =
+            keywordFilteredResults?.result?.content?.filter(
+              (item: any) => item.identifier !== result.identifier
+            ) ?? [];
+
+          if (filtered.length > 0) {
+            relatedContentTemp = filtered.map((item: any) => ({
+              name: item.name ?? '',
+              gradeLevel: item.gradeLevel ?? [],
+              language: item.language ?? [],
+              artifactUrl: item.artifactUrl ?? '',
+              identifier: item.identifier ?? '',
+              posterImage: item.posterImage ?? '',
+              contentType: item.contentType ?? '',
+              mimeType: item.mimeType ?? '',
+              author: item.author ?? '',
+              keywords: item.keywords ?? [],
+              year: item.year ?? '',
+              license: item.license ?? '',
+              description: item.description ?? '',
+              publisher: item.publisher ?? '',
+              url: item.url ?? '',
+              previewUrl: item.previewUrl ?? '',
+            }));
+            break; // Stop at first successful keyword
+          }
+        } catch (error) {
+          console.error(`Search failed for keyword ${keyword}:`, error);
+          continue;
+        }
+      }
+
+      setRelatedContent(relatedContentTemp);
     } catch (error) {
       console.error('Failed to fetch content:', error);
     } finally {
@@ -174,8 +208,24 @@ export default function Content() {
   const handleCardClick = (content: any) => {
     router.push(`/contents/${content?.identifier}`);
   };
-  const selectTagOnClick = (val: any) => {
-    router.push(`/searchpage?query=${val}&tags=${true}`);
+  const selectTagOnClick = async (keyword: any) => {
+    try {
+      setIsLoading(true);
+      const keywordFilteredResults = await ContentSearch({
+        channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+        query: keyword,
+      });
+
+      const filteredContent =
+        keywordFilteredResults?.result?.content?.filter(
+          (item: any) => item.identifier !== identifier
+        ) || [];
+      setRelatedContent(filteredContent);
+    } catch (error) {
+      console.error(`Search failed for keyword ${keyword}:`, error);
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <>
@@ -183,7 +233,7 @@ export default function Content() {
         <Layout
           showBack
           isFooter={isMobile} // add this when on mobile
-          footerComponent={!isMobile ? <FooterText page="" /> : undefined}
+          footerComponent={!isMobile ? <FooterText page="" /> : <Footer />}
           isLoadingChildren={isLoading}
           backIconClick={() => router.back()}
           backTitle={
@@ -248,7 +298,11 @@ export default function Content() {
           {!isMobile ? (
             // Desktop View (Carousel on Right, Content on Left)
             <>
-              <Grid container spacing={2} sx={{ padding: 2 }}>
+              <Grid
+                container
+                spacing={2}
+                sx={{ padding: 2, marginTop: '60px' }}
+              >
                 {/* Left Side (Content) */}
                 <Grid size={{ xs: 12, md: 3 }}>
                   {/* {[...Array(4)].map((_, i) => ( */}
@@ -286,18 +340,32 @@ export default function Content() {
                     </Typography>
 
                     {/* Know More Button */}
-                    <Box sx={{ display: 'flex', gap: 1, width: '50%' }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        gap: 1,
+                        width: '50%',
+                        '& > button': {
+                          flex: 1,
+                          minWidth: 0,
+                          textTransform: 'none', // Disable default Material-UI uppercase
+                          '& .MuiButton-startIcon': {
+                            marginRight: '4px', // Adjust icon spacing if needed
+                          },
+                        },
+                      }}
+                    >
                       <Button
                         variant="contained"
                         color="secondary"
                         sx={{
                           borderRadius: '50px',
                           height: '40px',
-                          flex: 0.2,
                           padding: '3px',
                           fontSize: '14px',
                         }}
                         onClick={handlePreview}
+                        startIcon={<VisibilityOutlinedIcon />}
                       >
                         Preview
                       </Button>
@@ -308,10 +376,10 @@ export default function Content() {
                         sx={{
                           borderRadius: '50px',
                           height: '40px',
-                          flex: 0.3,
                           color: 'black',
                           padding: '3px',
                         }}
+                        startIcon={<FileDownloadOutlinedIcon />}
                         disabled={!contentData?.previewUrl?.endsWith('.pdf')}
                         onClick={handleOnDownload}
                       >
@@ -324,10 +392,10 @@ export default function Content() {
                         sx={{
                           borderRadius: '50px',
                           height: '40px',
-                          flex: 0.3,
                           color: 'black',
                           padding: '3px',
                         }}
+                        startIcon={<LinkOutlinedIcon />}
                         disabled={!contentData?.url}
                         onClick={handleOnCLick}
                       >
@@ -400,6 +468,7 @@ export default function Content() {
                 gap: 2.5,
                 display: 'flex',
                 flexDirection: 'column',
+                pt: '18px',
               }}
             >
               <Box sx={{ px: 2 }}>
@@ -435,6 +504,7 @@ export default function Content() {
                     height: '40px',
                     flex: 0.3,
                   }}
+                  startIcon={<VisibilityOutlinedIcon />}
                   onClick={handlePreview}
                 >
                   Preview
@@ -449,6 +519,7 @@ export default function Content() {
                     flex: 0.3,
                     color: 'black',
                   }}
+                  startIcon={<FileDownloadOutlinedIcon />}
                   onClick={handleOnDownload}
                   disabled={!contentData?.previewUrl?.endsWith('.pdf')}
                 >
@@ -464,6 +535,7 @@ export default function Content() {
                     flex: 0.3,
                     color: 'black',
                   }}
+                  startIcon={<LinkOutlinedIcon />}
                   disabled={!contentData?.url}
                   onClick={handleOnCLick}
                 >
@@ -491,15 +563,18 @@ export default function Content() {
               <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
                 {contentData?.description ?? ''}
               </Typography>
-              <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-                <b>Author:</b> {contentData?.author || ''}
-              </Typography>
-              <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-                <b>Publisher:</b> {contentData?.publisher ?? ''}
-              </Typography>
-              <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
-                <b>Year:</b> {contentData?.year ?? ''}
-              </Typography>
+
+              <Stack spacing={0.5}>
+                <Typography variant="body1" textAlign="left">
+                  <b>Author:</b> {contentData?.author || ''}
+                </Typography>
+                <Typography variant="body1" textAlign="left">
+                  <b>Publisher:</b> {contentData?.publisher ?? ''}
+                </Typography>
+                <Typography variant="body1" textAlign="left">
+                  <b>Year:</b> {contentData?.year ?? ''}
+                </Typography>
+              </Stack>
             </Box>
           )}
           <Dialog open={openPopup} onClose={() => setOpenPopup(false)}>

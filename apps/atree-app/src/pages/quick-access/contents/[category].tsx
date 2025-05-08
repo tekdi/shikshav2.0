@@ -19,12 +19,14 @@ import {
   ContentSearch,
   ContentSearchResponse,
   FilterDialog,
+  RESOURCE_TYPES,
+  MIME_TYPES,
 } from '@shared-lib';
-import { RESOURCE_TYPES, MIME_TYPES } from '../../../utils/constantData';
 import CustomSwitch from '../../../component/CustomSwitch';
 import LoginDialog from '../../../component/LoginDialog';
 import useHandleCardClick from '../../../utils/useHandleCardClick';
 import FooterText from 'apps/atree-app/src/component/FooterText';
+import Footer from 'apps/atree-app/src/component/layout/Footer';
 const Content = dynamic(() => import('@Content'), { ssr: false });
 
 const MyComponent: React.FC = () => {
@@ -246,7 +248,7 @@ const MyComponent: React.FC = () => {
     <Layout
       _backButton={{ alignItems: 'center' }}
       isFooter={isMobile} // add this when on mobile
-      footerComponent={renderFooterComponent()}
+      footerComponent={!isMobile ? <FooterText page="" /> : <Footer />}
       backTitle={
         <Box
           sx={{
@@ -351,7 +353,9 @@ const MyComponent: React.FC = () => {
                 {isMobile && <SubFrameworkButtons />}
                 <Content
                   {...{
-                    // _grid: { size: { xs: 6, sm: 6, md: 9, lg: 3 } },
+                    _grid: {
+                      size: { xs: 6, sm: 6, md: 4, lg: 3 },
+                    },
                     contentTabs: ['content'],
                     handleCardClick: (content: ContentSearchResponse) => {
                       if (content.identifier) {

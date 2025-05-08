@@ -27,6 +27,7 @@ export * from './lib/Progress/Circular';
 export * from './lib/Progress/Progress';
 export * from './lib/Services/Content/Search';
 import Image from '../images/default.png';
+export { RESOURCE_TYPES, MIME_TYPES, languageData } from './utils/constantData';
 
 export const IMAGES = {
   DEFAULT_PLACEHOLDER: Image,

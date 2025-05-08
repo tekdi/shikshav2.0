@@ -9,7 +9,11 @@ import keycloak from '../service/keycloack';
 
 import '@fontsource/poppins';
 import dynamic from 'next/dynamic';
-import Layout from '../component/layout/layout';
+import {
+  fetchFrameworkData,
+  processFrameworkData,
+} from '../service/apiService';
+import { useEffect, useState } from 'react';
 const AuthHandler = dynamic(() => import('./AuthHandler'), {
   ssr: false,
 });
@@ -37,6 +41,39 @@ const theme = createTheme({
 });
 
 export default function RootLayout({ Component, pageProps }: AppProps) {
+  const [frameworkState, setFrameworkState] = useState({
+    frameworkData: null,
+    frameworkFilter: [],
+    framework: '',
+  });
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadFrameworkData = async () => {
+      try {
+        const data = await fetchFrameworkData(
+          process.env.NEXT_PUBLIC_FRAMEWORK ?? ''
+        );
+        if (isMounted) {
+          setFrameworkState(processFrameworkData(data));
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Error loading framework data:', error);
+        }
+      }
+    };
+
+    loadFrameworkData();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const enhancedPageProps = {
+    ...pageProps,
+    ...frameworkState,
+  };
   return (
     <ReactKeycloakProvider
       authClient={keycloak}
@@ -48,9 +85,7 @@ export default function RootLayout({ Component, pageProps }: AppProps) {
       <ThemeProvider theme={theme}>
         <CssBaseline /> {/* Normalize styles */}
         <AuthHandler />
-        <Layout {...pageProps}>
-          <Component {...pageProps} />
-        </Layout>
+        <Component {...enhancedPageProps} />
       </ThemeProvider>
     </ReactKeycloakProvider>
   );

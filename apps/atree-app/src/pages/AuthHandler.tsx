@@ -3,11 +3,10 @@ import { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { createUser, getUserAuthInfo, signin } from '../service/content';
 import { SelectChangeEvent } from '@mui/material/Select';
-import { languageData } from '../utils/constantData';
 
 import GlobalAlert from '../component/GlobalAlert';
 import { useRouter } from 'next/router';
-import { CommonDialog, CommonSelect } from '@shared-lib';
+import { CommonDialog, CommonSelect, languageData } from '@shared-lib';
 import {
   Box,
   Button,

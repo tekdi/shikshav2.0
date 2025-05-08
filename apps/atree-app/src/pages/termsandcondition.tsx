@@ -4,6 +4,7 @@ import Layout from '../component/layout/layout';
 import { Typography, useMediaQuery, useTheme } from '@mui/material';
 import Banner from '../component/Banner';
 import FooterText from '../component/FooterText';
+import { commonStyles } from '../utils/commonStyle';
 export default function Aboutus() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -15,13 +16,13 @@ export default function Aboutus() {
       <Banner />
       <Grid
         container
-        spacing={2}
         direction="column"
-        alignItems="left"
-        // justifyContent="center"
-        marginBottom={'5px'}
-        padding={{ xs: '16px' }}
-        mt={-3}
+        sx={commonStyles.responsivePadding}
+        spacing={2}
+        // alignItems="left"
+
+        marginBottom={'25px'}
+        justifyContent="center"
       >
         {/* About Us Description */}
         <Typography

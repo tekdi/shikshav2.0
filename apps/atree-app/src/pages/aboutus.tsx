@@ -1,16 +1,20 @@
 import * as React from 'react';
 import Grid from '@mui/material/Grid2';
 import Layout from '../component/layout/layout';
-import { Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Typography, useMediaQuery, useTheme } from '@mui/material';
 import Banner from '../component/Banner';
 import FooterText from '../component/FooterText';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
+import CallOutlinedIcon from '@mui/icons-material/CallOutlined';
+import { commonStyles } from '../utils/commonStyle';
 export default function Aboutus() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <Layout
       isFooter={isMobile} // add this when on mobile
-      footerComponent={  <FooterText page="" />}
+      footerComponent={<FooterText page="" />}
     >
       <Banner />
       <Grid
@@ -20,14 +24,10 @@ export default function Aboutus() {
         // alignItems="center"
         justifyContent="center"
         marginBottom={'25px'}
-        sx={{
-          pl: { xs: 2, md: 10 },
-          pr: { xs: 2, md: 10 },
-        }}
+        sx={commonStyles.responsivePadding}
       >
         {/* About Us Title */}
         <Typography
-          variant="h4"
           sx={{
             textAlign: 'center',
             fontWeight: { xs: 400, md: 500 },
@@ -136,11 +136,12 @@ export default function Aboutus() {
         </Typography>
         <Typography
           sx={{
-            textAlign: 'left',
+            textAlign: { xs: 'left', md: 'left' },
             fontWeight: { xs: 400, md: 500 },
             fontSize: { xs: '14px', md: '24px' },
             pl: { xs: 2, md: 10 },
             pr: { xs: 2, md: 10 },
+            whiteSpace: 'pre-line',
           }}
         >
           Get in Touch
@@ -150,12 +151,28 @@ export default function Aboutus() {
             textAlign: { xs: 'left', md: 'left' },
             pl: { xs: 2, md: 10 },
             pr: { xs: 2, md: 10 },
+            mb: 1,
           }}
         >
-          We’d love to hear from you! �� Email: envedu@atree.org �� Address:
-          ATREE, Royal Enclave, Sriramapura, Jakkur Post, Bangalore 560 064,
-          Karnataka �� Phone: +91-80-23635555 (EPABX)
+          We’d love to hear from you!
         </Typography>
+        <Box sx={{ pl: { xs: 2, md: 10 }, pr: { xs: 2, md: 10 } }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <EmailOutlinedIcon sx={{ mr: 1 }} />
+            <Typography>Email: envedu@atree.org</Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <LocationOnOutlinedIcon sx={{ mr: 1 }} />
+            <Typography>
+              Address: ATREE, Royal Enclave, Sriramapura, Jakkur Post, Bangalore
+              560 064, Karnataka
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            <CallOutlinedIcon sx={{ mr: 1 }} />
+            <Typography>Phone: +91-80-23635555 (EPABX)</Typography>
+          </Box>
+        </Box>
       </Grid>
     </Layout>
   );

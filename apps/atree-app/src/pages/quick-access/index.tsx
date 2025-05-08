@@ -4,6 +4,7 @@ import FolderComponent from '../../component/FolderComponent';
 import { useRouter } from 'next/router';
 import FooterText from '../../component/FooterText';
 import { useMediaQuery, useTheme } from '@mui/material';
+import Footer from '../../component/layout/Footer';
 const MyComponent: React.FC = () => {
   const router = useRouter();
   const [categories, setCategories] = useState<Array<any>>([]);
@@ -54,7 +55,7 @@ const MyComponent: React.FC = () => {
       isLoadingChildren={isLoadingChildren}
       backTitle={'Quick Access'}
       isFooter={isMobile} // add this when on mobile
-      footerComponent={!isMobile ? <FooterText page="" /> : undefined}
+      footerComponent={!isMobile ? <FooterText page="" /> : <Footer />}
     >
       <FolderComponent
         categories={categories}
