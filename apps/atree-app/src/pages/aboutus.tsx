@@ -8,6 +8,7 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import CallOutlinedIcon from '@mui/icons-material/CallOutlined';
 import { commonStyles } from '../utils/commonStyle';
+import DigitalHubBanner from '../component/DigitalHubBanner';
 export default function Aboutus() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -17,6 +18,7 @@ export default function Aboutus() {
       footerComponent={<FooterText page="" />}
     >
       <Banner />
+      <DigitalHubBanner />
       <Grid
         container
         spacing={2}
@@ -30,9 +32,9 @@ export default function Aboutus() {
         <Typography
           sx={{
             textAlign: 'center',
+            lineHeight: { xs: '30px', md: '64px' },
             fontWeight: { xs: 400, md: 500 },
-            fontSize: { xs: '24px', md: '64px' },
-            mt: 2,
+            fontSize: { xs: '24px', md: '57px' },
           }}
         >
           About Us

@@ -402,7 +402,7 @@ export default function Index() {
                   <Box
                     sx={{
                       width: '100%',
-                      padding: '12px',
+                      padding: '12px 0px',
                       gap: '16px',
                       flexDirection: 'column',
                       display: 'flex',
@@ -762,7 +762,7 @@ const SubFrameworkFilter = React.memo<{
   >([]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const maxItems = isMobile ? 3 : 5;
+  const maxItems = isMobile ? 3 : 6;
   useEffect(() => {
     if (subFrameworkFilter) {
       setFilterItems(subFrameworkFilter.slice(0, maxItems));
@@ -771,6 +771,9 @@ const SubFrameworkFilter = React.memo<{
   const handleItemClick = (item: any) => {
     localStorage.setItem('subcategory', item.name);
     router.push(`/contents`);
+  };
+  const capitalizeFirstLetter = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   };
   return (
     <Grid container spacing={1}>
@@ -783,13 +786,17 @@ const SubFrameworkFilter = React.memo<{
               borderRadius: '8px',
               color: '#001D32',
               backgroundColor: '#E3E9EA',
+              textTransform: 'none',
+              fontFamily: 'sans-serif',
+              fontSize: '11px',
+              lineHeight: '16px',
             }}
           >
-            {subFrameworkItem.name}
+            {capitalizeFirstLetter(subFrameworkItem.name)}
           </Button>
         </Grid>
       ))}
-      {subFrameworkFilter?.length > (isMobile ? 3 : 5) && (
+      {subFrameworkFilter?.length > (isMobile ? 3 : 6) && (
         <Button
           onClick={() => setOpenPopup(true)}
           sx={{
@@ -798,10 +805,13 @@ const SubFrameworkFilter = React.memo<{
             backgroundColor: '#E3E9EA',
           }}
         >
-          <MoreVertIcon onClick={() => setOpenPopup(true)} />
+          <MoreVertIcon
+            sx={{ width: '11px', height: '11px' }}
+            onClick={() => setOpenPopup(true)}
+          />
         </Button>
       )}
-      {subFrameworkFilter?.length > (isMobile ? 3 : 5) && openPopup && (
+      {subFrameworkFilter?.length > (isMobile ? 3 : 6) && openPopup && (
         <Dialog
           open={openPopup}
           onClose={() => setOpenPopup(false)}

@@ -301,123 +301,168 @@ export default function Content() {
               <Grid
                 container
                 spacing={2}
-                sx={{ padding: 2, marginTop: '60px' }}
+                sx={{
+                  padding: 2,
+                  marginTop: '60px',
+                }}
               >
-                {/* Left Side (Content) */}
-                <Grid size={{ xs: 12, md: 3 }}>
-                  {/* {[...Array(4)].map((_, i) => ( */}
-                  <ImageCard
-                    image={contentData?.posterImage ?? landingBanner?.src}
-                    name={''}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, md: 9 }}>
-                  <Stack spacing={2}>
-                    {/* Keywords */}
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                      {displayedKeywords.map((label) => (
-                        <Chip
-                          key={label}
-                          label={label}
-                          variant="outlined"
-                          sx={{
-                            height: 22,
-                            padding: '4px 6px',
-                            '& .MuiChip-label': {
-                              fontSize: '10px', // or any desired size, like '0.875rem'
+                <Box
+                  sx={{
+                    display: 'flex',
+                    border: '1px solid #C2C7CF',
+                    padding: '10px',
+                    gap: 2,
+                    borderRadius: '10px',
+                  }}
+                >
+                  {/* Left Side (Content) */}
+                  <Grid size={{ xs: 12, md: 3 }}>
+                    {/* {[...Array(4)].map((_, i) => ( */}
+                    <ImageCard
+                      image={contentData?.posterImage ?? landingBanner?.src}
+                      name={''}
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 9 }}>
+                    <Stack spacing={2}>
+                      {/* Keywords */}
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          gap: '19px',
+                          width: '100%',
+                        }}
+                      >
+                        {displayedKeywords.map((label) => (
+                          <Chip
+                            key={label}
+                            label={label}
+                            variant="outlined"
+                            sx={{
+                              height: 32,
+                              padding: '4px 6px',
+                              borderRadius: '8px',
+                              '& .MuiChip-label': {
+                                fontSize: '11px',
+                                fontFamily: 'sans-serif',
+                                fontWeight: 500,
+                                color: '#171D1E',
+                              },
+                            }}
+                            onClick={() =>
+                              selectTagOnClick(label.replace('#', ''))
+                            }
+                          />
+                        ))}
+                      </Box>
+
+                      {/* Description */}
+                      <Typography
+                        variant="body1"
+                        textAlign="left"
+                        fontFamily={'Arial'}
+                      >
+                        {contentData?.description ?? ''}
+                      </Typography>
+
+                      {/* Know More Button */}
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          gap: 1,
+                          width: '100%',
+                          '& > button': {
+                            flex: 1,
+                            minWidth: 0,
+                            maxWidth: 152,
+                            textTransform: 'none', // Disable default Material-UI uppercase
+                            '& .MuiButton-startIcon': {
+                              marginRight: '4px', // Adjust icon spacing if needed
                             },
-                          }}
-                          onClick={() =>
-                            selectTagOnClick(label.replace('#', ''))
-                          }
-                        />
-                      ))}
-                    </Box>
-
-                    {/* Description */}
-                    <Typography variant="body1" textAlign="left">
-                      {contentData?.description ?? ''}
-                    </Typography>
-
-                    {/* Know More Button */}
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        gap: 1,
-                        width: '50%',
-                        '& > button': {
-                          flex: 1,
-                          minWidth: 0,
-                          textTransform: 'none', // Disable default Material-UI uppercase
-                          '& .MuiButton-startIcon': {
-                            marginRight: '4px', // Adjust icon spacing if needed
                           },
-                        },
-                      }}
-                    >
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        sx={{
-                          borderRadius: '50px',
-                          height: '40px',
-                          padding: '3px',
-                          fontSize: '14px',
                         }}
-                        onClick={handlePreview}
-                        startIcon={<VisibilityOutlinedIcon />}
                       >
-                        Preview
-                      </Button>
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          sx={{
+                            borderRadius: '50px',
+                            height: '40px',
+                            padding: '3px',
+                            fontSize: '16px',
+                            fontWeight: 500,
+                          }}
+                          onClick={handlePreview}
+                          startIcon={<VisibilityOutlinedIcon />}
+                        >
+                          Preview
+                        </Button>
 
-                      <Button
-                        variant="outlined"
-                        color="secondary"
-                        sx={{
-                          borderRadius: '50px',
-                          height: '40px',
-                          color: 'black',
-                          padding: '3px',
-                        }}
-                        startIcon={<FileDownloadOutlinedIcon />}
-                        disabled={!contentData?.previewUrl?.endsWith('.pdf')}
-                        onClick={handleOnDownload}
-                      >
-                        Download
-                      </Button>
+                        <Button
+                          variant="outlined"
+                          color="secondary"
+                          sx={{
+                            borderRadius: '50px',
+                            height: '40px',
+                            color: 'black',
+                            padding: '3px',
+                            fontSize: '16px',
+                            fontWeight: 500,
+                          }}
+                          startIcon={<FileDownloadOutlinedIcon />}
+                          disabled={!contentData?.previewUrl?.endsWith('.pdf')}
+                          onClick={handleOnDownload}
+                        >
+                          Download
+                        </Button>
 
-                      <Button
-                        variant="outlined"
-                        color="secondary"
-                        sx={{
-                          borderRadius: '50px',
-                          height: '40px',
-                          color: 'black',
-                          padding: '3px',
-                        }}
-                        startIcon={<LinkOutlinedIcon />}
-                        disabled={!contentData?.url}
-                        onClick={handleOnCLick}
-                      >
-                        Resource Link
-                      </Button>
-                    </Box>
+                        <Button
+                          variant="outlined"
+                          color="secondary"
+                          sx={{
+                            borderRadius: '50px',
+                            height: '40px',
+                            color: 'black',
+                            padding: '3px',
+                            fontSize: '16px',
+                            fontWeight: 500,
+                          }}
+                          startIcon={<LinkOutlinedIcon />}
+                          disabled={!contentData?.url}
+                          onClick={handleOnCLick}
+                        >
+                          Resource Link
+                        </Button>
+                      </Box>
 
-                    {/* Year & License */}
-                    <Stack spacing={0.5}>
-                      <Typography variant="body1" textAlign="left">
-                        <b>Author:</b> {contentData?.author ?? ''}
-                      </Typography>
-                      <Typography variant="body1" textAlign="left">
-                        <b>Publisher:</b> {contentData?.publisher ?? ''}
-                      </Typography>
-                      <Typography variant="body1" textAlign="left">
-                        <b>Year:</b> {contentData?.year ?? ''}
-                      </Typography>
+                      {/* Year & License */}
+                      <Stack spacing={0.5}>
+                        <Typography
+                          variant="body1"
+                          textAlign="left"
+                          fontFamily={'Arial'}
+                        >
+                          <b>Author:</b> {contentData?.author ?? ''}
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          textAlign="left"
+                          fontFamily={'Arial'}
+                        >
+                          <b>Publisher:</b> {contentData?.publisher ?? ''}
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          textAlign="left"
+                          fontFamily={'Arial'}
+                        >
+                          <b>Year:</b> {contentData?.year ?? ''}
+                        </Typography>
+                      </Stack>
                     </Stack>
-                  </Stack>
-                </Grid>
-
+                  </Grid>
+                </Box>
                 {/* Right Side (Carousel) */}
               </Grid>
               <Box

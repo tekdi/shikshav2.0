@@ -5,6 +5,7 @@ import { Typography, useMediaQuery, useTheme } from '@mui/material';
 import Banner from '../component/Banner';
 import FooterText from '../component/FooterText';
 import { commonStyles } from '../utils/commonStyle';
+import DigitalHubBanner from '../component/DigitalHubBanner';
 export default function Aboutus() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -14,6 +15,8 @@ export default function Aboutus() {
       footerComponent={<FooterText page="" />}
     >
       <Banner />
+      <DigitalHubBanner />
+
       <Grid
         container
         direction="column"
@@ -29,7 +32,8 @@ export default function Aboutus() {
           sx={{
             textAlign: 'center',
             fontWeight: { xs: 400, md: 500 },
-            fontSize: { xs: '24px', md: '64px' },
+            fontSize: { xs: '24px', md: '57px' },
+            lineHeight: { xs: '30px', md: '64px' },
           }}
         >
           Terms and Conditions

@@ -18,6 +18,7 @@ import { ContentSearch } from '@shared-lib';
 import Loader from '../component/layout/LoaderComponent';
 import FooterText from '../component/FooterText';
 import Banner from '../component/Banner';
+import DigitalHubBanner from '../component/DigitalHubBanner';
 interface LandingPageProps {
   frameworkData: any;
   frameworkFilter: any[];
@@ -136,6 +137,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
       ) : (
         <Grid container justifyContent={'center'}>
           <Banner />
+          <DigitalHubBanner />
           <Grid
             sx={{ px: 4, textAlign: 'center' }}
             container
@@ -150,22 +152,6 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
             >
               {isMobile ? (
                 <Box>
-                  <Typography
-                    variant="body1"
-                    align="center"
-                    gutterBottom
-                    sx={{
-                      fontWeight: 400,
-                      fontSize: { xs: '14px', md: '24px' },
-                      lineHeight: { xs: '24px', md: '44px' },
-                      textAlign: 'center',
-                      color: '#000000',
-                    }}
-                  >
-                    {t(
-                      'A digital hub of Environment Education resources contextual to India.'
-                    )}
-                  </Typography>
                   <Typography
                     variant="body1"
                     align="center"
@@ -200,25 +186,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                   </Typography>
                 </Box>
               ) : (
-                <Box>
-                  <Typography
-                    variant="body1"
-                    align="center"
-                    gutterBottom
-                    sx={{
-                      fontWeight: 400,
-                      fontSize: { xs: '14px', md: '24px' },
-                      lineHeight: { xs: '24px', md: '44px' },
-                      pl: '55px',
-                      pr: '55px',
-                      textAlign: 'center',
-                      color: '#000000',
-                    }}
-                  >
-                    {t(
-                      'A digital hub of Environment Education resources contextual to India.'
-                    )}
-                  </Typography>
+                <Box sx={{ marginTop: '50px', marginBottom: '50px' }}>
                   <Typography
                     variant="body1"
                     align="center"
@@ -263,6 +231,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                   alignItems: 'center',
                   color: '#2B3133',
                   textAlign: 'center',
+                  marginBottom: '25px',
                 }}
               >
                 <Box>

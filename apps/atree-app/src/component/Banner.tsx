@@ -67,7 +67,7 @@ export default function Banner() {
               key={image.id}
               sx={{
                 width: '100%',
-                height: { xs: '181px', md: '500px' },
+                height: { md: '500px' },
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',

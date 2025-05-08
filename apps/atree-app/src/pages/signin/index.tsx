@@ -209,14 +209,14 @@ const Login: React.FC<ListProps> = () => {
                 left={0}
                 width="100vw"
                 height="100vh"
-                sx={{ pointerEvents: 'none', bgcolor: 'rgba(0, 0, 0, 0.2)' }}
+                sx={{ pointerEvents: 'auto', bgcolor: 'rgba(0, 0, 0, 0.2)' }}
                 onClick={() => setAlert({ message: '', severity: 'success' })}
               >
                 <Alert
                   variant="filled"
                   severity={alert.severity}
                   sx={{ pointerEvents: 'auto' }}
-                  onClick={() => setAlert({ message: '', severity: 'success' })}
+                  // onClick={() => setAlert({ message: '', severity: 'success' })}
                 >
                   {alert.message}
                 </Alert>

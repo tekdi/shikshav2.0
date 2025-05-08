@@ -256,7 +256,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                     sx={{
                       position: 'fixed',
                       right: 0,
-                      marginTop: { md: '60px' },
+                      marginTop: { md: '70px' },
                       transform: 'translateY(-50%)',
                       display: 'flex',
                       gap: 2,
