@@ -9,7 +9,7 @@ const buttonColors: Record<string, string> = {
   land: '#8F4A50',
   forest: '#148A00',
   'climate change': '#CF3D03',
-  'activity books': '#FF00FF',
+  'activity books': '#B0049F',
   'reference books': '#FFBD0D',
   general: '#FFBD0D',
   potpourri: '#FFBD0D',
@@ -108,6 +108,7 @@ export const FrameworkFilter = ({
       {frameworkFilter.map(({ identifier, name }) => {
         const isSelected = selectedFramework === name.toLowerCase();
         const lowerCaseName = name.toLowerCase();
+        const isPotpourri = lowerCaseName === 'potpourri';
         return (
           <Grid key={identifier}>
             <Button
@@ -119,7 +120,11 @@ export const FrameworkFilter = ({
                 textTransform: 'none',
                 fontSize: '16px',
                 fontStyle: 'sans-serif',
-                color: isSelected ? '#fff' : 'black',
+                color: isSelected
+                  ? isPotpourri
+                    ? '#171D1E'
+                    : '#fff'
+                  : 'black',
                 borderColor: '#cee5ff',
                 backgroundColor: isSelected
                   ? buttonColors[lowerCaseName]

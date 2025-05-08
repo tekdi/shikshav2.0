@@ -17,6 +17,8 @@ const MOBILE_PADDING_MAP: Record<string, string> = {
   '/': '40px',
   '/quick-access': '132px',
   '/quick-access/[category]': '132px',
+  '/termsandcondition': '76px',
+  '/aboutus': '76px',
 };
 
 const DESKTOP_PADDING_MAP: Record<string, string> = {
@@ -31,14 +33,32 @@ const getPaddingTop = (isMobile: boolean, router: any): string => {
   const defaultPadding = isMobile ? '40px' : '95px';
 
   if (isMobile) {
+    // if (
+    //   typeof window !== 'undefined' &&
+    //   window.location.hash.includes('error=login_required')
+    // ) {
+    //   return '47px';
+    // }
+    if (router.pathname === '/home' && router.query.category) {
+      return '47px';
+    }
     if (
-      typeof window !== 'undefined' &&
+      router.pathname === '/home' &&
       window.location.hash.includes('error=login_required')
     ) {
       return '47px';
     }
-    if (router.pathname === '/home' && router.query.category) {
-      return '47px';
+    if (
+      router.pathname === '/termsandcondition' &&
+      window.location.hash.includes('error=login_required')
+    ) {
+      return '76px';
+    }
+    if (
+      router.pathname === '/about' &&
+      window.location.hash.includes('error=login_required')
+    ) {
+      return '76px';
     }
     return MOBILE_PADDING_MAP[router.pathname] || defaultPadding;
   }

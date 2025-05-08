@@ -117,7 +117,7 @@ export default function Registration() {
     try {
       const [firstName, ...lastNameArr] = formData.name.trim().split(' ');
       const lastName = lastNameArr.join(' ');
-      const username = formData.email.split('@')[0];
+      const username = formData.email;
       const payload = {
         firstName,
         lastName,
@@ -239,7 +239,7 @@ export default function Registration() {
                   const isValidEmail =
                     /^[a-zA-Z0-9._]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/.test(value);
 
-                  if (!isValidEmail) {
+                  if (!validateEmail(value)) {
                     setError((prevError) => ({ ...prevError, email: true }));
                   } else {
                     setError((prevError) => ({ ...prevError, email: false }));
@@ -440,14 +440,14 @@ export default function Registration() {
                   left={0}
                   width="100vw"
                   height="100vh"
-                  sx={{ pointerEvents: 'none', bgcolor: 'rgba(0, 0, 0, 0.2)' }}
+                  sx={{ pointerEvents: 'auto', bgcolor: 'rgba(0, 0, 0, 0.2)' }}
                   onClick={() => setShowAlertMsg('')}
                 >
                   <Alert
                     variant="filled"
                     severity={alertSeverity}
                     sx={{ pointerEvents: 'auto' }}
-                    onClick={(e) => e.stopPropagation()}
+                    // onClick={(e) => e.stopPropagation()}
                   >
                     {showAlertMsg}
                   </Alert>
@@ -484,14 +484,14 @@ export default function Registration() {
               content={
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <Typography variant="body1">
-                    <strong>Username:</strong> {formData.email.split('@')[0]}
+                    <strong>Username:</strong> {formData.email}
                   </Typography>
-                  <Typography variant="body1">
+                  {/* <Typography variant="body1">
                     <strong>Password:</strong> {formData.password}
-                  </Typography>
+                  </Typography> */}
                   <Typography variant="body1">
-                    <strong>Note:</strong> Please save your username and
-                    password for future use.
+                    <strong>Note:</strong> Please save your username for future
+                    use.
                   </Typography>
                 </Box>
               }
@@ -517,7 +517,7 @@ export default function Registration() {
               }
               sx={{
                 width: '500px',
-                height: '300px',
+                height: '225px',
                 padding: '10px',
                 borderRadius: '16px',
               }}

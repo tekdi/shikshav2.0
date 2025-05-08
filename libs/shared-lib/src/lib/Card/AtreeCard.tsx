@@ -60,8 +60,9 @@ export const AtreeCard: React.FC<{
               <Card
                 sx={{
                   height: '100%',
-                  boxShadow: 'none',
+                  boxShadow: ' 0px 4px 4px 0px #00000040',
                   background: 'transparent',
+                  borderRadius: '8px',
                 }}
                 onClick={() => handleCardClick(content)}
               >
@@ -84,6 +85,7 @@ export const AtreeCard: React.FC<{
                     display: 'flex',
                     flexDirection: 'column',
                     padding: '0 0 10px 0 !important',
+                    marginLeft: '10px',
                   }}
                 >
                   <Typography
@@ -99,11 +101,26 @@ export const AtreeCard: React.FC<{
                       WebkitBoxOrient: 'vertical',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
+                      fontFamily: 'Manrope, sans-serif',
                     }}
                   >
                     {content.name}
                   </Typography>
-                  <Typography color="text.secondary">
+                  <Typography
+                    color="text.secondary"
+                    sx={{
+                      fontWeight: 500,
+                      fontSize: '14px',
+                      lineHeight: '20px',
+                      color: '##171D1E',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      fontFamily: 'Manrope, sans-serif',
+                    }}
+                  >
                     {`Year: ${(content as any)?.year || 'N/A'}`}
                   </Typography>
                 </CardContent>

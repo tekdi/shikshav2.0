@@ -571,7 +571,7 @@ export const FilterDialog = ({
             padding: '8px 18px',
             borderRadius: '16px',
             border: '1px solid #DDDDDD',
-            boxShadow: '0px 8px 8px -4px #0A0D120A',
+            boxShadow: '0px 20px 24px -1px #0A0D121A',
           }}
         >
           <Box sx={{ flexDirection: 'column' }}>
