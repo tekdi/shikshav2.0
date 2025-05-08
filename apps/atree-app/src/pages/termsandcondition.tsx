@@ -4,6 +4,7 @@ import Layout from '../component/layout/layout';
 import { Typography, useMediaQuery, useTheme } from '@mui/material';
 import Banner from '../component/Banner';
 import FooterText from '../component/FooterText';
+import { commonStyles } from '../utils/commonStyle';
 export default function Aboutus() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -20,10 +21,7 @@ export default function Aboutus() {
         // alignItems="left"
         justifyContent="center"
         marginBottom={'25px'}
-        sx={{
-          pl: { xs: 2, md: 10 },
-          pr: { xs: 2, md: 10 },
-        }}
+        sx={commonStyles.responsivePadding}
       >
         {/* About Us Description */}
         <Typography

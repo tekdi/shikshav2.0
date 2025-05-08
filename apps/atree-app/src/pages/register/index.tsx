@@ -26,7 +26,6 @@ import { createUser } from '../../service/content';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
 import Loader from '../../component/layout/LoaderComponent';
-import ImageCenter from '../../component/ImageCenter';
 
 import Layout from '../../component/layout/layout';
 
@@ -76,7 +75,7 @@ export default function Registration() {
     return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
   };
 
-  const validatePassword = (password: string) => {
+  const validatePwd = (password: string) => {
     return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
       password
     );
@@ -95,7 +94,7 @@ export default function Registration() {
           case 'email':
             return !validateEmail(value);
           case 'password':
-            return !validatePassword(value);
+            return !validatePwd(value);
           case 'gender':
             return !validateGender(value);
           default:
@@ -114,13 +113,13 @@ export default function Registration() {
     if (
       !validateName(formData.name) ||
       !validateEmail(formData.email) ||
-      !validatePassword(formData.password) ||
+      !validatePwd(formData.password) ||
       !validateGender(formData.gender)
     ) {
       setError({
         name: !validateName(formData.name),
         email: !validateEmail(formData.email),
-        password: !validatePassword(formData.password),
+        password: !validatePwd(formData.password),
         gender: !validateGender(formData.gender),
       });
       return;

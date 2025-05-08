@@ -19,8 +19,9 @@ import {
   ContentSearch,
   ContentSearchResponse,
   FilterDialog,
+  RESOURCE_TYPES,
+  MIME_TYPES,
 } from '@shared-lib';
-import { RESOURCE_TYPES, MIME_TYPES } from '@shared-lib';
 import CustomSwitch from '../../../component/CustomSwitch';
 import LoginDialog from '../../../component/LoginDialog';
 import useHandleCardClick from '../../../utils/useHandleCardClick';

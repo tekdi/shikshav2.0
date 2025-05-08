@@ -17,7 +17,6 @@ import { useKeycloak } from '@react-keycloak/web';
 import { useRouter } from 'next/router';
 import { getUserAuthInfo, signin } from '../../service/content';
 import Loader from '../../component/layout/LoaderComponent';
-import ImageCenter from '../../component/ImageCenter';
 import Layout from '../../component/layout/layout';
 
 interface ListProps {}
@@ -75,7 +74,7 @@ const Login: React.FC<ListProps> = () => {
           errorMessage = 'Password is required.';
         } else if (!validatePassword(value)) {
           errorMessage =
-            'Password must contain at least 8 characters, including uppercase, lowercase, number, and special character.';
+            'Password must contain at least 8 characters, including uppercase, lowercase, number, and special character';
         }
       }
       setCredentials((prev) => ({ ...prev, [field]: value }));

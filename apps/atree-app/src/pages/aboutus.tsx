@@ -7,6 +7,7 @@ import FooterText from '../component/FooterText';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import CallOutlinedIcon from '@mui/icons-material/CallOutlined';
+import { commonStyles } from '../utils/commonStyle';
 export default function Aboutus() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -23,10 +24,7 @@ export default function Aboutus() {
         // alignItems="center"
         justifyContent="center"
         marginBottom={'25px'}
-        sx={{
-          pl: { xs: 2, md: 10 },
-          pr: { xs: 2, md: 10 },
-        }}
+        sx={commonStyles.responsivePadding}
       >
         {/* About Us Title */}
         <Typography
