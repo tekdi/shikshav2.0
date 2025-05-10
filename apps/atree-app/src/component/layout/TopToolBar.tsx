@@ -162,12 +162,19 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
         sx={{
           boxShadow: '0px 2px 2px 0px #00000040',
           ..._appBar,
-          minHeight: { xs: '10px', md: '95px' },
+          height: { xs: '64px', md: '129px' },
+          objectFit: 'contain',
         }}
       >
-        <Container maxWidth="xl">
-          <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
-            <Box display={'flex'}>
+        <Container maxWidth="xl" sx={{ height: '100%' }}>
+          <Toolbar
+            disableGutters
+            sx={{
+              justifyContent: 'space-between',
+              minHeight: { xs: '0px', md: '64px' },
+            }}
+          >
+            <Box display={'flex'} alignItems="center" sx={{ height: '100%' }}>
               {showBackIcon && (
                 <IconButton
                   size="large"
@@ -200,9 +207,10 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                       src={logoUrl}
                       alt="logo"
                       sx={{
-                        width: { xs: '64px', md: '91px' },
-                        height: { xs: '65px', md: '91px' },
-                        marginTop: { md: '15px' },
+                        width: { xs: '64px', md: '129px' },
+                        height: { xs: '64px', md: '129px' },
+                        objectFit: 'contain',
+                        alignSelf: 'center',
                       }}
                     />
                   </Box>
@@ -251,7 +259,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
             </Box>
             {_isDrawer && (
               <Box display="flex" alignItems="center">
-                {!isMobile ? (
+                {!isMobile && !isAuthPage ? (
                   <Box
                     sx={{
                       position: 'fixed',

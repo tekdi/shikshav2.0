@@ -236,64 +236,7 @@ export default function Content() {
           footerComponent={!isMobile ? <FooterText page="" /> : <Footer />}
           isLoadingChildren={isLoading}
           backIconClick={() => router.back()}
-          backTitle={
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                width: '100%',
-              }}
-            >
-              {/* Left Side - Name and Author */}
-              <div style={{ flexGrow: 1 }}>
-                <Typography
-                  sx={{
-                    fontWeight: 700,
-                    fontSize: '22px',
-                    lineHeight: '28px',
-                    textAlign: 'left',
-                  }}
-                  gutterBottom
-                >
-                  {contentData?.name || ''}
-                </Typography>
-                {/* <Typography
-                variant="subtitle1"
-                color="textSecondary"
-                sx={{
-                  fontWeight: 500,
-                  fontSize: '16px',
-                  lineHeight: '24px',
-                  letterSpacing: '0.15px',
-                  textAlign: 'left',
-                }}
-              >
-                {contentData?.author || ''}
-              </Typography> */}
-              </div>
-
-              {/* Right Side - Share Button */}
-              {!isMobile && (
-                <IconButton
-                  onClick={handleOpen}
-                  color="primary"
-                  style={{
-                    marginLeft: 'auto',
-                    backgroundColor: 'white',
-                    color: '#2B3133',
-                    boxShadow:
-                      '-0.73px 0.73px 0.73px -1.46px rgba(255, 255, 255, 0.35) inset, 0px 8px 10px rgba(0, 0, 0, 0.05)',
-                  }}
-                >
-                  <ShareIcon />
-                </IconButton>
-              )}
-              {/* Share Dialog */}
-
-              <ShareDialog open={open} handleClose={() => setOpen(false)} />
-            </div>
-          }
+          backTitle={contentData?.name || ''}
         >
           {!isMobile ? (
             // Desktop View (Carousel on Right, Content on Left)
@@ -539,6 +482,8 @@ export default function Content() {
                   flexDirection: 'column',
                   gap: 2,
                   width: '100%',
+                  textTransform: 'none',
+                  alignItems: 'center',
                 }}
               >
                 <Button
@@ -548,44 +493,67 @@ export default function Content() {
                     borderRadius: '50px',
                     height: '40px',
                     flex: 0.3,
+                    width: '100%',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    textTransform: 'none',
+                    maxWidth: '344px',
                   }}
                   startIcon={<VisibilityOutlinedIcon />}
                   onClick={handlePreview}
                 >
                   Preview
                 </Button>
-
-                <Button
-                  variant="outlined"
-                  color="secondary"
+                <Box
                   sx={{
-                    borderRadius: '50px',
-                    height: '40px',
-                    flex: 0.3,
-                    color: 'black',
+                    display: 'flex',
+                    gap: 1,
+                    width: '100%',
+                    maxWidth: '300px',
+                    justifyContent: 'space-between',
                   }}
-                  startIcon={<FileDownloadOutlinedIcon />}
-                  onClick={handleOnDownload}
-                  disabled={!contentData?.previewUrl?.endsWith('.pdf')}
                 >
-                  Download
-                </Button>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    sx={{
+                      borderRadius: '50px',
+                      height: '40px',
+                      flex: 1,
+                      color: 'black',
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      textTransform: 'none',
+                      width: '48%',
+                    }}
+                    startIcon={<FileDownloadOutlinedIcon />}
+                    onClick={handleOnDownload}
+                    disabled={!contentData?.previewUrl?.endsWith('.pdf')}
+                  >
+                    Download
+                  </Button>
 
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  sx={{
-                    borderRadius: '50px',
-                    height: '40px',
-                    flex: 0.3,
-                    color: 'black',
-                  }}
-                  startIcon={<LinkOutlinedIcon />}
-                  disabled={!contentData?.url}
-                  onClick={handleOnCLick}
-                >
-                  Resource Link
-                </Button>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    sx={{
+                      borderRadius: '50px',
+                      height: '40px',
+                      flex: 1,
+                      color: 'black',
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      textTransform: 'none',
+                      width: '48%',
+                      whiteSpace: 'nowrap',
+                    }}
+                    startIcon={<LinkOutlinedIcon />}
+                    disabled={!contentData?.url}
+                    onClick={handleOnCLick}
+                  >
+                    Resource Link
+                  </Button>
+                </Box>
               </Box>
 
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
@@ -605,18 +573,33 @@ export default function Content() {
                 ))}
               </Box>
 
-              <Typography variant="body1" sx={{ mt: 0, textAlign: 'left' }}>
+              <Typography
+                variant="body1"
+                sx={{ mt: 0, textAlign: 'left', fontFamily: 'Arial' }}
+              >
                 {contentData?.description ?? ''}
               </Typography>
 
               <Stack spacing={0.5}>
-                <Typography variant="body1" textAlign="left">
+                <Typography
+                  variant="body1"
+                  textAlign="left"
+                  fontFamily={'Arial'}
+                >
                   <b>Author:</b> {contentData?.author || ''}
                 </Typography>
-                <Typography variant="body1" textAlign="left">
+                <Typography
+                  variant="body1"
+                  textAlign="left"
+                  fontFamily={'Arial'}
+                >
                   <b>Publisher:</b> {contentData?.publisher ?? ''}
                 </Typography>
-                <Typography variant="body1" textAlign="left">
+                <Typography
+                  variant="body1"
+                  textAlign="left"
+                  fontFamily={'Arial'}
+                >
                   <b>Year:</b> {contentData?.year ?? ''}
                 </Typography>
               </Stack>

@@ -290,242 +290,395 @@ export default function Content(props: ContentProps) {
     router.back();
   }, [router]);
   return (
-    <Loader isLoading={isPageLoading}>
-      <Box sx={{ p: 2 }}>
-        {propData?.filterBy && (
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              marginBottom: '50px',
-            }}
-          >
-            <ArrowBackIosIcon onClick={handleBack} />
-            {(() => {
-              const subcategory = localStorage.getItem('subcategory');
-              const category = localStorage.getItem('category');
-              const label = category ?? subcategory;
+    // <Loader isLoading={isPageLoading} layoutHeight={70}>
+    <Box sx={{ p: 2 }}>
+      {propData?.filterBy && (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: !isMobile ? '50px' : '10px',
+          }}
+        >
+          <ArrowBackIosIcon onClick={handleBack} />
+          {(() => {
+            const subcategory = localStorage.getItem('subcategory');
+            const category = localStorage.getItem('category');
+            const label = category ?? subcategory;
 
-              return label ? (
-                <Typography
-                  sx={{
-                    color: '#1C170D',
-                    fontSize: '22px',
-                    fontWeight: 700,
-                    marginLeft: 1,
-                  }}
-                >
-                  {label.charAt(0).toUpperCase() + label.slice(1)}
-                </Typography>
-              ) : null;
-            })()}
-            {propData?.showFilter && (
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="flex-end"
-                width="100%"
-                gap={2}
-                sx={{}}
+            return label ? (
+              <Typography
+                sx={{
+                  color: '#1C170D',
+                  fontSize: '22px',
+                  fontWeight: 700,
+                  marginLeft: 1,
+                }}
               >
-                <Box
-                  sx={{
-                    gap: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    backgroundColor: '#ffffff',
-                    borderRadius: propData?.filterBy ? '0px' : '12px',
-                    // padding: '8px',
-                    width: propData?.filterBy ? 'auto' : '56px', // Auto width for Filter By
-                    height: propData?.filterBy ? 'auto' : '46px', // Auto height for Filter By
-                    padding: propData?.filterBy ? '4px 8px' : '0px',
-                    '&:hover': {
-                      backgroundColor: propData?.filterBy
-                        ? 'transparent'
-                        : '#E0E0E0',
-                      boxShadow: propData?.filterBy
-                        ? 'none'
-                        : '0px 4px 8px 3px #00000026',
-                    },
-                    marginLeft: '4px',
-                    marginRight: '7px',
-
+                {label.charAt(0).toUpperCase() + label.slice(1)}
+                <span>{subcategory ? `-${subcategory}` : ''}</span>
+              </Typography>
+            ) : null;
+          })()}
+          {!isMobile && propData?.showFilter && (
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="flex-end"
+              width="100%"
+              gap={2}
+              sx={{}}
+            >
+              <Box
+                sx={{
+                  gap: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  backgroundColor: '#ffffff',
+                  borderRadius: propData?.filterBy ? '0px' : '12px',
+                  // padding: '8px',
+                  width: propData?.filterBy ? 'auto' : '56px', // Auto width for Filter By
+                  height: propData?.filterBy ? 'auto' : '46px', // Auto height for Filter By
+                  padding: propData?.filterBy ? '4px 8px' : '0px',
+                  '&:hover': {
+                    backgroundColor: propData?.filterBy
+                      ? 'transparent'
+                      : '#E0E0E0',
                     boxShadow: propData?.filterBy
                       ? 'none'
-                      : '0px 1px 3px 0px #0000004D',
-                  }}
-                >
-                  {propData?.filterBy ? (
-                    <Box display="flex" alignItems="center">
-                      <Chip
-                        label={
-                          <Box display="flex" alignItems="center" gap={1}>
-                            <span>Filter By</span>
-                            <ArrowDropDownIcon
-                              sx={{ color: '#42474E', fontSize: '20px' }}
-                            />
-                          </Box>
-                        }
-                        onClick={() => setFilterShow(true)}
-                        sx={{
-                          color: '#000000',
-                          borderRadius: '8px',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          cursor: 'pointer',
-                          backgroundColor: '#FFFFFF',
-                          border: '1px solid #C2C7CF',
-                          paddingX: '8px',
-                        }}
-                      />
-                    </Box>
-                  ) : (
-                    <FilterAltOutlinedIcon
-                      sx={{ color: '#6750A4', fontSize: '25px' }}
-                    />
-                  )}
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    gap={1}
-                    marginLeft="auto"
-                  >
-                    <Typography
-                      sx={{
-                        fontSize: '14px',
-                        fontWeight: fullAccess ? '400' : '600',
-                        color: fullAccess ? '#9E9E9E' : '#000000',
-                      }}
-                    >
-                      All
-                    </Typography>
+                      : '0px 4px 8px 3px #00000026',
+                  },
+                  marginLeft: '4px',
+                  marginRight: '7px',
 
-                    <Switch
-                      checked={fullAccess} // Controlled state for switch
-                      onChange={handleToggleFullAccess}
+                  boxShadow: propData?.filterBy
+                    ? 'none'
+                    : '0px 1px 3px 0px #0000004D',
+                }}
+              >
+                {propData?.filterBy ? (
+                  <Box display="flex" alignItems="center">
+                    <Chip
+                      label={
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <span>Filter By</span>
+                          <ArrowDropDownIcon
+                            sx={{ color: '#42474E', fontSize: '20px' }}
+                          />
+                        </Box>
+                      }
+                      onClick={() => setFilterShow(true)}
                       sx={{
-                        width: 42,
-                        height: 26,
+                        color: '#000000',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        cursor: 'pointer',
+                        backgroundColor: '#FFFFFF',
+                        border: '1px solid #C2C7CF',
+                        paddingX: '8px',
+                      }}
+                    />
+                  </Box>
+                ) : (
+                  <FilterAltOutlinedIcon
+                    sx={{ color: '#6750A4', fontSize: '25px' }}
+                  />
+                )}
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  gap={1}
+                  marginLeft="auto"
+                >
+                  <Typography
+                    sx={{
+                      fontSize: '14px',
+                      fontWeight: fullAccess ? '400' : '600',
+                      color: fullAccess ? '#9E9E9E' : '#000000',
+                    }}
+                  >
+                    All
+                  </Typography>
+
+                  <Switch
+                    checked={fullAccess} // Controlled state for switch
+                    onChange={handleToggleFullAccess}
+                    sx={{
+                      width: 42,
+                      height: 26,
+                      padding: 0,
+                      '& .MuiSwitch-switchBase': {
                         padding: 0,
-                        '& .MuiSwitch-switchBase': {
-                          padding: 0,
-                          transitionDuration: '300ms',
-                          '&.Mui-checked': {
-                            transform: 'translateX(16px)',
-                            color: '#fff',
-                            '& + .MuiSwitch-track': {
-                              background:
-                                'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
-                              opacity: 1,
-                              border: 0,
-                            },
-                            '&.Mui-disabled + .MuiSwitch-track': {
-                              opacity: 0.5,
-                            },
-                          },
-                          '&.Mui-focusVisible .MuiSwitch-thumb': {
-                            color: '#33cf4d',
-                            border: '6px solid #fff',
-                          },
-                          '&.Mui-disabled .MuiSwitch-thumb': {
-                            color: '#BDBDBD', // Grey thumb when disabled
+                        transitionDuration: '300ms',
+                        '&.Mui-checked': {
+                          transform: 'translateX(16px)',
+                          color: '#fff',
+                          '& + .MuiSwitch-track': {
+                            background:
+                              'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                            opacity: 1,
+                            border: 0,
                           },
                           '&.Mui-disabled + .MuiSwitch-track': {
                             opacity: 0.5,
-                            background: '#BDBDBD', // Grey track when disabled
                           },
                         },
-                        '& .MuiSwitch-thumb': {
-                          boxSizing: 'border-box',
-                          width: 25,
-                          height: 25,
+                        '&.Mui-focusVisible .MuiSwitch-thumb': {
+                          color: '#33cf4d',
+                          border: '6px solid #fff',
                         },
-                        '& .MuiSwitch-track': {
-                          borderRadius: 26 / 2,
-                          background: fullAccess
-                            ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
-                            : '#BDBDBD', // Grey when unchecked
-                          opacity: 1,
+                        '&.Mui-disabled .MuiSwitch-thumb': {
+                          color: '#BDBDBD', // Grey thumb when disabled
                         },
+                        '&.Mui-disabled + .MuiSwitch-track': {
+                          opacity: 0.5,
+                          background: '#BDBDBD', // Grey track when disabled
+                        },
+                      },
+                      '& .MuiSwitch-thumb': {
+                        boxSizing: 'border-box',
+                        width: 25,
+                        height: 25,
+                      },
+                      '& .MuiSwitch-track': {
+                        borderRadius: 26 / 2,
+                        background: fullAccess
+                          ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
+                          : '#BDBDBD', // Grey when unchecked
+                        opacity: 1,
+                      },
+                    }}
+                  />
+
+                  <Typography
+                    sx={{
+                      fontSize: '14px',
+                      fontWeight: fullAccess ? '600' : '400',
+                      color: fullAccess ? '#000000' : '#9E9E9E',
+                    }}
+                  >
+                    Only Full Access
+                  </Typography>
+                </Box>
+              </Box>
+
+              <FilterDialog
+                open={filterShow}
+                onClose={() => setFilterShow(false)}
+                frameworkFilter={frameworkFilter}
+                filterValues={localFilters}
+                onApply={handleApplyFilters}
+                isMobile={true}
+                resources={RESOURCE_TYPES}
+                mimeType={MIME_TYPES}
+              />
+            </Box>
+          )}
+        </Box>
+      )}
+      {(propData?.showSearch || propData?.showFilter) && (
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'flex-end',
+          }}
+        >
+          {propData?.showSearch && (
+            <CommonSearch
+              placeholder={'Search content..'}
+              rightIcon={<SearchIcon />}
+              onRightIconClick={handleSearchClick}
+              inputValue={searchValue ?? ''}
+              onInputChange={handleSearchChange}
+              onKeyPress={(ev: any) => {
+                if (ev.key === 'Enter') {
+                  handleSearchClick();
+                }
+              }}
+              sx={{
+                backgroundColor: '#f0f0f0',
+                padding: '4px',
+                borderRadius: '50px',
+                width: '100%',
+                marginLeft: '10px',
+              }}
+            />
+          )}
+
+          {isMobile && propData?.showFilter && (
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              width="100%"
+              sx={{ marginBottom: isMobile && '45px' }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  backgroundColor: '#ffffff',
+                  borderRadius: propData?.filterBy ? '0px' : '12px',
+                  // padding: '8px',
+                  width: propData?.filterBy ? 'auto' : '56px', // Auto width for Filter By
+                  height: propData?.filterBy ? 'auto' : '46px', // Auto height for Filter By
+                  padding: propData?.filterBy ? '4px 8px' : '0px',
+                  '&:hover': {
+                    backgroundColor: propData?.filterBy
+                      ? 'transparent'
+                      : '#E0E0E0',
+                    boxShadow: propData?.filterBy
+                      ? 'none'
+                      : '0px 4px 8px 3px #00000026',
+                  },
+                  marginLeft: '4px',
+                  marginRight: '7px',
+
+                  boxShadow: propData?.filterBy
+                    ? 'none'
+                    : '0px 1px 3px 0px #0000004D',
+                }}
+                onClick={() => setFilterShow(true)}
+              >
+                {propData?.filterBy ? (
+                  <Box display="flex" alignItems="center">
+                    <Chip
+                      label={
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <span>Filter By</span>
+                          <ArrowDropDownIcon
+                            sx={{ color: '#42474E', fontSize: '20px' }}
+                          />
+                        </Box>
+                      }
+                      onClick={() => setFilterShow(true)}
+                      sx={{
+                        color: '#000000',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        cursor: 'pointer',
+                        backgroundColor: '#FFFFFF',
+                        border: '1px solid #C2C7CF',
+                        paddingX: '8px',
                       }}
                     />
-
-                    <Typography
-                      sx={{
-                        fontSize: '14px',
-                        fontWeight: fullAccess ? '600' : '400',
-                        color: fullAccess ? '#000000' : '#9E9E9E',
-                      }}
-                    >
-                      Only Full Access
-                    </Typography>
                   </Box>
-                </Box>
-
-                <FilterDialog
-                  open={filterShow}
-                  onClose={() => setFilterShow(false)}
-                  frameworkFilter={frameworkFilter}
-                  filterValues={localFilters}
-                  onApply={handleApplyFilters}
-                  isMobile={true}
-                  resources={RESOURCE_TYPES}
-                  mimeType={MIME_TYPES}
-                />
+                ) : (
+                  <FilterAltOutlinedIcon
+                    sx={{ color: '#6750A4', fontSize: '25px' }}
+                  />
+                )}
               </Box>
-            )}
-          </Box>
-        )}
-        {(propData?.showSearch || propData?.showFilter) && (
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'flex-end',
-            }}
-          >
-            {propData?.showSearch && (
-              <CommonSearch
-                placeholder={'Search content..'}
-                rightIcon={<SearchIcon />}
-                onRightIconClick={handleSearchClick}
-                inputValue={searchValue ?? ''}
-                onInputChange={handleSearchChange}
-                onKeyPress={(ev: any) => {
-                  if (ev.key === 'Enter') {
-                    handleSearchClick();
-                  }
-                }}
-                sx={{
-                  backgroundColor: '#f0f0f0',
-                  padding: '4px',
-                  borderRadius: '50px',
-                  width: '100%',
-                  marginLeft: '10px',
-                }}
+
+              <Box display="flex" alignItems="center" gap={1} marginLeft="auto">
+                <Typography
+                  sx={{
+                    fontSize: '14px',
+                    fontWeight: fullAccess ? '400' : '600',
+                    color: fullAccess ? '#9E9E9E' : '#000000',
+                  }}
+                >
+                  All
+                </Typography>
+
+                <Switch
+                  checked={fullAccess} // Controlled state for switch
+                  onChange={handleToggleFullAccess}
+                  sx={{
+                    width: 42,
+                    height: 26,
+                    padding: 0,
+                    '& .MuiSwitch-switchBase': {
+                      padding: 0,
+                      transitionDuration: '300ms',
+                      '&.Mui-checked': {
+                        transform: 'translateX(16px)',
+                        color: '#fff',
+                        '& + .MuiSwitch-track': {
+                          background:
+                            'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                          opacity: 1,
+                          border: 0,
+                        },
+                        '&.Mui-disabled + .MuiSwitch-track': {
+                          opacity: 0.5,
+                        },
+                      },
+                      '&.Mui-focusVisible .MuiSwitch-thumb': {
+                        color: '#33cf4d',
+                        border: '6px solid #fff',
+                      },
+                      '&.Mui-disabled .MuiSwitch-thumb': {
+                        color: '#BDBDBD', // Grey thumb when disabled
+                      },
+                      '&.Mui-disabled + .MuiSwitch-track': {
+                        opacity: 0.5,
+                        background: '#BDBDBD', // Grey track when disabled
+                      },
+                    },
+                    '& .MuiSwitch-thumb': {
+                      boxSizing: 'border-box',
+                      width: 25,
+                      height: 25,
+                    },
+                    '& .MuiSwitch-track': {
+                      borderRadius: 26 / 2,
+                      background: fullAccess
+                        ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
+                        : '#BDBDBD', // Grey when unchecked
+                      opacity: 1,
+                    },
+                  }}
+                />
+
+                <Typography
+                  sx={{
+                    fontSize: '14px',
+                    fontWeight: fullAccess ? '600' : '400',
+                    color: fullAccess ? '#000000' : '#9E9E9E',
+                  }}
+                >
+                  Only Full Access
+                </Typography>
+              </Box>
+
+              <FilterDialog
+                open={filterShow}
+                onClose={() => setFilterShow(false)}
+                frameworkFilter={frameworkFilter}
+                filterValues={localFilters}
+                onApply={handleApplyFilters}
+                isMobile={true}
+                resources={RESOURCE_TYPES}
+                mimeType={MIME_TYPES}
               />
-            )}
-          </Box>
-        )}
-        <RenderTabContent
-          {...propData}
-          value={tabValue}
-          onChange={handleTabChange}
-          contentData={contentData}
-          _grid={propData?._grid || {}}
-          trackData={trackData || []}
-          type={localFilters?.type || ''}
-          handleCardClick={handleCardClickLocal}
-          hasMoreData={hasMoreData}
-          handleLoadMore={handleLoadMore}
-          isLodingMoreData={isLoading}
-          tabs={tabs}
-        />
-        {propData?.showHelpDesk && <HelpDesk />}
-        {propData?.showBackToTop && showBackToTop && <BackToTop />}
-      </Box>
-    </Loader>
+            </Box>
+          )}
+        </Box>
+      )}
+      <RenderTabContent
+        {...propData}
+        value={tabValue}
+        onChange={handleTabChange}
+        contentData={contentData}
+        _grid={propData?._grid || {}}
+        trackData={trackData || []}
+        type={localFilters?.type || ''}
+        handleCardClick={handleCardClickLocal}
+        hasMoreData={hasMoreData}
+        handleLoadMore={handleLoadMore}
+        isLodingMoreData={isLoading}
+        tabs={tabs}
+      />
+      {propData?.showHelpDesk && <HelpDesk />}
+      {propData?.showBackToTop && showBackToTop && <BackToTop />}
+    </Box>
   );
 }

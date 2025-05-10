@@ -7,6 +7,7 @@ import {
   Typography,
   Alert,
   Box,
+  Paper,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { CommonTextField } from '@shared-lib';
@@ -108,121 +109,133 @@ const Login: React.FC<ListProps> = () => {
         {loading ? (
           <Loader />
         ) : (
-          <Grid
-            container
-            spacing={2}
+          <Paper
+            elevation={6}
             sx={{
-              flex: 1,
+              maxWidth: 800,
               width: '100%',
-              borderRadius: 1,
-              bgcolor: '#FFFFFF',
-              justifyContent: 'center',
-
-              //   padding: 2,
-              mx: 'auto',
+              borderRadius: 4,
+              overflow: 'hidden',
+              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
+              m: 'auto',
             }}
           >
             <Grid
-              size={{ xs: 12, sm: 6, md: 6, lg: 6 }}
+              container
+              spacing={2}
               sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 2,
-                borderRadius: '20px 20px 0 0',
-                padding: '15px',
-                backgroundColor: '#FFFFFF',
-                mt: 4,
+                flex: 1,
+                width: '100%',
+                borderRadius: 1,
+                bgcolor: '#FFFFFF',
+                justifyContent: 'center',
+
+                //   padding: 2,
+                mx: 'auto',
               }}
             >
-              {['email', 'password'].map((field) => (
-                <Box key={field + '1'}>
-                  <FormLabel component="legend" sx={{ color: '#4D4639' }}>
-                    {field === 'email' ? 'Username' : 'Password'}
-                    <span style={{ color: 'red' }}>*</span>
-                  </FormLabel>
-                  <CommonTextField
-                    value={credentials[field as 'email' | 'password']}
-                    onChange={handleChange(field as 'email' | 'password')}
-                    type={
-                      field === 'password' && !showPassword
-                        ? 'password'
-                        : 'text'
-                    }
-                    variant="outlined"
-                    helperText={errors[field as 'email' | 'password']}
-                    error={!!errors[field as 'email' | 'password']}
-                    endIcon={
-                      field === 'password' && (
-                        <IconButton
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? <Visibility /> : <VisibilityOff />}
-                        </IconButton>
-                      )
-                    }
-                  />
-                </Box>
-              ))}
-
-              <Button
-                onClick={handleSigninClick}
+              <Grid
+                size={{ xs: 12, sm: 8, md: 8, lg: 8 }}
                 sx={{
-                  color: '#2B3133',
-                  width: { xs: '80%', sm: '60%', md: '50%' }, // Responsive width
-                  height: '44px',
-                  background: '#FFBD0D',
-                  borderRadius: '50px',
-                  fontSize: '16px',
-                  fontWeight: 500,
-                  textTransform: 'none',
-                  alignSelf: 'center', // Centers in flex container
-                  mx: 'auto',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 2,
+                  borderRadius: '20px 20px 0 0',
+                  padding: '15px',
+                  backgroundColor: '#FFFFFF',
+                  mt: 4,
                 }}
               >
-                Proceed
-              </Button>
-              <GoogleOAuthProvider
-                clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ''}
-              >
-                <MyCustomGoogleLogin />
-              </GoogleOAuthProvider>
-              <Typography
-                textAlign={'center'}
-                variant="h1"
-                fontSize={'16px'}
-                color="#3B383E"
-                fontWeight={500}
-              >
-                Don't Have An Account?{' '}
-                <Link href="/register" style={{ color: '#0037B9' }}>
-                  Sign up
-                </Link>
-              </Typography>
-            </Grid>
-            {alert.message && (
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                position="fixed"
-                top={0}
-                left={0}
-                width="100vw"
-                height="100vh"
-                sx={{ pointerEvents: 'auto', bgcolor: 'rgba(0, 0, 0, 0.2)' }}
-                onClick={() => setAlert({ message: '', severity: 'success' })}
-              >
-                <Alert
-                  variant="filled"
-                  severity={alert.severity}
-                  sx={{ pointerEvents: 'auto' }}
-                  // onClick={() => setAlert({ message: '', severity: 'success' })}
+                {['email', 'password'].map((field) => (
+                  <Box key={field + '1'}>
+                    <FormLabel component="legend" sx={{ color: '#4D4639' }}>
+                      {field === 'email' ? 'Username' : 'Password'}
+                      <span style={{ color: 'red' }}>*</span>
+                    </FormLabel>
+                    <CommonTextField
+                      value={credentials[field as 'email' | 'password']}
+                      onChange={handleChange(field as 'email' | 'password')}
+                      type={
+                        field === 'password' && !showPassword
+                          ? 'password'
+                          : 'text'
+                      }
+                      variant="outlined"
+                      helperText={errors[field as 'email' | 'password']}
+                      error={!!errors[field as 'email' | 'password']}
+                      endIcon={
+                        field === 'password' && (
+                          <IconButton
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                          </IconButton>
+                        )
+                      }
+                    />
+                  </Box>
+                ))}
+
+                <Button
+                  onClick={handleSigninClick}
+                  sx={{
+                    color: '#2B3133',
+                    width: { xs: '80%', sm: '60%', md: '50%' }, // Responsive width
+                    height: '44px',
+                    background: '#FFBD0D',
+                    borderRadius: '50px',
+                    fontSize: '16px',
+                    fontWeight: 500,
+                    textTransform: 'none',
+                    alignSelf: 'center', // Centers in flex container
+                    mx: 'auto',
+                  }}
                 >
-                  {alert.message}
-                </Alert>
-              </Box>
-            )}
-          </Grid>
+                  Proceed
+                </Button>
+                <GoogleOAuthProvider
+                  clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ''}
+                >
+                  <MyCustomGoogleLogin />
+                </GoogleOAuthProvider>
+                <Typography
+                  textAlign={'center'}
+                  variant="h1"
+                  fontSize={'16px'}
+                  color="#3B383E"
+                  fontWeight={500}
+                >
+                  Don't Have An Account?{' '}
+                  <Link href="/register" style={{ color: '#0037B9' }}>
+                    Sign up
+                  </Link>
+                </Typography>
+              </Grid>
+              {alert.message && (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  position="fixed"
+                  top={0}
+                  left={0}
+                  width="100vw"
+                  height="100vh"
+                  sx={{ pointerEvents: 'auto', bgcolor: 'rgba(0, 0, 0, 0.2)' }}
+                  onClick={() => setAlert({ message: '', severity: 'success' })}
+                >
+                  <Alert
+                    variant="filled"
+                    severity={alert.severity}
+                    sx={{ pointerEvents: 'auto' }}
+                    // onClick={() => setAlert({ message: '', severity: 'success' })}
+                  >
+                    {alert.message}
+                  </Alert>
+                </Box>
+              )}
+            </Grid>
+          </Paper>
         )}
       </Box>
     </Layout>

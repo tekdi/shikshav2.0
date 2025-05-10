@@ -3,7 +3,6 @@ import { Box, Typography, useTheme, useMediaQuery } from '@mui/material';
 
 const DigitalHubBanner = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
     <Box

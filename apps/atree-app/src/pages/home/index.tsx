@@ -420,7 +420,7 @@ export default function Index() {
 
                   <ContentSection
                     contents={
-                      contentData.length > 0 ? contentData.slice(0, 4) : []
+                      contentData.length > 0 ? contentData.slice(0, 8) : []
                     }
                     title={t('Read, Watch, Listen')}
                     onTitleClick={() => {
@@ -436,7 +436,7 @@ export default function Index() {
                     width: '100%',
                     flexDirection: 'column',
 
-                    padding: '0px',
+                    padding: '12px 0px',
                     display: 'flex',
                     gap: '16px',
                   }}
@@ -448,7 +448,7 @@ export default function Index() {
                       router.push('/contents');
                     }}
                     contents={
-                      contentData.length > 4 ? contentData.slice(4, 20) : []
+                      contentData.length > 8 ? contentData.slice(8, 20) : []
                     }
                     handleCardClick={handleCardClick}
                   />
@@ -865,7 +865,7 @@ const Title: React.FC<{
     >
       <Typography
         sx={{
-          fontStyle: 'normal',
+          fontFamily: 'Manrope, sans-serif',
           fontWeight: 700,
           fontSize: { xs: '20px', md: '22px' },
           lineHeight: '28px',

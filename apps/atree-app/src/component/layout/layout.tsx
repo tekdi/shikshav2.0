@@ -1,7 +1,9 @@
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+
 import {
   Button,
   debounce,
+  IconButton,
   Typography,
   useMediaQuery,
   useTheme,
@@ -22,6 +24,9 @@ import BookmarksOutlinedIcon from '@mui/icons-material/BookmarksOutlined';
 import TermsAndCondition from '../TermsAndCondition';
 import { useKeycloak } from '@react-keycloak/web';
 import { deleteUserAccount } from '../../service/content';
+import ShareIcon from '@mui/icons-material/Share';
+import ShareDialog from '../ShareDialog';
+
 interface LayoutProps {
   children?: React.ReactNode;
   footerComponent?: React.ReactNode | string;
@@ -111,6 +116,7 @@ export default function Layout({
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [openDeleteMessageDialog, setOpenDeleteMessageDialog] = useState(false); // [openDeleteMessageDialog]
+  const [open, setOpen] = useState(false);
   const router = useRouter();
   const token =
     typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -219,6 +225,8 @@ export default function Layout({
       to: 'delete-account',
     },
   ];
+  const handleOpen = () => setOpen(true);
+
   const handleItemClick = async (to: string) => {
     if (to === 'delete-account') {
       setOpenDeleteDialog(true);
@@ -328,7 +336,7 @@ export default function Layout({
               <TopAppBar
                 logoUrl={atreeLogo?.src || ''}
                 _appBar={{
-                  py: '8.5px',
+                  py: '30.5px',
                   backgroundColor: '#fff',
                 }}
                 // title="Jal-Jungle-Jameen"
@@ -366,7 +374,7 @@ export default function Layout({
             sx={{
               width: '100%',
               display: 'flex',
-              alignItems: 'flex-start',
+              alignItems: 'center', // Changed from 'flex-start' to 'center' for vertical alignment
               p: 2,
               bgcolor: '#FFFFFF',
               gap: 2,
@@ -374,15 +382,45 @@ export default function Layout({
             }}
           >
             {showBack && (
-              <ArrowBackIcon onClick={backIconClick || console.log} />
+              <IconButton onClick={backIconClick || console.log} sx={{ p: 0 }}>
+                <ArrowBackIosIcon />
+              </IconButton>
             )}
-            {typeof backTitle === 'string' ? (
-              <Typography fontSize={'22px'} fontWeight={400}>
-                {backTitle}
-              </Typography>
-            ) : (
-              backTitle
-            )}
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexGrow: 1,
+                gap: 2,
+              }}
+            >
+              {typeof backTitle === 'string' ? (
+                <Typography
+                  fontSize={'22px'}
+                  fontWeight={700}
+                  fontFamily={'Manrope, sans-serif'}
+                >
+                  {backTitle}
+                </Typography>
+              ) : (
+                backTitle
+              )}
+              {!isMobile && (
+                <IconButton
+                  onClick={handleOpen}
+                  color="primary"
+                  sx={{
+                    backgroundColor: 'white',
+                    color: '#2B3133',
+                    boxShadow:
+                      '-0.73px 0.73px 0.73px -1.46px rgba(255, 255, 255, 0.35) inset, 0px 8px 10px rgba(0, 0, 0, 0.05)',
+                  }}
+                >
+                  <ShareIcon />
+                </IconButton>
+              )}
+            </Box>
           </Box>
         )}
       </Box>
@@ -502,6 +540,7 @@ export default function Layout({
           height: '206px',
         }}
       />
+      <ShareDialog open={open} handleClose={() => setOpen(false)} />
       <CommonDialog
         isOpen={openDeleteMessageDialog}
         onClose={() => setOpenDeleteMessageDialog(false)}
