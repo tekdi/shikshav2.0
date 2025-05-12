@@ -121,7 +121,12 @@ export const AtreeCard: React.FC<{
                       fontFamily: 'Manrope, sans-serif',
                     }}
                   >
-                    {`Year: ${(content as any)?.year || 'N/A'}`}
+                    {`Year: ${
+                      (content as any)?.year?.toLowerCase?.() === 'n.d.' ||
+                      !(content as any)?.year
+                        ? 'N/A'
+                        : (content as any)?.year
+                    }`}
                   </Typography>
                 </CardContent>
               </Card>
