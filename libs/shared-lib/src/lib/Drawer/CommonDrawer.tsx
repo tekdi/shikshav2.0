@@ -116,143 +116,149 @@ export const CommonDrawer: React.FC<CommonDrawerProps> = ({
         },
       }}
     >
-      <Box sx={{ display: 'flex', justifyContent: 'center', padding: '8px' }}>
-        <IconButton
-          sx={{
-            color: '#fff',
-            fontSize: '51.5px', // Increases the icon size
-            padding: '12px', // Increases button padding for better click area
-            '& .MuiSvgIcon-root': {
-              fontSize: '51.5px', // Specifically increases the CloseIcon size
-            },
-          }}
-          onClick={onDrawerClose}
-        >
-          <CloseIcon />
-        </IconButton>
-      </Box>
-
       <Box
         sx={{
           display: 'flex',
+          flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
           height: '80%',
-          mt: -6,
+          mt: 3,
           '@media (max-width: 600px)': {
             alignItems: 'center',
           },
         }}
       >
-        <List
-          sx={{
-            width: '100%',
-            maxWidth: '400px',
-            textAlign: 'center',
-            fontSize: '20px',
-          }}
+        <Box
+          sx={{ display: 'flex', justifyContent: 'center', padding: '16px 0' }}
         >
-          {openDrawer === 'main' && username && (
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                flexDirection: 'row',
-                gap: 2,
-                mb: 2,
-                ml: '14px',
-              }}
-            >
-              <Avatar
-                sx={{
-                  width: 36,
-                  height: 36,
-                  bgcolor: '#ffbd0d',
-                  color: '#000000',
-                }}
-              >
-                {username?.charAt(0).toUpperCase() ?? ''}
-              </Avatar>
-
+          <IconButton
+            sx={{
+              color: '#fff',
+              fontSize: '28.22px', // Increases the icon size
+              // padding: '12px', // Increases button padding for better click area
+              '& .MuiSvgIcon-root': {
+                fontSize: '28.22px', // Specifically increases the CloseIcon size
+              },
+            }}
+            onClick={onDrawerClose}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+          <List
+            sx={{
+              width: '100%',
+              // maxWidth: '400px',
+              textAlign: 'center',
+              fontSize: '20px',
+              py: 0,
+              justifyContent: 'center',
+            }}
+          >
+            {openDrawer === 'main' && username && (
               <Box
                 sx={{
                   display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'flex-start',
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  gap: 2,
+                  mb: 2,
+                  ml: '14px',
                 }}
               >
-                <Typography
+                <Avatar
                   sx={{
-                    color: '#fff',
-                    fontWeight: 'bold',
-                    fontSize: '18px',
+                    width: 36,
+                    height: 36,
+                    bgcolor: '#ffbd0d',
+                    color: '#000000',
                   }}
                 >
-                  {username}
-                </Typography>
-                <Typography sx={{ color: '#ccc', fontSize: '14px' }}>
-                  {role}
-                </Typography>
-              </Box>
-            </Box>
-          )}
+                  {username?.charAt(0).toUpperCase() ?? ''}
+                </Avatar>
 
-          {openDrawer === 'main' &&
-            items.map((item) => (
-              <ListItemButton
-                key={`${item.text}-${item.to}`}
-                onClick={() => onItemClick(item.to)}
-              >
-                {item.icon && (
-                  <ListItemIcon sx={{ color: '#fff' }}>
-                    {item.icon}
-                  </ListItemIcon>
-                )}
-                <ListItemText
-                  primaryTypographyProps={{
-                    fontSize: '20px',
-                    fontWeight: 'bold',
-                    color: '#fff',
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
                   }}
-                  primary={item.text}
-                />
-              </ListItemButton>
-            ))}
+                >
+                  <Typography
+                    sx={{
+                      color: '#fff',
+                      fontWeight: 'bold',
+                      fontSize: '18px',
+                    }}
+                  >
+                    {username}
+                  </Typography>
+                  <Typography sx={{ color: '#ccc', fontSize: '14px' }}>
+                    {role}
+                  </Typography>
+                </Box>
+              </Box>
+            )}
 
-          {openDrawer === 'main' &&
-            categories.map((category) => (
-              <ListItemButton
-                key={category.text}
-                onClick={() => handleCategoryClick(category)}
-              >
-                <ListItemText primary={category.text} />
-                {category.subCategories && <ArrowForwardIcon />}
-              </ListItemButton>
-            ))}
+            {openDrawer === 'main' &&
+              items.map((item) => (
+                <ListItemButton
+                  key={`${item.text}-${item.to}`}
+                  onClick={() => onItemClick(item.to)}
+                >
+                  {item.icon && (
+                    <ListItemIcon sx={{ color: '#fff' }}>
+                      {item.icon}
+                    </ListItemIcon>
+                  )}
+                  <ListItemText
+                    primaryTypographyProps={{
+                      fontSize: '20px',
+                      fontWeight: 'bold',
+                      color: '#fff',
+                    }}
+                    primary={item.text}
+                  />
+                </ListItemButton>
+              ))}
 
-          {/* Render Category Subcategories */}
-          {openDrawer === 'category' &&
-            currentCategory?.subCategories?.map((subcategory) => (
-              <ListItemButton
-                key={subcategory.text}
-                onClick={() => handleSubcategoryClick(subcategory)}
-              >
-                <ListItemText primary={subcategory.text} />
-                {subcategory.subCategories && <ArrowForwardIcon />}
-              </ListItemButton>
-            ))}
+            {openDrawer === 'main' &&
+              categories.map((category) => (
+                <ListItemButton
+                  key={category.text}
+                  onClick={() => handleCategoryClick(category)}
+                >
+                  <ListItemText primary={category.text} />
+                  {category.subCategories && <ArrowForwardIcon />}
+                </ListItemButton>
+              ))}
 
-          {/* Render Subcategory Subcategories */}
-          {openDrawer === 'subcategory' &&
-            currentSubcategory?.subCategories?.map((subSubcategory) => (
-              <ListItemButton
-                key={subSubcategory.text}
-                onClick={() => onItemClick(subSubcategory.to)}
-              >
-                <ListItemText primary={subSubcategory.text} />
-              </ListItemButton>
-            ))}
-        </List>
+            {/* Render Category Subcategories */}
+            {openDrawer === 'category' &&
+              currentCategory?.subCategories?.map((subcategory) => (
+                <ListItemButton
+                  key={subcategory.text}
+                  onClick={() => handleSubcategoryClick(subcategory)}
+                >
+                  <ListItemText primary={subcategory.text} />
+                  {subcategory.subCategories && <ArrowForwardIcon />}
+                </ListItemButton>
+              ))}
+
+            {/* Render Subcategory Subcategories */}
+            {openDrawer === 'subcategory' &&
+              currentSubcategory?.subCategories?.map((subSubcategory) => (
+                <ListItemButton
+                  key={subSubcategory.text}
+                  onClick={() => onItemClick(subSubcategory.to)}
+                >
+                  <ListItemText primary={subSubcategory.text} />
+                </ListItemButton>
+              ))}
+          </List>
+        </Box>
       </Box>
     </Drawer>
   );

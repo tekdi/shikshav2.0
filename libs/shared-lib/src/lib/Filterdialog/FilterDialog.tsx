@@ -48,6 +48,10 @@ const CustomCheckbox = ({
     sx={{
       p: '0px',
       margin: '-5px', // Remove default margin
+      '& .MuiFormControlLabel-label': {
+        // Target the label specifically
+        fontSize: '14px', // Corrected spelling
+      },
     }}
     control={
       <Checkbox
@@ -71,6 +75,10 @@ const CustomResourceCheckbox = ({
     sx={{
       p: '0px',
       margin: '-5px', // Remove default margin
+      '& .MuiFormControlLabel-label': {
+        // Target the label specifically
+        fontFamily: 'Manrope, sans-serif', // Corrected spelling
+      },
     }}
     key={option.label}
     control={
@@ -98,6 +106,10 @@ const CustomRadio = ({ option }: any) => (
     sx={{
       p: '0px',
       margin: '-5px', // Remove default margin
+      '& .MuiFormControlLabel-label': {
+        // Target the label specifically
+        fontSize: '14px', // Corrected spelling
+      },
     }}
     control={
       <Radio
@@ -272,7 +284,7 @@ export const FilterDialog = ({
         <Dialog
           open={open ?? false}
           onClose={onClose}
-          maxWidth="sm"
+          // maxWidth="sm"
           sx={{
             borderRadius: '16px',
             '& .MuiDialog-paper': {
@@ -280,6 +292,9 @@ export const FilterDialog = ({
               display: 'flex',
               flexDirection: 'column',
               height: '90vh',
+              // maxHeight: '600px',
+              width: { xs: '100%', sm: '100%', md: '30%' },
+              // maxWidth: '340px',
             },
           }}
         >
@@ -299,7 +314,7 @@ export const FilterDialog = ({
             dividers
             sx={{
               flex: 1,
-              overflowY: 'auto',
+              overflow: 'hidden',
               padding: '0px 16px',
             }}
           >
@@ -377,65 +392,66 @@ export const FilterDialog = ({
 
               {frameworkFilter.categories?.some(
                 (cat: any) => cat.code === 'subTopic'
-              ) && (
-                <FormControl fullWidth key="subTopic" sx={formControlStyles}>
-                  <FormLabel
-                    component="legend"
-                    sx={{
-                      fontSize: '18px',
-                      fontWeight: 600,
-                      color: '#000000',
-                      '&.Mui-focused': {
-                        color: '#000000', // Prevent color change on focus
-                      },
-                    }}
-                  >
-                    Select Sub Category
-                  </FormLabel>
-                  <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                    {(() => {
-                      const selectedTopicCode = Array.isArray(
-                        selectedValues?.topic
-                      )
-                        ? selectedValues.topic[0]
-                            ?.replace(/\s/g, '')
-                            .toLowerCase()
-                        : selectedValues?.topic
-                            ?.replace(/\s/g, '')
-                            .toLowerCase();
+              ) &&
+                (() => {
+                  const selectedTopicCode = Array.isArray(selectedValues?.topic)
+                    ? selectedValues.topic[0]?.replace(/\s/g, '').toLowerCase()
+                    : selectedValues?.topic?.replace(/\s/g, '').toLowerCase();
 
-                      const topicTerm = frameworkFilter.categories
-                        ?.find((cat: any) => cat.code === 'topic')
-                        ?.terms?.find(
-                          (term: any) =>
-                            term.code.replace(/\s/g, '').toLowerCase() ===
-                            selectedTopicCode
-                        );
+                  const topicTerm = frameworkFilter.categories
+                    ?.find((cat: any) => cat.code === 'topic')
+                    ?.terms?.find(
+                      (term: any) =>
+                        term.code.replace(/\s/g, '').toLowerCase() ===
+                        selectedTopicCode
+                    );
 
-                      const associations =
-                        topicTerm?.associations?.filter(
-                          (a: any) => a.status === 'Live'
-                        ) ?? [];
+                  const associations =
+                    topicTerm?.associations?.filter(
+                      (a: any) => a.status === 'Live'
+                    ) ?? [];
 
-                      const uniqueAssociations = [
-                        ...new Map(
-                          associations.map((a: any) => [a.code, a])
-                        ).values(),
-                      ];
-
-                      return uniqueAssociations.map((option: any) => (
-                        <CustomCheckbox
-                          key={option.code}
-                          option={{ label: option.name, value: option.code }}
-                          filterCode="subTopic"
-                          handleCheckboxChange={handleCheckboxChange}
-                          currentSelectedValues={selectedValues?.subTopic ?? []}
-                        />
-                      ));
-                    })()}
-                  </Box>
-                </FormControl>
-              )}
+                  if (associations.length > 0) {
+                    return (
+                      <FormControl
+                        fullWidth
+                        key="subTopic"
+                        sx={formControlStyles}
+                      >
+                        <FormLabel
+                          component="legend"
+                          sx={{
+                            fontSize: '18px',
+                            fontWeight: 600,
+                            color: '#000000',
+                            '&.Mui-focused': {
+                              color: '#000000',
+                            },
+                          }}
+                        >
+                          Select Sub Category
+                        </FormLabel>
+                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                          {associations.map((option: any) => (
+                            <CustomCheckbox
+                              key={option.code}
+                              option={{
+                                label: option.name,
+                                value: option.code,
+                              }}
+                              filterCode="subTopic"
+                              handleCheckboxChange={handleCheckboxChange}
+                              currentSelectedValues={
+                                selectedValues?.subTopic ?? []
+                              }
+                            />
+                          ))}
+                        </Box>
+                      </FormControl>
+                    );
+                  }
+                  return null;
+                })()}
 
               {/* <Box sx={{ flexDirection: 'column', gap: 2 }}>
                 <FormControl fullWidth sx={formControlStyles}>
@@ -584,7 +600,7 @@ export const FilterDialog = ({
                       fontSize: '18px',
                       fontWeight: 600,
                       color: '#181D27',
-                      margin: '6px 0px',
+                      margin: '3px 0px',
                     }}
                   >
                     Select Resource Type
@@ -608,7 +624,7 @@ export const FilterDialog = ({
                     fontSize: '18px',
                     fontWeight: 600,
                     color: '#181D27',
-                    margin: '6px',
+                    margin: '3px',
                   }}
                 >
                   Select Content Type
@@ -680,7 +696,7 @@ export const FilterDialog = ({
               </Select>
             </FormControl>
           )}
-          <DialogActions sx={{ justifyContent: 'center', mt: 1 }}>
+          <DialogActions sx={{ justifyContent: 'center' }}>
             <Button
               variant="outlined"
               onClick={() => {

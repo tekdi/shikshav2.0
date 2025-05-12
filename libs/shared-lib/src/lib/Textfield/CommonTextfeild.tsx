@@ -46,6 +46,7 @@ export const CommonTextField: React.FC<CommonTextFieldProps> = ({
         label={label}
         value={value}
         onChange={onChange}
+        autoComplete="off"
         type={type}
         variant={
           variant === 'standard' ||
@@ -64,9 +65,15 @@ export const CommonTextField: React.FC<CommonTextFieldProps> = ({
           endAdornment: endIcon && (
             <InputAdornment position="end">{endIcon}</InputAdornment>
           ),
+          sx: {
+            height: '56px', // Set the height of the input field
+          },
         }}
         sx={{
           width: width,
+          '& .MuiOutlinedInput-root': {
+            height: '56px', // Ensure the root element has the same height
+          },
           '&:hover .MuiOutlinedInput-notchedOutline': {
             borderColor: '#4D4639', // Change color on hover
           },

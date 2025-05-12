@@ -222,6 +222,8 @@ const MyComponent: React.FC = () => {
           <Button
             onClick={() => setSubFramework(item.identifier)}
             sx={{
+              textTransform: 'none',
+              fontSize: '12px',
               borderRadius: '8px',
               color: subFramework === item.identifier ? '#FFFFFF' : '#001D32',
               backgroundColor:
@@ -272,7 +274,7 @@ const MyComponent: React.FC = () => {
         <Box
           display="flex"
           flexDirection="column"
-          py={isMobile ? '3rem' : '1rem'}
+          // py={!isMobile && '1rem'}
           px="8px"
           gap="1rem"
         >
@@ -351,49 +353,54 @@ const MyComponent: React.FC = () => {
                   )}
                 </Box>
                 {isMobile && <SubFrameworkButtons />}
-                <Content
-                  {...{
-                    _grid: {
-                      size: { xs: 6, sm: 6, md: 4, lg: 3 },
-                    },
-                    contentTabs: ['content'],
-                    handleCardClick: (content: ContentSearchResponse) => {
-                      if (content.identifier) {
-                        handleCardClick({ identifier: content.identifier });
-                      } else {
-                        console.warn('Content identifier is missing:', content);
-                      }
-                    },
-                    filters: {
-                      filters: {
-                        channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
-                        ...(filters.topic?.length
-                          ? { topic: filters.topic }
-                          : {}),
-
-                        ...(filters.access === 'Full Access' && {
-                          access: 'Full Access',
-                        }),
-                        ...(subFramework && { mimeType: [subFramework] }),
-                        ...(filters.mimeType?.length
-                          ? { mimeType: filters.mimeType }
-                          : {}),
-                        ...(filters.resource?.length
-                          ? { resource: filters.resource }
-                          : {}),
-
-                        ...(filters.subTopic?.length
-                          ? { subTopic: filters.subTopic }
-                          : {}),
+                <Box sx={{ marginTop: isMobile ? '32px' : '18px' }}>
+                  <Content
+                    {...{
+                      _grid: {
+                        size: { xs: 6, sm: 6, md: 4, lg: 3 },
                       },
-                    },
-                    _card: { cardName: 'AtreeCard', image: atreeLogo.src },
-                    showSearch: false,
-                    showFilter: false,
-                    filterBy: false,
-                    showFilterRight: false,
-                  }}
-                />
+                      contentTabs: ['content'],
+                      handleCardClick: (content: ContentSearchResponse) => {
+                        if (content.identifier) {
+                          handleCardClick({ identifier: content.identifier });
+                        } else {
+                          console.warn(
+                            'Content identifier is missing:',
+                            content
+                          );
+                        }
+                      },
+                      filters: {
+                        filters: {
+                          channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
+                          ...(filters.topic?.length
+                            ? { topic: filters.topic }
+                            : {}),
+
+                          ...(filters.access === 'Full Access' && {
+                            access: 'Full Access',
+                          }),
+                          ...(subFramework && { mimeType: [subFramework] }),
+                          ...(filters.mimeType?.length
+                            ? { mimeType: filters.mimeType }
+                            : {}),
+                          ...(filters.resource?.length
+                            ? { resource: filters.resource }
+                            : {}),
+
+                          ...(filters.subTopic?.length
+                            ? { subTopic: filters.subTopic }
+                            : {}),
+                        },
+                      },
+                      _card: { cardName: 'AtreeCard', image: atreeLogo.src },
+                      showSearch: false,
+                      showFilter: false,
+                      filterBy: false,
+                      showFilterRight: false,
+                    }}
+                  />
+                </Box>
               </>
             </Grid>
           </Grid>

@@ -6,7 +6,13 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import Image from 'next/image';
-import { InputBase, Stack, Typography } from '@mui/material';
+import {
+  InputBase,
+  Stack,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 
 interface CommonAppBarProps {
   title?: string;
@@ -25,7 +31,9 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
   showMenuIcon = true,
   menuIconClick,
 }) => {
+  const theme = useTheme();
   const [searchOpen, setSearchOpen] = useState(false);
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -42,6 +50,7 @@ export const TopAppBar: React.FC<CommonAppBarProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            minHeight: isMobile ? '5px' : undefined,
           }}
         >
           {/* Logo + Title Stack */}

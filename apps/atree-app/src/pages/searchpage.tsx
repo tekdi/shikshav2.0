@@ -52,38 +52,34 @@ export default function Searchpage() {
         px="14px"
         sx={{ width: 'fit-content' }}
       >
-        <IconButton
-          onClick={(e) => {
-            e.stopPropagation(); // prevent bubbling to parent
-            router.back();
-          }}
-          sx={{
-            width: 'fit-content',
-            height: 'fit-content',
-            padding: '4px',
-            alignSelf: 'flex-start',
-            backgroundColor: 'transparent',
-            borderRadius: '50%',
-            '&:hover': {
-              backgroundColor: 'rgba(0,0,0,0.04)', // Optional: subtle feedback
-            },
-            '&:focus': {
-              outline: 'none',
-            },
-          }}
-        >
-          <ArrowBackIcon />
-        </IconButton>
-        <Grid container spacing={3} justifyContent={'center'}>
+        <Box display="flex" alignItems="center" gap={2} sx={{ width: '100%' }}>
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+              router.back();
+            }}
+            sx={{
+              padding: '4px',
+              backgroundColor: 'transparent',
+              borderRadius: '50%',
+              '&:hover': {
+                backgroundColor: 'rgba(0,0,0,0.04)',
+              },
+              '&:focus': {
+                outline: 'none',
+              },
+            }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+
           {selectedquery && (
-            <Grid item xs={12}>
-              <Typography sx={{ fontWeight: 700, mb: 2 }}>
-                Showing Results for{' '}
-                <span style={{ color: '#FFBD0D' }}>{selectedquery}</span>
-              </Typography>
-            </Grid>
+            <Typography sx={{ fontWeight: 700 }}>
+              Showing Results for{' '}
+              <span style={{ color: '#FFBD0D' }}>{selectedquery}</span>
+            </Typography>
           )}
-        </Grid>
+        </Box>
 
         <Box
           sx={{
@@ -91,7 +87,7 @@ export default function Searchpage() {
             gap: '16px',
             display: 'flex',
             flexDirection: 'column',
-            marginTop: isMobile ? '-90px' : '-45px',
+            marginTop: isMobile ? '10px' : '55px',
           }}
         >
           <Content

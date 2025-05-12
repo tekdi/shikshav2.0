@@ -12,21 +12,27 @@ interface LoaderProps {
 }
 const MOBILE_PADDING_MAP: Record<string, string> = {
   '/contents/[identifier]': '138px',
-  '/contents': '25px',
+  '/contents': '32px',
   '/home': '47px',
   '/': '40px',
   '/quick-access': '132px',
   '/quick-access/[category]': '132px',
+  '/quick-access/contents/[category]': '132px',
   '/termsandcondition': '76px',
   '/aboutus': '76px',
+  '/register': '120px',
+  '/searchpage': '65px',
 };
 
 const DESKTOP_PADDING_MAP: Record<string, string> = {
-  '/quick-access': '160px',
-  '/quick-access/[category]': '160px',
-  '/quick-access/contents/[category]': '60px',
-  '/': '90px',
-  '/contents': '90px',
+  '/home': '120px',
+  '/quick-access': '195px',
+  '/quick-access/[category]': '195px',
+  '/quick-access/contents/[category]': '92px',
+  '/': '133px',
+  '/contents': '186px',
+  '/contents/[identifier]': '126px',
+  '/searchpage': '118px',
 };
 
 const getPaddingTop = (isMobile: boolean, router: any): string => {
@@ -39,6 +45,13 @@ const getPaddingTop = (isMobile: boolean, router: any): string => {
     // ) {
     //   return '47px';
     // }
+    const hasLoginError = window.location.hash.includes('error=login_required');
+    if (hasLoginError && !router.pathname.includes('searchpage')) {
+      return '76px';
+    }
+    if (router.pathname === '/searchpage' && hasLoginError) {
+      return '97px';
+    }
     if (router.pathname === '/home' && router.query.category) {
       return '47px';
     }
@@ -60,6 +73,7 @@ const getPaddingTop = (isMobile: boolean, router: any): string => {
     ) {
       return '76px';
     }
+
     return MOBILE_PADDING_MAP[router.pathname] || defaultPadding;
   }
 
