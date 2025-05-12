@@ -313,10 +313,11 @@ export default function Content(props: ContentProps) {
                   fontSize: '22px',
                   fontWeight: 700,
                   marginLeft: 1,
+                  whiteSpace: 'nowrap',
                 }}
               >
                 {label.charAt(0).toUpperCase() + label.slice(1)}
-                <span>{subcategory ? `-${subcategory}` : ''}</span>
+                <span>{subcategory ? ` - ${subcategory}` : ''}</span>
               </Typography>
             ) : null;
           })()}
@@ -325,7 +326,7 @@ export default function Content(props: ContentProps) {
               display="flex"
               alignItems="center"
               justifyContent="flex-end"
-              width="100%"
+              width="80%"
               gap={2}
               sx={{}}
             >

@@ -502,7 +502,7 @@ export default function Registration() {
                 onClose={() => setOpenUserDetailsDialog(false)}
                 disableCloseOnBackdropClick={true}
                 header="User Details"
-                hideCloseButton={true}
+                hideCloseButton={false}
                 content={
                   <Box
                     sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
@@ -541,7 +541,7 @@ export default function Registration() {
                 }
                 sx={{
                   width: '500px',
-                  height: '225px',
+                  height: '255px',
                   padding: '10px',
                   borderRadius: '16px',
                 }}
