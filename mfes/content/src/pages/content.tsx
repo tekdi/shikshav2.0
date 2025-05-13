@@ -39,6 +39,7 @@ export interface ContentProps {
   showHelpDesk?: boolean;
   filterBy?: boolean;
   showArrowback?: boolean;
+  showContent?: boolean;
 }
 export default function Content(props: ContentProps) {
   const router = useRouter();
@@ -61,6 +62,7 @@ export default function Content(props: ContentProps) {
   const [fullAccess, setFullAccess] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   useEffect(() => {
     const init = async () => {
       const newData = await getData('mfes_content_pages_content');
@@ -239,7 +241,6 @@ export default function Content(props: ContentProps) {
       }));
     }
   };
-
   //get filter framework
   useEffect(() => {
     const fetchFramework = async () => {
@@ -292,12 +293,12 @@ export default function Content(props: ContentProps) {
   return (
     // <Loader isLoading={isPageLoading} layoutHeight={70}>
     <Box sx={{ p: 2 }}>
-      {propData?.filterBy && (
+      {propData?.showContent && (
         <Box
           sx={{
             display: 'flex',
             alignItems: 'center',
-            marginBottom: !isMobile ? '50px' : '10px',
+            marginBottom: !isMobile ? '80px' : '10px',
           }}
         >
           <ArrowBackIosIcon onClick={handleBack} />
@@ -310,10 +311,13 @@ export default function Content(props: ContentProps) {
               <Typography
                 sx={{
                   color: '#1C170D',
-                  fontSize: '22px',
+                  fontSize: {
+                    xs: '14px', // Mobile (extra small)
+                    sm: '22px', // Desktop (small and up)
+                  },
                   fontWeight: 700,
                   marginLeft: 1,
-                  whiteSpace: 'nowrap',
+                  whiteSpace: { xs: 'normal', sm: 'nowrap' },
                 }}
               >
                 {label.charAt(0).toUpperCase() + label.slice(1)}
@@ -321,163 +325,6 @@ export default function Content(props: ContentProps) {
               </Typography>
             ) : null;
           })()}
-          {!isMobile && propData?.showFilter && (
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="flex-end"
-              width="80%"
-              gap={2}
-              sx={{}}
-            >
-              <Box
-                sx={{
-                  gap: '20px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  backgroundColor: '#ffffff',
-                  borderRadius: propData?.filterBy ? '0px' : '12px',
-                  // padding: '8px',
-                  width: propData?.filterBy ? 'auto' : '56px', // Auto width for Filter By
-                  height: propData?.filterBy ? 'auto' : '46px', // Auto height for Filter By
-                  padding: propData?.filterBy ? '4px 8px' : '0px',
-                  '&:hover': {
-                    backgroundColor: propData?.filterBy
-                      ? 'transparent'
-                      : '#E0E0E0',
-                    boxShadow: propData?.filterBy
-                      ? 'none'
-                      : '0px 4px 8px 3px #00000026',
-                  },
-                  marginLeft: '4px',
-                  marginRight: '7px',
-
-                  boxShadow: propData?.filterBy
-                    ? 'none'
-                    : '0px 1px 3px 0px #0000004D',
-                }}
-              >
-                {propData?.filterBy ? (
-                  <Box display="flex" alignItems="center">
-                    <Chip
-                      label={
-                        <Box display="flex" alignItems="center" gap={1}>
-                          <span>Filter By</span>
-                          <ArrowDropDownIcon
-                            sx={{ color: '#42474E', fontSize: '20px' }}
-                          />
-                        </Box>
-                      }
-                      onClick={() => setFilterShow(true)}
-                      sx={{
-                        color: '#000000',
-                        borderRadius: '8px',
-                        fontSize: '14px',
-                        fontWeight: '500',
-                        cursor: 'pointer',
-                        backgroundColor: '#FFFFFF',
-                        border: '1px solid #C2C7CF',
-                        paddingX: '8px',
-                      }}
-                    />
-                  </Box>
-                ) : (
-                  <FilterAltOutlinedIcon
-                    sx={{ color: '#6750A4', fontSize: '25px' }}
-                  />
-                )}
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  gap={1}
-                  marginLeft="auto"
-                >
-                  <Typography
-                    sx={{
-                      fontSize: '14px',
-                      fontWeight: fullAccess ? '400' : '600',
-                      color: fullAccess ? '#9E9E9E' : '#000000',
-                    }}
-                  >
-                    All
-                  </Typography>
-
-                  <Switch
-                    checked={fullAccess} // Controlled state for switch
-                    onChange={handleToggleFullAccess}
-                    sx={{
-                      width: 42,
-                      height: 26,
-                      padding: 0,
-                      '& .MuiSwitch-switchBase': {
-                        padding: 0,
-                        transitionDuration: '300ms',
-                        '&.Mui-checked': {
-                          transform: 'translateX(16px)',
-                          color: '#fff',
-                          '& + .MuiSwitch-track': {
-                            background:
-                              'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
-                            opacity: 1,
-                            border: 0,
-                          },
-                          '&.Mui-disabled + .MuiSwitch-track': {
-                            opacity: 0.5,
-                          },
-                        },
-                        '&.Mui-focusVisible .MuiSwitch-thumb': {
-                          color: '#33cf4d',
-                          border: '6px solid #fff',
-                        },
-                        '&.Mui-disabled .MuiSwitch-thumb': {
-                          color: '#BDBDBD', // Grey thumb when disabled
-                        },
-                        '&.Mui-disabled + .MuiSwitch-track': {
-                          opacity: 0.5,
-                          background: '#BDBDBD', // Grey track when disabled
-                        },
-                      },
-                      '& .MuiSwitch-thumb': {
-                        boxSizing: 'border-box',
-                        width: 25,
-                        height: 25,
-                      },
-                      '& .MuiSwitch-track': {
-                        borderRadius: 26 / 2,
-                        background: fullAccess
-                          ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
-                          : '#BDBDBD', // Grey when unchecked
-                        opacity: 1,
-                      },
-                    }}
-                  />
-
-                  <Typography
-                    sx={{
-                      fontSize: '14px',
-                      fontWeight: fullAccess ? '600' : '400',
-                      color: fullAccess ? '#000000' : '#9E9E9E',
-                    }}
-                  >
-                    Only Full Access
-                  </Typography>
-                </Box>
-              </Box>
-
-              <FilterDialog
-                open={filterShow}
-                onClose={() => setFilterShow(false)}
-                frameworkFilter={frameworkFilter}
-                filterValues={localFilters}
-                onApply={handleApplyFilters}
-                isMobile={true}
-                resources={RESOURCE_TYPES}
-                mimeType={MIME_TYPES}
-              />
-            </Box>
-          )}
         </Box>
       )}
       {(propData?.showSearch || propData?.showFilter) && (

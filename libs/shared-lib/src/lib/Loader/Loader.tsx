@@ -12,7 +12,7 @@ interface LoaderProps {
 }
 const MOBILE_PADDING_MAP: Record<string, string> = {
   '/contents/[identifier]': '138px',
-  '/contents': '32px',
+  '/contents': '60px',
   '/home': '47px',
   '/': '40px',
   '/quick-access': '132px',
@@ -28,9 +28,9 @@ const DESKTOP_PADDING_MAP: Record<string, string> = {
   '/home': '120px',
   '/quick-access': '195px',
   '/quick-access/[category]': '195px',
-  '/quick-access/contents/[category]': '92px',
+  '/quick-access/contents/[category]': '105px',
   '/': '133px',
-  '/contents': '186px',
+  '/contents': '132px',
   '/contents/[identifier]': '126px',
   '/searchpage': '118px',
 };

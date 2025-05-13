@@ -22,6 +22,7 @@ import {
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 const formControlStyles = {
   '&.Mui-focused': { color: '#1D1B20' },
   '& .MuiInputLabel-root.Mui-focused': { color: '#1D1B20' },
@@ -165,6 +166,7 @@ export const FilterDialog = ({
     resource: [] as string[],
     mimeType: [] as string[],
   });
+
   useEffect(() => {
     const mimeType = filterValues?.request?.filters?.mimeType;
     const resource = filterValues?.request?.filters?.resource;
@@ -187,6 +189,16 @@ export const FilterDialog = ({
       setSelectedFilters({
         mimeType: mimeType || [],
         resource: resource || [],
+      });
+    }
+    if (filterValues?.request?.filters?.topic) {
+      // localStorage.setItem('category', filterValues?.filters?.topic);
+      console.log('Filterdialog', filterValues?.request?.filters?.topic);
+
+      setSelectedTopic(filterValues?.request?.filters?.topic);
+      setSelectedValues({
+        topic: filterValues?.request?.filters?.topic,
+        subTopic: filterValues?.request?.filters?.subTopic,
       });
     }
     if (filterValues?.filters?.topic) {
@@ -221,14 +233,20 @@ export const FilterDialog = ({
     if (filterCode === 'topic') {
       setSelectedTopic(newValue); // Update the selected topic state
     }
+
     updateSelectedValues(filterCode, newValue);
   };
 
   const handleCheckboxChange = (event: any, filterCode: string) => {
     const { checked, value } = event.target;
+    const newValue = typeof value === 'string' ? value.split(',') : value;
 
     setSelectedValues((prev: any) => {
       const currentValues = prev[filterCode] || [];
+      const subCategory = checked
+        ? [...currentValues, value]
+        : currentValues.filter((v: string) => v !== value);
+      localStorage.setItem('subcategory', subCategory);
       return {
         ...prev,
         [filterCode]: checked
@@ -243,8 +261,8 @@ export const FilterDialog = ({
     filterType: 'resource' | 'mimeType'
   ) => {
     const { checked, value } = event.target;
-
     const currentValues = selectedFilters[filterType] || [];
+
     const updatedValues = checked
       ? [...currentValues, value]
       : currentValues.filter((v: string) => v !== value);
@@ -452,54 +470,6 @@ export const FilterDialog = ({
                   }
                   return null;
                 })()}
-
-              {/* <Box sx={{ flexDirection: 'column', gap: 2 }}>
-                <FormControl fullWidth sx={formControlStyles}>
-                  {resources?.length > 0 && (
-                    <Box sx={{ display: 'grid' }}>
-                      <Typography
-                        sx={{
-                          fontSize: '18px',
-                          fontWeight: 600,
-                          color: '#181D27',
-                        }}
-                      >
-                        Select Resource Type
-                      </Typography>
-                      {resources?.map((option: any) => (
-                        <CustomResourceCheckbox
-                          key={option?.label}
-                          option={option}
-                          filterCode="resource"
-                          handleCheckboxChange={handleResourceCheckboxChange}
-                          currentSelectedValues={selectedFilters.resource}
-                        />
-                      ))}
-                    </Box>
-                  )}
-
-                  <Box sx={{ display: 'grid' }}>
-                    <Typography
-                      sx={{
-                        fontSize: '18px',
-                        fontWeight: 600,
-                        color: '#181D27',
-                      }}
-                    >
-                      Select Content Type
-                    </Typography>
-                    {mimeType?.map((option: any) => (
-                      <CustomResourceCheckbox
-                        key={option?.label}
-                        option={option}
-                        filterCode="mimeType"
-                        handleCheckboxChange={handleResourceCheckboxChange}
-                        currentSelectedValues={selectedFilters.mimeType ?? []}
-                      />
-                    ))}
-                  </Box>
-                </FormControl>
-              </Box> */}
             </Box>
 
             {/* Subject */}
@@ -595,16 +565,43 @@ export const FilterDialog = ({
             <FormControl fullWidth sx={formControlStyles}>
               {resources?.length > 0 && (
                 <Box sx={{ display: 'grid' }}>
-                  <Typography
+                  <Box
                     sx={{
-                      fontSize: '18px',
-                      fontWeight: 600,
-                      color: '#181D27',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
                       margin: '3px 0px',
                     }}
                   >
-                    Select Resource Type
-                  </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: '18px',
+                        fontWeight: 600,
+                        color: '#181D27',
+                        margin: '3px 0px',
+                      }}
+                    >
+                      Resource Type
+                    </Typography>
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        setSelectedValues({});
+                        selectedFilters.mimeType = [];
+                        selectedFilters.resource = [];
+                        localStorage.removeItem('selectedFilters');
+                        onApply?.({});
+                      }}
+                      sx={{
+                        color: '#1D1B20',
+                        '&:hover': {
+                          color: '#FFBD0D',
+                        },
+                      }}
+                    >
+                      <RestartAltIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
                   {resources?.map((option: any) => (
                     <CustomResourceCheckbox
                       key={option?.label}
@@ -627,7 +624,7 @@ export const FilterDialog = ({
                     margin: '3px',
                   }}
                 >
-                  Select Content Type
+                  Content Type
                 </Typography>
                 {mimeType?.map((option: any) => (
                   <CustomResourceCheckbox
@@ -641,7 +638,6 @@ export const FilterDialog = ({
               </Box>
             </FormControl>
           </Box>
-          <Divider />
 
           {/* Subject */}
           {filter?.subject && filter.subject.length > 0 && (
@@ -696,47 +692,6 @@ export const FilterDialog = ({
               </Select>
             </FormControl>
           )}
-          <DialogActions sx={{ justifyContent: 'center' }}>
-            <Button
-              variant="outlined"
-              onClick={() => {
-                setSelectedValues({});
-                selectedFilters.mimeType = [];
-                selectedFilters.resource = [];
-                localStorage.removeItem('selectedFilters');
-                onApply?.({});
-              }}
-              sx={{
-                borderRadius: '100px',
-                color: '#414651',
-                textTransform: 'none',
-                border: '1px solid #D5D7DA',
-                width: '132px',
-              }}
-            >
-              Reset
-            </Button>
-            <Button
-              variant="contained"
-              onClick={() => {
-                localStorage.setItem(
-                  'selectedFilters',
-                  JSON.stringify(selectedValues)
-                );
-                onApply?.(selectedValues);
-              }}
-              sx={{
-                borderRadius: '100px',
-                bgcolor: '#FFBD0D',
-                color: '#2B3133',
-                marginLeft: 2,
-                textTransform: 'none',
-                width: '132px',
-              }}
-            >
-              Apply
-            </Button>
-          </DialogActions>
         </Box>
       )}
     </>

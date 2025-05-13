@@ -41,7 +41,7 @@ const MyComponent: React.FC = () => {
       category.associations &&
       Array.isArray(category.associations) &&
       category.associations.some((assoc: any) => assoc.status === 'Live');
-
+    localStorage.setItem('category', category.name);
     if (!hasValidAssociations) {
       const query = true;
       router.push(`/quick-access/contents/${category.name}?isTopic=${query}`);

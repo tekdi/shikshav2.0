@@ -357,10 +357,10 @@ export default function Index() {
                     padding: '12px',
                   }}
                 >
-                  <SwitchAccess
+                  {/* <SwitchAccess
                     fullAccess={fullAccess}
                     handleToggleFullAccess={handleToggleFullAccess}
-                  />
+                  /> */}
                   <ContentSection
                     contents={contentData.length > 0 ? contentData : []}
                     title={!hasFilter ? '' : undefined}
@@ -377,7 +377,7 @@ export default function Index() {
                 <Box
                   sx={{
                     width: '100%',
-                    gap: '16px',
+                    // gap: '16px',
                     display: 'flex',
                     flexDirection: 'column',
                     padding: '9px 0px',
@@ -390,13 +390,13 @@ export default function Index() {
                       alignItems: 'center',
                     }}
                   >
-                    {subFrameworkFilter && subFrameworkFilter.length > 0 && (
+                    {/* {subFrameworkFilter && subFrameworkFilter.length > 0 && (
                       <Title>{t('Browse by Sub Categories')}</Title>
-                    )}
-                    <SwitchAccess
+                    )} */}
+                    {/* <SwitchAccess
                       fullAccess={fullAccess}
                       handleToggleFullAccess={handleToggleFullAccess}
-                    />
+                    /> */}
                   </Box>
 
                   <Box
@@ -419,10 +419,8 @@ export default function Index() {
                   </Box>
 
                   <ContentSection
-                    contents={
-                      contentData.length > 0 ? contentData.slice(0, 8) : []
-                    }
-                    title={t('Read, Watch, Listen')}
+                    contents={contentData.length > 0 ? contentData : []}
+                    title={t('')}
                     onTitleClick={() => {
                       localStorage.removeItem('subcategory');
                       router.push('/contents');
@@ -431,7 +429,7 @@ export default function Index() {
                   />
                 </Box>
 
-                <Box
+                {/* <Box
                   sx={{
                     width: '100%',
                     flexDirection: 'column',
@@ -442,7 +440,7 @@ export default function Index() {
                   }}
                 >
                   <ContentSection
-                    title={t('Related Content')}
+                    title={t('')}
                     onTitleClick={() => {
                       localStorage.removeItem('subcategory');
                       router.push('/contents');
@@ -452,7 +450,7 @@ export default function Index() {
                     }
                     handleCardClick={handleCardClick}
                   />
-                </Box>
+                </Box> */}
               </Grid>
             )}
           </Grid>
@@ -468,7 +466,7 @@ export default function Index() {
               sx={{
                 display: 'flex',
                 width: '100%',
-                gap: '16px',
+                // gap: '16px',
                 flexDirection: 'column',
                 padding: '0px',
               }}

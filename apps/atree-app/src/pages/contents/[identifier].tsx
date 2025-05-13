@@ -55,6 +55,7 @@ interface ContentItem {
   publisher: string;
   url: string;
   previewUrl: string;
+  downloadurl: string;
 }
 
 export default function Content() {
@@ -77,9 +78,9 @@ export default function Content() {
     router.push(`/player/${identifier}`);
   };
   const handleOnDownload = async () => {
-    if (contentData?.previewUrl?.endsWith('.pdf')) {
+    if (contentData?.downloadurl) {
       try {
-        const response = await fetch(contentData?.previewUrl);
+        const response = await fetch(contentData?.downloadurl);
         const blob = await response?.blob();
         const blobUrl = window.URL.createObjectURL(blob);
 
@@ -107,46 +108,52 @@ export default function Content() {
       if (result && typeof result === 'object') {
         setContentData(result);
       }
-      const keywords = result?.keywords?.filter((item: any) => item) ?? [];
+      const cleanKeywords = (
+        result?.keywords?.filter((item: any) => item) ?? []
+      ).slice(0, 4);
+      // .map((keyword: any) => `"${keyword}"`); // Remove #
+      const queryString = cleanKeywords;
+
       let relatedContentTemp: ContentItem[] = [];
 
-      for (const keyword of keywords) {
-        try {
-          const keywordFilteredResults = await ContentSearch({
-            channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
-            query: keyword,
-          });
-          const filtered =
-            keywordFilteredResults?.result?.content?.filter(
-              (item: any) => item.identifier !== result.identifier
-            ) ?? [];
+      // for (const keyword of keywords) {
+      try {
+        const keywordFilteredResults = await ContentSearch({
+          channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+          filters: { keywords: queryString },
+        });
+        const filtered =
+          keywordFilteredResults?.result?.content?.filter(
+            (item: any) => item.identifier !== result.identifier
+          ) ?? [];
 
-          if (filtered.length > 0) {
-            relatedContentTemp = filtered.map((item: any) => ({
-              name: item.name ?? '',
-              gradeLevel: item.gradeLevel ?? [],
-              language: item.language ?? [],
-              artifactUrl: item.artifactUrl ?? '',
-              identifier: item.identifier ?? '',
-              posterImage: item.posterImage ?? '',
-              contentType: item.contentType ?? '',
-              mimeType: item.mimeType ?? '',
-              author: item.author ?? '',
-              keywords: item.keywords ?? [],
-              year: item.year ?? '',
-              license: item.license ?? '',
-              description: item.description ?? '',
-              publisher: item.publisher ?? '',
-              url: item.url ?? '',
-              previewUrl: item.previewUrl ?? '',
-            }));
-            break; // Stop at first successful keyword
-          }
-        } catch (error) {
-          console.error(`Search failed for keyword ${keyword}:`, error);
-          continue;
+        if (filtered.length > 0) {
+          relatedContentTemp = filtered.map((item: any) => ({
+            name: item.name ?? '',
+            gradeLevel: item.gradeLevel ?? [],
+            language: item.language ?? [],
+            artifactUrl: item.artifactUrl ?? '',
+            identifier: item.identifier ?? '',
+            posterImage: item.posterImage ?? '',
+            contentType: item.contentType ?? '',
+            mimeType: item.mimeType ?? '',
+            author: item.author ?? '',
+            keywords: item.keywords ?? [],
+            year: item.year ?? '',
+            license: item.license ?? '',
+            description: item.description ?? '',
+            publisher: item.publisher ?? '',
+            url: item.url ?? '',
+            previewUrl: item.previewUrl ?? '',
+            downloadurl: item.downloadurl ?? '', // Added missing property
+          }));
+          // break; // Stop at first successful keyword
         }
+      } catch (error) {
+        console.error(`Search failed for keyword ${cleanKeywords}:`, error);
+        // continue;
       }
+      // }
 
       setRelatedContent(relatedContentTemp);
     } catch (error) {
@@ -287,7 +294,7 @@ export default function Content() {
                               padding: '4px 6px',
                               borderRadius: '8px',
                               '& .MuiChip-label': {
-                                fontSize: '11px',
+                                fontSize: '14px',
                                 fontFamily: 'sans-serif',
                                 fontWeight: 500,
                                 color: '#171D1E',
@@ -354,7 +361,7 @@ export default function Content() {
                             fontWeight: 500,
                           }}
                           startIcon={<FileDownloadOutlinedIcon />}
-                          disabled={!contentData?.previewUrl?.endsWith('.pdf')}
+                          disabled={!contentData?.downloadurl}
                           onClick={handleOnDownload}
                         >
                           Download

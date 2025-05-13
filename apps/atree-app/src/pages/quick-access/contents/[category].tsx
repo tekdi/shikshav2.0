@@ -43,10 +43,21 @@ const MyComponent: React.FC = () => {
     limit: 5,
     offset: 0,
     channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
-    topic: isTopic ? category : undefined, // Initialize topic if isTopic=true
-    subTopic: !isTopic ? category : undefined,
+    topic:
+      typeof window !== 'undefined'
+        ? localStorage.getItem('category') || undefined
+        : undefined,
+    subTopic:
+      typeof window !== 'undefined'
+        ? localStorage.getItem('subCategory') || undefined
+        : undefined,
+    mimeType: [] as string[],
+    resource: [] as string[],
   });
-
+  const topicVal =
+    typeof window !== 'undefined'
+      ? localStorage.getItem('category') || undefined
+      : undefined;
   const [searchResults, setSearchResults] = useState<
     { subTopic: string; length: number }[]
   >([]);
@@ -87,13 +98,13 @@ const MyComponent: React.FC = () => {
       setFilters((prevFilters: any) => ({
         ...prevFilters,
         ...(isTopicValid
-          ? { topic: category, subTopic: undefined }
+          ? { topic: topicVal, subTopic: undefined }
           : { subTopic: category }),
       }));
       const filterParams: any = {
         ...filters,
         ...(isTopicValid
-          ? { topic: category, subTopic: undefined }
+          ? { topic: topicVal, subTopic: undefined }
           : { subTopic: category }),
       };
 
@@ -121,7 +132,7 @@ const MyComponent: React.FC = () => {
   useEffect(() => {
     setFilters((prevFilters: any) => ({
       ...prevFilters,
-      topic: isTopic ? category : undefined,
+      topic: topicVal ? topicVal : undefined,
       subTopic: !isTopic ? category : undefined,
     }));
   }, [isTopic, category]);
@@ -142,40 +153,26 @@ const MyComponent: React.FC = () => {
   const handleClick = (category: any) =>
     router.push(`/contents/${category.name}`);
 
-  /** Handle Filter Application */
   const handleApplyFilters = (selectedValues: any) => {
     const isEmpty = Object.keys(selectedValues).length === 0;
-    console.log('selectedValues', selectedValues);
-    if (selectedValues) {
-      // Remove `isTopic` from the URL
-      const { isTopic, ...updatedQuery } = router.query;
-      router.replace(
-        {
-          pathname: router.pathname,
-          query: updatedQuery,
-        },
-        undefined,
-        { shallow: true } // Prevents full page reload
-      );
-
-      // Update filters correctly
-      setFilters((prevFilters: any) => {
-        const newFilters = {
-          ...prevFilters,
-          ...selectedValues,
-          ...(isEmpty ? { subTopic: category } : {}),
-          ...(isEmpty ? { topic: undefined } : {}),
-          ...(isEmpty ? { resource: undefined } : {}),
-          ...(isEmpty ? { mimeType: undefined } : {}),
-        };
-        console.log('Updated Filters (inside setState callback)==', newFilters);
-        return newFilters;
-      });
-    }
+    const actualFilters = selectedValues.request?.filters || selectedValues;
+    setFilters((prevFilters: any) => {
+      const newFilters = {
+        ...prevFilters,
+        ...(actualFilters.resource && { resource: actualFilters.resource }),
+        ...(actualFilters.mimeType && { mimeType: actualFilters.mimeType }),
+        ...(actualFilters.topic && { topic: actualFilters.topic }),
+        ...(actualFilters.subTopic && { subTopic: actualFilters.subTopic }),
+        ...(isEmpty ? { subTopic: category } : {}),
+        ...(isEmpty ? { topic: topicVal } : {}),
+        ...(isEmpty ? { resource: undefined } : {}),
+        ...(isEmpty ? { mimeType: undefined } : {}),
+      };
+      return newFilters;
+    });
   };
-
   useEffect(() => {
-    console.log('Updated Filters (inside useEffect)==', filters);
+    console.log('Updated Filters (inside quick)==', filters);
   }, [filters]);
 
   const handleToggleFullAccess = (
@@ -240,12 +237,6 @@ const MyComponent: React.FC = () => {
       ))}
     </Grid>
   );
-  const renderFooterComponent = () => {
-    if (!isMobile) {
-      return <FooterText page="" />;
-    }
-    return undefined;
-  };
   return (
     <Layout
       _backButton={{ alignItems: 'center' }}
@@ -290,7 +281,16 @@ const MyComponent: React.FC = () => {
                 open={filterShow}
                 onClose={() => setFilterShow(false)}
                 frameworkFilter={frameworkFilter}
-                filterValues={filters}
+                filterValues={{
+                  request: {
+                    filters: {
+                      resource: filters.resource || [],
+                      mimeType: filters.mimeType || [],
+                      topic: filters.topic || [],
+                      subTopic: filters.subTopic || [],
+                    },
+                  },
+                }}
                 onApply={handleApplyFilters}
                 isMobile={isMobile}
               />
@@ -307,7 +307,16 @@ const MyComponent: React.FC = () => {
             <Grid size={{ xs: 3, md: 3 }}>
               <FilterDialog
                 frameworkFilter={frameworkFilter}
-                filterValues={filters}
+                filterValues={{
+                  request: {
+                    filters: {
+                      resource: filters.resource || [],
+                      mimeType: filters.mimeType || [],
+                      topic: filters.topic || [],
+                      subTopic: filters.subTopic || [],
+                    },
+                  },
+                }}
                 onApply={handleApplyFilters}
                 resources={RESOURCE_TYPES}
                 mimeType={MIME_TYPES}
@@ -336,21 +345,6 @@ const MyComponent: React.FC = () => {
                       cursor: 'auto',
                     }}
                   />
-
-                  {!isMobile && (
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      gap={1}
-                      sx={{ width: '100%', justifyContent: 'center' }}
-                    >
-                      <CustomSwitch
-                        fullAccess={fullAccess}
-                        handleToggleFullAccess={handleToggleFullAccess}
-                        customFontStyle={customFontStyle}
-                      />
-                    </Box>
-                  )}
                 </Box>
                 {isMobile && <SubFrameworkButtons />}
                 <Box sx={{ marginTop: isMobile ? '32px' : '18px' }}>

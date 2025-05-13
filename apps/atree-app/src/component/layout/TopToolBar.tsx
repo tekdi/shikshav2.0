@@ -297,51 +297,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                         readOnly
                       />
                     </Box>
-                    {/* 🌐 Language Selector */}
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      sx={{
-                        height: '32px',
-                        border: '1px solid #ccc',
-                        borderRadius: '8px',
-                        padding: '0 8px',
-                        width: '120px', // Fixed width
-                        flexShrink: 0,
-                        overflow: 'hidden',
-                      }}
-                    >
-                      <Select
-                        value={selectedLanguage}
-                        onChange={handleLanguageSelect}
-                        onClick={() => handleLanguageClick(selectedLanguage)}
-                        displayEmpty
-                        sx={{
-                          width: '100%',
-                          fontSize: '16px',
-                          color: '#42474E',
-                          '.MuiOutlinedInput-notchedOutline': { border: 0 },
-                          '&:hover .MuiOutlinedInput-notchedOutline': {
-                            border: 0,
-                          },
-                          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                            border: 0,
-                          },
-                          '.MuiSelect-select': {
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                            padding: '0px',
-                          },
-                        }}
-                      >
-                        {languages.map((lang) => (
-                          <MenuItem key={lang} value={lang}>
-                            {lang}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </Box>
+
                     {/* ☰ Menu Icon */}
                     <IconButton
                       size="large"
