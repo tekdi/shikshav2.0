@@ -51,6 +51,12 @@ const getPaddingTop = (isMobile: boolean, router: any): string => {
     ) {
       return '47px';
     }
+    if (
+      router.pathname === '/quick-access' &&
+      window.location.hash.includes('error=login_required')
+    ) {
+      return '132px';
+    }
     const hasLoginError = window.location.hash.includes('error=login_required');
     if (hasLoginError && !router.pathname.includes('searchpage')) {
       return '76px';

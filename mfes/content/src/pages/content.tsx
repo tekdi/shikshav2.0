@@ -317,11 +317,37 @@ export default function Content(props: ContentProps) {
                   },
                   fontWeight: 700,
                   marginLeft: 1,
+                  display: '-webkit-box',
+                  WebkitLineClamp: { xs: 2, sm: 1 },
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
                   whiteSpace: { xs: 'normal', sm: 'nowrap' },
                 }}
               >
                 {label.charAt(0).toUpperCase() + label.slice(1)}
-                <span>{subcategory ? ` - ${subcategory}` : ''}</span>
+                {subcategory && (
+                  <span>
+                    {' '}
+                    {isMobile ? (
+                      // Mobile view - show all subcategories
+                      <>
+                        :{' '}
+                        {Array.isArray(subcategory)
+                          ? subcategory.join(', ')
+                          : subcategory}
+                      </>
+                    ) : (
+                      // Desktop view - show only the first subcategory
+                      <>
+                        :{' '}
+                        {Array.isArray(subcategory)
+                          ? subcategory[0]
+                          : subcategory}
+                      </>
+                    )}
+                  </span>
+                )}
               </Typography>
             ) : null;
           })()}

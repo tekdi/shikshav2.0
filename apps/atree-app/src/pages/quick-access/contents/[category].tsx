@@ -278,7 +278,7 @@ const MyComponent: React.FC = () => {
       backTitle={
         <Box sx={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
           <Typography sx={{ fontSize: '22px', lineHeight: '28px' }}>
-            {category}
+            {topicVal} : {category}
           </Typography>
         </Box>
       }

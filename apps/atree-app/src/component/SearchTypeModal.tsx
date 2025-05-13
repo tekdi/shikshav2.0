@@ -85,11 +85,9 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
     item.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
   // Handle Enter Key Press
-  const navigateToSearchPage = () => {
+  const navigateToSearchPage = (queryValue: string) => {
     if (searchQuery.trim()) {
-      const url = searchType
-        ? `/searchpage?type=${searchType}&query=${searchQuery}`
-        : `/searchpage?query=${searchQuery}`;
+      const url = `/searchpage?query=${queryValue}`;
 
       router.push(url);
       onClose();
@@ -100,18 +98,36 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
   const handleKeyPress = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      navigateToSearchPage();
+      navigateToSearchPage(searchQuery);
     }
   };
 
   // Handle Search Button Click
-  const handleSearch = () => {
-    navigateToSearchPage();
+  const handleSearch = (queryValue: string) => {
+    navigateToSearchPage(queryValue);
+    setSearchResults([]);
+    setSearchQuery('');
+    setSearchType('');
   };
   useEffect(() => {
     console.log('Updated Search Query:', searchQuery);
   }, [searchQuery, selectedType]);
+  const highlightMatch = (text: string, query: string) => {
+    if (!query) return text;
 
+    const regex = new RegExp(`(${query})`, 'gi');
+    const parts = text.split(regex);
+
+    return parts.map((part, i) =>
+      regex.test(part) ? (
+        <span key={i} style={{ color: '#0E28AE', fontWeight: 'bold' }}>
+          {part}
+        </span>
+      ) : (
+        <span key={i}>{part}</span>
+      )
+    );
+  };
   return (
     <Dialog
       open={open}
@@ -183,20 +199,28 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
 
         {/* API Search Results */}
         {searchResults.length > 0
-          ? searchResults.map((item) => (
-              <ListItem
-                key={item.name}
-                sx={{ cursor: 'pointer' }}
-                onClick={handleSearch}
-              >
-                <ListItemAvatar>
-                  <Avatar sx={{ backgroundColor: '#CEE5FF', color: '#06164B' }}>
-                    {item.name ? item.name.charAt(0).toUpperCase() : 'S'}
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary={item.name} />
-              </ListItem>
-            ))
+          ? searchResults.map((item) => {
+              return (
+                <ListItem
+                  key={item.name}
+                  sx={{ cursor: 'pointer' }}
+                  onClick={() => handleSearch(item.name)}
+                >
+                  <ListItemAvatar>
+                    <Avatar
+                      sx={{ backgroundColor: '#CEE5FF', color: '#06164B' }}
+                    >
+                      {item.name ? item.name.charAt(0).toUpperCase() : 'S'}
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={
+                      <span>{highlightMatch(item.name, searchQuery)}</span>
+                    }
+                  />
+                </ListItem>
+              );
+            })
           : searchQuery &&
             filteredSearchTypes.length === 0 && (
               <ListItem>

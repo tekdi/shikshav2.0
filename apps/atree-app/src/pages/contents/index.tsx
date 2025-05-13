@@ -29,8 +29,6 @@ const List: React.FC<ListProps> = () => {
 
   const subCategory = getLocalStorageItem('subcategory');
   const storedCategory = getLocalStorageItem('category');
-  const selectedLanguage = getLocalStorageItem('language');
-  const selectedAccess = getLocalStorageItem('access');
 
   const [filters, setFilters] = useState<any>({
     request: {
@@ -76,7 +74,7 @@ const List: React.FC<ListProps> = () => {
         ...prevFilters.request,
         filters: {
           ...prevFilters.request.filters,
-          ...(selectedValues.request?.filters || selectedValues),
+          ...(selectedValues.request?.filters ?? selectedValues),
         },
       },
     }));
