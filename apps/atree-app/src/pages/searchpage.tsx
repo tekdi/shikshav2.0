@@ -50,13 +50,13 @@ export default function Searchpage() {
         gap="1rem"
         py="1rem"
         px="14px"
-        sx={{ width: 'fit-content' }}
+        sx={{ width: '100%' }}
       >
         <Box display="flex" alignItems="center" gap={2} sx={{ width: '100%' }}>
           <IconButton
             onClick={(e) => {
               e.stopPropagation();
-              router.back();
+              router.push('/home');
             }}
             sx={{
               padding: '4px',

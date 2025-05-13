@@ -118,15 +118,17 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
     const regex = new RegExp(`(${query})`, 'gi');
     const parts = text.split(regex);
 
-    return parts.map((part, i) =>
-      regex.test(part) ? (
-        <span key={i} style={{ color: '#0E28AE', fontWeight: 'bold' }}>
+    return parts.map((part, i) => {
+      const key = `${part}-${i}`; // create a semi-unique key
+
+      return regex.test(part) ? (
+        <span key={key} style={{ color: '#0E28AE', fontWeight: 'bold' }}>
           {part}
         </span>
       ) : (
-        <span key={i}>{part}</span>
-      )
-    );
+        <span key={key}>{part}</span>
+      );
+    });
   };
   return (
     <Dialog
