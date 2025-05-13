@@ -66,6 +66,7 @@ const MyComponent: React.FC = () => {
   }, []);
 
   const handleClick = (category: any) => {
+    localStorage.setItem('subcategory', category.name);
     router.push(`/quick-access/contents/${category.name}`);
   };
 

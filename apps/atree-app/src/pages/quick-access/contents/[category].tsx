@@ -29,6 +29,17 @@ import FooterText from 'apps/atree-app/src/component/FooterText';
 import Footer from 'apps/atree-app/src/component/layout/Footer';
 const Content = dynamic(() => import('@Content'), { ssr: false });
 
+const subFrameworkFilter = [
+  { identifier: '', name: 'All' },
+  { identifier: 'video/x-youtube', name: 'Videos' },
+  { identifier: 'application/pdf', name: 'PDFs' },
+  { identifier: 'video/mp4', name: 'Audiobooks' },
+];
+
+const getLocalStorageItem = (key: string) => {
+  return typeof window !== 'undefined' ? localStorage.getItem(key) : null;
+};
+
 const MyComponent: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -39,36 +50,31 @@ const MyComponent: React.FC = () => {
   const [subFramework, setSubFramework] = useState('');
   const [filterShow, setFilterShow] = useState(false);
   const [frameworkFilter, setFrameworkFilter] = useState(false);
+  const [fullAccess, setFullAccess] = useState(false);
+  const [searchResults, setSearchResults] = useState<
+    { subTopic: string; length: number }[]
+  >([]);
+
+  const topicVal = getLocalStorageItem('category');
   const [filters, setFilters] = useState<any>({
     limit: 5,
     offset: 0,
     channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
-    topic: isTopic ? category : undefined, // Initialize topic if isTopic=true
-    subTopic: !isTopic ? category : undefined,
+    topic: topicVal ?? undefined,
+    subTopic: getLocalStorageItem('subCategory') ?? undefined,
+    mimeType: [] as string[],
+    resource: [] as string[],
   });
-
-  const [searchResults, setSearchResults] = useState<
-    { subTopic: string; length: number }[]
-  >([]);
-  const [fullAccess, setFullAccess] = useState(false);
 
   const { handleCardClick, openMessageDialog, setOpenMessageDialog } =
     useHandleCardClick();
-  /** SubFramework Filter Options */
-  const subFrameworkFilter = [
-    { identifier: '', name: 'All' },
-    { identifier: 'video/x-youtube', name: 'Videos' },
-    { identifier: 'application/pdf', name: 'PDFs' },
-    { identifier: 'video/mp4', name: 'Audiobooks' },
-  ];
+
   const customFontStyle = {
-    fontSize: '14px', //font
+    fontSize: '14px',
     color: fullAccess ? '#9E9E9E' : '#000000',
-    //color
     fontWeight: fullAccess ? '400' : '600',
   };
 
-  /** Fetch Framework Data */
   const fetchFrameworkData = async () => {
     try {
       const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
@@ -80,117 +86,111 @@ const MyComponent: React.FC = () => {
     }
   };
 
-  /** Fetch Content Search Results */
+  const updateSearchResults = async (data: any) => {
+    if (category) {
+      setSearchResults([
+        {
+          subTopic: String(category),
+          length: data?.result?.content?.length || 0,
+        },
+      ]);
+    }
+  };
+
+  const getFilterParams = () => {
+    const isTopicValid = typeof isTopic === 'string' && isTopic.trim() !== '';
+    const filterParams: any = {
+      ...filters,
+      ...(isTopicValid
+        ? { topic: topicVal, subTopic: undefined }
+        : { subTopic: category }),
+    };
+
+    if (subFramework) {
+      filterParams.mimeType = [subFramework];
+    }
+    return filterParams;
+  };
+
   const fetchContentSearch = async () => {
     try {
-      const isTopicValid = typeof isTopic === 'string' && isTopic.trim() !== '';
+      const filterParams = getFilterParams();
       setFilters((prevFilters: any) => ({
         ...prevFilters,
-        ...(isTopicValid
-          ? { topic: category, subTopic: undefined }
-          : { subTopic: category }),
+        ...filterParams,
       }));
-      const filterParams: any = {
-        ...filters,
-        ...(isTopicValid
-          ? { topic: category, subTopic: undefined }
-          : { subTopic: category }),
-      };
-
-      if (subFramework) {
-        filterParams.mimeType = [subFramework];
-      }
 
       const data = await ContentSearch({
         channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
         filters: filterParams,
       });
 
-      if (category) {
-        setSearchResults([
-          {
-            subTopic: String(category),
-            length: data?.result?.content?.length || 0,
-          },
-        ]);
-      }
+      await updateSearchResults(data);
     } catch (error) {
       console.error('Error fetching content search:', error);
     }
   };
+
+  const initializeData = async () => {
+    await fetchFrameworkData();
+    await fetchContentSearch();
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     setFilters((prevFilters: any) => ({
       ...prevFilters,
-      topic: isTopic ? category : undefined,
+      topic: topicVal ?? undefined,
       subTopic: !isTopic ? category : undefined,
     }));
   }, [isTopic, category]);
+
   useEffect(() => {
-    (async () => {
-      await fetchFrameworkData();
-      await fetchContentSearch();
-      setIsLoading(false);
-    })();
+    initializeData();
   }, []);
+
   const handleCloseMessage = () => {
-    //close
     setOpenMessageDialog(false);
-    //rout
     router.push('/signin');
   };
-  /** Handle Category Click */
+
   const handleClick = (category: any) =>
     router.push(`/contents/${category.name}`);
 
-  /** Handle Filter Application */
-  const handleApplyFilters = (selectedValues: any) => {
+  const updateFilters = (selectedValues: any) => {
     const isEmpty = Object.keys(selectedValues).length === 0;
-    console.log('selectedValues', selectedValues);
-    if (selectedValues) {
-      // Remove `isTopic` from the URL
-      const { isTopic, ...updatedQuery } = router.query;
-      router.replace(
-        {
-          pathname: router.pathname,
-          query: updatedQuery,
-        },
-        undefined,
-        { shallow: true } // Prevents full page reload
-      );
+    const actualFilters = selectedValues.request?.filters ?? selectedValues;
 
-      // Update filters correctly
-      setFilters((prevFilters: any) => {
-        const newFilters = {
-          ...prevFilters,
-          ...selectedValues,
-          ...(isEmpty ? { subTopic: category } : {}),
-          ...(isEmpty ? { topic: undefined } : {}),
-          ...(isEmpty ? { resource: undefined } : {}),
-          ...(isEmpty ? { mimeType: undefined } : {}),
-        };
-        console.log('Updated Filters (inside setState callback)==', newFilters);
-        return newFilters;
-      });
-    }
+    return {
+      ...(actualFilters.resource && { resource: actualFilters.resource }),
+      ...(actualFilters.mimeType && { mimeType: actualFilters.mimeType }),
+      ...(actualFilters.topic && { topic: actualFilters.topic }),
+      ...(actualFilters.subTopic && { subTopic: actualFilters.subTopic }),
+      ...(isEmpty ? { subTopic: category } : {}),
+      ...(isEmpty ? { topic: topicVal } : {}),
+      ...(isEmpty ? { resource: undefined } : {}),
+      ...(isEmpty ? { mimeType: undefined } : {}),
+    };
   };
 
-  useEffect(() => {
-    console.log('Updated Filters (inside useEffect)==', filters);
-  }, [filters]);
+  const handleApplyFilters = (selectedValues: any) => {
+    setFilters((prevFilters: any) => ({
+      ...prevFilters,
+      ...updateFilters(selectedValues),
+    }));
+  };
 
   const handleToggleFullAccess = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const accessValue = event.target.checked ? 'Full Access' : 'all'; // Set 'full' or 'all' based on switch state
+    const accessValue = event.target.checked ? 'Full Access' : 'all';
     setFullAccess(event.target.checked);
     setFilters((prevFilters: any) => ({
       ...prevFilters,
-      ...prevFilters.filters, // Preserve existing filters
-      access: accessValue === 'all' ? undefined : accessValue, // Remove 'access' key if 'all'
+      access: accessValue === 'all' ? undefined : accessValue,
       offset: 0,
     }));
   };
-  /** Reusable Filter Button */
 
   const FilterChip = () => (
     <Chip
@@ -214,7 +214,6 @@ const MyComponent: React.FC = () => {
     />
   );
 
-  /** SubFramework Filter Buttons */
   const SubFrameworkButtons = () => (
     <Grid container spacing={1} justifyContent="center">
       {subFrameworkFilter.map((item) => (
@@ -240,28 +239,46 @@ const MyComponent: React.FC = () => {
       ))}
     </Grid>
   );
-  const renderFooterComponent = () => {
-    if (!isMobile) {
-      return <FooterText page="" />;
-    }
-    return undefined;
-  };
+
+  const getContentProps = () => ({
+    _grid: {
+      size: { xs: 6, sm: 6, md: 4, lg: 3 },
+    },
+    contentTabs: ['content'],
+    handleCardClick: (content: ContentSearchResponse) => {
+      if (content.identifier) {
+        handleCardClick({ identifier: content.identifier });
+      } else {
+        console.warn('Content identifier is missing:', content);
+      }
+    },
+    filters: {
+      filters: {
+        channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
+        ...(filters.topic?.length ? { topic: filters.topic } : {}),
+        ...(filters.access === 'Full Access' && { access: 'Full Access' }),
+        ...(subFramework && { mimeType: [subFramework] }),
+        ...(filters.mimeType?.length ? { mimeType: filters.mimeType } : {}),
+        ...(filters.resource?.length ? { resource: filters.resource } : {}),
+        ...(filters.subTopic?.length ? { subTopic: filters.subTopic } : {}),
+      },
+    },
+    _card: { cardName: 'AtreeCard', image: atreeLogo.src },
+    showSearch: false,
+    showFilter: false,
+    filterBy: false,
+    showFilterRight: false,
+  });
+
   return (
     <Layout
       _backButton={{ alignItems: 'center' }}
-      isFooter={isMobile} // add this when on mobile
+      isFooter={isMobile}
       footerComponent={!isMobile ? <FooterText page="" /> : <Footer />}
       backTitle={
-        <Box
-          sx={{
-            display: 'flex',
-            // alignItems: 'center',
-            gap: '16px',
-            flexWrap: 'wrap',
-          }}
-        >
+        <Box sx={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
           <Typography sx={{ fontSize: '22px', lineHeight: '28px' }}>
-            {category}
+            {topicVal} : {category}
           </Typography>
         </Box>
       }
@@ -271,26 +288,24 @@ const MyComponent: React.FC = () => {
       {isLoading ? (
         <Loader />
       ) : (
-        <Box
-          display="flex"
-          flexDirection="column"
-          // py={!isMobile && '1rem'}
-          px="8px"
-          gap="1rem"
-        >
+        <Box display="flex" flexDirection="column" px="8px" gap="1rem">
           {isMobile && (
-            <Box
-              display="flex"
-              alignItems="center"
-              gap={1}
-              // sx={{ justifyContent: 'flex-end' }}
-            >
+            <Box display="flex" alignItems="center" gap={1} marginLeft="auto">
               <FilterChip />
               <FilterDialog
                 open={filterShow}
                 onClose={() => setFilterShow(false)}
                 frameworkFilter={frameworkFilter}
-                filterValues={filters}
+                filterValues={{
+                  request: {
+                    filters: {
+                      resource: filters.resource ?? [],
+                      mimeType: filters.mimeType ?? [],
+                      topic: filters.topic ?? [],
+                      subTopic: filters.subTopic ?? [],
+                    },
+                  },
+                }}
                 onApply={handleApplyFilters}
                 isMobile={isMobile}
               />
@@ -307,7 +322,16 @@ const MyComponent: React.FC = () => {
             <Grid size={{ xs: 3, md: 3 }}>
               <FilterDialog
                 frameworkFilter={frameworkFilter}
-                filterValues={filters}
+                filterValues={{
+                  request: {
+                    filters: {
+                      resource: filters.resource ?? [],
+                      mimeType: filters.mimeType ?? [],
+                      topic: filters.topic ?? [],
+                      subTopic: filters.subTopic ?? [],
+                    },
+                  },
+                }}
                 onApply={handleApplyFilters}
                 resources={RESOURCE_TYPES}
                 mimeType={MIME_TYPES}
@@ -336,75 +360,14 @@ const MyComponent: React.FC = () => {
                       cursor: 'auto',
                     }}
                   />
-
-                  {!isMobile && (
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      gap={1}
-                      sx={{ width: '100%', justifyContent: 'center' }}
-                    >
-                      <CustomSwitch
-                        fullAccess={fullAccess}
-                        handleToggleFullAccess={handleToggleFullAccess}
-                        customFontStyle={customFontStyle}
-                      />
-                    </Box>
-                  )}
                 </Box>
                 {isMobile && <SubFrameworkButtons />}
                 <Box sx={{ marginTop: isMobile ? '32px' : '18px' }}>
-                  <Content
-                    {...{
-                      _grid: {
-                        size: { xs: 6, sm: 6, md: 4, lg: 3 },
-                      },
-                      contentTabs: ['content'],
-                      handleCardClick: (content: ContentSearchResponse) => {
-                        if (content.identifier) {
-                          handleCardClick({ identifier: content.identifier });
-                        } else {
-                          console.warn(
-                            'Content identifier is missing:',
-                            content
-                          );
-                        }
-                      },
-                      filters: {
-                        filters: {
-                          channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
-                          ...(filters.topic?.length
-                            ? { topic: filters.topic }
-                            : {}),
-
-                          ...(filters.access === 'Full Access' && {
-                            access: 'Full Access',
-                          }),
-                          ...(subFramework && { mimeType: [subFramework] }),
-                          ...(filters.mimeType?.length
-                            ? { mimeType: filters.mimeType }
-                            : {}),
-                          ...(filters.resource?.length
-                            ? { resource: filters.resource }
-                            : {}),
-
-                          ...(filters.subTopic?.length
-                            ? { subTopic: filters.subTopic }
-                            : {}),
-                        },
-                      },
-                      _card: { cardName: 'AtreeCard', image: atreeLogo.src },
-                      showSearch: false,
-                      showFilter: false,
-                      filterBy: false,
-                      showFilterRight: false,
-                    }}
-                  />
+                  <Content {...getContentProps()} />
                 </Box>
               </>
             </Grid>
           </Grid>
-          {/* </Box> */}
         </Box>
       )}
       <LoginDialog

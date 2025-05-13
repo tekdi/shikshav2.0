@@ -50,9 +50,11 @@ export const AtreeCard: React.FC<{
         <>
           {(isHome ? visibleContents : contents).map((content) => (
             <Grid
-              size={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 4 }}
+              size={{ xs: 12, sm: 6, md: 4 }}
               sx={{
                 cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
               }}
               key={content.identifier}
               {..._grid}
@@ -60,32 +62,48 @@ export const AtreeCard: React.FC<{
               <Card
                 sx={{
                   height: '100%',
-                  boxShadow: ' 0px 4px 4px 0px #00000040',
+                  boxShadow: '0px 4px 4px 0px #00000040',
                   background: 'transparent',
                   borderRadius: '8px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  flexGrow: 1,
                 }}
                 onClick={() => handleCardClick(content)}
               >
-                <CardMedia
-                  component="img"
-                  image={content?.posterImage || _card?.image}
-                  alt={content.name}
+                <Box
                   sx={{
-                    objectFit: 'cover',
-                    objectPosition: 'center',
+                    position: 'relative',
+                    width: '100%',
+                    paddingTop: '66.66%', // 3:2 aspect ratio (2/3 = 0.6666)
+                    overflow: 'hidden',
                     borderRadius: '16px',
                     border: '1px solid rgba(0,0,0,0.1)',
-                    aspectRatio: '176 / 118',
-                    overflow: 'hidden',
                     mb: 2,
                   }}
-                />
+                >
+                  <CardMedia
+                    component="img"
+                    image={content?.posterImage || _card?.image}
+                    alt={content.name}
+                    sx={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover', // Changed from 'cover' to 'contain'
+                      backgroundColor: '#f5f5f5', // Fallback background
+                    }}
+                  />
+                </Box>
                 <CardContent
                   sx={{
                     display: 'flex',
                     flexDirection: 'column',
                     padding: '0 0 10px 0 !important',
                     marginLeft: '10px',
+                    flexGrow: 1,
                   }}
                 >
                   <Typography
@@ -112,7 +130,7 @@ export const AtreeCard: React.FC<{
                       fontWeight: 500,
                       fontSize: '14px',
                       lineHeight: '20px',
-                      color: '##171D1E',
+                      color: '#171D1E',
                       display: '-webkit-box',
                       WebkitLineClamp: 2,
                       WebkitBoxOrient: 'vertical',

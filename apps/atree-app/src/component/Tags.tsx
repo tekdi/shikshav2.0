@@ -102,7 +102,13 @@ export const FrameworkFilter = ({
               minWidth: '100px',
               marginTop: { md: '-10px' },
             }
-          : {}
+          : {
+              display: 'flex',
+              flexDirection: 'row', // Explicit row direction
+              flexWrap: 'nowrap', // Prevent wrapping
+              gap: 1, // Space between items
+              overflowX: 'auto', // Horizontal scroll if needed
+            }
       }
     >
       {frameworkFilter.map(({ identifier, name }) => {
