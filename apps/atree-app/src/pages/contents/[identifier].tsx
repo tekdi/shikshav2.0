@@ -116,7 +116,6 @@ export default function Content() {
 
       let relatedContentTemp: ContentItem[] = [];
 
-      // for (const keyword of keywords) {
       try {
         const keywordFilteredResults = await ContentSearch({
           channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,

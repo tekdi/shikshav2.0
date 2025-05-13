@@ -192,9 +192,6 @@ export const FilterDialog = ({
       });
     }
     if (filterValues?.request?.filters?.topic) {
-      // localStorage.setItem('category', filterValues?.filters?.topic);
-      console.log('Filterdialog', filterValues?.request?.filters?.topic);
-
       setSelectedTopic(filterValues?.request?.filters?.topic);
       setSelectedValues({
         topic: filterValues?.request?.filters?.topic,
@@ -239,7 +236,6 @@ export const FilterDialog = ({
 
   const handleCheckboxChange = (event: any, filterCode: string) => {
     const { checked, value } = event.target;
-    const newValue = typeof value === 'string' ? value.split(',') : value;
 
     setSelectedValues((prev: any) => {
       const currentValues = prev[filterCode] || [];

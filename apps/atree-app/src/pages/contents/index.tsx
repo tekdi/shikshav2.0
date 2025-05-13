@@ -69,7 +69,7 @@ const List: React.FC<ListProps> = () => {
   const handleApplyFilters = (selectedValues: any) => {
     setFilters((prevFilters: any) => {
       // Get the actual filters from the selected values
-      const incomingFilters = selectedValues.request?.filters || selectedValues;
+      const incomingFilters = selectedValues.request?.filters ?? selectedValues;
 
       return {
         ...prevFilters,
@@ -134,7 +134,7 @@ const List: React.FC<ListProps> = () => {
                     image: atreeLogo.src,
                   },
                   showSearch: false,
-                  filterBy: isMobile ? true : false,
+                  filterBy: isMobile,
                   showArrowback: true,
                   showContent: true,
                 }}
@@ -174,7 +174,7 @@ const List: React.FC<ListProps> = () => {
                 image: atreeLogo.src,
               },
               showSearch: false,
-              filterBy: isMobile ? true : false,
+              filterBy: isMobile,
               showArrowback: true,
               showContent: true,
             }}

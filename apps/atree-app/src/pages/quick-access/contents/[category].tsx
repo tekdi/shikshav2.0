@@ -45,18 +45,18 @@ const MyComponent: React.FC = () => {
     channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
     topic:
       typeof window !== 'undefined'
-        ? localStorage.getItem('category') || undefined
+        ? localStorage.getItem('category') ?? undefined
         : undefined,
     subTopic:
       typeof window !== 'undefined'
-        ? localStorage.getItem('subCategory') || undefined
+        ? localStorage.getItem('subCategory') ?? undefined
         : undefined,
     mimeType: [] as string[],
     resource: [] as string[],
   });
   const topicVal =
     typeof window !== 'undefined'
-      ? localStorage.getItem('category') || undefined
+      ? localStorage.getItem('category') ?? undefined
       : undefined;
   const [searchResults, setSearchResults] = useState<
     { subTopic: string; length: number }[]
@@ -132,7 +132,7 @@ const MyComponent: React.FC = () => {
   useEffect(() => {
     setFilters((prevFilters: any) => ({
       ...prevFilters,
-      topic: topicVal ? topicVal : undefined,
+      topic: topicVal ?? undefined,
       subTopic: !isTopic ? category : undefined,
     }));
   }, [isTopic, category]);
@@ -155,7 +155,7 @@ const MyComponent: React.FC = () => {
 
   const handleApplyFilters = (selectedValues: any) => {
     const isEmpty = Object.keys(selectedValues).length === 0;
-    const actualFilters = selectedValues.request?.filters || selectedValues;
+    const actualFilters = selectedValues.request?.filters ?? selectedValues;
     setFilters((prevFilters: any) => {
       const newFilters = {
         ...prevFilters,
@@ -284,10 +284,10 @@ const MyComponent: React.FC = () => {
                 filterValues={{
                   request: {
                     filters: {
-                      resource: filters.resource || [],
-                      mimeType: filters.mimeType || [],
-                      topic: filters.topic || [],
-                      subTopic: filters.subTopic || [],
+                      resource: filters.resource ?? [],
+                      mimeType: filters.mimeType ?? [],
+                      topic: filters.topic ?? [],
+                      subTopic: filters.subTopic ?? [],
                     },
                   },
                 }}
@@ -310,10 +310,10 @@ const MyComponent: React.FC = () => {
                 filterValues={{
                   request: {
                     filters: {
-                      resource: filters.resource || [],
-                      mimeType: filters.mimeType || [],
-                      topic: filters.topic || [],
-                      subTopic: filters.subTopic || [],
+                      resource: filters.resource ?? [],
+                      mimeType: filters.mimeType ?? [],
+                      topic: filters.topic ?? [],
+                      subTopic: filters.subTopic ?? [],
                     },
                   },
                 }}
