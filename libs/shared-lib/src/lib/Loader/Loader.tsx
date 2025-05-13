@@ -45,6 +45,12 @@ const getPaddingTop = (isMobile: boolean, router: any): string => {
     // ) {
     //   return '47px';
     // }
+    if (
+      router.pathname === '/register' &&
+      window.location.hash.includes('error=login_required')
+    ) {
+      return '47px';
+    }
     const hasLoginError = window.location.hash.includes('error=login_required');
     if (hasLoginError && !router.pathname.includes('searchpage')) {
       return '76px';
@@ -55,6 +61,7 @@ const getPaddingTop = (isMobile: boolean, router: any): string => {
     if (router.pathname === '/home' && router.query.category) {
       return '47px';
     }
+
     if (
       router.pathname === '/home' &&
       window.location.hash.includes('error=login_required')
@@ -76,6 +83,7 @@ const getPaddingTop = (isMobile: boolean, router: any): string => {
 
     return MOBILE_PADDING_MAP[router.pathname] || defaultPadding;
   }
+  MOBILE_PADDING_MAP;
 
   return DESKTOP_PADDING_MAP[router.pathname] || defaultPadding;
 };
