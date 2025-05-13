@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useEffect, useState } from 'react';
 import { ContentSearchResponse, RESOURCE_TYPES, MIME_TYPES } from '@shared-lib';
 import Layout from '../../component/layout/layout';
@@ -11,27 +10,28 @@ import FooterText from '../../component/FooterText';
 import Footer from '../../component/layout/Footer';
 import Grid from '@mui/material/Grid2';
 import FilterDialog from 'libs/shared-lib/src/lib/Filterdialog/FilterDialog';
+
 interface ListProps {}
 
 const Content = dynamic(() => import('@Content'), {
   ssr: false,
 });
-const selectedLanguage =
-  typeof window !== 'undefined' ? localStorage.getItem('language') : null;
+
+const getLocalStorageItem = (key: string) => {
+  return typeof window !== 'undefined' ? localStorage.getItem(key) : null;
+};
+
 const List: React.FC<ListProps> = () => {
   const [frameworkFilter, setFrameworkFilter] = useState(false);
-
   const mfe_content = process.env.NEXT_PUBLIC_CONTENT;
   const [isLoadingChildren, setIsLoadingChildren] = React.useState(true);
   const router = useRouter();
-  const subCategory =
-    typeof window !== 'undefined' ? localStorage.getItem('subcategory') : null;
-  const storedCategory =
-    typeof window !== 'undefined' ? localStorage.getItem('category') : null;
-  const selectedLanguage =
-    typeof window !== 'undefined' ? localStorage.getItem('language') : null;
-  const selectedAccess =
-    typeof window !== 'undefined' ? localStorage.getItem('access') : null;
+
+  const subCategory = getLocalStorageItem('subcategory');
+  const storedCategory = getLocalStorageItem('category');
+  const selectedLanguage = getLocalStorageItem('language');
+  const selectedAccess = getLocalStorageItem('access');
+
   const [filters, setFilters] = useState<any>({
     request: {
       filters: {
@@ -44,12 +44,14 @@ const List: React.FC<ListProps> = () => {
       offset: 0,
     },
   });
+
   useEffect(() => {
     const init = async () => {
       setIsLoadingChildren(false);
     };
     init();
   }, [mfe_content]);
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -66,27 +68,56 @@ const List: React.FC<ListProps> = () => {
     };
     fetchFrameworkData();
   }, []);
-  const handleApplyFilters = (selectedValues: any) => {
-    setFilters((prevFilters: any) => {
-      // Get the actual filters from the selected values
-      const incomingFilters = selectedValues.request?.filters ?? selectedValues;
 
-      return {
-        ...prevFilters,
-        request: {
-          ...prevFilters.request,
-          filters: {
-            ...prevFilters.request.filters,
-            ...incomingFilters,
-          },
+  const handleApplyFilters = (selectedValues: any) => {
+    setFilters((prevFilters: any) => ({
+      ...prevFilters,
+      request: {
+        ...prevFilters.request,
+        filters: {
+          ...prevFilters.request.filters,
+          ...(selectedValues.request?.filters || selectedValues),
         },
-      };
-    });
+      },
+    }));
   };
+
+  const contentProps = {
+    _grid: {
+      size: { xs: 6, sm: 6, md: 4, lg: 3 },
+    },
+    handleCardClick: (content: ContentSearchResponse) =>
+      router.push(`/contents/${content?.identifier}`),
+    contentTabs: ['content'],
+    filters: {
+      filters: {
+        channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
+        ...filters.request.filters,
+      },
+    },
+    _card: {
+      cardName: 'AtreeCard',
+      image: atreeLogo.src,
+    },
+    showSearch: false,
+    filterBy: isMobile,
+    showArrowback: true,
+    showContent: true,
+  };
+
+  const boxStyles = {
+    padding: 0,
+    minHeight: '100vh',
+    width: '100%',
+    overflow: { md: 'hidden', xs: 'auto' },
+    display: 'flex',
+    flexDirection: 'column',
+  };
+
   return (
     <Layout
       isLoadingChildren={isLoadingChildren}
-      isFooter={isMobile} // add this when on mobile
+      isFooter={isMobile}
       footerComponent={!isMobile ? <FooterText page="" /> : <Footer />}
     >
       {!isMobile ? (
@@ -104,81 +135,14 @@ const List: React.FC<ListProps> = () => {
             </Box>
           </Grid>
           <Grid size={{ xs: 9 }}>
-            <Box
-              sx={{
-                padding: 0,
-                minHeight: '100vh', // Ensures full screen height even if the parent has constraints
-                width: '100%',
-                overflow: { md: 'hidden', xs: 'auto' }, // Prevents unwanted scrolling on desktop
-                display: 'flex', // Helps in full-height layout
-                flexDirection: 'column',
-                // marginTop: { xs: '20px', md: '-60px' },
-              }}
-            >
-              <Content
-                {...{
-                  _grid: {
-                    size: { xs: 6, sm: 6, md: 4, lg: 3 },
-                  },
-                  handleCardClick: (content: ContentSearchResponse) =>
-                    router.push(`/contents/${content?.identifier}`),
-                  contentTabs: ['content'],
-                  filters: {
-                    filters: {
-                      channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
-                      ...filters.request.filters,
-                    },
-                  },
-                  _card: {
-                    cardName: 'AtreeCard',
-                    image: atreeLogo.src,
-                  },
-                  showSearch: false,
-                  filterBy: isMobile,
-                  showArrowback: true,
-                  showContent: true,
-                }}
-              />
+            <Box sx={boxStyles}>
+              <Content {...contentProps} />
             </Box>
           </Grid>
         </Grid>
       ) : (
-        <Box
-          sx={{
-            padding: 0,
-            minHeight: '100vh', // Ensures full screen height even if the parent has constraints
-            width: '100%',
-            overflow: { md: 'hidden', xs: 'auto' }, // Prevents unwanted scrolling on desktop
-            display: 'flex', // Helps in full-height layout
-            flexDirection: 'column',
-            // marginTop: { xs: '20px', md: '-60px' },
-          }}
-        >
-          <Content
-            {...{
-              _grid: {
-                size: { xs: 6, sm: 6, md: 4, lg: 3 },
-              },
-              handleCardClick: (content: ContentSearchResponse) =>
-                router.push(`/contents/${content?.identifier}`),
-              contentTabs: ['content'],
-              filters: {
-                filters: {
-                  channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
-
-                  ...filters.request.filters,
-                },
-              },
-              _card: {
-                cardName: 'AtreeCard',
-                image: atreeLogo.src,
-              },
-              showSearch: false,
-              filterBy: isMobile,
-              showArrowback: true,
-              showContent: true,
-            }}
-          />
+        <Box sx={boxStyles}>
+          <Content {...contentProps} />
         </Box>
       )}
     </Layout>
