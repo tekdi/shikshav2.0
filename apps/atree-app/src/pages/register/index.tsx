@@ -12,7 +12,7 @@ import {
   Box,
   Paper,
 } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import {
   CommonDialog,
   CommonSelect,
@@ -39,6 +39,7 @@ export default function Registration() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    moble:'',
     password: '',
     gender: '',
   });
@@ -181,371 +182,217 @@ export default function Registration() {
               width: '100%',
               borderRadius: 4,
               overflow: 'hidden',
-              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
-              m: 'auto',
+              mx: 'auto',
+              mt: 3,
+              p: { xs: 2, sm: 3 },
+              bgcolor: '#ffffff',
+              position: 'relative',
+              boxShadow: '0px 6px 18px rgba(0, 0, 0, 0.15)',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: '-6px',
+                left: '-6px',
+                right: '-6px',
+                bottom: '-6px',
+                background: 'linear-gradient(90deg, #FFBD0D 0%, #fcb900 100%)',
+                zIndex: -1,
+                borderRadius: 'inherit',
+                filter: 'blur(5px)',
+              },
             }}
           >
-            <Grid
-              container
-              spacing={2}
-              sx={{
-                flex: 1,
-                width: '100%',
-                borderRadius: 1,
-                bgcolor: '#FFFFFF',
-                justifyContent: 'center',
-                padding: 2,
-                mx: 'auto',
-                marginTop: '5%',
-              }}
-            >
-              <Grid
-                size={{ xs: 12, sm: 6, md: 6, lg: 6 }}
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 1,
-                  borderRadius: '20px 20px 0 0',
-                  // padding: '15px',
-                  backgroundColor: '#FFFFFF',
-                }}
-              >
-                {/* <ImageCenter /> */}
-                <FormLabel component="legend" sx={{ color: '#4D4639' }}>
-                  Full Name<span style={{ color: 'red' }}>*</span>
-                </FormLabel>
-                <CommonTextField
-                  value={formData.name}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (!/\d/.test(value)) {
-                      // Allow only if the input doesn't contain numbers
-                      handleChange('name')(
-                        e as React.ChangeEvent<HTMLInputElement>
-                      );
-                    }
-                  }}
-                  type="text"
-                  variant="outlined"
-                  helperText={
-                    formData.name.length > 0 && error.name
-                      ? 'Enter full name (First and Last)'
-                      : ''
-                  }
-                  error={error.name}
-                />
-
-                <FormLabel component="legend" sx={{ color: '#4D4639' }}>
-                  Email ID<span style={{ color: 'red' }}>*</span>
-                </FormLabel>
-                <CommonTextField
-                  value={formData.email}
-                  onChange={(e) => {
-                    const value = e.target.value;
-
-                    // Prevent entering a number at the start
-                    if (value.length === 1 && /^\d/.test(value)) return;
-
-                    handleChange('email')(
-                      e as React.ChangeEvent<HTMLInputElement>
-                    );
-
-                    // Validate email format
-                    const isValidEmail =
-                      /^[a-zA-Z0-9._]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/.test(value);
-
-                    if (!validateEmail(value)) {
-                      setError((prevError) => ({ ...prevError, email: true }));
-                    } else {
-                      setError((prevError) => ({ ...prevError, email: false }));
-                    }
-                  }}
-                  type="text"
-                  variant="outlined"
-                  helperText={
-                    formData.email.length > 0 && error.email
-                      ? 'Enter a valid Email ID (Should not start with a number)'
-                      : ''
-                  }
-                  error={error.email}
-                />
-
-                <FormLabel component="legend" sx={{ color: '#4D4639' }}>
-                  Password<span style={{ color: 'red' }}>*</span>
-                </FormLabel>
-                <CommonTextField
-                  value={formData.password}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    // @ts-ignore
-                    handleChange('password')(
-                      e as React.ChangeEvent<HTMLInputElement>
-                    );
-
-                    // Password validation regex
-                    const passwordRegex =
-                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-                    // Update error state based on validation
-                    if (!passwordRegex.test(value)) {
-                      setError((prevError) => ({
-                        ...prevError,
-                        password: true,
-                      }));
-                    } else {
-                      setError((prevError) => ({
-                        ...prevError,
-                        password: false,
-                      }));
-                    }
-                  }}
-                  type={showPassword ? 'text' : 'password'}
-                  variant="outlined"
-                  helperText={
-                    formData.password.length > 0 && error.password
-                      ? 'Password must contain at least 8 characters, including uppercase, lowercase, number, and special character.'
-                      : ''
-                  }
-                  error={error.password}
-                  endIcon={
-                    <IconButton
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                    >
-                      {showPassword ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  }
-                />
-                <FormLabel component="legend" sx={{ color: '#4D4639' }}>
-                  Gender<span style={{ color: 'red' }}>*</span>
-                </FormLabel>
-                <RadioGroup
-                  row
-                  value={formData.gender}
-                  onChange={handleChange('gender')}
-                >
-                  <FormControlLabel
-                    value="male"
-                    control={
-                      <Radio
-                        sx={{
-                          color: '#FFBD0D',
-                          '&.Mui-checked': { color: '#FFBD0D' },
-                        }}
-                      />
-                    }
-                    label="Male"
-                  />
-                  <FormControlLabel
-                    value="female"
-                    control={
-                      <Radio
-                        sx={{
-                          color: '#FFBD0D',
-                          '&.Mui-checked': { color: '#FFBD0D' },
-                        }}
-                      />
-                    }
-                    label="Female"
-                  />
-                  <FormControlLabel
-                    value="other"
-                    control={
-                      <Radio
-                        sx={{
-                          color: '#FFBD0D',
-                          '&.Mui-checked': { color: '#FFBD0D' },
-                        }}
-                      />
-                    }
-                    label="Other"
-                  />
-                </RadioGroup>
-                {error.gender && (
-                  <Typography color="error" fontSize="12px">
-                    Please select a gender.
-                  </Typography>
-                )}
-
-                <FormLabel component="legend" sx={{ color: '#4D4639' }}>
-                  Select Role<span style={{ color: 'red' }}>*</span>
-                </FormLabel>
-                <CommonSelect
-                  value={selectedValue}
-                  onChange={handleRoleChange}
-                  options={languageData.map(({ title, roleId }) => ({
-                    label: title,
-                    value: roleId,
-                  }))}
-                />
-
-                {/* {otpShow ? ( */}
-                <>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      // whiteSpace: 'nowrap',
-                    }}
-                  >
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={termsAccepted}
-                          onChange={() => setTermsAccepted(!termsAccepted)}
-                          sx={{
-                            transform: 'scale(0.8)',
-                            color: '#FFBD0D',
-                            '&.Mui-checked': {
-                              color: '#FFBD0D',
-                            },
-                          }}
-                        />
-                      }
-                      label={
-                        <Typography fontSize="14px" marginLeft="-2%">
-                          I have read and accepted the{' '}
-                          <Link
-                            href="/termsandcondition"
-                            style={{
-                              color: '#0047D4',
-                              textDecoration: 'underline',
-                            }}
-                          >
-                            Terms and Conditions
-                          </Link>
-                          .
-                        </Typography>
-                      }
-                    />
-                  </Box>
-
-                  <Button
-                    onClick={handleCreateUser}
-                    sx={{
-                      color: '#2B3133',
-                      width: { xs: '80%', sm: '60%', md: '50%' }, // Responsive width
-                      height: '44px',
-                      background: '#FFBD0D',
-                      borderRadius: '50px',
-                      fontSize: '16px',
-                      fontWeight: 500,
-                      textTransform: 'none',
-                      alignSelf: 'center', // Centers in flex container
-                      mx: 'auto',
-                    }}
-                    disabled={
-                      !formData.name ||
-                      !formData.email ||
-                      !formData.password ||
-                      !formData.gender ||
-                      !selectedValue ||
-                      !languageData.some(
-                        ({ roleId }) => roleId === selectedValue
-                      ) ||
-                      !termsAccepted
-                    }
-                  >
-                    Verify & Proceed
-                  </Button>
-                </>
-                {showAlertMsg && (
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    position="fixed"
-                    top={0}
-                    left={0}
-                    width="100vw"
-                    height="100vh"
-                    sx={{
-                      pointerEvents: 'auto',
-                      bgcolor: 'rgba(0, 0, 0, 0.2)',
-                    }}
-                    onClick={() => setShowAlertMsg('')}
-                  >
-                    <Alert
-                      variant="filled"
-                      severity={alertSeverity}
-                      sx={{ pointerEvents: 'auto' }}
-                      // onClick={(e) => e.stopPropagation()}
-                    >
-                      {showAlertMsg}
-                    </Alert>
-                  </Box>
-                )}
-
-                {/* <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
-          <GoogleLogin
-            onSuccess={() => {}}
-            onError={() => {}}
-            useOneTap
-            theme="outline"
-          />
-        </GoogleOAuthProvider> */}
-
-                <Typography
-                  textAlign="center"
-                  fontSize="16px"
-                  color="#3B383E"
-                  fontWeight={500}
-                >
-                  Already have an Account?{' '}
-                  <Link href="/signin" style={{ color: '#0037B9' }}>
-                    Sign In
-                  </Link>
-                </Typography>
-              </Grid>
-              <CommonDialog
-                isOpen={openUserDetailsDialog}
-                onClose={() => setOpenUserDetailsDialog(false)}
-                disableCloseOnBackdropClick={true}
-                header="User Details"
-                hideCloseButton={false}
-                content={
-                  <Box
-                    sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
-                  >
-                    <Typography variant="body1">
-                      <strong>Username:</strong> {formData.email}
-                    </Typography>
-                    {/* <Typography variant="body1">
-                    <strong>Password:</strong> {formData.password}
-                  </Typography> */}
-                    <Typography variant="body1">
-                      <strong>Note:</strong> Please save your username for
-                      future use.
-                    </Typography>
-                  </Box>
-                }
-                actions={
-                  <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                    <Button
-                      onClick={handleCloseUserDetailsDialog}
+            <Grid container direction="column" spacing={1.5}>
+              {[
+                {
+                  key: 'name',
+                  label: 'Full Name',
+                  type: 'text',
+                  required: true,
+                },
+                {
+                  key: 'email',
+                  label: 'Email ID',
+                  type: 'text',
+                  required: true,
+                },
+                {
+                  key: 'mobile',
+                  label: 'Contact Number',
+                  type: 'text',
+                  required: false,
+                },
+                {
+                  key: 'password',
+                  label: 'Password',
+                  type: showPassword ? 'text' : 'password',
+                  required: true,
+                },
+              ].map(({ key, label, type, required }) => (
+                <Grid item key={key} container alignItems="center" spacing={1}>
+                  <Grid item xs={12} sm={4}>
+                    <FormLabel
                       sx={{
-                        color: '#2B3133',
-                        width: '100%',
-                        height: '40px',
-
-                        background:
-                          'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
-                        borderRadius: '50px',
+                        color: '#4D4639',
+                        fontWeight: 600,
                         fontSize: '14px',
-                        fontWeight: 500,
                       }}
                     >
-                      OK
-                    </Button>
-                  </Box>
-                }
-                sx={{
-                  width: '500px',
-                  height: '255px',
-                  padding: '10px',
-                  borderRadius: '16px',
-                }}
-              />
+                      {label}
+                     &nbsp; {required && <span style={{ color: 'red' }}>*</span>}
+                    </FormLabel>
+                  </Grid>
+                  <Grid item xs={12} sm={8}>
+                    <CommonTextField
+                      value={formData[key]}
+                      onChange={handleChange(key)}
+                      type={type}
+                      variant="outlined"
+                      fullWidth
+                      size="small"
+                      error={error[key]}
+                      helperText={
+                        error[key]
+                          ? `Please enter valid ${label.toLowerCase()}`
+                          : ''
+                      }
+                      endIcon={
+                        key === 'password' && (
+                          <IconButton
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                          </IconButton>
+                        )
+                      }
+                    />
+                  </Grid>
+                </Grid>
+              ))}
+
+              {/* Gender selection */}
+              <Grid item container alignItems="center">
+                <Grid item xs={12} sm={4}>
+                  <FormLabel
+                    sx={{ color: '#4D4639', fontWeight: 600, fontSize: '14px' }}
+                  >
+                    Gender &nbsp;<span style={{ color: 'red' }}>*</span>
+                  </FormLabel>
+                </Grid>
+                <Grid item xs={12} sm={8}>
+                  <RadioGroup
+                    row
+                    value={formData.gender}
+                    onChange={handleChange('gender')}
+                  >
+                    {['male', 'female', 'other'].map((gender) => (
+                      <FormControlLabel
+                        key={gender}
+                        value={gender}
+                        control={
+                          <Radio
+                            sx={{
+                              color: '#FFBD0D',
+                              '&.Mui-checked': { color: '#FFBD0D' },
+                              p: 0.5,
+                            }}
+                          />
+                        }
+                        label={
+                          <Typography fontSize="13px">
+                            {gender.charAt(0).toUpperCase() + gender.slice(1)}
+                          </Typography>
+                        }
+                      />
+                    ))}
+                  </RadioGroup>
+                  {error.gender && (
+                    <Typography color="error" fontSize="12px">
+                      Please select a gender.
+                    </Typography>
+                  )}
+                </Grid>
+              </Grid>
+
+              {/* Role Select */}
+              <Grid item container alignItems="center">
+                <Grid item xs={12} sm={4}>
+                  <FormLabel
+                    sx={{ color: '#4D4639', fontWeight: 600, fontSize: '14px' }}
+                  >
+                    Select Role &nbsp;<span style={{ color: 'red' }}>*</span>
+                  </FormLabel>
+                </Grid>
+                <Grid item xs={12} sm={8}>
+                  <CommonSelect
+                    value={selectedValue}
+                    onChange={handleRoleChange}
+                    options={languageData.map(({ title, roleId }) => ({
+                      label: title,
+                      value: roleId,
+                    }))}
+                  />
+                </Grid>
+              </Grid>
+
+              {/* Terms and Conditions */}
+              <Grid item>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={termsAccepted}
+                      onChange={() => setTermsAccepted(!termsAccepted)}
+                      sx={{
+                        transform: 'scale(0.9)',
+                        color: '#FFBD0D',
+                        '&.Mui-checked': { color: '#FFBD0D' },
+                        p: 0.5,
+                      }}
+                    />
+                  }
+                  label={
+                    <Typography fontSize="13px">
+                      I have read and accepted the{' '}
+                      <Link
+                        href="/termsandcondition"
+                        style={{
+                          color: '#0047D4',
+                          textDecoration: 'underline',
+                        }}
+                      >
+                        Terms and Conditions
+                      </Link>
+                    </Typography>
+                  }
+                />
+              </Grid>
+
+              {/* Submit Button */}
+              <Grid item textAlign="center">
+                <Button
+                  onClick={handleCreateUser}
+                  sx={{
+                    width: { xs: '100%', sm: '70%', md: '60%' },
+                    height: '40px',
+                    background: '#FFBD0D',
+                    borderRadius: '50px',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    textTransform: 'none',
+                    color: '#2B3133',
+                  }}
+                  disabled={
+                    !formData.name ||
+                    !formData.email ||
+                    !formData.password ||
+                    !formData.gender ||
+                    !selectedValue ||
+                    !termsAccepted
+                  }
+                >
+                  Verify & Proceed
+                </Button>
+              </Grid>
             </Grid>
           </Paper>
         )}

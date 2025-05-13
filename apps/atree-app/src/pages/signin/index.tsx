@@ -9,7 +9,7 @@ import {
   Box,
   Paper,
 } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { CommonTextField } from '@shared-lib';
 import Link from 'next/link';
 import { GoogleOAuthProvider } from '@react-oauth/google';
@@ -21,6 +21,7 @@ import Loader from '../../component/layout/LoaderComponent';
 import Layout from '../../component/layout/layout';
 import { commonButtonStyle } from '../../utils/commonStyle';
 import { validateEmail, validatePassword } from '../../utils/authUtils';
+
 interface ListProps {}
 
 const Login: React.FC<ListProps> = () => {
@@ -103,6 +104,7 @@ const Login: React.FC<ListProps> = () => {
       setLoading(false);
     }
   };
+
   return (
     <Layout>
       <Box>
@@ -112,46 +114,54 @@ const Login: React.FC<ListProps> = () => {
           <Paper
             elevation={6}
             sx={{
-              maxWidth: 800,
+              maxWidth: 600,
               width: '100%',
-              borderRadius: 4,
+              borderRadius: 8,
               overflow: 'hidden',
-              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
-              m: 'auto',
+              mx: 'auto',
+              mt: 5,
+              p: { xs: 3, sm: 4 },
+              bgcolor: '#ffffff',
+              position: 'relative', // For gradient shadow effect
+              boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.2)',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: '-8px',
+                left: '-8px',
+                right: '-8px',
+                bottom: '-8px',
+                background: 'linear-gradient(90deg, #FFBD0D 0%, #fcb900 100%)',
+                zIndex: -1,
+                borderRadius: 'inherit',
+                filter: 'blur(6px)',
+              },
             }}
           >
-            <Grid
-              container
-              spacing={2}
-              sx={{
-                flex: 1,
-                width: '100%',
-                borderRadius: 1,
-                bgcolor: '#FFFFFF',
-                justifyContent: 'center',
-
-                //   padding: 2,
-                mx: 'auto',
-              }}
-            >
-              <Grid
-                size={{ xs: 12, sm: 8, md: 8, lg: 8 }}
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 2,
-                  borderRadius: '20px 20px 0 0',
-                  padding: '15px',
-                  backgroundColor: '#FFFFFF',
-                  mt: 4,
-                }}
-              >
-                {['email', 'password'].map((field) => (
-                  <Box key={field + '1'}>
-                    <FormLabel component="legend" sx={{ color: '#4D4639' }}>
+            <Grid container direction="column" spacing={3}>
+              {['email', 'password'].map((field) => (
+                <Grid
+                  item
+                  key={field}
+                  container
+                  alignItems="center"
+                  justifyContent="flex-start"
+                >
+                  <Grid item xs={4}>
+                    <FormLabel
+                      component="label"
+                      sx={{
+                        color: '#4D4639',
+                        fontWeight: 700,
+                        fontSize: '1rem',
+                        marginBottom: 1,
+                      }}
+                    >
                       {field === 'email' ? 'Username' : 'Password'}
                       <span style={{ color: 'red' }}>*</span>
                     </FormLabel>
+                  </Grid>
+                  <Grid item xs={6}>
                     <CommonTextField
                       value={credentials[field as 'email' | 'password']}
                       onChange={handleChange(field as 'email' | 'password')}
@@ -163,6 +173,8 @@ const Login: React.FC<ListProps> = () => {
                       variant="outlined"
                       helperText={errors[field as 'email' | 'password']}
                       error={!!errors[field as 'email' | 'password']}
+                      fullWidth
+                      sx={{ mt: 0 }}
                       endIcon={
                         field === 'password' && (
                           <IconButton
@@ -173,68 +185,88 @@ const Login: React.FC<ListProps> = () => {
                         )
                       }
                     />
-                  </Box>
-                ))}
+                  </Grid>
+                </Grid>
+              ))}
 
-                <Button
-                  onClick={handleSigninClick}
-                  sx={{
-                    color: '#2B3133',
-                    width: { xs: '80%', sm: '60%', md: '50%' }, // Responsive width
-                    height: '44px',
-                    background: '#FFBD0D',
-                    borderRadius: '50px',
-                    fontSize: '16px',
-                    fontWeight: 500,
-                    textTransform: 'none',
-                    alignSelf: 'center', // Centers in flex container
-                    mx: 'auto',
-                  }}
-                >
-                  Proceed
-                </Button>
-                <GoogleOAuthProvider
-                  clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ''}
-                >
-                  <MyCustomGoogleLogin />
-                </GoogleOAuthProvider>
-                <Typography
-                  textAlign={'center'}
-                  variant="h1"
-                  fontSize={'16px'}
-                  color="#3B383E"
-                  fontWeight={500}
-                >
-                  Don't Have An Account?{' '}
-                  <Link href="/register" style={{ color: '#0037B9' }}>
+              {/* Proceed and Google buttons */}
+              <Grid item>
+                <Grid container spacing={2} justifyContent="center">
+                  <Grid item xs={8} md={5}>
+                    <Button
+                      onClick={handleSigninClick}
+                      sx={{
+                        width: '100%',
+                        height: '48px',
+                        background:
+                          'linear-gradient(90deg, #FFBD0D 0%, #fcb900 100%)',
+                        color: '#2B3133',
+                        borderRadius: '30px',
+                        fontSize: '16px',
+                        fontWeight: 600,
+                        textTransform: 'none',
+                        boxShadow: '0px 4px 12px rgba(0,0,0,0.1)',
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          background: '#e6a90b',
+                        },
+                      }}
+                    >
+                      Proceed
+                    </Button>
+                  </Grid>
+                  <Grid item xs={8} md={5}>
+                    <GoogleOAuthProvider
+                      clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ''}
+                    >
+                      <MyCustomGoogleLogin />
+                    </GoogleOAuthProvider>
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <Grid item textAlign="center">
+                <Typography fontSize="15px" color="#3B383E">
+                  Don't have an account?{' '}
+                  <Link
+                    href="/register"
+                    style={{
+                      color: '#0037B9',
+                      fontWeight: 600,
+                      textDecoration: 'underline',
+                    }}
+                  >
                     Sign up
                   </Link>
                 </Typography>
               </Grid>
-              {alert.message && (
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  position="fixed"
-                  top={0}
-                  left={0}
-                  width="100vw"
-                  height="100vh"
-                  sx={{ pointerEvents: 'auto', bgcolor: 'rgba(0, 0, 0, 0.2)' }}
-                  onClick={() => setAlert({ message: '', severity: 'success' })}
-                >
-                  <Alert
-                    variant="filled"
-                    severity={alert.severity}
-                    sx={{ pointerEvents: 'auto' }}
-                    // onClick={() => setAlert({ message: '', severity: 'success' })}
-                  >
-                    {alert.message}
-                  </Alert>
-                </Box>
-              )}
             </Grid>
+
+            {alert.message && (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                position="fixed"
+                top={0}
+                left={0}
+                width="100vw"
+                height="100vh"
+                sx={{
+                  pointerEvents: 'auto',
+                  bgcolor: 'rgba(0, 0, 0, 0.3)',
+                }}
+                onClick={() => setAlert({ message: '', severity: 'success' })}
+              >
+                <Alert
+                  variant="filled"
+                  severity={alert.severity}
+                  sx={{ pointerEvents: 'auto' }}
+                >
+                  {alert.message}
+                </Alert>
+              </Box>
+            )}
           </Paper>
         )}
       </Box>
@@ -243,6 +275,7 @@ const Login: React.FC<ListProps> = () => {
 };
 
 export default Login;
+
 const MyCustomGoogleLogin = () => {
   const { keycloak } = useKeycloak();
 
@@ -250,12 +283,10 @@ const MyCustomGoogleLogin = () => {
     try {
       await keycloak.login({
         idpHint: 'google',
-        // redirectUri: `${window.location.origin}/home`,
       });
       if (keycloak.authenticated && keycloak.token) {
         localStorage.setItem('token', keycloak.token || '');
         localStorage.setItem('refreshToken', keycloak.refreshToken || '');
-        console.log('keycloak.token', keycloak.token);
       } else {
         console.error('No token received after login.');
       }
@@ -267,9 +298,24 @@ const MyCustomGoogleLogin = () => {
   return (
     <Box>
       <Button
-        variant="contained"
-        sx={commonButtonStyle}
-        onClick={() => handleLogin()} // Manually trigger login
+        variant="outlined"
+        sx={{
+          width: '100%',
+          height: '48px',
+          background: 'transparent',
+          color: '#2B3133',
+          borderRadius: '30px',
+          fontSize: '16px',
+          fontWeight: 600,
+          textTransform: 'none',
+          border: '2px solid #FFBD0D',
+          boxShadow: '0px 4px 12px rgba(0,0,0,0.1)',
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            background: '#fcb900',
+          },
+        }}
+        onClick={() => handleLogin()}
       >
         <Box display="flex" alignItems="center" gap="10px">
           <img
