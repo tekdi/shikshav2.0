@@ -33,23 +33,24 @@ import {
   validateEmail,
   validatePassword,
   validateName,
+  validateMobile,
 } from '../../utils/authUtils';
 
 export default function Registration() {
   const [formData, setFormData] = useState<{ [key: string]: string }>({
     name: '',
     email: '',
-    moble: '',
+    mobile: '',
     password: '',
     gender: '',
   });
-  
 
   const [error, setError] = useState({
     name: false,
     email: false,
     password: false,
     gender: false,
+    mobile: false,
   });
 
   const [selectedValue, setSelectedValue] = useState('Educator');
@@ -77,25 +78,30 @@ export default function Registration() {
   const handleChange =
     (field: keyof typeof formData) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      setShowAlertMsg('');
       const value = event.target.value;
       const validateField = (field: string, value: string | number) => {
-              if (typeof value !== 'string') return false; // Ensure value is a string
-              switch (field) {
-                case 'name':
-                  return !validateName(value);
-                case 'email':
-                  return !validateEmail(value);
-                case 'password':
-                  return !validatePassword(value);
-                case 'gender':
-                  return !validateGender(value);
-                default:
-                  return false;
-              }
-            };
+        if (typeof value !== 'string') return false; // Ensure value is a string
+        switch (field) {
+          case 'name':
+            return !validateName(value);
+          case 'email':
+            return !validateEmail(value);
+          case 'password':
+            return !validatePassword(value);
+          case 'gender':
+            return !validateGender(value);
+          case 'mobile':
+            return value ? !validateMobile(value) : false;
+          default:
+            return false;
+        }
+      };
 
       setFormData({ ...formData, [field]: value });
+      setError({
+        ...error,
+        [field]: validateField(field.toString(), value.toString()),
+      });
       // setError({
       //   ...error,
       //   [field]: validateField(field, value.toString()),
@@ -107,13 +113,15 @@ export default function Registration() {
       !validateName(formData.name) ||
       !validateEmail(formData.email) ||
       !validatePassword(formData.password) ||
-      !validateGender(formData.gender)
+      !validateGender(formData.gender) ||
+      (formData.mobile && !validateMobile(formData.mobile))
     ) {
       setError({
         name: !validateName(formData.name),
         email: !validateEmail(formData.email),
         password: !validatePassword(formData.password),
         gender: !validateGender(formData.gender),
+        mobile: formData.mobile ? !validateMobile(formData.mobile) : false,
       });
       return;
     }
@@ -128,6 +136,7 @@ export default function Registration() {
         username,
         password: formData.password,
         gender: formData.gender,
+        ...(formData.mobile && { mobile: formData.mobile }),
         tenantCohortRoleMapping: tenantCohortRoleMapping,
       };
       const response = await createUser(payload);
@@ -232,7 +241,7 @@ export default function Registration() {
                 },
               ].map(({ key, label, type, required }) => (
                 <Grid item key={key} container alignItems="center" spacing={1}>
-                  <Grid item xs={12} sm={4}>
+                  <Grid item xs={12} sm={3}>
                     <FormLabel
                       sx={{
                         color: '#4D4639',
@@ -241,10 +250,11 @@ export default function Registration() {
                       }}
                     >
                       {label}
-                     &nbsp; {required && <span style={{ color: 'red' }}>*</span>}
+                      &nbsp;{' '}
+                      {required && <span style={{ color: 'red' }}>*</span>}
                     </FormLabel>
                   </Grid>
-                  <Grid item xs={12} sm={8}>
+                  <Grid item xs={12} sm={9}>
                     <CommonTextField
                       value={formData[key]}
                       onChange={handleChange(key)}
@@ -273,7 +283,7 @@ export default function Registration() {
 
               {/* Gender selection */}
               <Grid item container alignItems="center">
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={3}>
                   <FormLabel
                     sx={{ color: '#4D4639', fontWeight: 600, fontSize: '14px' }}
                   >
@@ -317,14 +327,14 @@ export default function Registration() {
 
               {/* Role Select */}
               <Grid item container alignItems="center">
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={3}>
                   <FormLabel
                     sx={{ color: '#4D4639', fontWeight: 600, fontSize: '14px' }}
                   >
                     Select Role &nbsp;<span style={{ color: 'red' }}>*</span>
                   </FormLabel>
                 </Grid>
-                <Grid item xs={12} sm={8}>
+                <Grid item xs={12} sm={9}>
                   <CommonSelect
                     value={selectedValue}
                     onChange={handleRoleChange}
@@ -387,14 +397,71 @@ export default function Registration() {
                     !formData.email ||
                     !formData.password ||
                     !formData.gender ||
+                    // !formData.mobile ||
                     !selectedValue ||
                     !termsAccepted
                   }
                 >
                   Verify & Proceed
                 </Button>
+                <Typography
+                  textAlign="center"
+                  fontSize="16px"
+                  color="#3B383E"
+                  fontWeight={500}
+                >
+                  Already have an Account?{' '}
+                  <Link href="/signin" style={{ color: '#0037B9' }}>
+                    Sign In
+                  </Link>
+                </Typography>
               </Grid>
             </Grid>
+            {showAlertMsg && (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                position="fixed"
+                top={0}
+                left={0}
+                width="100vw"
+                height="100vh"
+                sx={{
+                  pointerEvents: 'auto',
+                  bgcolor: 'rgba(0, 0, 0, 0.2)',
+                  zIndex: 9999,
+                }}
+                onClick={() => {
+                  setShowAlertMsg('');
+                  if (alertSeverity === 'success') {
+                    router.push('/signin');
+                  }
+                }}
+              >
+                <Alert
+                  variant="filled"
+                  severity={alertSeverity}
+                  sx={{
+                    pointerEvents: 'auto',
+                    width: 'auto',
+                    minWidth: '300px',
+                    '&:hover': {
+                      cursor: 'default', // Prevent cursor change on hover
+                    },
+                  }}
+                  onClose={() => {
+                    setShowAlertMsg('');
+                    if (alertSeverity === 'success') {
+                      router.push('/signin');
+                    }
+                  }}
+                  onClick={(e) => e.stopPropagation()} // Prevent click-through to overlay
+                >
+                  {showAlertMsg}
+                </Alert>
+              </Box>
+            )}
           </Paper>
         )}
       </Box>
