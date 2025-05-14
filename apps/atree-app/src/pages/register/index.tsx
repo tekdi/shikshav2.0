@@ -78,7 +78,6 @@ export default function Registration() {
   const handleChange =
     (field: keyof typeof formData) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      // setShowAlertMsg('');
       const value = event.target.value;
       const validateField = (field: string, value: string | number) => {
         if (typeof value !== 'string') return false; // Ensure value is a string
