@@ -36,13 +36,14 @@ import {
 } from '../../utils/authUtils';
 
 export default function Registration() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{ [key: string]: string }>({
     name: '',
     email: '',
-    moble:'',
+    moble: '',
     password: '',
     gender: '',
   });
+  
 
   const [error, setError] = useState({
     name: false,
@@ -78,26 +79,27 @@ export default function Registration() {
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setShowAlertMsg('');
       const value = event.target.value;
-      const validateField = (field: string, value: string) => {
-        switch (field) {
-          case 'name':
-            return !validateName(value);
-          case 'email':
-            return !validateEmail(value);
-          case 'password':
-            return !validatePassword(value);
-          case 'gender':
-            return !validateGender(value);
-          default:
-            return false;
-        }
-      };
+      const validateField = (field: string, value: string | number) => {
+              if (typeof value !== 'string') return false; // Ensure value is a string
+              switch (field) {
+                case 'name':
+                  return !validateName(value);
+                case 'email':
+                  return !validateEmail(value);
+                case 'password':
+                  return !validatePassword(value);
+                case 'gender':
+                  return !validateGender(value);
+                default:
+                  return false;
+              }
+            };
 
       setFormData({ ...formData, [field]: value });
-      setError({
-        ...error,
-        [field]: validateField(field, value),
-      });
+      // setError({
+      //   ...error,
+      //   [field]: validateField(field, value.toString()),
+      // });
     };
 
   const handleCreateUser = async () => {
@@ -249,10 +251,9 @@ export default function Registration() {
                       type={type}
                       variant="outlined"
                       fullWidth
-                      size="small"
-                      error={error[key]}
+                      error={error[key as keyof typeof error]}
                       helperText={
-                        error[key]
+                        error[key as keyof typeof error]
                           ? `Please enter valid ${label.toLowerCase()}`
                           : ''
                       }

@@ -174,7 +174,7 @@ const Login: React.FC<ListProps> = () => {
                       helperText={errors[field as 'email' | 'password']}
                       error={!!errors[field as 'email' | 'password']}
                       fullWidth
-                      sx={{ mt: 0 }}
+                      // style={{ marginTop: 0 }}
                       endIcon={
                         field === 'password' && (
                           <IconButton
