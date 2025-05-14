@@ -15,6 +15,7 @@ interface CreateUserParams {
   gender: string;
   firstName: string;
   lastName: string;
+  mobile?: string;
   tenantCohortRoleMapping: TenantCohortRoleMapping[];
 }
 interface AuthParams {
@@ -79,6 +80,7 @@ export const createUser = async (payload: CreateUserParams): Promise<any> => {
     username,
     password,
     gender,
+    mobile,
     tenantCohortRoleMapping,
   } = payload; // Extract values from payload
 
@@ -89,7 +91,9 @@ export const createUser = async (payload: CreateUserParams): Promise<any> => {
       gender: gender,
       firstName: firstName,
       lastName: lastName,
+
       tenantCohortRoleMapping,
+      ...(mobile && { mobile }),
     });
 
     return response?.data;

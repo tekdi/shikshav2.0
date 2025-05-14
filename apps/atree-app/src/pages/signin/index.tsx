@@ -232,8 +232,8 @@ const Login: React.FC<ListProps> = () => {
                     href="/register"
                     style={{
                       color: '#0037B9',
-                      fontWeight: 600,
-                      textDecoration: 'underline',
+                      fontWeight: 500,
+                      // textDecoration: 'underline',
                     }}
                   >
                     Sign up
@@ -311,9 +311,9 @@ const MyCustomGoogleLogin = () => {
           border: '2px solid #FFBD0D',
           boxShadow: '0px 4px 12px rgba(0,0,0,0.1)',
           transition: 'all 0.3s ease',
-          '&:hover': {
-            background: '#fcb900',
-          },
+          // '&:hover': {
+          //   background: '#fcb900',
+          // },
         }}
         onClick={() => handleLogin()}
       >

@@ -9,6 +9,10 @@ export const validatePassword = (password: string) => {
   );
 };
 
+export const validateMobile = (mobile: string) => {
+  return /^[6-9]\d{9}$/.test(mobile);
+};
+
 export const validateName = (name: string) => {
   const hasNumbers = /\d/;
   return !hasNumbers.test(name) && name.trim().split(' ').length >= 2;
