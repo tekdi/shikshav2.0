@@ -62,7 +62,14 @@ export default function Content(props: ContentProps) {
   const [fullAccess, setFullAccess] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
+  const isTinyPhone = useMediaQuery('(max-width: 390px)');
+  const [categoryLabel, setCategoryLabel] = useState('');
+  useEffect(() => {
+    const subcategory = localStorage.getItem('subcategory');
+    const category = localStorage.getItem('category');
+    const label = subcategory ? `${category} : ${subcategory}` : category;
+    setCategoryLabel(label ?? '');
+  }, []);
   useEffect(() => {
     const init = async () => {
       const newData = await getData('mfes_content_pages_content');
@@ -302,55 +309,21 @@ export default function Content(props: ContentProps) {
           }}
         >
           <ArrowBackIosIcon onClick={handleBack} />
-          {(() => {
-            const subcategory = localStorage.getItem('subcategory');
-            const category = localStorage.getItem('category');
-            const label = category ?? subcategory;
-
-            return label ? (
-              <Typography
-                sx={{
-                  color: '#1C170D',
-                  fontSize: {
-                    xs: '14px', // Mobile (extra small)
-                    sm: '22px', // Desktop (small and up)
-                  },
-                  fontWeight: 700,
-                  marginLeft: 1,
-                  display: '-webkit-box',
-                  WebkitLineClamp: { xs: 2, sm: 1 },
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: { xs: 'normal', sm: 'nowrap' },
-                }}
-              >
-                {label.charAt(0).toUpperCase() + label.slice(1)}
-                {subcategory && (
-                  <span>
-                    {' '}
-                    {isMobile ? (
-                      // Mobile view - show all subcategories
-                      <>
-                        :{' '}
-                        {Array.isArray(subcategory)
-                          ? subcategory.join(', ')
-                          : subcategory}
-                      </>
-                    ) : (
-                      // Desktop view - show only the first subcategory
-                      <>
-                        :{' '}
-                        {Array.isArray(subcategory)
-                          ? subcategory[0]
-                          : subcategory}
-                      </>
-                    )}
-                  </span>
-                )}
-              </Typography>
-            ) : null;
-          })()}
+          {categoryLabel && (
+            <Typography
+              sx={{
+                color: '#1C170D',
+                fontSize: {
+                  xs: '14px',
+                  sm: '22px',
+                },
+                fontWeight: 700,
+                marginLeft: 1,
+              }}
+            >
+              {categoryLabel}
+            </Typography>
+          )}
         </Box>
       )}
       {(propData?.showSearch || propData?.showFilter) && (
@@ -389,7 +362,10 @@ export default function Content(props: ContentProps) {
               alignItems="center"
               justifyContent="space-between"
               width="100%"
-              sx={{ marginBottom: isMobile && '45px' }}
+              sx={{
+                marginBottom: isMobile ? '45px' : undefined,
+                marginTop: isTinyPhone ? '20px' : undefined,
+              }}
             >
               <Box
                 sx={{

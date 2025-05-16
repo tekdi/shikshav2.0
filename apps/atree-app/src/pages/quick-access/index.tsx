@@ -61,7 +61,7 @@ const MyComponent: React.FC = () => {
         categories={categories}
         onClick={handleClick}
         _item={{
-          width: { xs: '295px', md: '100%' },
+          width: '100%',
         }}
       />
     </Layout>
