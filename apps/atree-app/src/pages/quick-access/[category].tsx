@@ -20,8 +20,12 @@ const MyComponent: React.FC = () => {
   const [searchResults, setSearchResults] = useState<
     { subTopic: string; length: number }[]
   >([]);
+  const [resolvedCategory, setResolvedCategory] = useState('');
 
   useEffect(() => {
+    if (!router.isReady || !category) return;
+    setResolvedCategory(category as string);
+
     const init = async () => {
       const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
       const frameworkData = await fetch(url).then((res) => res.json());
@@ -85,7 +89,7 @@ const MyComponent: React.FC = () => {
             letterSpacing: 0,
           }}
         >
-          {category}
+          {resolvedCategory || 'Loading...'}
         </Typography>
       }
       showBack
@@ -96,7 +100,7 @@ const MyComponent: React.FC = () => {
         subLabel="resources"
         onClick={handleClick}
         length={searchResults}
-        _item={{ width: { xs: '298px', md: '100%' } }}
+        _item={{ width: '100%' }}
       />
     </Layout>
   );

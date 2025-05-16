@@ -11,7 +11,6 @@ import Grid from '@mui/material/Grid2';
 import { ContentSearchResponse } from '../Services/Content/Search';
 import { usePathname } from 'next/navigation';
 const ITEMS_PER_PAGE = 20;
-
 export const AtreeCard: React.FC<{
   contents: ContentSearchResponse[];
   _grid: object;
@@ -102,7 +101,7 @@ export const AtreeCard: React.FC<{
                     display: 'flex',
                     flexDirection: 'column',
                     padding: '0 0 10px 0 !important',
-                    marginLeft: '10px',
+                    marginLeft: '6px',
                     flexGrow: 1,
                   }}
                 >
@@ -152,7 +151,15 @@ export const AtreeCard: React.FC<{
           ))}
 
           {isHome && visibleCount < contents.length && (
-            <Box width="100%" display="flex" justifyContent="center" mt={3}>
+            <Box
+              width="100%"
+              display="flex"
+              justifyContent="center"
+              mt={3}
+              sx={{
+                mb: { xs: 2, sm: 0 },
+              }}
+            >
               <Button
                 variant="contained"
                 onClick={handleLoadMore}
