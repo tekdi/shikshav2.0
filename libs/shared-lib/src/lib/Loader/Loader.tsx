@@ -29,7 +29,7 @@ const DESKTOP_PADDING_MAP: Record<string, string> = {
   '/quick-access': '195px',
   '/quick-access/[category]': '195px',
   '/quick-access/contents/[category]': '105px',
-  '/': '133px',
+  // '/': '133px',
   '/contents': '132px',
   '/contents/[identifier]': '126px',
   '/searchpage': '118px',
@@ -38,13 +38,12 @@ const DESKTOP_PADDING_MAP: Record<string, string> = {
 const getPaddingTop = (isMobile: boolean, router: any): string => {
   const defaultPadding = isMobile ? '40px' : '95px';
 
+  // Remove padding for root path "/"
+  if (router.pathname === '/') {
+    return '0px';
+  }
+
   if (isMobile) {
-    // if (
-    //   typeof window !== 'undefined' &&
-    //   window.location.hash.includes('error=login_required')
-    // ) {
-    //   return '47px';
-    // }
     if (
       router.pathname === '/register' &&
       window.location.hash.includes('error=login_required')
@@ -57,6 +56,7 @@ const getPaddingTop = (isMobile: boolean, router: any): string => {
     ) {
       return '132px';
     }
+
     const hasLoginError = window.location.hash.includes('error=login_required');
     if (hasLoginError && !router.pathname.includes('searchpage')) {
       return '76px';
@@ -67,7 +67,6 @@ const getPaddingTop = (isMobile: boolean, router: any): string => {
     if (router.pathname === '/home' && router.query.category) {
       return '47px';
     }
-
     if (
       router.pathname === '/home' &&
       window.location.hash.includes('error=login_required')
@@ -89,7 +88,6 @@ const getPaddingTop = (isMobile: boolean, router: any): string => {
 
     return MOBILE_PADDING_MAP[router.pathname] || defaultPadding;
   }
-  MOBILE_PADDING_MAP;
 
   return DESKTOP_PADDING_MAP[router.pathname] || defaultPadding;
 };

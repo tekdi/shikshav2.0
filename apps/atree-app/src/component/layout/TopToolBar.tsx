@@ -215,22 +215,6 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                     />
                   </Box>
                 )}
-                {!isMobile && !isAuthPage && (
-                  <Box
-                    sx={{
-                      flexGrow: 1,
-                      display: 'flex',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <FrameworkFilter
-                      frameworkFilter={frameworkFilter || []}
-                      framework={framework}
-                      setFramework={setFramework}
-                      fromSubcategory={false}
-                    />
-                  </Box>
-                )}
                 <Typography
                   component="div"
                   sx={{
@@ -257,107 +241,108 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                 )}
               </Box>
             </Box>
-            {_isDrawer && (
-              <Box display="flex" alignItems="center">
-                {!isMobile && !isAuthPage ? (
-                  <Box
-                    sx={{
-                      position: 'fixed',
-                      right: 0,
-                      marginTop: { md: '70px' },
-                      transform: 'translateY(-50%)',
-                      display: 'flex',
-                      gap: 2,
-                      alignItems: 'center',
-                      paddingRight: '16px',
-                      zIndex: 1100,
-                    }}
-                  >
-                    {/* 🔍 Search Box */}
+
+            {/* Middle section with FrameworkFilter and Search */}
+            <Box display="flex" alignItems="center" gap={2}>
+              {!isMobile && !isAuthPage && (
+                <Box
+                  sx={{
+                    // minWidth: '200px',
+                    position: 'relative', // Adjust width as needed
+                  }}
+                >
+                  <FrameworkFilter
+                    frameworkFilter={frameworkFilter || []}
+                    framework={framework}
+                    setFramework={setFramework}
+                    fromSubcategory={false}
+                  />
+                </Box>
+              )}
+
+              {_isDrawer && (
+                <Box display="flex" alignItems="center">
+                  {!isMobile && !isAuthPage ? (
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        gap: 2,
+                        alignItems: 'center',
+                        zIndex: 1100,
+                      }}
+                    >
+                      {/* 🔍 Search Box */}
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: { xs: '40px', md: '40px' },
+                          height: '40px',
+                          borderRadius: '28px',
+                          cursor: 'pointer',
+                        }}
+                        onClick={handleSearchOpen}
+                      >
+                        <SearchIcon sx={{ color: 'text.secondary' }} />
+                      </Box>
+
+                      {/* ☰ Menu Icon */}
+                      <IconButton
+                        size="large"
+                        edge="start"
+                        sx={{ color: 'text.secondary' }}
+                        aria-label="menu"
+                        onClick={menuIconClick}
+                      >
+                        <MenuIcon />
+                      </IconButton>
+                    </Box>
+                  ) : (
                     <Box
                       sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        width: { xs: '180px', md: '238px' },
-                        height: '40px',
-                        borderRadius: '28px',
-                        border: '1px solid #ccc',
-                        paddingLeft: '12px',
-                        backgroundColor: '#E9E7EF',
-                        flexShrink: 0, // Prevent from shrinking when sibling grows
+                        zIndex: 1100,
                       }}
                     >
-                      <SearchIcon
-                        sx={{ color: 'text.secondary', marginRight: '8px' }}
-                      />
-                      <InputBase
-                        placeholder="Search for resources..."
+                      <IconButton
+                        size="large"
+                        edge="start"
+                        sx={{ color: 'text.secondary' }}
+                        aria-label="search"
                         onClick={handleSearchOpen}
-                        sx={{ flex: 1 }}
-                        readOnly
-                      />
+                      >
+                        <SearchIcon />
+                      </IconButton>
+                      <IconButton
+                        size="large"
+                        edge="start"
+                        sx={{ color: 'text.secondary' }}
+                        aria-label="menu"
+                        onClick={menuIconClick}
+                      >
+                        <MenuIcon />
+                      </IconButton>
                     </Box>
-
-                    {/* ☰ Menu Icon */}
+                  )}
+                  <SearchTypeModal
+                    open={isSearchOpen}
+                    onClose={handleSearchClose}
+                    onSelect={(type) => console.log(type)}
+                  />
+                  {profileIcon && profileIcon.length > 0 && (
                     <IconButton
-                      size="large"
-                      edge="start"
-                      sx={{ color: 'text.secondary' }}
-                      aria-label="menu"
-                      onClick={menuIconClick}
+                      color={actionButtonColor}
+                      aria-label={profileIcon[0]?.ariaLabel}
+                      onClick={profileIcon[0]?.onLogoutClick}
                     >
-                      <MenuIcon />
+                      {profileIcon[0].icon}
                     </IconButton>
-                  </Box>
-                ) : (
-                  <Box
-                    sx={{
-                      position: 'fixed',
-                      right: 0,
-                      marginTop: '50px',
-                      transform: 'translateY(-50%)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      paddingRight: '16px',
-                      zIndex: 1100,
-                    }}
-                  >
-                    <IconButton
-                      size="large"
-                      edge="start"
-                      sx={{ color: 'text.secondary' }}
-                      aria-label="search"
-                      onClick={handleSearchOpen}
-                    >
-                      <SearchIcon />
-                    </IconButton>
-                    <IconButton
-                      size="large"
-                      edge="start"
-                      sx={{ color: 'text.secondary' }}
-                      aria-label="menu"
-                      onClick={menuIconClick}
-                    >
-                      <MenuIcon />
-                    </IconButton>
-                  </Box>
-                )}
-                <SearchTypeModal
-                  open={isSearchOpen}
-                  onClose={handleSearchClose}
-                  onSelect={(type) => console.log(type)}
-                />
-                {profileIcon && profileIcon.length > 0 && (
-                  <IconButton
-                    color={actionButtonColor}
-                    aria-label={profileIcon[0]?.ariaLabel}
-                    onClick={profileIcon[0]?.onLogoutClick}
-                  >
-                    {profileIcon[0].icon}
-                  </IconButton>
-                )}
-              </Box>
-            )}
+                  )}
+                </Box>
+              )}
+            </Box>
           </Toolbar>
         </Container>
       </AppBar>

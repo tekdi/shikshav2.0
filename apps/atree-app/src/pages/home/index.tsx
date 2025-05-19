@@ -341,7 +341,7 @@ export default function Index() {
                   onApply={handleApplyFilters}
                   isMobile={isMobile}
                   resources={RESOURCE_TYPES}
-                  mimeType={MIME_TYPES}
+                  // mimeType={MIME_TYPES}
                 />
               </Box>
             </Grid>
@@ -384,7 +384,11 @@ export default function Index() {
                       justifyContent: 'space-between',
                       alignItems: 'center',
                     }}
-                  ></Box>
+                  >
+                    {subFrameworkFilter && subFrameworkFilter.length > 0 && (
+                      <Title>{t('Browse by Sub Categories')}</Title>
+                    )}
+                  </Box>
 
                   <Box
                     sx={{

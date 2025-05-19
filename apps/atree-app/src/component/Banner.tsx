@@ -30,19 +30,17 @@ export default function Banner() {
   );
 
   return (
-    <Grid width="100%">
+    <Grid width="100%" sx={{ marginTop: 0 }}>
       <Box
         sx={{
           position: 'relative',
           width: '100%',
-          minHeight: { md: '500px' }, // Full height for web
+          minHeight: { md: '500px' },
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
-        {/* Fixed Text */}
-
         {/* Carousel with Images */}
         <Carousel
           indicators={false}
@@ -56,7 +54,7 @@ export default function Banner() {
           navButtonsAlwaysInvisible={true}
           sx={{
             width: '100%',
-            minHeight: { md: '500px' }, // Full height for web
+            minHeight: { md: '500px' },
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

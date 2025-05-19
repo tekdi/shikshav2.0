@@ -611,7 +611,7 @@ export const FilterDialog = ({
               )}
               {/* SubTopic - Checkboxes */}
 
-              <Box sx={{ display: 'grid' }}>
+              {/* <Box sx={{ display: 'grid' }}>
                 <Typography
                   sx={{
                     fontSize: '18px',
@@ -631,7 +631,7 @@ export const FilterDialog = ({
                     currentSelectedValues={selectedFilters.mimeType ?? []}
                   />
                 ))}
-              </Box>
+              </Box> */}
             </FormControl>
           </Box>
 
