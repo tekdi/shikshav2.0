@@ -27,7 +27,7 @@ import { createUser } from '../../service/content';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
 import Loader from '../../component/layout/LoaderComponent';
-
+import { trackEvent } from '@shared-lib';
 import Layout from '../../component/layout/layout';
 import {
   validateEmail,
@@ -141,6 +141,11 @@ export default function Registration() {
       };
       const response = await createUser(payload);
       if (response?.responseCode === 201) {
+        trackEvent({
+          action: 'registration_success',
+          category: 'user',
+          label: 'Registration Form',
+        });
         setShowAlertMsg('User registered successfully!');
         setAlertSeverity('success');
         setOpenUserDetailsDialog(true);
@@ -381,7 +386,14 @@ export default function Registration() {
               {/* Submit Button */}
               <Grid item textAlign="center">
                 <Button
-                  onClick={handleCreateUser}
+                  onClick={() => {
+                    trackEvent({
+                      action: 'signup',
+                      category: 'engagement',
+                      label: 'Verify & Proceed Button',
+                    });
+                    handleCreateUser;
+                  }}
                   sx={{
                     width: { xs: '100%', sm: '70%', md: '60%' },
                     height: '40px',

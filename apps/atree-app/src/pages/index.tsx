@@ -14,7 +14,7 @@ import Insta from '../component/Insta';
 import Layout from '../component/layout/layout';
 import { ImageBanner } from '../component/layout/ImageBanner';
 import { useEffect, useState } from 'react';
-import { ContentSearch } from '@shared-lib';
+import { ContentSearch, trackEvent, trackPageView } from '@shared-lib';
 import Loader from '../component/layout/LoaderComponent';
 import FooterText from '../component/FooterText';
 import Banner from '../component/Banner';
@@ -50,9 +50,12 @@ const AnimatedCounter = ({
   const [count, setCount] = useState(0);
   const [key, setKey] = useState(0);
 
-  const restartCounter = () => {
-    setKey((prev) => prev + 1);
-  };
+  useEffect(() => {
+    trackEvent({
+      action: 'view_landing_page',
+      category: 'Landing Page',
+    });
+  }, []);
 
   useEffect(() => {
     const totalSteps = duration / 10;

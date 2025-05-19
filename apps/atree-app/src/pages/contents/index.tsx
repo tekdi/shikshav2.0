@@ -1,6 +1,11 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { ContentSearchResponse, RESOURCE_TYPES, MIME_TYPES } from '@shared-lib';
+import {
+  ContentSearchResponse,
+  RESOURCE_TYPES,
+  MIME_TYPES,
+  trackEvent,
+} from '@shared-lib';
 import Layout from '../../component/layout/layout';
 import { Box, useMediaQuery, useTheme } from '@mui/material';
 import atreeLogo from '../../../assets/images/placeholder.jpg';
@@ -49,7 +54,12 @@ const List: React.FC<ListProps> = () => {
     };
     init();
   }, [mfe_content]);
-
+  useEffect(() => {
+    trackEvent({
+      action: 'view_content_page',
+      category: 'Content Page',
+    });
+  }, []);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -68,6 +78,11 @@ const List: React.FC<ListProps> = () => {
   }, []);
 
   const handleApplyFilters = (selectedValues: any) => {
+    trackEvent({
+      action: 'filter_apply',
+      category: 'user',
+      label: 'Content Page',
+    });
     setFilters((prevFilters: any) => ({
       ...prevFilters,
       request: {

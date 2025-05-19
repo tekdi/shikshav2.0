@@ -17,3 +17,17 @@ export const validateName = (name: string) => {
   const hasNumbers = /\d/;
   return !hasNumbers.test(name) && name.trim().split(' ').length >= 2;
 };
+
+export const dispatchLoginEvent = (
+  user: string,
+  method: 'credentials' | 'google'
+) => {
+  const loginEvent = new CustomEvent('userLogin', {
+    detail: {
+      user,
+      method,
+      timestamp: new Date().toISOString(),
+    },
+  });
+  window.dispatchEvent(loginEvent);
+};

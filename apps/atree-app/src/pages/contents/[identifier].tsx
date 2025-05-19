@@ -32,7 +32,7 @@ import atreeLogo from '../../../assets/images/placeholder.jpg';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined';
-import { AtreeCard, ContentSearch} from '@shared-lib';
+import { AtreeCard, ContentSearch, trackEvent } from '@shared-lib';
 import ShareDialog from '../../component/ShareDialog';
 import FooterText from '../../component/FooterText';
 import Loader from '../../component/layout/LoaderComponent';
@@ -70,21 +70,31 @@ export default function Content() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [open, setOpen] = useState(false);
   const [relatedContent, setRelatedContent] = useState<any>([]);
-    const languageDisplayMap: Record<string, string> = {
-      english: 'English',
-      hindi: 'हिन्दी',
-      marathi: 'मराठी',
-      bengali: 'বাংলা',
-      assamese: 'অসমীয়া',
-      kannada: 'ಕನ್ನಡ',
-      tamil: 'தமிழ்',
-      malayalam: 'മലയാളം',
-    };
+  const languageDisplayMap: Record<string, string> = {
+    english: 'English',
+    hindi: 'हिन्दी',
+    marathi: 'मराठी',
+    bengali: 'বাংলা',
+    assamese: 'অসমীয়া',
+    kannada: 'ಕನ್ನಡ',
+    tamil: 'தமிழ்',
+    malayalam: 'മലയാളം',
+  };
   const handleOpen = () => setOpen(true);
   const handleOnCLick = () => {
+    trackEvent({
+      action: 'resource_open',
+      category: 'user',
+      label: 'Content Details Page',
+    });
     window.open(contentData?.url, '_blank');
   };
   const handlePreview = () => {
+    trackEvent({
+      action: 'preview_content',
+      category: 'user',
+      label: 'Content Details Page',
+    });
     router.push(`/player/${identifier}`);
   };
   const handleOnDownload = async () => {
@@ -100,7 +110,11 @@ export default function Content() {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-
+        trackEvent({
+          action: 'download_content',
+          category: 'user',
+          label: 'Content Details Page',
+        });
         // Revoke the blob URL after download to free up memory
         setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
       } catch (error) {
@@ -236,6 +250,11 @@ export default function Content() {
         keywordFilteredResults?.result?.content?.filter(
           (item: any) => item.identifier !== identifier
         ) || [];
+        trackEvent({
+          action: 'tags_content',
+          category: 'user',
+          label: 'Content Details Page',
+        });
       setRelatedContent(filteredContent);
     } catch (error) {
       console.error(`Search failed for keyword ${keyword}:`, error);
