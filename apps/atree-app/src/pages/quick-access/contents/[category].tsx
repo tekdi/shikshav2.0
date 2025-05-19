@@ -334,7 +334,7 @@ const MyComponent: React.FC = () => {
                 }}
                 onApply={handleApplyFilters}
                 resources={RESOURCE_TYPES}
-                mimeType={MIME_TYPES}
+                // mimeType={MIME_TYPES}
                 isMobile={isMobile}
               />
             </Grid>

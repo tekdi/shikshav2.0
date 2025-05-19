@@ -128,7 +128,7 @@ const List: React.FC<ListProps> = () => {
                 onApply={handleApplyFilters}
                 isMobile={isMobile}
                 resources={RESOURCE_TYPES}
-                mimeType={MIME_TYPES}
+                // mimeType={MIME_TYPES}
               />
             </Box>
           </Grid>

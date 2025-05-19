@@ -507,7 +507,7 @@ export default function Content(props: ContentProps) {
                 onApply={handleApplyFilters}
                 isMobile={true}
                 resources={RESOURCE_TYPES}
-                mimeType={MIME_TYPES}
+                // mimeType={MIME_TYPES}
               />
             </Box>
           )}

@@ -43,40 +43,42 @@ interface LayoutProps {
 
   onItemClick?: (to: string) => void | undefined;
   onBackIconClick?: () => void;
-  showTopAppBar?: {
-    title?: string;
-    showMenuIcon?: boolean;
-    showBackIcon?: boolean;
-    menuIconClick?: () => void;
-    onMenuClose?: () => void;
-    actionButtonLabel?: string;
-    actionButtonClick?: () => void;
-    actionButtonColor?: 'inherit' | 'primary' | 'secondary' | 'default';
-    position?: 'fixed' | 'absolute' | 'sticky' | 'static' | 'relative';
-    color?: 'primary' | 'secondary' | 'default' | 'transparent' | 'inherit';
-    profileIcon?: {
-      icon: React.ReactNode;
-      ariaLabel: string;
-      anchorEl?: HTMLElement | null;
-      onLogoutClick?: (
-        event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-      ) => void;
-      onOptionClick?: (
-        event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-      ) => void;
-    }[];
-    actionIcons?: {
-      icon: React.ReactNode;
-      ariaLabel: string;
-      anchorEl?: HTMLElement | null;
-      onLogoutClick?: (
-        event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-      ) => void;
-      onOptionClick?: (
-        event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-      ) => void;
-    }[];
-  };
+  showTopAppBar?:
+    | boolean
+    | {
+        title?: string;
+        showMenuIcon?: boolean;
+        showBackIcon?: boolean;
+        menuIconClick?: () => void;
+        onMenuClose?: () => void;
+        actionButtonLabel?: string;
+        actionButtonClick?: () => void;
+        actionButtonColor?: 'inherit' | 'primary' | 'secondary' | 'default';
+        position?: 'fixed' | 'absolute' | 'sticky' | 'static' | 'relative';
+        color?: 'primary' | 'secondary' | 'default' | 'transparent' | 'inherit';
+        profileIcon?: {
+          icon: React.ReactNode;
+          ariaLabel: string;
+          anchorEl?: HTMLElement | null;
+          onLogoutClick?: (
+            event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+          ) => void;
+          onOptionClick?: (
+            event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+          ) => void;
+        }[];
+        actionIcons?: {
+          icon: React.ReactNode;
+          ariaLabel: string;
+          anchorEl?: HTMLElement | null;
+          onLogoutClick?: (
+            event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+          ) => void;
+          onOptionClick?: (
+            event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+          ) => void;
+        }[];
+      };
   topAppBarIcons?: {
     icon: React.ReactNode;
     ariaLabel: string;
@@ -317,7 +319,7 @@ export default function Layout({
       }}
     >
       <Box sx={{ zIndex: 100, position: 'fixed', top: 0, left: 0, right: 0 }}>
-        {showTopAppBar && (
+        {Boolean(showTopAppBar) && (
           <Box
             sx={{
               display: 'center',
@@ -339,7 +341,6 @@ export default function Layout({
                   py: '30.5px',
                   backgroundColor: '#fff',
                 }}
-                // title="Jal-Jungle-Jameen"
                 _title={{
                   fontSize: '14px',
                   lineHeight: '16px',
@@ -347,7 +348,6 @@ export default function Layout({
                   fontWeight: 400,
                 }}
                 _isDrawer={isDrawer}
-                // subTitle="In Classrooms"
                 _subTitle={{
                   fontSize: '14px',
                   lineHeight: '16px',
@@ -358,13 +358,13 @@ export default function Layout({
                 //@ts-ignore
                 actionIcons={topAppBarIcons}
                 menuIconClick={() => setIsDrawerOpen(true)}
-                searchQuery={searchQuery} // Pass the search value
+                searchQuery={searchQuery}
                 onSearchChange={handleSearchChange}
                 frameworkData={frameworkData}
                 frameworkFilter={frameworkFilter}
                 framework={framework}
                 setFramework={setFramework}
-                {...showTopAppBar}
+                {...(typeof showTopAppBar === 'object' ? showTopAppBar : {})}
               />
             </Box>
           </Box>

@@ -19,6 +19,8 @@ import Loader from '../component/layout/LoaderComponent';
 import FooterText from '../component/FooterText';
 import Banner from '../component/Banner';
 import DigitalHubBanner from '../component/DigitalHubBanner';
+import atreeLogo from '../../public/images/atreeLogo.svg';
+
 interface LandingPageProps {
   frameworkData: any;
   frameworkFilter: any[];
@@ -131,11 +133,35 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
   }, [frameworkData]);
 
   return (
-    <Layout footerComponent={<FooterText page={''} />}>
+    <Layout
+      showTopAppBar={false}
+      footerComponent={<FooterText page={''} />}
+      sx={{ padding: 0, margin: 0 }}
+    >
       {loading ? (
         <Loader />
       ) : (
-        <Grid container justifyContent={'center'}>
+        <Grid
+          container
+          justifyContent={'center'}
+          sx={{ padding: 0, margin: 0 }}
+        >
+          <Box
+            sx={{
+              position: 'absolute',
+              top: { xs: 8, md: 16 },
+              left: { xs: 8, md: 24 },
+              zIndex: 10,
+            }}
+          >
+            <Image
+              src={atreeLogo}
+              alt="Logo"
+              width={isMobile ? 50 : 100}
+              // height="auto"
+            />
+          </Box>
+
           <Banner />
           <DigitalHubBanner />
           <Grid

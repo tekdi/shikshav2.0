@@ -28,8 +28,17 @@ export const AtreeCard: React.FC<{
   const handleLoadMore = () => {
     setVisibleCount((prev) => prev + ITEMS_PER_PAGE);
   };
-
   const visibleContents = contents?.slice(0, visibleCount);
+  const languageDisplayMap: Record<string, string> = {
+    english: 'ENG',
+    hindi: 'हिन्दी',
+    marathi: 'मराठी',
+    bengali: 'বাংলা',
+    assamese: 'অসমীয়া',
+    kannada: 'ಕನ್ನಡ',
+    tamil: 'தமிழ்',
+    malayalam: 'മലയാളം',
+  };
   return (
     <Grid container spacing={2} width="100%">
       {contents?.length === 0 ? (
@@ -123,28 +132,53 @@ export const AtreeCard: React.FC<{
                   >
                     {content.name}
                   </Typography>
-                  <Typography
-                    color="text.secondary"
+
+                  {/* Year and Language Row */}
+                  <Box
                     sx={{
-                      fontWeight: 500,
-                      fontSize: '14px',
-                      lineHeight: '20px',
-                      color: '#171D1E',
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      fontFamily: 'Manrope, sans-serif',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginTop: '4px',
                     }}
                   >
-                    {`Year: ${
-                      (content as any)?.year?.toLowerCase?.() === 'n.d.' ||
-                      !(content as any)?.year
-                        ? 'N/A'
-                        : (content as any)?.year
-                    }`}
-                  </Typography>
+                    {/* Year */}
+                    <Typography
+                      color="text.secondary"
+                      sx={{
+                        fontWeight: 500,
+                        fontSize: '14px',
+                        lineHeight: '20px',
+                        color: '#171D1E',
+                        fontFamily: 'Manrope, sans-serif',
+                      }}
+                    >
+                      {`${
+                        (content as any)?.year?.toLowerCase?.() === 'n.d.' ||
+                        !(content as any)?.year
+                          ? 'N/A'
+                          : (content as any)?.year
+                      }`}
+                    </Typography>
+
+                    {/* Native Language Tag */}
+                    {content?.language?.[0] && (
+                      <Box
+                        sx={{
+                          backgroundColor: '#FFBD0D', // highlighted yellow
+                          padding: '2px 8px',
+                          // borderRadius: '8px',
+                          fontWeight: 600,
+                          fontSize: '12px',
+                          color: '#000',
+                        }}
+                      >
+                        {languageDisplayMap[
+                          (content).language[0].toLowerCase?.() ?? ''
+                        ] ?? (content).language[0]}
+                      </Box>
+                    )}
+                  </Box>
                 </CardContent>
               </Card>
             </Grid>

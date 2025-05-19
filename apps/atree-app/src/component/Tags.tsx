@@ -1,5 +1,5 @@
 'use client';
-import { Button, useMediaQuery, useTheme } from '@mui/material';
+import { Button, Stack, useMediaQuery, useTheme } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -93,14 +93,14 @@ export const FrameworkFilter = ({
       sx={
         !isMobile
           ? {
-              position: 'absolute',
+              position: 'relative',
               left: '38%',
               transform: 'translateX(-50%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               minWidth: '100px',
-              marginTop: { md: '-10px' },
+              marginTop: { md: '1px' },
             }
           : {
               display: 'flex',
@@ -111,43 +111,38 @@ export const FrameworkFilter = ({
             }
       }
     >
-      {frameworkFilter.map(({ identifier, name }) => {
-        const isSelected = selectedFramework === name.toLowerCase();
-        const lowerCaseName = name.toLowerCase();
-        const isPotpourri = lowerCaseName === 'potpourri';
-        return (
-          <Grid key={identifier}>
+      <Stack direction="row" spacing={3}>
+        {frameworkFilter.map(({ identifier, name }) => {
+          const isSelected = selectedFramework === name.toLowerCase();
+          const lowerCaseName = name.toLowerCase();
+          const isPotpourri = lowerCaseName === 'potpourri';
+
+          return (
             <Button
-              variant={isSelected ? 'contained' : 'outlined'}
+              key={identifier}
+              variant="text"
+              disableRipple
               sx={{
-                borderRadius: '8px',
+                padding: 0,
+                minWidth: 'auto',
                 fontFamily: 'sans-serif',
-                fontWeight: 500,
+                fontWeight: isSelected ? 'bold' : 500,
                 textTransform: 'none',
                 fontSize: '16px',
-                fontStyle: 'sans-serif',
-                color: isSelected
-                  ? isPotpourri
-                    ? '#171D1E'
-                    : '#fff'
-                  : 'black',
-                borderColor: '#cee5ff',
-                backgroundColor: isSelected
-                  ? buttonColors[lowerCaseName]
-                  : 'transparent',
-
-                // '&:hover': {
-                //   backgroundColor: buttonColors[lowerCaseName] || 'black',
-                //   color: '#fff',
-                // },
+                color: isSelected ? 'black' : 'gray',
+                backgroundColor: 'transparent',
+                border: 'none',
+                '&:hover': {
+                  backgroundColor: 'transparent',
+                },
               }}
               onClick={() => handleItemClick({ identifier, name })}
             >
               {name}
             </Button>
-          </Grid>
-        );
-      })}
+          );
+        })}
+      </Stack>
     </Grid>
   );
 };

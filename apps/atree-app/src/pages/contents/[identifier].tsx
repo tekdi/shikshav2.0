@@ -32,7 +32,7 @@ import atreeLogo from '../../../assets/images/placeholder.jpg';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined';
-import { AtreeCard, ContentSearch } from '@shared-lib';
+import { AtreeCard, ContentSearch} from '@shared-lib';
 import ShareDialog from '../../component/ShareDialog';
 import FooterText from '../../component/FooterText';
 import Loader from '../../component/layout/LoaderComponent';
@@ -70,6 +70,16 @@ export default function Content() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [open, setOpen] = useState(false);
   const [relatedContent, setRelatedContent] = useState<any>([]);
+    const languageDisplayMap: Record<string, string> = {
+      english: 'English',
+      hindi: 'हिन्दी',
+      marathi: 'मराठी',
+      bengali: 'বাংলা',
+      assamese: 'অসমীয়া',
+      kannada: 'ಕನ್ನಡ',
+      tamil: 'தமிழ்',
+      malayalam: 'മലയാളം',
+    };
   const handleOpen = () => setOpen(true);
   const handleOnCLick = () => {
     window.open(contentData?.url, '_blank');
@@ -406,7 +416,35 @@ export default function Content() {
                           textAlign="left"
                           fontFamily={'Arial'}
                         >
-                          <b>Year:</b> {contentData?.year ?? ''}
+                          {contentData?.year ?? ''}
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          textAlign="left"
+                          fontFamily={'Arial'}
+                        >
+                          {(contentData as any)?.language?.[0] && (
+                            <Typography
+                              variant="body1"
+                              textAlign="left"
+                              fontFamily="Arial"
+                              sx={{
+                                display: 'inline-block',
+                                backgroundColor: '#FFBD0D', // highlighted yellow
+                                padding: '2px 8px',
+                                // borderRadius: '8px',
+                                fontWeight: 600,
+                                fontSize: '1rem',
+                                color: '#000',
+                              }}
+                            >
+                              {languageDisplayMap[
+                                (
+                                  contentData as any
+                                ).language[0].toLowerCase?.() ?? ''
+                              ] ?? (contentData as any).language[0]}
+                            </Typography>
+                          )}
                         </Typography>
                       </Stack>
                     </Stack>
@@ -606,7 +644,33 @@ export default function Content() {
                   textAlign="left"
                   fontFamily={'Arial'}
                 >
-                  <b>Year:</b> {contentData?.year ?? ''}
+                  {contentData?.year ?? ''}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  textAlign="left"
+                  fontFamily={'Arial'}
+                >
+                  {(contentData as any)?.language?.[0] && (
+                    <Typography
+                      variant="body1"
+                      textAlign="left"
+                      fontFamily="Arial"
+                      sx={{
+                        display: 'inline-block',
+                        backgroundColor: '#FFBD0D', // highlighted yellow
+                        padding: '2px 8px',
+                        // borderRadius: '8px',
+                        fontWeight: 600,
+                        fontSize: '1rem',
+                        color: '#000',
+                      }}
+                    >
+                      {languageDisplayMap[
+                        (contentData as any).language[0]?.toLowerCase?.() ?? ''
+                      ] ?? (contentData as any).language[0]}
+                    </Typography>
+                  )}
                 </Typography>
               </Stack>
             </Box>
