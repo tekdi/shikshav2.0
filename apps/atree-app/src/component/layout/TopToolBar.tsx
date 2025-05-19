@@ -252,7 +252,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                   }}
                 >
                   <FrameworkFilter
-                    frameworkFilter={frameworkFilter || []}
+                    frameworkFilter={frameworkFilter ?? []}
                     framework={framework}
                     setFramework={setFramework}
                     fromSubcategory={false}

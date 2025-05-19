@@ -162,7 +162,7 @@ export const AtreeCard: React.FC<{
                     </Typography>
 
                     {/* Native Language Tag */}
-                    {(content as any)?.language?.[0] && (
+                    {content?.language?.[0] && (
                       <Box
                         sx={{
                           backgroundColor: '#FFBD0D', // highlighted yellow
@@ -174,8 +174,8 @@ export const AtreeCard: React.FC<{
                         }}
                       >
                         {languageDisplayMap[
-                          (content as any).language[0].toLowerCase?.() || ''
-                        ] || (content as any).language[0]}
+                          (content).language[0].toLowerCase?.() ?? ''
+                        ] ?? (content).language[0]}
                       </Box>
                     )}
                   </Box>

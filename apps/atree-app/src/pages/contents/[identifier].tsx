@@ -32,7 +32,7 @@ import atreeLogo from '../../../assets/images/placeholder.jpg';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined';
-import { AtreeCard, ContentSearch, FilterDialog, RESOURCE_TYPES } from '@shared-lib';
+import { AtreeCard, ContentSearch} from '@shared-lib';
 import ShareDialog from '../../component/ShareDialog';
 import FooterText from '../../component/FooterText';
 import Loader from '../../component/layout/LoaderComponent';
@@ -245,7 +245,6 @@ export default function Content() {
   };
   return (
     <>
-      
       {contentData ? (
         <Layout
           showBack
@@ -258,7 +257,6 @@ export default function Content() {
           {!isMobile ? (
             // Desktop View (Carousel on Right, Content on Left)
             <>
-            
               <Grid
                 container
                 spacing={2}
@@ -443,8 +441,8 @@ export default function Content() {
                               {languageDisplayMap[
                                 (
                                   contentData as any
-                                ).language[0].toLowerCase?.() || ''
-                              ] || (contentData as any).language[0]}
+                                ).language[0].toLowerCase?.() ?? ''
+                              ] ?? (contentData as any).language[0]}
                             </Typography>
                           )}
                         </Typography>
@@ -669,8 +667,8 @@ export default function Content() {
                       }}
                     >
                       {languageDisplayMap[
-                        (contentData as any).language[0].toLowerCase?.() || ''
-                      ] || (contentData as any).language[0]}
+                        (contentData as any).language[0]?.toLowerCase?.() ?? ''
+                      ] ?? (contentData as any).language[0]}
                     </Typography>
                   )}
                 </Typography>
