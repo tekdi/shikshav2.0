@@ -250,8 +250,9 @@ export default function Registration() {
                     <FormLabel
                       sx={{
                         color: '#4D4639',
-                        fontWeight: 600,
-                        fontSize: '14px',
+                        fontWeight: 500,
+                        fontSize: '16px',
+                        fontFamily: 'poppins',
                       }}
                     >
                       {label}
@@ -290,7 +291,12 @@ export default function Registration() {
               <Grid item container alignItems="center">
                 <Grid item xs={12} sm={3}>
                   <FormLabel
-                    sx={{ color: '#4D4639', fontWeight: 600, fontSize: '14px' }}
+                    sx={{
+                      color: '#4D4639',
+                      fontWeight: 500,
+                      fontSize: '16px',
+                      fontFamily: 'poppins',
+                    }}
                   >
                     Gender &nbsp;<span style={{ color: 'red' }}>*</span>
                   </FormLabel>
@@ -309,6 +315,9 @@ export default function Registration() {
                           <Radio
                             sx={{
                               color: '#FFBD0D',
+                              fontFamily: 'poppins',
+                              fontSize: '16px',
+                              fontWeight: 500,
                               '&.Mui-checked': { color: '#FFBD0D' },
                               p: 0.5,
                             }}
@@ -334,7 +343,12 @@ export default function Registration() {
               <Grid item container alignItems="center">
                 <Grid item xs={12} sm={3}>
                   <FormLabel
-                    sx={{ color: '#4D4639', fontWeight: 600, fontSize: '14px' }}
+                    sx={{
+                      color: '#4D4639',
+                      fontFamily: 'poppins',
+                      fontWeight: 500,
+                      fontSize: '16px',
+                    }}
                   >
                     Select Role &nbsp;<span style={{ color: 'red' }}>*</span>
                   </FormLabel>

@@ -22,7 +22,7 @@ const DigitalHubBanner = () => {
       <Typography
         variant="h1"
         sx={{
-          fontFamily: 'Poppins, sans-serif',
+          fontFamily: 'Poppins',
           fontWeight: 400,
           fontSize: { xs: '14px', sm: '24px' }, // Smaller on mobile
           lineHeight: '20px', // Adjusted for mobile

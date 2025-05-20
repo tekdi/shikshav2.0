@@ -17,6 +17,7 @@ export default function FooterText({ page }: FooterTextProps) {
       <Typography
         align="center"
         gutterBottom
+        fontFamily="poppins"
         sx={{ fontSize: { xs: '10px', md: '14px' } }}
       >
         Curated by ATREE: For, Of, and By Environment Educators of India
