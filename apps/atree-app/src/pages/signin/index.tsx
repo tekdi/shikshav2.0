@@ -20,7 +20,11 @@ import { getUserAuthInfo, signin } from '../../service/content';
 import Loader from '../../component/layout/LoaderComponent';
 import Layout from '../../component/layout/layout';
 import { commonButtonStyle } from '../../utils/commonStyle';
-import { validateEmail, validatePassword } from '../../utils/authUtils';
+import {
+  dispatchLoginEvent,
+  validateEmail,
+  validatePassword,
+} from '../../utils/authUtils';
 
 interface ListProps {}
 
@@ -90,6 +94,7 @@ const Login: React.FC<ListProps> = () => {
           'role',
           authInfo?.result?.tenantData?.[0]?.roleName
         );
+        dispatchLoginEvent(user, 'credentials');
         setAlert({ message: 'Login successful!', severity: 'success' });
         router.push('/home');
       } else {
@@ -287,6 +292,8 @@ const MyCustomGoogleLogin = () => {
       if (keycloak.authenticated && keycloak.token) {
         localStorage.setItem('token', keycloak.token || '');
         localStorage.setItem('refreshToken', keycloak.refreshToken || '');
+        const user = keycloak.tokenParsed?.preferred_username || 'Unknown User';
+        dispatchLoginEvent(user, 'google');
       } else {
         console.error('No token received after login.');
       }

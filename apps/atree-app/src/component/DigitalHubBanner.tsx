@@ -16,7 +16,7 @@ const DigitalHubBanner = () => {
         gap: '24px',
         // padding: { xs: '16px', sm: '5' }, // Add padding on mobile
         margin: '0 auto', // Center the container
-        backgroundColor: '#F8F2CB', // Change as needed
+        backgroundColor: '#FCD905', // Change as needed
       }}
     >
       <Typography

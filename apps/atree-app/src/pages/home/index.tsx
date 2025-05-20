@@ -26,6 +26,7 @@ import {
   FilterDialog,
   RESOURCE_TYPES,
   MIME_TYPES,
+  trackEvent,
 } from '@shared-lib';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -102,6 +103,11 @@ export default function Index() {
 
   // **Update Filters and Trigger API Call in One Step**
   const handleApplyFilters = async (selectedValues: any) => {
+    trackEvent({
+      action: 'filter_apply',
+      category: 'user',
+      label: 'Home Page',
+    });
     const { offset, limit, ...filters } = selectedValues;
     setFilters((prevFilters) => {
       // Create a new filters object, preserving previous filters
@@ -137,7 +143,12 @@ export default function Index() {
       return newFilters;
     });
   };
-
+  useEffect(() => {
+    trackEvent({
+      action: 'view_home_page',
+      category: 'Home Page',
+    });
+  }, []);
   // **Initial Data Fetch Based on frameworkName**
   useEffect(() => {
     const init = async () => {
@@ -247,6 +258,13 @@ export default function Index() {
 
   // **Handle Content Click**
   const handleCardClick = (content: any) => {
+    trackEvent({
+      action: 'card_click',
+      category: 'user',
+      label: 'Home Page',
+    });
+    localStorage.removeItem('selectedFilters');
+
     if (consumedContent.length < 3) {
       router.push(`/contents/${content?.identifier}`);
       setConsumedContent((prev) => {
@@ -738,7 +756,14 @@ const SubFrameworkFilter = React.memo<{
         <Grid key={subFrameworkItem.identifier}>
           <Button
             // onClick={() => setSubFramework(subFrameworkItem.identifier)}
-            onClick={() => handleItemClick(subFrameworkItem)}
+            onClick={() => {
+              trackEvent({
+                action: 'subcategory_click',
+                category: 'user',
+                label: 'Home Page',
+              });
+              handleItemClick(subFrameworkItem);
+            }}
             sx={{
               borderRadius: '8px',
               color: '#001D32',
@@ -784,7 +809,14 @@ const SubFrameworkFilter = React.memo<{
           {/* <DialogTitle>Remaining Data</DialogTitle> */}
           <IconButton
             aria-label="close"
-            onClick={() => setOpenPopup(false)}
+            onClick={() => {
+              trackEvent({
+                action: 'subcategory_click',
+                category: 'user',
+                label: 'Home Page',
+              });
+              setOpenPopup(false);
+            }}
             sx={{
               position: 'absolute',
               right: 8,

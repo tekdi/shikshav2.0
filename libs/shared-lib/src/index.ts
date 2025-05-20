@@ -25,6 +25,7 @@ export * from './lib/Loader/Loader';
 export * from './lib/Filterdialog/FilterDialog';
 export * from './lib/Progress/Circular';
 export * from './lib/Progress/Progress';
+export * from './lib/GA/analytics';
 export * from './lib/Services/Content/Search';
 import Image from '../images/default.png';
 export { RESOURCE_TYPES, MIME_TYPES, languageData } from './utils/constantData';
