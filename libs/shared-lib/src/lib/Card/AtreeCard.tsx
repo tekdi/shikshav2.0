@@ -85,7 +85,7 @@ export const AtreeCard: React.FC<{
                     width: '100%',
                     paddingTop: '66.66%', // 3:2 aspect ratio (2/3 = 0.6666)
                     overflow: 'hidden',
-                    borderRadius: '16px',
+                    borderRadius: '16px 16px 0 0',
                     border: '1px solid rgba(0,0,0,0.1)',
                     mb: 2,
                   }}
@@ -165,7 +165,7 @@ export const AtreeCard: React.FC<{
                     {content?.language?.[0] && (
                       <Box
                         sx={{
-                          backgroundColor: '#FFBD0D', // highlighted yellow
+                          backgroundColor: '#FCD905', // highlighted yellow
                           padding: '2px 8px',
                           // borderRadius: '8px',
                           fontWeight: 600,
@@ -174,8 +174,8 @@ export const AtreeCard: React.FC<{
                         }}
                       >
                         {languageDisplayMap[
-                          (content).language[0].toLowerCase?.() ?? ''
-                        ] ?? (content).language[0]}
+                          content.language[0].toLowerCase?.() ?? ''
+                        ] ?? content.language[0]}
                       </Box>
                     )}
                   </Box>

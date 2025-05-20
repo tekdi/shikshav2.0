@@ -137,7 +137,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
 
   return (
     <Layout
-      showTopAppBar={false}
+      showTopAppBar={true}
       footerComponent={<FooterText page={''} />}
       sx={{ padding: 0, margin: 0 }}
     >
@@ -187,6 +187,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                     gutterBottom
                     sx={{
                       fontWeight: 400,
+                      fontFamily: 'Poppins',
                       fontSize: { xs: '14px', md: '24px' },
                       lineHeight: { xs: '24px', md: '44px' },
                       textAlign: 'center',
@@ -348,12 +349,11 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
               display: 'flex',
               alignItems: 'center',
               flexDirection: 'column',
-              padding: '0px 15px',
+              padding: '10px 15px',
               // gap: 2,
             }}
           >
             <Typography
-              variant="h5"
               align="center"
               gutterBottom
               sx={{
@@ -361,6 +361,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                 fontSize: '18px',
                 lineHeight: '24px',
                 textAlign: 'center',
+                fontFamily: 'poppins',
               }}
             >
               {t('Follow Us On')}

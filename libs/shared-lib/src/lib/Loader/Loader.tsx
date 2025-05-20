@@ -29,7 +29,7 @@ const DESKTOP_PADDING_MAP: Record<string, string> = {
   '/quick-access': '195px',
   '/quick-access/[category]': '195px',
   '/quick-access/contents/[category]': '105px',
-  // '/': '132px',
+  '/': '132px',
   '/contents': '132px',
   '/contents/[identifier]': '126px',
   '/searchpage': '118px',
@@ -38,14 +38,13 @@ const DESKTOP_PADDING_MAP: Record<string, string> = {
 const getPaddingTop = (
   isMobile: boolean,
   router: any,
-  transparentAppBar: boolean
 ): string => {
   const defaultPadding = isMobile ? '40px' : '95px';
 
   // Remove padding for root path "/"
-  if (router.pathname === '/') {
-    return '0px';
-  }
+  // if (router.pathname === '/') {
+  //   return '0px';
+  // }
 
   if (isMobile) {
     if (

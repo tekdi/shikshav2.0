@@ -71,7 +71,8 @@ export const ImageBanner = ({
                 color: '#000',
                 width: { xs: 40, md: 85 },
                 height: { xs: 40, md: 85 },
-                fontSize: { xs: '18px', md: '30px' },
+                fontFamily: 'sans-serif',
+                fontSize: { xs: '18px', md: '45px' },
                 fontWeight: 500,
               }}
             >
@@ -83,6 +84,7 @@ export const ImageBanner = ({
               width: '245px',
               color: 'white',
               fontWeight: 700,
+              fontFamily: 'Manrope, sans-serif',
               // width: isMobile ? 'auto' : '70%',
               fontSize: { xs: '18px', md: '30px' },
             }}

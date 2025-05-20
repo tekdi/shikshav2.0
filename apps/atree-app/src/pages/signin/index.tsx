@@ -159,6 +159,7 @@ const Login: React.FC<ListProps> = () => {
                         color: '#4D4639',
                         fontWeight: 700,
                         fontSize: '1rem',
+                        fontFamily: 'poppins',
                         marginBottom: 1,
                       }}
                     >
@@ -208,7 +209,8 @@ const Login: React.FC<ListProps> = () => {
                         color: '#2B3133',
                         borderRadius: '30px',
                         fontSize: '16px',
-                        fontWeight: 600,
+                        fontWeight: 500,
+                        fontFamily: 'poppins',
                         textTransform: 'none',
                         boxShadow: '0px 4px 12px rgba(0,0,0,0.1)',
                         transition: 'all 0.3s ease',
@@ -231,14 +233,19 @@ const Login: React.FC<ListProps> = () => {
               </Grid>
 
               <Grid item textAlign="center">
-                <Typography fontSize="15px" color="#3B383E">
+                <Typography
+                  fontSize="16px"
+                  color="#3B383E"
+                  sx={{ fontWeight: 500, fontFamily: 'poppins' }}
+                >
                   Don't have an account?{' '}
                   <Link
                     href="/register"
                     style={{
                       color: '#0037B9',
                       fontWeight: 500,
-                      // textDecoration: 'underline',
+                      fontFamily: 'poppins',
+                      textDecoration: 'underline',
                     }}
                   >
                     Sign up
@@ -313,7 +320,8 @@ const MyCustomGoogleLogin = () => {
           color: '#2B3133',
           borderRadius: '30px',
           fontSize: '16px',
-          fontWeight: 600,
+          fontWeight: 500,
+          fontFamily: 'poppins',
           textTransform: 'none',
           border: '2px solid #FFBD0D',
           boxShadow: '0px 4px 12px rgba(0,0,0,0.1)',

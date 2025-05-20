@@ -395,21 +395,9 @@ export default function Content() {
                   // marginTop: '60px',
                 }}
               >
-                {/* Left Side (Filter) */}
-                <Grid size={{ xs: 12, md: 3 }}>
-                  <FilterDialog
-                    frameworkFilter={filterData}
-                    filterValues={filters}
-                    onApply={handleApplyFilters}
-                    isMobile={isMobile}
-                    resources={RESOURCE_TYPES}
-                    // mimeType={MIME_TYPES}
-                  />
-                </Grid>
-
                 {/* Right Side (Content) */}
 
-                <Grid size={{ xs: 12, md: 9 }}>
+                <Grid size={{ xs: 12 }}>
                   <Box
                     sx={{
                       display: 'flex',
@@ -688,7 +676,7 @@ export default function Content() {
                       : []
                   }
                   handleCardClick={handleCardClick}
-                  _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
+                  _grid={{ size: { xs: 6, sm: 6, md: 3, lg: 2 } }}
                   _card={{ image: atreeLogo.src }}
                 />
               </Box>
