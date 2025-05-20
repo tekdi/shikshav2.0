@@ -28,16 +28,34 @@ import Grid from '@mui/material/Grid2';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ShareIcon from '@mui/icons-material/Share';
 import atreeLogo from '../../../assets/images/placeholder.jpg';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import CloseIcon from '@mui/icons-material/Close';
 
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined';
-import { AtreeCard, ContentSearch, trackEvent } from '@shared-lib';
+import {
+  AtreeCard,
+  ContentSearch,
+  trackEvent,
+  RESOURCE_TYPES,
+  MIME_TYPES,
+} from '@shared-lib';
 import ShareDialog from '../../component/ShareDialog';
 import FooterText from '../../component/FooterText';
 import Loader from '../../component/layout/LoaderComponent';
 import Footer from '../../component/layout/Footer';
-
+import FilterDialog from 'libs/shared-lib/src/lib/Filterdialog/FilterDialog';
+const buttonColors = {
+  water: '#0E28AE',
+  land: '#8F4A50',
+  forest: '#148A00',
+  'climate change': '#CF3D03',
+  'activity books': '#23005A',
+  'reference books': '#FFBD0D',
+  general: '#FFBD0D',
+  potpourri: '#FFBD0D',
+};
 interface ContentItem {
   name: string;
   gradeLevel: string[];
@@ -70,6 +88,19 @@ export default function Content() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [open, setOpen] = useState(false);
   const [relatedContent, setRelatedContent] = useState<any>([]);
+  const [filterData, setFilterData] = useState();
+  const [subFrameworkFilter, setSubFrameworkFilter] = useState<any[]>([]);
+  const [frameworkFilter, setFrameworkFilter] = useState();
+  const [subFramework, setSubFramework] = useState('');
+  const [framework, setFramework] = useState('');
+
+  const [filters, setFilters] = useState<any>({
+    request: {
+      filters: {},
+      offset: 0,
+      limit: 5,
+    },
+  });
   const languageDisplayMap: Record<string, string> = {
     english: 'English',
     hindi: 'हिन्दी',
@@ -123,68 +154,75 @@ export default function Content() {
     }
   };
 
-  const fetchContent = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const {
-        result: { content: result },
-      } = await getContentDetails(identifier as string);
-      if (result && typeof result === 'object') {
-        setContentData(result);
-      }
-      const cleanKeywords = (
-        result?.keywords?.filter((item: any) => item) ?? []
-      ).slice(0, 4);
-      // .map((keyword: any) => `"${keyword}"`); // Remove #
-      const queryString = cleanKeywords;
-
-      let relatedContentTemp: ContentItem[] = [];
-
+  const fetchContent = useCallback(
+    async (updatedFilters: any) => {
+      setIsLoading(true);
       try {
-        const keywordFilteredResults = await ContentSearch({
-          channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
-          filters: { keywords: queryString },
-        });
-        const filtered =
-          keywordFilteredResults?.result?.content?.filter(
-            (item: any) => item.identifier !== result.identifier
-          ) ?? [];
-
-        if (filtered.length > 0) {
-          relatedContentTemp = filtered.map((item: any) => ({
-            name: item.name ?? '',
-            gradeLevel: item.gradeLevel ?? [],
-            language: item.language ?? [],
-            artifactUrl: item.artifactUrl ?? '',
-            identifier: item.identifier ?? '',
-            posterImage: item.posterImage ?? '',
-            contentType: item.contentType ?? '',
-            mimeType: item.mimeType ?? '',
-            author: item.author ?? '',
-            keywords: item.keywords ?? [],
-            year: item.year ?? '',
-            license: item.license ?? '',
-            description: item.description ?? '',
-            publisher: item.publisher ?? '',
-            url: item.url ?? '',
-            previewUrl: item.previewUrl ?? '',
-            downloadurl: item.downloadurl ?? '', // Added missing property
-          }));
-          // break; // Stop at first successful keyword
+        const {
+          result: { content: result },
+        } = await getContentDetails(identifier as string);
+        if (result && typeof result === 'object') {
+          setContentData(result);
         }
-      } catch (error) {
-        console.error(`Search failed for keyword ${cleanKeywords}:`, error);
-        // continue;
-      }
-      // }
+        const cleanKeywords = (
+          result?.keywords?.filter((item: any) => item) ?? []
+        ).slice(0, 4);
+        // .map((keyword: any) => `"${keyword}"`); // Remove #
+        const queryString = cleanKeywords;
 
-      setRelatedContent(relatedContentTemp);
-    } catch (error) {
-      console.error('Failed to fetch content:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [identifier]);
+        let relatedContentTemp: ContentItem[] = [];
+
+        try {
+          const searchFilters = {
+            ...updatedFilters, // Include existing filters
+            keywords: queryString, // Add current content's keywords
+          };
+          const keywordFilteredResults = await ContentSearch({
+            channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+            filters: searchFilters,
+          });
+          const filtered =
+            keywordFilteredResults?.result?.content?.filter(
+              (item: any) => item.identifier !== result.identifier
+            ) ?? [];
+
+          if (filtered.length > 0) {
+            relatedContentTemp = filtered.map((item: any) => ({
+              name: item.name ?? '',
+              gradeLevel: item.gradeLevel ?? [],
+              language: item.language ?? [],
+              artifactUrl: item.artifactUrl ?? '',
+              identifier: item.identifier ?? '',
+              posterImage: item.posterImage ?? '',
+              contentType: item.contentType ?? '',
+              mimeType: item.mimeType ?? '',
+              author: item.author ?? '',
+              keywords: item.keywords ?? [],
+              year: item.year ?? '',
+              license: item.license ?? '',
+              description: item.description ?? '',
+              publisher: item.publisher ?? '',
+              url: item.url ?? '',
+              previewUrl: item.previewUrl ?? '',
+              downloadurl: item.downloadurl ?? '', // Added missing property
+            }));
+            // break; // Stop at first successful keyword
+          }
+        } catch (error) {
+          console.error(`Search failed for keyword ${cleanKeywords}:`, error);
+          // continue;
+        }
+        // }
+
+        setRelatedContent(relatedContentTemp);
+      } catch (error) {
+        console.error('Failed to fetch content:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [identifier]
+  );
 
   const keywords = Array.isArray(contentData?.keywords)
     ? contentData.keywords
@@ -200,7 +238,7 @@ export default function Content() {
   const remainingKeywords = keywords.slice(3);
   useEffect(() => {
     if (identifier) {
-      fetchContent();
+      fetchContent(filters.request.filters);
     }
   }, [identifier]);
 
@@ -209,6 +247,10 @@ export default function Content() {
       const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
       const response = await fetch(url);
       const frameworkData = await response.json();
+      let selectedCategory = '';
+      if (typeof window !== 'undefined') {
+        selectedCategory = localStorage.getItem('category') || '';
+      }
 
       const filteredFramework = frameworkData?.result?.framework
         ? {
@@ -222,18 +264,49 @@ export default function Content() {
               : [],
           }
         : { categories: [] }; // Provide a default structure if frameworkData is undefined
-
+      setFilterData({
+        ...frameworkData?.result?.framework,
+        categories: frameworkData?.result?.framework.categories.filter(
+          (category: any) => category.status === 'Live'
+        ),
+      });
       const fdata =
         filteredFramework?.categories?.find(
           (item: any) => item.code === 'topic'
         )?.terms ?? [];
+      const selectedFramework = fdata.find(
+        (item: any) =>
+          item.name?.toLowerCase() === selectedCategory?.toLowerCase()
+      );
+      const defaultFramework = fdata[0]?.identifier || '';
+      const frameworkToSet = selectedFramework?.identifier || defaultFramework;
+      setFramework(frameworkToSet);
+
+      setFrameworkFilter(fdata);
+      if (frameworkToSet && fdata) {
+        const subFrameworkData = fdata.find(
+          (item: any) => item.identifier === frameworkToSet
+        );
+
+        if (subFrameworkData?.associations) {
+          const uniqueAssociations = Array.from(
+            new Map(
+              subFrameworkData.associations.map((item: any) => [
+                item?.name,
+                item,
+              ])
+            ).values()
+          );
+          setSubFrameworkFilter(uniqueAssociations);
+        }
+      }
     } catch (error) {
       console.error('Error fetching framework data:', error);
     }
   };
   useEffect(() => {
     fetchFrameworkData();
-  }, []);
+  }, [frameworkFilter, framework]);
 
   const handleCardClick = (content: any) => {
     router.push(`/contents/${content?.identifier}`);
@@ -250,11 +323,11 @@ export default function Content() {
         keywordFilteredResults?.result?.content?.filter(
           (item: any) => item.identifier !== identifier
         ) || [];
-        trackEvent({
-          action: 'tags_content',
-          category: 'user',
-          label: 'Content Details Page',
-        });
+      trackEvent({
+        action: 'tags_content',
+        category: 'user',
+        label: 'Content Details Page',
+      });
       setRelatedContent(filteredContent);
     } catch (error) {
       console.error(`Search failed for keyword ${keyword}:`, error);
@@ -262,16 +335,54 @@ export default function Content() {
       setIsLoading(false);
     }
   };
+
+  const handleApplyFilters = async (selectedValues: any) => {
+    trackEvent({
+      action: 'filter_apply',
+      category: 'user',
+      label: 'Home Page',
+    });
+    const { offset, limit, ...filters } = selectedValues;
+    setFilters((prevFilters: any) => {
+      // Create a new filters object, preserving previous filters
+      let cleanedFilters = {
+        ...prevFilters.request.filters,
+        ...Object.fromEntries(
+          Object.entries(filters).filter(
+            ([key, value]) => Array.isArray(value) && value.length > 0
+          )
+        ),
+      };
+
+      if (!filters.mimeType || filters.mimeType.length === 0) {
+        delete cleanedFilters.mimeType;
+      }
+      if (!filters.resource || filters.resource.length === 0) {
+        delete cleanedFilters.resource;
+      }
+
+      const newFilters = {
+        request: {
+          filters: cleanedFilters,
+          offset: offset ?? prevFilters.request.offset ?? 0,
+          limit: limit ?? prevFilters.request.limit ?? 5,
+        },
+      };
+      setFilters(newFilters);
+      fetchContent(newFilters.request.filters);
+      return newFilters;
+    });
+  };
   return (
     <>
       {contentData ? (
         <Layout
-          showBack
+          // showBack
           isFooter={isMobile} // add this when on mobile
           footerComponent={!isMobile ? <FooterText page="" /> : <Footer />}
           isLoadingChildren={isLoading}
-          backIconClick={() => router.back()}
-          backTitle={contentData?.name || ''}
+          // backIconClick={() => router.back()}
+          // backTitle={contentData?.name || ''}
         >
           {!isMobile ? (
             // Desktop View (Carousel on Right, Content on Left)
@@ -281,196 +392,269 @@ export default function Content() {
                 spacing={2}
                 sx={{
                   padding: 2,
-                  marginTop: '60px',
+                  // marginTop: '60px',
                 }}
               >
-                <Box
-                  sx={{
-                    display: 'flex',
-                    border: '1px solid #C2C7CF',
-                    padding: '10px',
-                    gap: 2,
-                    borderRadius: '10px',
-                  }}
-                >
-                  {/* Left Side (Content) */}
-                  <Grid size={{ xs: 12, md: 3 }}>
-                    {/* {[...Array(4)].map((_, i) => ( */}
-                    <ImageCard
-                      image={contentData?.posterImage ?? landingBanner?.src}
-                      name={''}
+                {/* Left Side (Filter) */}
+                <Grid size={{ xs: 12, md: 3 }}>
+                  <FilterDialog
+                    frameworkFilter={filterData}
+                    filterValues={filters}
+                    onApply={handleApplyFilters}
+                    isMobile={isMobile}
+                    resources={RESOURCE_TYPES}
+                    // mimeType={MIME_TYPES}
+                  />
+                </Grid>
+
+                {/* Right Side (Content) */}
+
+                <Grid size={{ xs: 12, md: 9 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    {subFrameworkFilter && subFrameworkFilter.length > 0 && (
+                      <Title>Browse by Sub Categories</Title>
+                    )}
+                  </Box>
+
+                  <Box
+                    sx={{
+                      width: '100%',
+                      padding: '12px 0px',
+                      gap: '16px',
+                      flexDirection: 'column',
+                      display: 'flex',
+                    }}
+                  >
+                    <SubFrameworkFilter
+                      subFramework={subFramework}
+                      setSubFramework={setSubFramework}
+                      lastButton={true}
+                      subFrameworkFilter={subFrameworkFilter || []}
                     />
-                  </Grid>
-                  <Grid size={{ xs: 12, md: 9 }}>
-                    <Stack spacing={2}>
-                      {/* Keywords */}
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          flexWrap: 'wrap',
-                          gap: '19px',
-                          width: '100%',
-                        }}
-                      >
-                        {displayedKeywords.map((label) => (
-                          <Chip
-                            key={label}
-                            label={label}
-                            variant="outlined"
-                            sx={{
-                              height: 32,
-                              padding: '4px 6px',
-                              borderRadius: '8px',
-                              '& .MuiChip-label': {
-                                fontSize: '14px',
-                                fontFamily: 'sans-serif',
-                                fontWeight: 500,
-                                color: '#171D1E',
-                              },
-                            }}
-                            onClick={() =>
-                              selectTagOnClick(label.replace('#', ''))
-                            }
-                          />
-                        ))}
-                      </Box>
+                  </Box>
+                  <div
+                    style={{
+                      flexGrow: 1,
+                      justifyContent: 'flex-end',
+                      display: 'flex',
+                    }}
+                  >
+                    <IconButton
+                      onClick={handleOpen}
+                      color="primary"
+                      style={{
+                        marginLeft: 'auto',
+                        backgroundColor: 'white',
+                        color: '#2B3133',
+                        boxShadow:
+                          '-0.73px 0.73px 0.73px -1.46px rgba(255, 255, 255, 0.35) inset, 0px 8px 10px rgba(0, 0, 0, 0.05)',
+                      }}
+                    >
+                      <ShareIcon />
+                    </IconButton>
 
-                      {/* Description */}
-                      <Typography
-                        variant="body1"
-                        textAlign="left"
-                        fontFamily={'Arial'}
-                      >
-                        {contentData?.description ?? ''}
-                      </Typography>
+                    {/* Share Dialog */}
 
-                      {/* Know More Button */}
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          gap: 1,
-                          width: '100%',
-                          '& > button': {
-                            flex: 1,
-                            minWidth: 0,
-                            maxWidth: 152,
-                            textTransform: 'none', // Disable default Material-UI uppercase
-                            '& .MuiButton-startIcon': {
-                              marginRight: '4px', // Adjust icon spacing if needed
-                            },
-                          },
-                        }}
-                      >
-                        <Button
-                          variant="contained"
-                          color="secondary"
+                    <ShareDialog
+                      open={open}
+                      handleClose={() => setOpen(false)}
+                    />
+                  </div>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      border: '1px solid #C2C7CF',
+                      padding: '10px',
+                      gap: 2,
+                      borderRadius: '10px',
+                    }}
+                  >
+                    {/* Content Image */}
+                    <Grid size={{ xs: 12, md: 3 }}>
+                      <ImageCard
+                        image={contentData?.posterImage ?? landingBanner?.src}
+                        name={''}
+                      />
+                    </Grid>
+
+                    {/* Content Details */}
+                    <Grid size={{ xs: 12, md: 9 }}>
+                      <Stack spacing={2}>
+                        {/* Keywords */}
+                        <Box
                           sx={{
-                            borderRadius: '50px',
-                            height: '40px',
-                            padding: '3px',
-                            fontSize: '16px',
-                            fontWeight: 500,
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: '19px',
+                            width: '100%',
                           }}
-                          onClick={handlePreview}
-                          startIcon={<VisibilityOutlinedIcon />}
                         >
-                          Preview
-                        </Button>
-
-                        <Button
-                          variant="outlined"
-                          color="secondary"
-                          sx={{
-                            borderRadius: '50px',
-                            height: '40px',
-                            color: 'black',
-                            padding: '3px',
-                            fontSize: '16px',
-                            fontWeight: 500,
-                          }}
-                          startIcon={<FileDownloadOutlinedIcon />}
-                          disabled={!contentData?.downloadurl}
-                          onClick={handleOnDownload}
-                        >
-                          Download
-                        </Button>
-
-                        <Button
-                          variant="outlined"
-                          color="secondary"
-                          sx={{
-                            borderRadius: '50px',
-                            height: '40px',
-                            color: 'black',
-                            padding: '3px',
-                            fontSize: '16px',
-                            fontWeight: 500,
-                          }}
-                          startIcon={<LinkOutlinedIcon />}
-                          disabled={!contentData?.url}
-                          onClick={handleOnCLick}
-                        >
-                          Resource Link
-                        </Button>
-                      </Box>
-
-                      {/* Year & License */}
-                      <Stack spacing={0.5}>
-                        <Typography
-                          variant="body1"
-                          textAlign="left"
-                          fontFamily={'Arial'}
-                        >
-                          <b>Author:</b> {contentData?.author ?? ''}
-                        </Typography>
-                        <Typography
-                          variant="body1"
-                          textAlign="left"
-                          fontFamily={'Arial'}
-                        >
-                          <b>Publisher:</b> {contentData?.publisher ?? ''}
-                        </Typography>
-                        <Typography
-                          variant="body1"
-                          textAlign="left"
-                          fontFamily={'Arial'}
-                        >
-                          {contentData?.year ?? ''}
-                        </Typography>
-                        <Typography
-                          variant="body1"
-                          textAlign="left"
-                          fontFamily={'Arial'}
-                        >
-                          {(contentData as any)?.language?.[0] && (
-                            <Typography
-                              variant="body1"
-                              textAlign="left"
-                              fontFamily="Arial"
+                          {displayedKeywords.map((label) => (
+                            <Chip
+                              key={label}
+                              label={label}
+                              variant="outlined"
                               sx={{
-                                display: 'inline-block',
-                                backgroundColor: '#FFBD0D', // highlighted yellow
-                                padding: '2px 8px',
-                                // borderRadius: '8px',
-                                fontWeight: 600,
-                                fontSize: '1rem',
-                                color: '#000',
+                                height: 32,
+                                padding: '4px 6px',
+                                borderRadius: '8px',
+                                '& .MuiChip-label': {
+                                  fontSize: '14px',
+                                  fontFamily: 'sans-serif',
+                                  fontWeight: 500,
+                                  color: '#171D1E',
+                                },
                               }}
-                            >
-                              {languageDisplayMap[
-                                (
-                                  contentData as any
-                                ).language[0].toLowerCase?.() ?? ''
-                              ] ?? (contentData as any).language[0]}
-                            </Typography>
-                          )}
+                              onClick={() =>
+                                selectTagOnClick(label.replace('#', ''))
+                              }
+                            />
+                          ))}
+                        </Box>
+
+                        {/* Description */}
+                        <Typography
+                          variant="body1"
+                          textAlign="left"
+                          fontFamily={'Arial'}
+                        >
+                          {contentData?.description ?? ''}
                         </Typography>
+
+                        {/* Action Buttons */}
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            gap: 1,
+                            width: '100%',
+                            '& > button': {
+                              flex: 1,
+                              minWidth: 0,
+                              maxWidth: 152,
+                              textTransform: 'none',
+                              '& .MuiButton-startIcon': {
+                                marginRight: '4px',
+                              },
+                            },
+                          }}
+                        >
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            sx={{
+                              borderRadius: '50px',
+                              height: '40px',
+                              padding: '3px',
+                              fontSize: '16px',
+                              fontWeight: 500,
+                            }}
+                            onClick={handlePreview}
+                            startIcon={<VisibilityOutlinedIcon />}
+                          >
+                            Preview
+                          </Button>
+
+                          <Button
+                            variant="outlined"
+                            color="secondary"
+                            sx={{
+                              borderRadius: '50px',
+                              height: '40px',
+                              color: 'black',
+                              padding: '3px',
+                              fontSize: '16px',
+                              fontWeight: 500,
+                            }}
+                            startIcon={<FileDownloadOutlinedIcon />}
+                            disabled={!contentData?.downloadurl}
+                            onClick={handleOnDownload}
+                          >
+                            Download
+                          </Button>
+
+                          <Button
+                            variant="outlined"
+                            color="secondary"
+                            sx={{
+                              borderRadius: '50px',
+                              height: '40px',
+                              color: 'black',
+                              padding: '3px',
+                              fontSize: '16px',
+                              fontWeight: 500,
+                            }}
+                            startIcon={<LinkOutlinedIcon />}
+                            disabled={!contentData?.url}
+                            onClick={handleOnCLick}
+                          >
+                            Resource Link
+                          </Button>
+                        </Box>
+
+                        {/* Metadata */}
+                        <Stack spacing={0.5}>
+                          <Typography
+                            variant="body1"
+                            textAlign="left"
+                            fontFamily={'Arial'}
+                          >
+                            <b>Author:</b> {contentData?.author ?? ''}
+                          </Typography>
+                          <Typography
+                            variant="body1"
+                            textAlign="left"
+                            fontFamily={'Arial'}
+                          >
+                            <b>Publisher:</b> {contentData?.publisher ?? ''}
+                          </Typography>
+                          <Typography
+                            variant="body1"
+                            textAlign="left"
+                            fontFamily={'Arial'}
+                          >
+                            {contentData?.year ?? ''}
+                          </Typography>
+                          <Typography
+                            variant="body1"
+                            textAlign="left"
+                            fontFamily={'Arial'}
+                          >
+                            {(contentData as any)?.language?.[0] && (
+                              <Typography
+                                variant="body1"
+                                textAlign="left"
+                                fontFamily="Arial"
+                                sx={{
+                                  display: 'inline-block',
+                                  backgroundColor: '#FFBD0D',
+                                  padding: '2px 8px',
+                                  fontWeight: 600,
+                                  fontSize: '1rem',
+                                  color: '#000',
+                                }}
+                              >
+                                {languageDisplayMap[
+                                  (
+                                    contentData as any
+                                  ).language[0].toLowerCase?.() ?? ''
+                                ] ?? (contentData as any).language[0]}
+                              </Typography>
+                            )}
+                          </Typography>
+                        </Stack>
                       </Stack>
-                    </Stack>
-                  </Grid>
-                </Box>
-                {/* Right Side (Carousel) */}
+                    </Grid>
+                  </Box>
+                </Grid>
               </Grid>
+
+              {/* Related Content Section */}
               <Box
                 sx={{
                   width: '100%',
@@ -782,3 +966,208 @@ const ImageCard = ({
     </Card>
   );
 };
+const Title: React.FC<{
+  children: React.ReactNode | string;
+  onClick?: () => void;
+}> = ({ children, onClick }) => {
+  return (
+    <Box
+      display="flex"
+      flexDirection="row"
+      justifyContent="space-between"
+      alignItems="center"
+      width="100%"
+    >
+      <Typography
+        sx={{
+          fontFamily: 'Manrope, sans-serif',
+          fontWeight: 700,
+          fontSize: { xs: '20px', md: '22px' },
+          lineHeight: '28px',
+          color: '#1C170D',
+        }}
+      >
+        {children}
+      </Typography>
+      {onClick && (
+        <IconButton onClick={onClick}>
+          <ChevronRightIcon />
+        </IconButton>
+      )}
+    </Box>
+  );
+};
+const SubFrameworkFilter = React.memo<{
+  subFrameworkFilter: Array<{ identifier: string; name: string }>;
+  subFramework: string;
+  setSubFramework: (subFramework: string) => void;
+  lastButton: boolean;
+}>(function SubFrameworkFilter({
+  subFrameworkFilter,
+  subFramework,
+  setSubFramework,
+}) {
+  const router = useRouter();
+
+  const [openPopup, setOpenPopup] = useState<boolean>(false);
+  const [filterItems, setFilterItems] = useState<
+    Array<{ identifier: string; name: string }>
+  >([]);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const maxItems = isMobile ? 3 : 6;
+  useEffect(() => {
+    if (subFrameworkFilter) {
+      setFilterItems(subFrameworkFilter.slice(0, maxItems));
+    }
+  }, [subFrameworkFilter]);
+  const handleItemClick = (item: any) => {
+    localStorage.setItem('subcategory', item.name);
+    router.push(`/contents`);
+  };
+  const capitalizeFirstLetter = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  };
+  return (
+    <Grid container spacing={1}>
+      {filterItems?.map((subFrameworkItem: any) => (
+        <Grid key={subFrameworkItem.identifier}>
+          <Button
+            // onClick={() => setSubFramework(subFrameworkItem.identifier)}
+            onClick={() => {
+              trackEvent({
+                action: 'subcategory_click',
+                category: 'user',
+                label: 'Home Page',
+              });
+              handleItemClick(subFrameworkItem);
+            }}
+            sx={{
+              borderRadius: '8px',
+              color: '#001D32',
+              backgroundColor: '#E3E9EA',
+              textTransform: 'none',
+              fontFamily: 'sans-serif',
+              fontSize: '11px',
+              lineHeight: '16px',
+            }}
+          >
+            {capitalizeFirstLetter(subFrameworkItem.name)}
+          </Button>
+        </Grid>
+      ))}
+      {subFrameworkFilter?.length > (isMobile ? 3 : 6) && (
+        <Button
+          onClick={() => setOpenPopup(true)}
+          sx={{
+            borderRadius: '8px',
+            color: '#001D32',
+            backgroundColor: '#E3E9EA',
+          }}
+        >
+          <MoreVertIcon
+            sx={{ width: '11px', height: '11px' }}
+            onClick={() => setOpenPopup(true)}
+          />
+        </Button>
+      )}
+      {subFrameworkFilter?.length > (isMobile ? 3 : 6) && openPopup && (
+        <Dialog
+          open={openPopup}
+          onClose={() => setOpenPopup(false)}
+          maxWidth="sm"
+          fullWidth
+          PaperProps={{
+            style: {
+              maxHeight: '80vh',
+              overflow: 'hidden',
+            },
+          }}
+        >
+          {/* <DialogTitle>Remaining Data</DialogTitle> */}
+          <IconButton
+            aria-label="close"
+            onClick={() => {
+              trackEvent({
+                action: 'subcategory_click',
+                category: 'user',
+                label: 'Home Page',
+              });
+              setOpenPopup(false);
+            }}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: '#484848',
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+          <DialogContent sx={{ padding: '45px 30px' }}>
+            <FrameworkFilter
+              frameworkFilter={subFrameworkFilter}
+              framework={subFramework}
+              setFramework={setSubFramework}
+              fromSubcategory={true}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
+    </Grid>
+  );
+});
+const FrameworkFilter = React.memo<{
+  frameworkFilter: Array<{ identifier: string; name: string }>;
+  framework: string;
+  fromSubcategory?: boolean;
+  setFramework: (framework: string) => void;
+}>(function FrameworkFilter({
+  frameworkFilter,
+  framework,
+  setFramework,
+  fromSubcategory,
+}) {
+  const router = useRouter();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const handleItemClick = (item: any) => {
+    if (fromSubcategory) {
+      localStorage.setItem('subcategory', item.name);
+      router.push(`/contents`);
+    } else {
+      setFramework(item.identifier);
+    }
+  };
+  return (
+    <Grid container spacing={1} display="flex" justifyContent="center">
+      {frameworkFilter?.map((frameworkItem: any) => (
+        <Grid key={frameworkItem.identifier}>
+          <Button
+            variant={
+              framework === frameworkItem.identifier ? 'contained' : 'outlined'
+            }
+            sx={{
+              borderRadius: '8px',
+              borderColor:
+                framework !== frameworkItem.identifier ? '#CEE5FF' : '',
+              color: framework !== frameworkItem.identifier ? '#171D1E' : '',
+              backgroundColor:
+                framework === frameworkItem.identifier
+                  ? frameworkItem?.name?.toLowerCase() in buttonColors
+                    ? buttonColors[
+                        frameworkItem?.name?.toLowerCase() as keyof typeof buttonColors
+                      ]
+                    : ''
+                  : '',
+            }}
+            // onClick={() => setFramework(frameworkItem.identifier)}
+            onClick={() => handleItemClick(frameworkItem)}
+          >
+            {frameworkItem.name}
+          </Button>
+        </Grid>
+      ))}
+    </Grid>
+  );
+});

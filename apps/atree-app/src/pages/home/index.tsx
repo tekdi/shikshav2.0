@@ -26,6 +26,7 @@ import {
   FilterDialog,
   RESOURCE_TYPES,
   MIME_TYPES,
+  trackEvent,
 } from '@shared-lib';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -262,6 +263,8 @@ export default function Index() {
       category: 'user',
       label: 'Home Page',
     });
+    localStorage.removeItem('selectedFilters');
+
     if (consumedContent.length < 3) {
       router.push(`/contents/${content?.identifier}`);
       setConsumedContent((prev) => {
