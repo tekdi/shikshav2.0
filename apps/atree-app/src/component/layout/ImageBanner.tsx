@@ -30,7 +30,6 @@ export const ImageBanner = ({
 }) => {
   const router = useRouter();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const handleClick = () => {
     router.push(`/home?category=${encodeURIComponent(name)}`);
   };
@@ -71,9 +70,9 @@ export const ImageBanner = ({
                 color: '#000',
                 width: { xs: 40, md: 85 },
                 height: { xs: 40, md: 85 },
-                fontFamily: 'sans-serif',
+                fontFamily: 'Poppins',
                 fontSize: { xs: '18px', md: '45px' },
-                fontWeight: 500,
+                fontWeight: 800,
               }}
             >
               {name.charAt(0).toUpperCase()}
@@ -83,10 +82,9 @@ export const ImageBanner = ({
             sx={{
               width: '245px',
               color: 'white',
-              fontWeight: 700,
-              fontFamily: 'Manrope, sans-serif',
-              // width: isMobile ? 'auto' : '70%',
-              fontSize: { xs: '18px', md: '30px' },
+              fontWeight: 800,
+              fontFamily: 'Poppins',
+              fontSize: { xs: '18px', md: '24px' },
             }}
           >
             {name}

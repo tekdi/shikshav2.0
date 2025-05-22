@@ -10,6 +10,7 @@ import {
 import Grid from '@mui/material/Grid2';
 import { ContentSearchResponse } from '../Services/Content/Search';
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 const ITEMS_PER_PAGE = 20;
 export const AtreeCard: React.FC<{
   contents: ContentSearchResponse[];
@@ -29,6 +30,7 @@ export const AtreeCard: React.FC<{
     setVisibleCount((prev) => prev + ITEMS_PER_PAGE);
   };
   const visibleContents = contents?.slice(0, visibleCount);
+  const maxChars = 20;
   const languageDisplayMap: Record<string, string> = {
     english: 'ENG',
     hindi: 'हिन्दी',
@@ -48,11 +50,20 @@ export const AtreeCard: React.FC<{
             textAlign: 'center',
             width: '100%',
             fontWeight: 500,
-            color: 'text.secondary',
+
             mt: 2,
           }}
         >
-          No resources found
+          Oops! We don't have this resource yet on our shelves. Help us stock it
+          by recommending it{' '}
+          <Link
+            href="https://docs.google.com/forms/d/1r4wxm2a2kKH2Veq9_AYIfmWNYJJh5u-nw_SweHC5ydQ/viewform?edit_requested=true"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#0037B9', textDecoration: 'underline' }}
+          >
+            here
+          </Link>
         </Typography>
       ) : (
         <>
@@ -118,19 +129,23 @@ export const AtreeCard: React.FC<{
                     variant="h6"
                     component="div"
                     sx={{
-                      fontWeight: 700,
+                      fontWeight: 500,
                       fontSize: '16px',
                       lineHeight: '20px',
-                      color: '#171D1E',
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
+                      color: '#000000',
+                      // display: '-webkit-box',
+                      whiteSpace: 'nowrap',
+                      WebkitLineClamp: 1,
                       WebkitBoxOrient: 'vertical',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
-                      fontFamily: 'Manrope, sans-serif',
+                      fontFamily: 'Poppins',
                     }}
                   >
-                    {content.name}
+                    {content?.name}
+                    {/* {(content?.name ?? '').length > maxChars
+                      ? (content?.name ?? '').slice(0, maxChars) + '...'
+                      : content?.name ?? ''} */}
                   </Typography>
 
                   {/* Year and Language Row */}
@@ -146,11 +161,11 @@ export const AtreeCard: React.FC<{
                     <Typography
                       color="text.secondary"
                       sx={{
-                        fontWeight: 500,
-                        fontSize: '14px',
+                        fontWeight: 400,
+                        fontSize: '16px',
                         lineHeight: '20px',
-                        color: '#171D1E',
-                        fontFamily: 'Manrope, sans-serif',
+                        color: '#000000',
+                        fontFamily: 'Poppins',
                       }}
                     >
                       {`${
@@ -168,9 +183,10 @@ export const AtreeCard: React.FC<{
                           backgroundColor: '#FCD905', // highlighted yellow
                           padding: '2px 8px',
                           // borderRadius: '8px',
-                          fontWeight: 600,
-                          fontSize: '12px',
-                          color: '#000',
+                          fontWeight: 400,
+                          fontSize: '16px',
+                          color: '#000000',
+                          fontFamily: 'Poppins',
                         }}
                       >
                         {languageDisplayMap[
@@ -197,7 +213,16 @@ export const AtreeCard: React.FC<{
               <Button
                 variant="contained"
                 onClick={handleLoadMore}
-                sx={{ background: '#FFBD0D', color: '#2B3133' }}
+                sx={{
+                  background: '#fcd804',
+                  color: '#000000',
+                  fontFamily: 'Poppins',
+                  fontSize: '16px',
+                  borderRadius: '50px',
+                  height: '40px',
+                  padding: '16px',
+                  textTransform: 'none',
+                }}
               >
                 Load More
               </Button>

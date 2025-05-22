@@ -31,14 +31,18 @@ export default function Aboutus() {
         <Typography
           sx={{
             textAlign: 'center',
-            fontWeight: { xs: 400, md: 500 },
-            fontSize: { xs: '24px', md: '57px' },
+            fontWeight: { xs: 500, md: 500 },
             lineHeight: { xs: '30px', md: '64px' },
+            fontSize: { xs: '24px', md: '57px' },
+            fontFamily: 'Poppins',
+            color: '#000000',
           }}
         >
           Terms and Conditions
         </Typography>
-        <Typography>
+        <Typography
+          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+        >
           Welcome to the Jal Jungle Jameen in classrooms digital library
           platform (herein after referred to as “Platform”). Please read the
           following terms and conditions carefully before accessing, using, or
@@ -51,22 +55,41 @@ export default function Aboutus() {
           alters the privacy or security, users will be notified upon their
           first return to the platform.
         </Typography>
-        <Typography sx={{ textAlign: 'left' }}>
+        <Typography
+          sx={{
+            textAlign: 'left',
+            fontSize: '16px',
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
+        >
           Please contact our team at envedu@atree.org if you have any questions,
           concerns, or comments.
         </Typography>
-        <Typography fontWeight="bold" gutterBottom sx={{ textAlign: 'left' }}>
+        <Typography
+          gutterBottom
+          sx={{
+            textAlign: 'left',
+            fontSize: '16px',
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
+        >
           1. Open Access and Login Requirements
         </Typography>
 
         {/* Content */}
-        <Typography>
+        <Typography
+          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+        >
           1.1 General Readers. Access to the environment education resources
           (either sample or full) on the Platform is free but repeat users
           require registration or login. Curated information on the resources
           can be accessed through the website, or mobile application
         </Typography>
-        <Typography>
+        <Typography
+          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+        >
           1.2 Logged-in Readers. Logins are required to personalize the Jal
           Jungle Jameen in classrooms digital library experience through the
           creation of profile(s). Creating profile(s) allows for the following
@@ -75,18 +98,38 @@ export default function Aboutus() {
           seamless user experience between different devices. To protect your
           privacy, please use a nickname or username when creating a login.
         </Typography>
-        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+        <Typography
+          sx={{
+            fontSize: '16px',
+            fontFamily: 'Poppins',
+            color: '#000000',
+            fontWeight: 700,
+          }}
+          gutterBottom
+        >
           2. Termination
         </Typography>
-        <Typography>
+        <Typography
+          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+        >
           ATREE may, in its sole discretion, terminate or suspend access to the
           reader /user community for any reason, including, without limitation,
           breach, or assignment of these terms.
         </Typography>
-        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+        <Typography
+          gutterBottom
+          sx={{
+            fontSize: '16px',
+            fontFamily: 'Poppins',
+            color: '#000000',
+            fontWeight: 700,
+          }}
+        >
           3. Content & Intellectual Property
         </Typography>
-        <Typography>
+        <Typography
+          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+        >
           3.1 General Reader and Logged-in Readers. The Platform strives to be
           an open and freely accessible digital library of environment education
           resources in multiple Indian languages and in multiple formats
@@ -99,7 +142,9 @@ export default function Aboutus() {
           using the Platform you agree to abide by all copyright notices,
           trademark rules, and any other restrictions set forth.
         </Typography>
-        <Typography>
+        <Typography
+          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+        >
           3.2 Prohibited Content The Platform is designed to be an open,
           productive, safe, and inviting space for users across cultures,
           nationalities, religions, and backgrounds. While ATREE strives to
@@ -117,10 +162,20 @@ export default function Aboutus() {
           violence or discrimination can be appropriate for Jal Jungle Jameen in
           classrooms.
         </Typography>
-        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+        <Typography
+          sx={{
+            fontSize: '16px',
+            fontFamily: 'Poppins',
+            color: '#000000',
+            fontWeight: 700,
+          }}
+          gutterBottom
+        >
           4. ATREE’s Role
         </Typography>
-        <Typography>
+        <Typography
+          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+        >
           6.1 User Community. While we strive to enforce these terms and
           conditions that will allow for an open, productive, safe and inviting
           space for diverse users to access, share, recommend, and otherwise
@@ -133,26 +188,48 @@ export default function Aboutus() {
           the Platform does contain content generated by users for which ATREE
           has no control over.
         </Typography>
-        <Typography>
+        <Typography
+          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+        >
           By agreeing to these terms, you understand that ATREE is only
           providing a means for communication between the various users of the
           Platform. We facilitate this communication by providing the Platform,
           but it is the users of the Platform who are responsible for the access
           and exchange of the content found within the Platform
         </Typography>
-        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+        <Typography
+          sx={{
+            fontSize: '16px',
+            fontFamily: 'Poppins',
+            color: '#000000',
+            fontWeight: 700,
+          }}
+          gutterBottom
+        >
           Privacy Policy
         </Typography>
-        <Typography>
+        <Typography
+          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+        >
           Your privacy is very important to us. Please completely read and
           understand the following privacy policy before using the Platform. For
           the convenience of our readers, the Platform uses Google, Apple, and
           Facebook logins to verify credentials.
         </Typography>
-        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+        <Typography
+          sx={{
+            fontSize: '16px',
+            fontFamily: 'Poppins',
+            color: '#000000',
+            fontWeight: 700,
+          }}
+          gutterBottom
+        >
           1. Data Collection and Storage
         </Typography>
-        <Typography>
+        <Typography
+          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+        >
           By using the Platform you consent to the collection and use by
           ATREE/TEKDI? of certain types of data, such as but not limited to IP
           address, browser type, page visits, the time and date of visit,
@@ -165,16 +242,28 @@ export default function Aboutus() {
           based on your profile- as an educator, parent, student or others.
           Usage data from the platform is stored anonymously.
         </Typography>
-        <Typography>
+        <Typography
+          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+        >
           Any data created during the use of the Platform is anonymized
           automatically when it is stored by ATREE. This data is retained for
           longitudinal analysis to better understand the preferences of our
           unique reading communities and measure growth over time.
         </Typography>
-        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+        <Typography
+          sx={{
+            fontSize: '16px',
+            fontFamily: 'Poppins',
+            color: '#000000',
+            fontWeight: 700,
+          }}
+          gutterBottom
+        >
           2. Cookies
         </Typography>
-        <Typography>
+        <Typography
+          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+        >
           Cookies are small text files that the Platform can send to your
           browser for storage on your computer's hard drive. They make your use
           of the Platform easier by saving your status and preferences and may
@@ -189,11 +278,28 @@ export default function Aboutus() {
           cookies, but you may be able to change the settings to refuse cookies
           or to be alerted when cookies are being sent.
         </Typography>
-        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+        <Typography
+          sx={{
+            fontSize: '16px',
+            fontFamily: 'Poppins',
+            color: '#000000',
+            fontWeight: 700,
+          }}
+          gutterBottom
+        >
           3. Children's Privacy
         </Typography>
-        <Typography>
-          <span style={{ fontWeight: 'bold' }}>
+        <Typography
+          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+        >
+          <span
+            style={{
+              fontSize: '16px',
+              fontFamily: 'Poppins',
+              color: '#000000',
+              fontWeight: 700,
+            }}
+          >
             3.1 General Readers and Logged-in Readers.
           </span>{' '}
           ATREE does not collect personal information, regardless of age. ATREE
@@ -203,15 +309,36 @@ export default function Aboutus() {
           legal guardian of a child under age 13 who you believe has submitted
           personal information to the Platform, please contact ATREE.
         </Typography>
-        <Typography>
-          <span style={{ fontWeight: 'bold' }}>3.2 Translator Community.</span>{' '}
+        <Typography
+          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+        >
+          <span
+            style={{
+              fontSize: '16px',
+              fontFamily: 'Poppins',
+              color: '#000000',
+              fontWeight: 700,
+            }}
+          >
+            3.2 Translator Community.
+          </span>{' '}
           The parts of the Platform that require personal information, such as
           your
         </Typography>
-        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+        <Typography
+          sx={{
+            fontSize: '16px',
+            fontFamily: 'Poppins',
+            color: '#000000',
+            fontWeight: 700,
+          }}
+          gutterBottom
+        >
           4. Security
         </Typography>
-        <Typography>
+        <Typography
+          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+        >
           The Platform has security measures in place to protect the loss,
           misuse, and alteration of the information under our control. However,
           your confidential use of the Platform cannot be guaranteed by ATREE.
@@ -220,10 +347,20 @@ export default function Aboutus() {
           use of the Platform or any information you transmitted to the Site.
         </Typography>
 
-        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+        <Typography
+          style={{
+            fontSize: '16px',
+            fontFamily: 'Poppins',
+            color: '#000000',
+            fontWeight: 700,
+          }}
+          gutterBottom
+        >
           5. Other Websites
         </Typography>
-        <Typography>
+        <Typography
+          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+        >
           Material on the Platform may link to independently run websites
           outside of the Jal Jungle Jameen in classrooms domain. ATREE is not
           responsible for the privacy practices or content of such websites. We
@@ -231,22 +368,52 @@ export default function Aboutus() {
           from this website.
         </Typography>
 
-        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+        <Typography
+          style={{
+            fontSize: '16px',
+            fontFamily: 'Poppins',
+            color: '#000000',
+            fontWeight: 700,
+          }}
+          gutterBottom
+        >
           6. Disclosure to Third Parties
         </Typography>
-        <Typography>
+        <Typography
+          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+        >
           No reader data is sold or traded to third parties.
         </Typography>
 
-        <Typography>
-          <span style={{ fontWeight: 'bold' }}>6.1 General Readers.</span>At
-          times, Jal Jungle Jameen in classrooms may make information available
-          for research, impact reports, or to strategic partners for analysis.
-          If this occurs, any data shared is in anonymous, aggregated form that
-          cannot be directly connected to individual users.
+        <Typography
+          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+        >
+          <span
+            style={{
+              fontSize: '16px',
+              fontFamily: 'Poppins',
+              color: '#000000',
+              fontWeight: 700,
+            }}
+          >
+            6.1 General Readers.
+          </span>
+          At times, Jal Jungle Jameen in classrooms may make information
+          available for research, impact reports, or to strategic partners for
+          analysis. If this occurs, any data shared is in anonymous, aggregated
+          form that cannot be directly connected to individual users.
         </Typography>
-        <Typography>
-          <span style={{ fontWeight: 'bold' }}>
+        <Typography
+          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+        >
+          <span
+            style={{
+              fontSize: '16px',
+              fontFamily: 'Poppins',
+              color: '#000000',
+              fontWeight: 700,
+            }}
+          >
             6.2 Logged-in Readers Community.
           </span>{' '}
           By using Google, Apple, or Facebook logins when creating a Jal Jungle
@@ -256,10 +423,20 @@ export default function Aboutus() {
           should refer to the respective terms and conditions before using these
           third-party logins.
         </Typography>
-        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+        <Typography
+          style={{
+            fontSize: '16px',
+            fontFamily: 'Poppins',
+            color: '#000000',
+            fontWeight: 700,
+          }}
+          gutterBottom
+        >
           6. Disclosure to Third Parties
         </Typography>
-        <Typography>
+        <Typography
+          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+        >
           XXXX. The Platform uses xxxxx to help support an issue ticketing
           system. When submitting an issue through xxxxx for the purpose of
           reporting any feedback, issues, or problematic content, readers are

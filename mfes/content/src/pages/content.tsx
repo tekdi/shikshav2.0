@@ -26,7 +26,7 @@ import HelpDesk from '../components/HelpDesk';
 import { hierarchyAPI } from '../services/Hierarchy';
 import { ContentSearch, ContentSearchResponse } from '../services/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 export interface ContentProps {
   _grid?: object;
   filters?: object;
@@ -308,16 +308,17 @@ export default function Content(props: ContentProps) {
             marginBottom: !isMobile ? '80px' : '10px',
           }}
         >
-          <ArrowBackIosIcon onClick={handleBack} />
+          <ArrowBackIcon onClick={handleBack} />
           {categoryLabel && (
             <Typography
               sx={{
-                color: '#1C170D',
+                color: '#000000',
                 fontSize: {
                   xs: '14px',
-                  sm: '22px',
+                  sm: '24px',
                 },
-                fontWeight: 700,
+                fontFamily: 'Poppins',
+                fontWeight: 500,
                 marginLeft: 1,
               }}
             >

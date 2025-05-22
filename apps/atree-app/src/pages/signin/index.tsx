@@ -19,7 +19,6 @@ import { useRouter } from 'next/router';
 import { getUserAuthInfo, signin } from '../../service/content';
 import Loader from '../../component/layout/LoaderComponent';
 import Layout from '../../component/layout/layout';
-import { commonButtonStyle } from '../../utils/commonStyle';
 import {
   dispatchLoginEvent,
   validateEmail,
@@ -84,19 +83,27 @@ const Login: React.FC<ListProps> = () => {
         const authInfo = await getUserAuthInfo({
           token: response?.result?.access_token,
         });
-        const capitalizeFirstLetter = (word: string) =>
-          word.charAt(0).toUpperCase() + word.slice(1);
-        const user = `${capitalizeFirstLetter(
-          authInfo?.result?.firstName
-        )} ${capitalizeFirstLetter(authInfo?.result?.lastName)}`.trim();
-        localStorage.setItem('username', user);
-        localStorage.setItem(
-          'role',
-          authInfo?.result?.tenantData?.[0]?.roleName
-        );
-        dispatchLoginEvent(user, 'credentials');
-        setAlert({ message: 'Login successful!', severity: 'success' });
-        router.push('/home');
+        if (authInfo?.result?.status !== 'archived') {
+          const capitalizeFirstLetter = (word: string) =>
+            word.charAt(0).toUpperCase() + word.slice(1);
+          const user = `${capitalizeFirstLetter(
+            authInfo?.result?.firstName
+          )} ${capitalizeFirstLetter(authInfo?.result?.lastName)}`.trim();
+          localStorage.setItem('username', user);
+          localStorage.setItem('userId', authInfo?.result?.userId);
+          localStorage.setItem(
+            'role',
+            authInfo?.result?.tenantData?.[0]?.roleName
+          );
+          dispatchLoginEvent(user, 'credentials');
+          setAlert({ message: 'Login successful!', severity: 'success' });
+          router.push('/home');
+        } else {
+          setAlert({
+            message: 'Your account has been deleted.',
+            severity: 'error',
+          });
+        }
       } else {
         setAlert({
           message: response?.response?.data?.params?.errmsg || 'Login failed',
@@ -111,7 +118,11 @@ const Login: React.FC<ListProps> = () => {
   };
 
   return (
-    <Layout>
+    <Layout
+      showTopAppBar={{
+        title: 'Sign Up/Log In', // Add this
+      }}
+    >
       <Box>
         {loading ? (
           <Loader />
@@ -124,7 +135,7 @@ const Login: React.FC<ListProps> = () => {
               borderRadius: 8,
               overflow: 'hidden',
               mx: 'auto',
-              mt: 5,
+              mt: 8,
               p: { xs: 3, sm: 4 },
               bgcolor: '#ffffff',
               position: 'relative', // For gradient shadow effect
@@ -156,15 +167,15 @@ const Login: React.FC<ListProps> = () => {
                     <FormLabel
                       component="label"
                       sx={{
-                        color: '#4D4639',
-                        fontWeight: 700,
-                        fontSize: '1rem',
+                        color: '#000000',
+                        fontWeight: 500,
+                        fontSize: '16px',
                         fontFamily: 'poppins',
                         marginBottom: 1,
                       }}
                     >
                       {field === 'email' ? 'Username' : 'Password'}
-                      <span style={{ color: 'red' }}>*</span>
+                      &nbsp; <span style={{ color: 'red' }}> *</span>
                     </FormLabel>
                   </Grid>
                   <Grid item xs={6}>
@@ -204,9 +215,8 @@ const Login: React.FC<ListProps> = () => {
                       sx={{
                         width: '100%',
                         height: '48px',
-                        background:
-                          'linear-gradient(90deg, #FFBD0D 0%, #fcb900 100%)',
-                        color: '#2B3133',
+                        backgroundColor: '#fcd804',
+                        color: '#000000',
                         borderRadius: '30px',
                         fontSize: '16px',
                         fontWeight: 500,
@@ -235,8 +245,8 @@ const Login: React.FC<ListProps> = () => {
               <Grid item textAlign="center">
                 <Typography
                   fontSize="16px"
-                  color="#3B383E"
-                  sx={{ fontWeight: 500, fontFamily: 'poppins' }}
+                  color="#000000"
+                  sx={{ fontWeight: 500, fontFamily: 'Poppins' }}
                 >
                   Don't have an account?{' '}
                   <Link
@@ -323,7 +333,7 @@ const MyCustomGoogleLogin = () => {
           fontWeight: 500,
           fontFamily: 'poppins',
           textTransform: 'none',
-          border: '2px solid #FFBD0D',
+          border: '2px solid #fcd804',
           boxShadow: '0px 4px 12px rgba(0,0,0,0.1)',
           transition: 'all 0.3s ease',
           // '&:hover': {

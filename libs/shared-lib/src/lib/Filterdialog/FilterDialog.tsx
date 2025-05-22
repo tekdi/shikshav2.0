@@ -78,7 +78,10 @@ const CustomResourceCheckbox = ({
       margin: '-5px', // Remove default margin
       '& .MuiFormControlLabel-label': {
         // Target the label specifically
-        fontFamily: 'Manrope, sans-serif', // Corrected spelling
+        fontFamily: 'poppins', // Corrected spelling
+        fontSize: '16px',
+        fontWeight: 400,
+        color: '#000000',
       },
     }}
     key={option.label}
@@ -571,10 +574,11 @@ export const FilterDialog = ({
                   >
                     <Typography
                       sx={{
-                        fontSize: '18px',
-                        fontWeight: 600,
+                        fontSize: '24px',
+                        fontWeight: 500,
                         color: '#181D27',
                         margin: '3px 0px',
+                        fontFamily: 'Poppins',
                       }}
                     >
                       Resource Type

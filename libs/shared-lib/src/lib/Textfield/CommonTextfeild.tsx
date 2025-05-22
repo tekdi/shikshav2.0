@@ -43,6 +43,9 @@ export const CommonTextField: React.FC<CommonTextFieldProps> = ({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
       <TextField
+        id="outlined-size-small"
+        defaultValue="Small"
+        size="small"
         label={label}
         value={value}
         onChange={onChange}
@@ -65,15 +68,10 @@ export const CommonTextField: React.FC<CommonTextFieldProps> = ({
           endAdornment: endIcon && (
             <InputAdornment position="end">{endIcon}</InputAdornment>
           ),
-          sx: {
-            height: '56px', // Set the height of the input field
-          },
         }}
         sx={{
           width: width,
-          '& .MuiOutlinedInput-root': {
-            height: '56px', // Ensure the root element has the same height
-          },
+
           '&:hover .MuiOutlinedInput-notchedOutline': {
             borderColor: '#4D4639', // Change color on hover
           },

@@ -30,22 +30,16 @@ import ShareIcon from '@mui/icons-material/Share';
 import atreeLogo from '../../../assets/images/placeholder.jpg';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CloseIcon from '@mui/icons-material/Close';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined';
-import {
-  AtreeCard,
-  ContentSearch,
-  trackEvent,
-  RESOURCE_TYPES,
-  MIME_TYPES,
-} from '@shared-lib';
+import { AtreeCard, ContentSearch, trackEvent } from '@shared-lib';
 import ShareDialog from '../../component/ShareDialog';
 import FooterText from '../../component/FooterText';
 import Loader from '../../component/layout/LoaderComponent';
 import Footer from '../../component/layout/Footer';
-import FilterDialog from 'libs/shared-lib/src/lib/Filterdialog/FilterDialog';
 const buttonColors = {
   water: '#0E28AE',
   land: '#8F4A50',
@@ -80,7 +74,6 @@ export default function Content() {
   const router = useRouter();
   const { identifier } = router.query; // Access dynamic parameter 'identifier'
   const [contentData, setContentData] = useState<ContentItem | null>(null);
-  const [contentResultData, setContentResultData] = useState<any>([]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [openPopup, setOpenPopup] = useState<boolean>(false);
@@ -249,7 +242,7 @@ export default function Content() {
       const frameworkData = await response.json();
       let selectedCategory = '';
       if (typeof window !== 'undefined') {
-        selectedCategory = localStorage.getItem('category') || '';
+        selectedCategory = localStorage.getItem('category') ?? '';
       }
 
       const filteredFramework = frameworkData?.result?.framework
@@ -278,8 +271,8 @@ export default function Content() {
         (item: any) =>
           item.name?.toLowerCase() === selectedCategory?.toLowerCase()
       );
-      const defaultFramework = fdata[0]?.identifier || '';
-      const frameworkToSet = selectedFramework?.identifier || defaultFramework;
+      const defaultFramework = fdata[0]?.identifier ?? '';
+      const frameworkToSet = selectedFramework?.identifier ?? defaultFramework;
       setFramework(frameworkToSet);
 
       setFrameworkFilter(fdata);
@@ -322,7 +315,7 @@ export default function Content() {
       const filteredContent =
         keywordFilteredResults?.result?.content?.filter(
           (item: any) => item.identifier !== identifier
-        ) || [];
+        ) ?? [];
       trackEvent({
         action: 'tags_content',
         category: 'user',
@@ -405,6 +398,26 @@ export default function Content() {
                       alignItems: 'center',
                     }}
                   >
+                    <IconButton
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push('/home');
+                      }}
+                      sx={{
+                        padding: '4px',
+                        backgroundColor: 'transparent',
+                        color: '#000000',
+                        borderRadius: '50%',
+                        '&:hover': {
+                          backgroundColor: 'rgba(0,0,0,0.04)',
+                        },
+                        '&:focus': {
+                          outline: 'none',
+                        },
+                      }}
+                    >
+                      <ArrowBackIcon />
+                    </IconButton>
                     {subFrameworkFilter && subFrameworkFilter.length > 0 && (
                       <Title>Browse by Sub Categories</Title>
                     )}
@@ -431,6 +444,7 @@ export default function Content() {
                       flexGrow: 1,
                       justifyContent: 'flex-end',
                       display: 'flex',
+                      marginBottom: '3px',
                     }}
                   >
                     <IconButton
@@ -461,6 +475,7 @@ export default function Content() {
                       padding: '10px',
                       gap: 2,
                       borderRadius: '10px',
+                      ml: 4,
                     }}
                   >
                     {/* Content Image */}
@@ -494,9 +509,9 @@ export default function Content() {
                                 borderRadius: '8px',
                                 '& .MuiChip-label': {
                                   fontSize: '14px',
-                                  fontFamily: 'sans-serif',
+                                  fontFamily: 'Poppins',
                                   fontWeight: 500,
-                                  color: '#171D1E',
+                                  color: '#000000',
                                 },
                               }}
                               onClick={() =>
@@ -508,9 +523,13 @@ export default function Content() {
 
                         {/* Description */}
                         <Typography
-                          variant="body1"
                           textAlign="left"
-                          fontFamily={'Arial'}
+                          sx={{
+                            fontFamily: 'Poppins',
+                            fontSize: '16px',
+                            fontWeight: 400,
+                            color: '#000000',
+                          }}
                         >
                           {contentData?.description ?? ''}
                         </Typography>
@@ -534,13 +553,15 @@ export default function Content() {
                         >
                           <Button
                             variant="contained"
-                            color="secondary"
                             sx={{
                               borderRadius: '50px',
                               height: '40px',
                               padding: '3px',
                               fontSize: '16px',
                               fontWeight: 500,
+                              fontFamily: 'Poppins',
+                              color: '#000000',
+                              backgroundColor: '#fcd804',
                             }}
                             onClick={handlePreview}
                             startIcon={<VisibilityOutlinedIcon />}
@@ -554,10 +575,11 @@ export default function Content() {
                             sx={{
                               borderRadius: '50px',
                               height: '40px',
-                              color: 'black',
+                              color: '#000000',
                               padding: '3px',
                               fontSize: '16px',
                               fontWeight: 500,
+                              fontFamily: 'Poppins',
                             }}
                             startIcon={<FileDownloadOutlinedIcon />}
                             disabled={!contentData?.downloadurl}
@@ -568,14 +590,15 @@ export default function Content() {
 
                           <Button
                             variant="outlined"
-                            color="secondary"
                             sx={{
                               borderRadius: '50px',
                               height: '40px',
-                              color: 'black',
+                              color: '#000000',
                               padding: '3px',
                               fontSize: '16px',
                               fontWeight: 500,
+                              fontFamily: 'Poppins',
+                              borderColor: '#fcd804',
                             }}
                             startIcon={<LinkOutlinedIcon />}
                             disabled={!contentData?.url}
@@ -620,7 +643,7 @@ export default function Content() {
                                 fontFamily="Arial"
                                 sx={{
                                   display: 'inline-block',
-                                  backgroundColor: '#FFBD0D',
+                                  backgroundColor: '#FCD905',
                                   padding: '2px 8px',
                                   fontWeight: 600,
                                   fontSize: '1rem',
@@ -650,6 +673,7 @@ export default function Content() {
                   display: 'flex',
                   flexDirection: 'column',
                   padding: '20px',
+                  ml: 4,
                 }}
               >
                 <Box
@@ -660,14 +684,16 @@ export default function Content() {
                   width="100%"
                 >
                   <Typography
-                    sx={{ fontSize: '22px', fontWeight: 700 }}
+                    sx={{
+                      fontSize: '24px',
+                      fontWeight: 500,
+                      fontFamily: 'Poppins',
+                      color: '#000000',
+                    }}
                     onClick={() => router.push('/contents')}
                   >
                     Related Content
                   </Typography>
-                  <IconButton onClick={() => router.push('/contents')}>
-                    <ChevronRightIcon />
-                  </IconButton>
                 </Box>
                 <AtreeCard
                   contents={
@@ -928,28 +954,6 @@ const ImageCard = ({
           sx={_image}
           image={image}
         />
-        {/* <CardContent
-          sx={{
-            backgroundColor: '#DDE8FF',
-            alignItems: 'flex-start',
-            textAlign: 'start',
-            padding: '12px 10px',
-            ..._text,
-          }}
-        >
-          <Typography
-            variant="h5"
-            gutterBottom
-            sx={{
-              fontWeight: 400,
-              fontSize: '12px',
-              lineHeight: '18px',
-              letterSpacing: '0.32px',
-            }}
-          >
-            {name}
-          </Typography>
-        </CardContent> */}
       </CardActionArea>
     </Card>
   );
@@ -968,11 +972,11 @@ const Title: React.FC<{
     >
       <Typography
         sx={{
-          fontFamily: 'Manrope, sans-serif',
-          fontWeight: 700,
-          fontSize: { xs: '20px', md: '22px' },
+          fontFamily: 'Poppins',
+          fontWeight: 500,
+          fontSize: { xs: '20px', md: '24px' },
           lineHeight: '28px',
-          color: '#1C170D',
+          color: '#000000',
         }}
       >
         {children}
@@ -1003,7 +1007,7 @@ const SubFrameworkFilter = React.memo<{
   >([]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const maxItems = isMobile ? 3 : 6;
+  const maxItems = isMobile ? 3 : 5;
   useEffect(() => {
     if (subFrameworkFilter) {
       setFilterItems(subFrameworkFilter.slice(0, maxItems));
@@ -1017,11 +1021,24 @@ const SubFrameworkFilter = React.memo<{
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   };
   return (
-    <Grid container spacing={1}>
+    <Grid container spacing={1} ml={4}>
       {filterItems?.map((subFrameworkItem: any) => (
         <Grid key={subFrameworkItem.identifier}>
-          <Button
-            // onClick={() => setSubFramework(subFrameworkItem.identifier)}
+          <Chip
+            key={subFrameworkItem.name}
+            label={capitalizeFirstLetter(subFrameworkItem.name)}
+            variant="outlined"
+            sx={{
+              height: 32,
+              padding: '4px 6px',
+              borderRadius: '8px',
+              '& .MuiChip-label': {
+                fontSize: '14px',
+                fontFamily: 'Poppins',
+                fontWeight: 500,
+                color: '#000000',
+              },
+            }}
             onClick={() => {
               trackEvent({
                 action: 'subcategory_click',
@@ -1030,34 +1047,38 @@ const SubFrameworkFilter = React.memo<{
               });
               handleItemClick(subFrameworkItem);
             }}
-            sx={{
-              borderRadius: '8px',
-              color: '#001D32',
-              backgroundColor: '#E3E9EA',
-              textTransform: 'none',
-              fontFamily: 'sans-serif',
-              fontSize: '11px',
-              lineHeight: '16px',
-            }}
-          >
-            {capitalizeFirstLetter(subFrameworkItem.name)}
-          </Button>
+          />
         </Grid>
       ))}
       {subFrameworkFilter?.length > (isMobile ? 3 : 6) && (
-        <Button
-          onClick={() => setOpenPopup(true)}
+        <Chip
+          label={
+            <MoreVertIcon
+              fontSize="medium"
+              sx={{ width: '11px', height: '11px' }}
+            />
+          }
+          variant="outlined"
           sx={{
+            height: 32,
+            padding: '4px 6px',
             borderRadius: '8px',
-            color: '#001D32',
-            backgroundColor: '#E3E9EA',
+            '& .MuiChip-label': {
+              fontSize: '14px',
+              fontFamily: 'Poppins',
+              fontWeight: 500,
+              color: '#000000',
+            },
           }}
-        >
-          <MoreVertIcon
-            sx={{ width: '11px', height: '11px' }}
-            onClick={() => setOpenPopup(true)}
-          />
-        </Button>
+          onClick={() => {
+            trackEvent({
+              action: 'subcategory_click',
+              category: 'user',
+              label: 'Home Page',
+            });
+            setOpenPopup(true);
+          }}
+        />
       )}
       {subFrameworkFilter?.length > (isMobile ? 3 : 6) && openPopup && (
         <Dialog
@@ -1136,10 +1157,12 @@ const FrameworkFilter = React.memo<{
               framework === frameworkItem.identifier ? 'contained' : 'outlined'
             }
             sx={{
+              fontFamily: 'Poppins',
+              fontWeight: 500,
+              color: '#000000',
               borderRadius: '8px',
               borderColor:
                 framework !== frameworkItem.identifier ? '#CEE5FF' : '',
-              color: framework !== frameworkItem.identifier ? '#171D1E' : '',
               backgroundColor:
                 framework === frameworkItem.identifier
                   ? frameworkItem?.name?.toLowerCase() in buttonColors
@@ -1149,7 +1172,6 @@ const FrameworkFilter = React.memo<{
                     : ''
                   : '',
             }}
-            // onClick={() => setFramework(frameworkItem.identifier)}
             onClick={() => handleItemClick(frameworkItem)}
           >
             {frameworkItem.name}

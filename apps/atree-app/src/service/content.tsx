@@ -108,14 +108,14 @@ export const deleteUserAccount = async ({
   token,
   userId,
 }: DeleteParams): Promise<any> => {
-  const apiUrl = `${process.env.NEXT_PUBLIC_ATREE_LOGIN_URL}/user/v1/update${userId}`;
+  const apiUrl = `${process.env.NEXT_PUBLIC_ATREE_LOGIN_URL}/interface/v1/user/update/${userId}`;
   const headers = {
     Authorization: `Bearer ${token}`,
     tenantid: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
   };
   const data = {
     userData: {
-      status: 'deactive',
+      status: 'archived',
       reason: 'Health Issue',
     },
   };

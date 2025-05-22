@@ -20,7 +20,6 @@ import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import ParkOutlinedIcon from '@mui/icons-material/ParkOutlined';
 import { useRouter } from 'next/router';
-import BookmarksOutlinedIcon from '@mui/icons-material/BookmarksOutlined';
 import TermsAndCondition from '../TermsAndCondition';
 import { useKeycloak } from '@react-keycloak/web';
 import { deleteUserAccount } from '../../service/content';
@@ -194,15 +193,6 @@ export default function Layout({
       to: '/aboutus',
     },
 
-    ...(!isMobile
-      ? [
-          {
-            text: 'Quick Access',
-            icon: <BookmarksOutlinedIcon fontSize="small" />,
-            to: '/quick-access',
-          },
-        ]
-      : []),
     {
       text: 'Recommend Resources',
       icon: <PostAddOutlinedIcon fontSize="small" />,
@@ -284,27 +274,33 @@ export default function Layout({
   };
   const handleCloseDeleteDialog = async () => {
     setOpenDeleteDialog(false);
-    const accToken = localStorage.getItem('token') || '';
+    const accToken = localStorage.getItem('token') ?? '';
     const userId = localStorage.getItem('userId') ?? '';
     try {
-      await deleteUserAccount({ token: accToken, userId: userId });
+      const deleteResponse = await deleteUserAccount({
+        token: accToken,
+        userId: userId,
+      });
+      if (deleteResponse?.responseCode === 200) {
+        setOpenDeleteMessageDialog(true);
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
+        localStorage.removeItem('role');
+        localStorage.removeItem('username');
+        Object.keys(localStorage).forEach((key) => {
+          if (key.startsWith('kc-callback-')) {
+            localStorage.removeItem(key);
+          }
+        });
 
-      // On success, show confirmation
-      setOpenDeleteMessageDialog(true);
-
-      // Perform logout cleanup
-      // localStorage.clear();
-      // sessionStorage.clear();
-      // Object.keys(localStorage).forEach((key) => {
-      //   if (key.startsWith('kc-callback-')) {
-      //     localStorage.removeItem(key);
-      //   }
-      // });
-
-      // keycloak.logout({ redirectUri: window.location.origin });
+        keycloak.logout({
+          redirectUri: window.location.origin, // Redirect to home page after logout
+        });
+        document.cookie =
+          'g_state=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      }
     } catch (error) {
       console.error('Error deleting account:', error);
-      // Optional: show an error dialog
     }
   };
 
@@ -336,16 +332,17 @@ export default function Layout({
               minHeight={'64px'}
             >
               <TopAppBar
-                logoUrl={atreeLogo?.src || ''}
+                logoUrl={atreeLogo?.src ?? ''}
                 _appBar={{
                   py: '30.5px',
                   backgroundColor: '#fff',
                 }}
                 _title={{
-                  fontSize: '14px',
-                  lineHeight: '16px',
-                  color: 'text.secondary',
-                  fontWeight: 400,
+                  fontWeight: 500,
+                  fontSize: '24px !important',
+                  color: '#000000',
+                  fontFamily: 'Poppins',
+                  textAlign: 'center',
                 }}
                 _isDrawer={isDrawer}
                 _subTitle={{
@@ -382,7 +379,7 @@ export default function Layout({
             }}
           >
             {showBack && (
-              <IconButton onClick={backIconClick || console.log} sx={{ p: 0 }}>
+              <IconButton onClick={backIconClick ?? console.log} sx={{ p: 0 }}>
                 <ArrowBackIosIcon />
               </IconButton>
             )}
@@ -432,7 +429,7 @@ export default function Layout({
           items={drawerItems}
           categories={categorieItems}
           onItemClick={(to) => {
-            handleItemClick?.(to || '');
+            handleItemClick?.(to ?? '');
             setIsDrawerOpen(false);
           }}
         />
@@ -502,14 +499,14 @@ export default function Layout({
             <Button
               onClick={handleCloseDeleteDialog}
               sx={{
-                color: '#2B3133',
+                color: '#000000',
                 width: '100%',
                 height: '40px',
+                textTransform: 'none',
                 marginRight: '20px',
-                background:
-                  'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                background: '#fcd804',
                 borderRadius: '50px',
-                fontSize: '14px',
+                fontSize: '16px',
                 fontWeight: 500,
               }}
             >
@@ -518,15 +515,15 @@ export default function Layout({
             <Button
               onClick={() => setOpenDeleteDialog(false)}
               sx={{
-                color: '#2B3133',
+                color: '#000000',
                 width: '100%',
                 height: '40px',
-
-                background:
-                  'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                marginRight: '20px',
+                background: '#fcd804',
                 borderRadius: '50px',
-                fontSize: '14px',
+                fontSize: '16px',
                 fontWeight: 500,
+                textTransform: 'none',
               }}
             >
               No
@@ -543,7 +540,9 @@ export default function Layout({
       <ShareDialog open={open} handleClose={() => setOpen(false)} />
       <CommonDialog
         isOpen={openDeleteMessageDialog}
-        onClose={() => setOpenDeleteMessageDialog(false)}
+        onClose={() => {
+          setOpenDeleteMessageDialog(false), router.push('/');
+        }}
         disableCloseOnBackdropClick={true}
         header="User Details"
         hideCloseButton={true}
@@ -559,15 +558,15 @@ export default function Layout({
             <Button
               onClick={() => setOpenDeleteMessageDialog(false)}
               sx={{
-                color: '#2B3133',
+                color: '#000000',
                 width: '100%',
                 height: '40px',
-
-                background:
-                  'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                marginRight: '20px',
+                background: '#fcd804',
                 borderRadius: '50px',
-                fontSize: '14px',
+                fontSize: '16px',
                 fontWeight: 500,
+                textTransform: 'none',
               }}
             >
               Okay
@@ -589,14 +588,15 @@ export default function Layout({
             <Button
               onClick={() => setOpenDialog(false)}
               sx={{
-                color: '#2B3133',
+                color: '#000000',
                 width: '100%',
                 height: '40px',
-                background:
-                  'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                background: '#fcd804',
                 borderRadius: '50px',
-                fontSize: '14px',
+                fontSize: '16px',
                 fontWeight: 500,
+                textTransform: 'none',
+                fontFamily: 'Poppins',
               }}
             >
               Close

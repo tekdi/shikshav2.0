@@ -102,13 +102,14 @@ export default function Registration() {
         ...error,
         [field]: validateField(field.toString(), value.toString()),
       });
-      // setError({
-      //   ...error,
-      //   [field]: validateField(field, value.toString()),
-      // });
     };
 
   const handleCreateUser = async () => {
+    trackEvent({
+      action: 'signup',
+      category: 'engagement',
+      label: 'Verify & Proceed Button',
+    });
     if (
       !validateName(formData.name) ||
       !validateEmail(formData.email) ||
@@ -172,10 +173,6 @@ export default function Registration() {
       },
     ]);
   };
-  const handleCloseUserDetailsDialog = () => {
-    setOpenUserDetailsDialog(false);
-    router.push('/signin');
-  };
   useEffect(() => {
     if (showAlertMsg) {
       const timer = setTimeout(() => {
@@ -186,7 +183,11 @@ export default function Registration() {
     }
   }, [showAlertMsg]);
   return (
-    <Layout>
+    <Layout
+      showTopAppBar={{
+        title: ' Sign up to Engage, Educate, and Inspire.', // Add this
+      }}
+    >
       <Box>
         {loading ? (
           <Loader />
@@ -199,7 +200,7 @@ export default function Registration() {
               borderRadius: 4,
               overflow: 'hidden',
               mx: 'auto',
-              mt: 3,
+              mt: 6,
               p: { xs: 2, sm: 3 },
               bgcolor: '#ffffff',
               position: 'relative',
@@ -249,10 +250,10 @@ export default function Registration() {
                   <Grid item xs={12} sm={3}>
                     <FormLabel
                       sx={{
-                        color: '#4D4639',
+                        color: '#000000',
                         fontWeight: 500,
                         fontSize: '16px',
-                        fontFamily: 'poppins',
+                        fontFamily: 'Poppins',
                       }}
                     >
                       {label}
@@ -292,7 +293,7 @@ export default function Registration() {
                 <Grid item xs={12} sm={3}>
                   <FormLabel
                     sx={{
-                      color: '#4D4639',
+                      color: '#000000',
                       fontWeight: 500,
                       fontSize: '16px',
                       fontFamily: 'poppins',
@@ -344,7 +345,7 @@ export default function Registration() {
                 <Grid item xs={12} sm={3}>
                   <FormLabel
                     sx={{
-                      color: '#4D4639',
+                      color: '#000000',
                       fontFamily: 'poppins',
                       fontWeight: 500,
                       fontSize: '16px',
@@ -374,14 +375,20 @@ export default function Registration() {
                       onChange={() => setTermsAccepted(!termsAccepted)}
                       sx={{
                         transform: 'scale(0.9)',
-                        color: '#FFBD0D',
-                        '&.Mui-checked': { color: '#FFBD0D' },
+                        color: '#fcd804',
+                        '&.Mui-checked': { color: '#fcd804' },
                         p: 0.5,
                       }}
                     />
                   }
                   label={
-                    <Typography fontSize="13px">
+                    <Typography
+                      sx={{
+                        fontFamily: 'poppins',
+                        fontSize: '16px',
+                        fontWeight: 500,
+                      }}
+                    >
                       I have read and accepted the{' '}
                       <Link
                         href="/termsandcondition"
@@ -400,23 +407,16 @@ export default function Registration() {
               {/* Submit Button */}
               <Grid item textAlign="center">
                 <Button
-                  onClick={() => {
-                    trackEvent({
-                      action: 'signup',
-                      category: 'engagement',
-                      label: 'Verify & Proceed Button',
-                    });
-                    handleCreateUser;
-                  }}
+                  onClick={handleCreateUser}
                   sx={{
                     width: { xs: '100%', sm: '70%', md: '60%' },
                     height: '40px',
-                    background: '#FFBD0D',
+                    background: '#fcd804',
                     borderRadius: '50px',
                     fontSize: '14px',
                     fontWeight: 500,
                     textTransform: 'none',
-                    color: '#2B3133',
+                    color: '#000000',
                   }}
                   disabled={
                     !formData.name ||
@@ -433,11 +433,14 @@ export default function Registration() {
                 <Typography
                   textAlign="center"
                   fontSize="16px"
-                  color="#3B383E"
+                  color="#000000"
                   fontWeight={500}
                 >
                   Already have an Account?{' '}
-                  <Link href="/signin" style={{ color: '#0037B9' }}>
+                  <Link
+                    href="/signin"
+                    style={{ color: '#0037B9', textDecoration: 'underline' }}
+                  >
                     Sign In
                   </Link>
                 </Typography>

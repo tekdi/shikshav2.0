@@ -27,7 +27,6 @@ export default function Searchpage() {
   const selectedType = searchParams.get('type')?.toLowerCase();
   // Get type from URL
   const selectedquery = searchParams.get('query')?.toLowerCase();
-  const tags = searchParams.get('tags');
   const [framework, setFramework] = useState(selectedType || ''); // Default to selectedType if available
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -48,7 +47,7 @@ export default function Searchpage() {
         display="flex"
         flexDirection="column"
         gap="1rem"
-        py="1rem"
+        py="2rem"
         px="14px"
         sx={{ width: '100%' }}
       >
@@ -61,6 +60,7 @@ export default function Searchpage() {
             sx={{
               padding: '4px',
               backgroundColor: 'transparent',
+              color: '#000000',
               borderRadius: '50%',
               '&:hover': {
                 backgroundColor: 'rgba(0,0,0,0.04)',
@@ -74,9 +74,19 @@ export default function Searchpage() {
           </IconButton>
 
           {selectedquery && (
-            <Typography sx={{ fontWeight: 700 }}>
+            <Typography
+              sx={{ fontWeight: 500, fontSize: '24px', fontFamily: 'Poppins' }}
+            >
               Showing Results for{' '}
-              <span style={{ color: '#FFBD0D' }}>{selectedquery}</span>
+              <span
+                style={{
+                  color: '#000000',
+                  backgroundColor: '#fcd804',
+                  padding: '5px',
+                }}
+              >
+                {selectedquery}
+              </span>
             </Typography>
           )}
         </Box>
