@@ -611,43 +611,82 @@ export default function Content() {
                         {/* Metadata */}
                         <Stack spacing={0.5}>
                           <Typography
-                            variant="body1"
                             textAlign="left"
-                            fontFamily={'Arial'}
+                            sx={{
+                              color: '#000000',
+                              fontSize: '16px',
+                              fontWeight: 400,
+                              fontFamily: 'Poppins',
+                            }}
                           >
-                            <b>Author:</b> {contentData?.author ?? ''}
+                            <span
+                              style={{
+                                color: '#000000',
+                                fontSize: '16px',
+                                fontWeight: 700,
+                                fontFamily: 'Poppins',
+                              }}
+                            >
+                              Author :
+                            </span>{' '}
+                            {contentData?.author ?? ''}
                           </Typography>
                           <Typography
-                            variant="body1"
                             textAlign="left"
-                            fontFamily={'Arial'}
+                            sx={{
+                              color: '#000000',
+                              fontSize: '16px',
+                              fontWeight: 400,
+                              fontFamily: 'Poppins',
+                            }}
                           >
-                            <b>Publisher:</b> {contentData?.publisher ?? ''}
+                            <span
+                              style={{
+                                color: '#000000',
+                                fontSize: '16px',
+                                fontWeight: 700,
+                                fontFamily: 'Poppins',
+                              }}
+                            >
+                              Publisher :
+                            </span>{' '}
+                            {contentData?.publisher ?? ''}
                           </Typography>
                           <Typography
-                            variant="body1"
                             textAlign="left"
-                            fontFamily={'Arial'}
+                            sx={{
+                              color: '#000000',
+                              fontSize: '16px',
+                              fontWeight: 400,
+                              fontFamily: 'Poppins',
+                            }}
                           >
-                            {contentData?.year ?? ''}
+                            {contentData?.year === 'n.d.' ||
+                            contentData?.year === 'ND' ||
+                            !contentData?.year
+                              ? 'N/A'
+                              : contentData?.year}
                           </Typography>
                           <Typography
-                            variant="body1"
                             textAlign="left"
-                            fontFamily={'Arial'}
+                            sx={{
+                              color: '#000000',
+                              fontSize: '16px',
+                              fontWeight: 400,
+                              fontFamily: 'Poppins',
+                            }}
                           >
                             {(contentData as any)?.language?.[0] && (
                               <Typography
-                                variant="body1"
                                 textAlign="left"
-                                fontFamily="Arial"
                                 sx={{
                                   display: 'inline-block',
                                   backgroundColor: '#FCD905',
                                   padding: '2px 8px',
-                                  fontWeight: 600,
-                                  fontSize: '1rem',
-                                  color: '#000',
+                                  color: '#000000',
+                                  fontSize: '16px',
+                                  fontWeight: 500,
+                                  fontFamily: 'Poppins',
                                 }}
                               >
                                 {languageDisplayMap[

@@ -33,7 +33,7 @@ export default function Aboutus() {
             textAlign: 'center',
             lineHeight: { xs: '30px', md: '64px' },
             fontWeight: { xs: 500, md: 500 },
-            fontSize: { xs: '24px', md: '57px' },
+            fontSize: { xs: '24px', md: '24px' },
             fontFamily: 'Poppins',
             color: '#000000',
           }}
