@@ -247,7 +247,7 @@ export default function Index() {
         });
       }
     }
-  }, [framework, frameworkFilter]);
+  }, [framework, frameworkFilter, frameworkName]);
 
   // **Listen for Filter Changes and Fetch Content**
   useEffect(() => {
