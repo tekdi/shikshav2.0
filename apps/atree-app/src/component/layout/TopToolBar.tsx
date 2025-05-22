@@ -8,10 +8,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import {
   Container,
-  InputBase,
   Menu,
   MenuItem,
-  Select,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
@@ -85,28 +83,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isAuthPage =
     router.pathname === '/signin' || router.pathname === '/register';
-  const languages = [
-    'English',
-    'Hindi',
-    'Marathi',
-    'Bengali',
-    'Assamese',
-    'Kannada',
-    'Tamil',
-    'Malayalam',
-  ];
-  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
-  React.useEffect(() => {
-    const lang = localStorage.getItem('language') ?? 'English';
-    setSelectedLanguage(lang);
-  }, []);
-  useEffect(() => {
-    if (window.location.pathname === '/') {
-      localStorage.removeItem('language');
-    }
-    const storedLang = localStorage.getItem('language') ?? 'English';
-    setSelectedLanguage(storedLang);
-  }, []);
+
   useEffect(() => {
     if (framework) {
       if (frameworkFilter) {
@@ -145,15 +122,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
   const handleSearchClose = () => {
     setIsSearchOpen(false);
   };
-  const handleLanguageSelect = (e: any) => {
-    const lang = e.target.value;
-    setSelectedLanguage(lang);
-    localStorage.setItem('language', lang);
-    router.push('/contents');
-  };
-  const handleLanguageClick = (e: any) => {
-    router.push('/contents');
-  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -216,11 +185,14 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                   </Box>
                 )}
                 <Typography
-                  component="div"
                   sx={{
-                    flexGrow: 1,
-                    fontSize: '14px',
-                    fontWeight: 400,
+                    position: 'absolute',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    fontWeight: 500,
+                    fontSize: '64px !important',
+                    color: '#000000',
+                    fontFamily: 'Poppins',
                     ..._title,
                   }}
                 >

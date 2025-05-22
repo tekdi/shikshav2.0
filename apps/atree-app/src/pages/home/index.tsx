@@ -9,6 +9,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import {
   Box,
   Button,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -38,6 +39,8 @@ import Loader from '../../component/layout/LoaderComponent';
 import dynamic from 'next/dynamic';
 import FooterText from '../../component/FooterText';
 import Footer from '../../component/layout/Footer';
+import Link from 'next/link';
+
 const buttonColors = {
   water: '#0E28AE',
   land: '#8F4A50',
@@ -93,7 +96,7 @@ export default function Index() {
         filters: updatedFilters,
       });
 
-      setContentData(data?.result?.content || []);
+      setContentData(data?.result?.content ?? []);
     } catch (error) {
       console.error('Error fetching content data:', error);
     } finally {
@@ -359,7 +362,6 @@ export default function Index() {
                   onApply={handleApplyFilters}
                   isMobile={isMobile}
                   resources={RESOURCE_TYPES}
-                  // mimeType={MIME_TYPES}
                 />
               </Box>
             </Grid>
@@ -521,14 +523,30 @@ export default function Index() {
           </Box>
         </DialogTitle>
         <DialogContent>
-          <Typography>Please login to continue</Typography>
+          <Typography
+            sx={{ fontFamily: 'Poppins', fontSize: '16px', fontWeight: '500' }}
+          >
+            Great going! You've explored 3 resources. Please login to continue
+          </Typography>
         </DialogContent>
         <DialogActions sx={{ justifyContent: 'center', py: 2, px: 3 }}>
           <Button
             variant="contained"
             color="secondary"
             onClick={handleCloseMessage}
-            sx={{ borderRadius: '50px', height: '40px', width: '100%' }}
+            sx={{
+              borderRadius: '50px',
+              height: '40px',
+              width: '30%',
+              borderRadius: '50px',
+              height: '40px',
+              backgroundColor: '#fcd804',
+              color: '#000000',
+              fontFamily: 'Poppins',
+              fontSize: '16px',
+              fontWeight: '500',
+              textTransform: 'none',
+            }}
           >
             {t('Proceed')}
           </Button>
@@ -569,8 +587,7 @@ const SwitchAccess = ({ fullAccess, handleToggleFullAccess }: any) => (
             color: '#fff',
             transform: 'translateX(16px)',
             '& + .MuiSwitch-track': {
-              background:
-                'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+              background: '#fcd804',
               opacity: 1,
               border: 0,
             },
@@ -598,9 +615,7 @@ const SwitchAccess = ({ fullAccess, handleToggleFullAccess }: any) => (
           width: 25,
         },
         '& .MuiSwitch-track': {
-          background: fullAccess
-            ? 'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)'
-            : '#BDBDBD', // Grey when unchecked
+          background: fullAccess ? '#fcd804' : '#BDBDBD', // Grey when unchecked
           opacity: 1,
           borderRadius: 26 / 2,
         },
@@ -648,7 +663,16 @@ const ContentSection = ({ title, contents, onTitleClick, handleCardClick }) => (
           mt: 2,
         }}
       >
-        No resources found
+        Oops! We don't have this resource yet on our shelves. Help us stock it
+        by recommending it{' '}
+        <Link
+          href="https://docs.google.com/forms/d/1r4wxm2a2kKH2Veq9_AYIfmWNYJJh5u-nw_SweHC5ydQ/viewform?edit_requested=true"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: '#0037B9', textDecoration: 'underline' }}
+        >
+          here
+        </Link>
       </Typography>
     )}
   </Box>
@@ -737,7 +761,7 @@ const SubFrameworkFilter = React.memo<{
   >([]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const maxItems = isMobile ? 3 : 6;
+  const maxItems = isMobile ? 3 : 5;
   useEffect(() => {
     if (subFrameworkFilter) {
       setFilterItems(subFrameworkFilter.slice(0, maxItems));
@@ -754,8 +778,21 @@ const SubFrameworkFilter = React.memo<{
     <Grid container spacing={1}>
       {filterItems?.map((subFrameworkItem: any) => (
         <Grid key={subFrameworkItem.identifier}>
-          <Button
-            // onClick={() => setSubFramework(subFrameworkItem.identifier)}
+          <Chip
+            key={subFrameworkItem.name}
+            label={capitalizeFirstLetter(subFrameworkItem.name)}
+            variant="outlined"
+            sx={{
+              height: 32,
+              padding: '4px 6px',
+              borderRadius: '8px',
+              '& .MuiChip-label': {
+                fontSize: '14px',
+                fontFamily: 'Poppins',
+                fontWeight: 500,
+                color: '#000000',
+              },
+            }}
             onClick={() => {
               trackEvent({
                 action: 'subcategory_click',
@@ -764,34 +801,38 @@ const SubFrameworkFilter = React.memo<{
               });
               handleItemClick(subFrameworkItem);
             }}
-            sx={{
-              borderRadius: '8px',
-              color: '#001D32',
-              backgroundColor: '#E3E9EA',
-              textTransform: 'none',
-              fontFamily: 'sans-serif',
-              fontSize: '11px',
-              lineHeight: '16px',
-            }}
-          >
-            {capitalizeFirstLetter(subFrameworkItem.name)}
-          </Button>
+          />
         </Grid>
       ))}
       {subFrameworkFilter?.length > (isMobile ? 3 : 6) && (
-        <Button
-          onClick={() => setOpenPopup(true)}
+        <Chip
+          label={
+            <MoreVertIcon
+              fontSize="medium"
+              sx={{ width: '11px', height: '11px' }}
+            />
+          }
+          variant="outlined"
           sx={{
+            height: 32,
+            padding: '4px 6px',
             borderRadius: '8px',
-            color: '#001D32',
-            backgroundColor: '#E3E9EA',
+            '& .MuiChip-label': {
+              fontSize: '14px',
+              fontFamily: 'Poppins',
+              fontWeight: 500,
+              color: '#000000',
+            },
           }}
-        >
-          <MoreVertIcon
-            sx={{ width: '11px', height: '11px' }}
-            onClick={() => setOpenPopup(true)}
-          />
-        </Button>
+          onClick={() => {
+            trackEvent({
+              action: 'subcategory_click',
+              category: 'user',
+              label: 'Home Page',
+            });
+            setOpenPopup(true);
+          }}
+        />
       )}
       {subFrameworkFilter?.length > (isMobile ? 3 : 6) && openPopup && (
         <Dialog
@@ -854,11 +895,11 @@ const Title: React.FC<{
     >
       <Typography
         sx={{
-          fontFamily: 'Manrope, sans-serif',
-          fontWeight: 700,
-          fontSize: { xs: '20px', md: '22px' },
+          fontFamily: 'Poppins',
+          fontWeight: 500,
+          fontSize: { xs: '20px', md: '24px' },
           lineHeight: '28px',
-          color: '#1C170D',
+          color: '#000000',
         }}
       >
         {children}

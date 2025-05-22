@@ -23,7 +23,6 @@ export default function Aboutus() {
         container
         spacing={2}
         direction="column"
-        // alignItems="center"
         justifyContent="center"
         marginBottom={'25px'}
         sx={commonStyles.responsivePadding}
@@ -33,8 +32,10 @@ export default function Aboutus() {
           sx={{
             textAlign: 'center',
             lineHeight: { xs: '30px', md: '64px' },
-            fontWeight: { xs: 400, md: 500 },
+            fontWeight: { xs: 500, md: 500 },
             fontSize: { xs: '24px', md: '57px' },
+            fontFamily: 'Poppins',
+            color: '#000000',
           }}
         >
           About Us
@@ -42,10 +43,11 @@ export default function Aboutus() {
         <Typography
           sx={{
             textAlign: 'left',
-            fontWeight: { xs: 400, md: 500 },
+            fontWeight: { xs: 500, md: 500 },
             fontSize: { xs: '14px', md: '24px' },
             pl: { xs: 2, md: 10 },
             pr: { xs: 2, md: 10 },
+            fontFamily: 'Poppins',
           }}
         >
           SNAIL: Slow. Intentional. Transformative.
@@ -56,6 +58,9 @@ export default function Aboutus() {
             textAlign: { xs: 'left', md: 'left' },
             pl: { xs: 2, md: 10 },
             pr: { xs: 2, md: 10 },
+            fontSize: '16px',
+            fontFamily: 'Poppins',
+            color: '#000000',
           }}
         >
           We are a collective of passionate environmental educators based at
@@ -69,6 +74,9 @@ export default function Aboutus() {
             textAlign: { xs: 'left', md: 'left' },
             pl: { xs: 2, md: 10 },
             pr: { xs: 2, md: 10 },
+            fontFamily: 'Poppins',
+            color: '#000000',
+            fontSize: '16px',
           }}
         >
           Our mission is to enrich school-level curricula and pedagogy across
@@ -86,6 +94,8 @@ export default function Aboutus() {
             fontSize: { xs: '14px', md: '24px' },
             pl: { xs: 2, md: 10 },
             pr: { xs: 2, md: 10 },
+            fontFamily: 'Poppins',
+            color: '#000000',
           }}
         >
           What We Offer
@@ -95,6 +105,9 @@ export default function Aboutus() {
             textAlign: { xs: 'left', md: 'left' },
             pl: { xs: 2, md: 10 },
             pr: { xs: 2, md: 10 },
+            fontFamily: 'Poppins',
+            color: '#000000',
+            fontSize: '16px',
           }}
         >
           Our Digital Hub of Education Resources is a dynamic space designed for
@@ -118,6 +131,8 @@ export default function Aboutus() {
             fontSize: { xs: '14px', md: '24px' },
             pl: { xs: 2, md: 10 },
             pr: { xs: 2, md: 10 },
+            fontFamily: 'Poppins',
+            color: '#000000',
           }}
         >
           Our Network
@@ -127,6 +142,9 @@ export default function Aboutus() {
             textAlign: { xs: 'left', md: 'left' },
             pl: { xs: 2, md: 10 },
             pr: { xs: 2, md: 10 },
+            fontFamily: 'Poppins',
+            color: '#000000',
+            fontSize: '16px',
           }}
         >
           We are proud to collaborate with over 60 leading environmental
@@ -144,6 +162,8 @@ export default function Aboutus() {
             pl: { xs: 2, md: 10 },
             pr: { xs: 2, md: 10 },
             whiteSpace: 'pre-line',
+            fontFamily: 'Poppins',
+            color: '#000000',
           }}
         >
           Get in Touch
@@ -154,6 +174,9 @@ export default function Aboutus() {
             pl: { xs: 2, md: 10 },
             pr: { xs: 2, md: 10 },
             mb: 1,
+            fontFamily: 'Poppins',
+            color: '#000000',
+            fontSize: '16px',
           }}
         >
           We’d love to hear from you!
@@ -161,18 +184,35 @@ export default function Aboutus() {
         <Box sx={{ pl: { xs: 2, md: 10 }, pr: { xs: 2, md: 10 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
             <EmailOutlinedIcon sx={{ mr: 1 }} />
-            <Typography>Email: envedu@atree.org</Typography>
+            <Typography
+              sx={{ fontFamily: 'Poppins', color: '#000000', fontSize: '16px' }}
+            >
+              Email: envedu@atree.org
+            </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
             <LocationOnOutlinedIcon sx={{ mr: 1 }} />
-            <Typography>
+            <Typography
+              sx={{ fontFamily: 'Poppins', color: '#000000', fontSize: '16px' }}
+            >
               Address: ATREE, Royal Enclave, Sriramapura, Jakkur Post, Bangalore
               560 064, Karnataka
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <CallOutlinedIcon sx={{ mr: 1 }} />
-            <Typography>Phone: +91-80-23635555 (EPABX)</Typography>
+            <CallOutlinedIcon
+              sx={{
+                mr: 1,
+                fontFamily: 'Poppins',
+                color: '#000000',
+                fontSize: '16px',
+              }}
+            />
+            <Typography
+              sx={{ fontFamily: 'Poppins', color: '#000000', fontSize: '16px' }}
+            >
+              Phone: +91-80-23635555 (EPABX)
+            </Typography>
           </Box>
         </Box>
       </Grid>

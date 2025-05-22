@@ -48,9 +48,17 @@ const LoginDialog: React.FC<CommonDialogProps> = ({
       <DialogActions sx={{ justifyContent: 'center', py: 2, px: 3 }}>
         <Button
           variant="contained"
-          color="secondary"
           onClick={onButtonClick || onClose}
-          sx={{ borderRadius: '50px', height: '40px', width: '100%' }}
+          sx={{
+            borderRadius: '50px',
+            height: '40px',
+            width: '100%',
+            backgroundColor: '#fcd804',
+            color: '#000000',
+            fontFamily: 'Poppins',
+            fontSize: '16px',
+            fontWeight: '500',
+          }}
         >
           {buttonText}
         </Button>

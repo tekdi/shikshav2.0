@@ -41,7 +41,6 @@ const RenderTabContent = memo(
     isLodingMoreData: boolean;
     _card?: any;
   }) => {
-    
     return (
       <Box sx={{ width: '100%' }}>
         {tabs?.length !== undefined && tabs?.length > 1 && (
@@ -129,7 +128,16 @@ const RenderTabContent = memo(
               variant="contained"
               onClick={handleLoadMore}
               disabled={isLodingMoreData}
-              sx={{ background: '#FFBD0D', color: '#2B3133' }}
+              sx={{
+                background: '#fcd804',
+                color: '#000000',
+                fontFamily: 'Poppins',
+                fontSize: '16px',
+                borderRadius: '50px',
+                height: '40px',
+                padding: '16px',
+                textTransform: 'none',
+              }}
             >
               {isLodingMoreData ? <CircularProgress size={20} /> : 'Load More'}
             </Button>

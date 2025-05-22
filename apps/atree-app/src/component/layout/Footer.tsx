@@ -3,19 +3,16 @@ import {
   BottomNavigation,
   BottomNavigationAction,
   Box,
-  useTheme,
   useMediaQuery,
 } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
-// import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import ShareIcon from '@mui/icons-material/Share';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import { useEffect, useState } from 'react';
 import ShareDialog from '../ShareDialog';
 const items = [
   { label: 'Home', icon: <HomeIcon /> },
-  { label: 'Quick Access', icon: <BookmarksIcon /> },
-  // { label: 'Bookmarked', icon: <BookmarkBorderIcon /> },
+
   { label: 'Share', icon: <ShareIcon /> },
 ];
 
@@ -29,10 +26,8 @@ export default function Footer() {
       case 0:
         router.push('/home');
         break;
+
       case 1:
-        router.push('/quick-access');
-        break;
-      case 2:
         setOpen(true);
         break;
     }

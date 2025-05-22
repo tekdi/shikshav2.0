@@ -36,6 +36,9 @@ export const CommonSelect: React.FC<DropdownProps> = ({
       <FormControl fullWidth={fullWidth} sx={{ width }}>
         <InputLabel id={`${label}-label`}>{label}</InputLabel>
         <Select
+          id="outlined-size-small"
+          defaultValue="Small"
+          size="small"
           labelId={`${label}-label`}
           value={value === null || value === undefined ? '' : String(value)}
           label={label}

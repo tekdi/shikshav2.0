@@ -125,11 +125,11 @@ export const FrameworkFilter = ({
               sx={{
                 padding: 0,
                 minWidth: 'auto',
-                fontFamily: 'sans-serif',
+                fontFamily: 'Poppins',
                 fontWeight: isSelected ? 'bold' : 500,
                 textTransform: 'none',
-                fontSize: '16px',
-                color: isSelected ? 'black' : 'gray',
+                fontSize: '20px',
+                color: isSelected ? '#000000' : '#4D4C4C',
                 backgroundColor: 'transparent',
                 border: 'none',
                 '&:hover': {

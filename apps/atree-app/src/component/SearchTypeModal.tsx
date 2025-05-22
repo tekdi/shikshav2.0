@@ -133,7 +133,12 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={() => {
+        onClose();
+        setSearchQuery('');
+        setSearchResults([]);
+        setSearchType('');
+      }}
       fullWidth
       maxWidth="sm"
       PaperProps={{
@@ -156,7 +161,6 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
             autoFocus
             placeholder="Search by..."
             value={searchQuery}
-            // onChange={(e) => setSearchQuery(e.target.value)}
             onChange={handleChange}
             onKeyDown={handleKeyPress} // Detect Enter key press
             sx={{
@@ -165,7 +169,15 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
             }}
           />
 
-          <IconButton onClick={onClose} sx={{ ml: 1 }}>
+          <IconButton
+            onClick={() => {
+              onClose();
+              setSearchQuery('');
+              setSearchResults([]);
+              setSearchType('');
+            }}
+            sx={{ ml: 1 }}
+          >
             <CloseIcon />
           </IconButton>
         </Box>

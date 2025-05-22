@@ -4,8 +4,6 @@ type FooterTextProps = {
   readonly page?: string; // made optional in case it's not always passed
 };
 export default function FooterText({ page }: FooterTextProps) {
-  const isAboutPage = page === 'aboutus';
-
   return (
     <Grid
       sx={{
@@ -18,7 +16,7 @@ export default function FooterText({ page }: FooterTextProps) {
         align="center"
         gutterBottom
         fontFamily="poppins"
-        sx={{ fontSize: { xs: '10px', md: '14px' } }}
+        sx={{ fontSize: { xs: '10px', md: '14px', fontWeight: 400 } }}
       >
         Curated by ATREE: For, Of, and By Environment Educators of India
       </Typography>

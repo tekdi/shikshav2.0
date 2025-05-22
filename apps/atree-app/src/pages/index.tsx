@@ -14,7 +14,7 @@ import Insta from '../component/Insta';
 import Layout from '../component/layout/layout';
 import { ImageBanner } from '../component/layout/ImageBanner';
 import { useEffect, useState } from 'react';
-import { ContentSearch, trackEvent, trackPageView } from '@shared-lib';
+import { ContentSearch, trackEvent } from '@shared-lib';
 import Loader from '../component/layout/LoaderComponent';
 import FooterText from '../component/FooterText';
 import Banner from '../component/Banner';
@@ -82,7 +82,10 @@ const AnimatedCounter = ({
   }, [key, target, duration, restartDelay]);
 
   return (
-    <Typography fontWeight="400" sx={{ fontSize: { xs: '24px', md: '64px' } }}>
+    <Typography
+      fontWeight="Bold"
+      sx={{ fontFamily: 'Poppins', fontSize: { xs: '24px', md: '60px' } }}
+    >
       {count}
     </Typography>
   );
@@ -203,7 +206,8 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                     align="center"
                     gutterBottom
                     sx={{
-                      fontWeight: 400,
+                      fontWeight: 500,
+                      fontFamily: 'Poppins',
                       fontSize: { xs: '14px', md: '24px' },
                       lineHeight: { xs: '24px', md: '44px' },
                       textAlign: 'center',
@@ -218,11 +222,11 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
               ) : (
                 <Box sx={{ marginTop: '50px', marginBottom: '50px' }}>
                   <Typography
-                    variant="body1"
                     align="center"
                     gutterBottom
                     sx={{
-                      fontWeight: 400,
+                      fontWeight: 500,
+                      fontFamily: 'Poppins',
                       fontSize: { xs: '14px', md: '24px' },
                       lineHeight: { xs: '24px', md: '44px' },
                       pl: '55px',
@@ -250,7 +254,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
             >
               <Box
                 sx={{
-                  backgroundColor: '#FCD905',
+                  backgroundColor: '#fcd804',
                   width: '100vw',
                   maxWidth: '100%',
                   height: { xs: '63px', md: '170px' },
@@ -267,8 +271,14 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                 <Box>
                   <AnimatedCounter target={1000} duration={2000} />
                   <Typography
-                    fontWeight="400"
-                    sx={{ fontSize: { xs: '10px', md: '24px' } }}
+                    sx={{
+                      fontSize: {
+                        xs: '10px',
+                        md: '24px',
+                        fontFamily: 'Poppins',
+                        fontWeight: 500,
+                      },
+                    }}
                   >
                     RESOURCES
                   </Typography>
@@ -276,8 +286,11 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                 <Box>
                   <AnimatedCounter target={15} duration={2000} />
                   <Typography
-                    fontWeight="400"
-                    sx={{ fontSize: { xs: '10px', md: '24px' } }}
+                    sx={{
+                      fontFamily: 'Poppins',
+                      fontSize: { xs: '10px', md: '24px' },
+                      fontWeight: 500,
+                    }}
                   >
                     CATEGORIES
                   </Typography>
@@ -285,26 +298,15 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                 <Box>
                   <AnimatedCounter target={8} duration={2000} />
                   <Typography
-                    fontWeight="400"
-                    sx={{ fontSize: { xs: '10px', md: '24px' } }}
+                    sx={{
+                      fontFamily: 'Poppins',
+                      fontSize: { xs: '10px', md: '24px', fontWeight: 500 },
+                    }}
                   >
                     LANGUAGES
                   </Typography>
                 </Box>
               </Box>
-              {/* <Typography
-                variant="body1"
-                align="center"
-                gutterBottom
-                sx={{
-                  fontWeight: 400,
-                  fontSize: { xs: '14px', md: '24px' },
-                  textAlign: 'center',
-                  padding: '20px',
-                }}
-              >
-                {t('Choose what best fits your interests and needs')}
-              </Typography> */}
             </Grid>
           </Grid>
           <Grid sx={{ px: 1 }}>
@@ -350,7 +352,6 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
               alignItems: 'center',
               flexDirection: 'column',
               padding: '10px 15px',
-              // gap: 2,
             }}
           >
             <Typography
