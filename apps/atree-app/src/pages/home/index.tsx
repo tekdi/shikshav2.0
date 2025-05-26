@@ -40,6 +40,8 @@ import dynamic from 'next/dynamic';
 import FooterText from '../../component/FooterText';
 import Footer from '../../component/layout/Footer';
 import Link from 'next/link';
+import { TelemetryEventType } from '../../utils/app.constant';
+import { telemetryFactory } from '../../utils/telemetry';
 
 const buttonColors = {
   water: '#0E28AE',
@@ -262,12 +264,28 @@ export default function Index() {
   // **Handle Content Click**
   const handleCardClick = (content: any) => {
     trackEvent({
-      action: 'card_click',
+      action: `${filterCategory} - ${content?.name}`,
       category: 'user',
       label: 'Home Page',
     });
     localStorage.removeItem('selectedFilters');
+    const windowUrl = window.location.pathname;
+    const cleanedUrl = windowUrl.replace(/^\//, '');
+    const env = cleanedUrl.split('/')[0];
 
+    const telemetryInteract = {
+      context: {
+        env: env,
+        cdata: [],
+      },
+      edata: {
+        id: `${filterCategory} - ${content?.name}`,
+        type: TelemetryEventType.CLICK,
+        subtype: '',
+        pageid: cleanedUrl,
+      },
+    };
+    telemetryFactory.interact(telemetryInteract);
     if (consumedContent.length < 3) {
       router.push(`/contents/${content?.identifier}`);
       setConsumedContent((prev) => {
@@ -769,6 +787,28 @@ const SubFrameworkFilter = React.memo<{
   }, [subFrameworkFilter]);
   const handleItemClick = (item: any) => {
     localStorage.setItem('subcategory', item.name);
+    trackEvent({
+      action: 'tags_click',
+      category: 'engagement',
+      label: `Subcategory -${item.name}`,
+    });
+    const windowUrl = window.location.pathname;
+    const cleanedUrl = windowUrl.replace(/^\//, '');
+    const env = cleanedUrl.split('/')[0];
+
+    const telemetryInteract = {
+      context: {
+        env: env,
+        cdata: [],
+      },
+      edata: {
+        id: `Subcategory -${item.name}`,
+        type: TelemetryEventType.CLICK,
+        subtype: '',
+        pageid: cleanedUrl,
+      },
+    };
+    telemetryFactory.interact(telemetryInteract);
     router.push(`/contents`);
   };
   const capitalizeFirstLetter = (str: string) => {

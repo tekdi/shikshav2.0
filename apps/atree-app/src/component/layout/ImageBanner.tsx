@@ -10,6 +10,9 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
+import { TelemetryEventType } from '../../utils/app.constant';
+import { telemetryFactory } from '../../utils/telemetry';
+import { trackEvent } from '@shared-lib';
 
 export const ImageBanner = ({
   image,
@@ -31,6 +34,28 @@ export const ImageBanner = ({
   const router = useRouter();
   const theme = useTheme();
   const handleClick = () => {
+    trackEvent({
+      action: 'landing_page_click',
+      category: 'engagement',
+      label: `Category - ${encodeURIComponent(name)}`,
+    });
+    const windowUrl = window.location.pathname;
+    const cleanedUrl = windowUrl.replace(/^\//, '');
+    const env = cleanedUrl.split('/')[0];
+
+    const telemetryInteract = {
+      context: {
+        env: env,
+        cdata: [],
+      },
+      edata: {
+        id: `Category - ${encodeURIComponent(name)}`,
+        type: TelemetryEventType.CLICK,
+        subtype: '',
+        pageid: 'landing_page',
+      },
+    };
+    telemetryFactory.interact(telemetryInteract);
     router.push(`/home?category=${encodeURIComponent(name)}`);
   };
 

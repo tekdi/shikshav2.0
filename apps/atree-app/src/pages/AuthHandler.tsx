@@ -6,7 +6,12 @@ import { SelectChangeEvent } from '@mui/material/Select';
 
 import GlobalAlert from '../component/GlobalAlert';
 import { useRouter } from 'next/router';
-import { CommonDialog, CommonSelect, languageData } from '@shared-lib';
+import {
+  CommonDialog,
+  CommonSelect,
+  languageData,
+  trackEvent,
+} from '@shared-lib';
 import {
   Box,
   Button,
@@ -17,6 +22,8 @@ import {
   FormLabel,
   Typography,
 } from '@mui/material';
+import { TelemetryEventType } from '../utils/app.constant';
+import { telemetryFactory } from '../utils/telemetry';
 
 const AuthHandler = () => {
   const router = useRouter();
@@ -86,6 +93,31 @@ const AuthHandler = () => {
       const authInfo = await getUserAuthInfo({
         token: response?.result?.access_token,
       });
+      trackEvent({
+        action: 'signin',
+        category: 'engagement',
+        label: `user login with google successfully - ${
+          keycloak.tokenParsed?.preferred_username || 'Unknown User'
+        }`,
+      });
+      const windowUrl = window.location.pathname;
+      const cleanedUrl = windowUrl.replace(/^\//, '');
+      const env = cleanedUrl.split('/')[0];
+      console.log('env', env, 'cleanedUrl', cleanedUrl);
+      const telemetryInteract = {
+        context: {
+          env: env,
+          cdata: [],
+        },
+        edata: {
+          id: 'Login with google successfully',
+          type: TelemetryEventType.CLICK,
+          subtype: '',
+          pageid: cleanedUrl,
+          uid: keycloak.tokenParsed?.preferred_username || 'Unknown User',
+        },
+      };
+      telemetryFactory.interact(telemetryInteract);
       console.log('authInfo', authInfo);
       if (typeof window !== 'undefined') {
         localStorage.setItem(

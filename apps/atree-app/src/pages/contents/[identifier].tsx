@@ -299,7 +299,7 @@ export default function Content() {
   };
   useEffect(() => {
     fetchFrameworkData();
-  }, [frameworkFilter, framework]);
+  }, []);
 
   const handleCardClick = (content: any) => {
     router.push(`/contents/${content?.identifier}`);

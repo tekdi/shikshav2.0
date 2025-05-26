@@ -3,6 +3,9 @@ import { Button, Stack, useMediaQuery, useTheme } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import { TelemetryEventType } from '../utils/app.constant';
+import { telemetryFactory } from '../utils/telemetry';
+import { trackEvent } from '@shared-lib';
 
 const buttonColors: Record<string, string> = {
   water: '#0E28AE',
@@ -77,6 +80,28 @@ export const FrameworkFilter = ({
     localStorage.removeItem('access');
 
     localStorage.setItem('category', selectedCategory);
+    trackEvent({
+      action: 'tags_click',
+      category: 'engagement',
+      label: `category - ${selectedCategory}`,
+    });
+    const windowUrl = window.location.pathname;
+    const cleanedUrl = windowUrl.replace(/^\//, '');
+    const env = cleanedUrl.split('/')[0];
+
+    const telemetryInteract = {
+      context: {
+        env: env,
+        cdata: [],
+      },
+      edata: {
+        id: `category - ${selectedCategory}`,
+        type: TelemetryEventType.CLICK,
+        subtype: '',
+        pageid: cleanedUrl,
+      },
+    };
+    telemetryFactory.interact(telemetryInteract);
     if (fromSubcategory) {
       localStorage.setItem('subcategory', selectedCategory);
       router.push(`/contents`);

@@ -14,6 +14,9 @@ import {
   processFrameworkData,
 } from '../service/apiService';
 import { useEffect, useState } from 'react';
+import { telemetryFactory } from '../utils/telemetry';
+import { useRouter } from 'next/router';
+import { TelemetryEventType } from '../utils/app.constant';
 const AuthHandler = dynamic(() => import('./AuthHandler'), {
   ssr: false,
 });
@@ -46,6 +49,33 @@ export default function RootLayout({ Component, pageProps }: AppProps) {
     frameworkFilter: [],
     framework: '',
   });
+  const router = useRouter();
+  useEffect(() => {
+    telemetryFactory.init();
+  }, []);
+  useEffect(() => {
+    const handleRouteChange = (url: string) => {
+      const windowUrl = url;
+      const cleanedUrl = windowUrl.replace(/^\//, '');
+
+      const telemetryImpression = {
+        context: {
+          env: cleanedUrl,
+          cdata: [],
+        },
+        edata: {
+          type: TelemetryEventType.VIEW,
+          subtype: '',
+          pageid: cleanedUrl ? cleanedUrl : 'landing_page',
+          uri: '',
+        },
+      };
+      telemetryFactory.impression(telemetryImpression);
+    };
+
+    // Log initial page load
+    handleRouteChange(window.location.pathname);
+  }, [router]);
   useEffect(() => {
     let isMounted = true;
 

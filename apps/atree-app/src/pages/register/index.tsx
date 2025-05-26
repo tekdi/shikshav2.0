@@ -35,6 +35,8 @@ import {
   validateName,
   validateMobile,
 } from '../../utils/authUtils';
+import { TelemetryEventType } from '../../utils/app.constant';
+import { telemetryFactory } from '../../utils/telemetry';
 
 export default function Registration() {
   const [formData, setFormData] = useState<{ [key: string]: string }>({
@@ -108,7 +110,7 @@ export default function Registration() {
     trackEvent({
       action: 'signup',
       category: 'engagement',
-      label: 'Verify & Proceed Button',
+      label: 'user created successfully',
     });
     if (
       !validateName(formData.name) ||
@@ -149,6 +151,23 @@ export default function Registration() {
         });
         setShowAlertMsg('User registered successfully!');
         setAlertSeverity('success');
+        const windowUrl = window.location.pathname;
+        const cleanedUrl = windowUrl.replace(/^\//, '');
+        const env = cleanedUrl.split('/')[0];
+
+        const telemetryInteract = {
+          context: {
+            env: env,
+            cdata: [],
+          },
+          edata: {
+            id: 'user created successfully',
+            type: TelemetryEventType.CLICK,
+            subtype: '',
+            pageid: cleanedUrl,
+          },
+        };
+        telemetryFactory.interact(telemetryInteract);
         setOpenUserDetailsDialog(true);
       } else if (response?.response?.data?.responseCode === 400) {
         setShowAlertMsg(response?.response?.data?.params?.err);

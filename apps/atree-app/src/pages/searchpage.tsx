@@ -14,8 +14,10 @@ import atreeLogo from '../../assets/images/placeholder.jpg';
 import Layout from '../component/layout/layout';
 import dynamic from 'next/dynamic';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { ContentSearchResponse } from '@shared-lib';
+import { ContentSearchResponse, trackEvent } from '@shared-lib';
 import FooterText from '../component/FooterText';
+import { TelemetryEventType } from '../utils/app.constant';
+import { telemetryFactory } from '../utils/telemetry';
 
 const Content = dynamic(() => import('@Content'), {
   ssr: false,
@@ -31,6 +33,28 @@ export default function Searchpage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   React.useEffect(() => {
+    trackEvent({
+      action: 'Search query',
+      category: 'engagement',
+      label: `${selectedquery}`,
+    });
+    const windowUrl = window.location.pathname;
+    const cleanedUrl = windowUrl.replace(/^\//, '');
+    const env = cleanedUrl.split('/')[0];
+
+    const telemetryInteract = {
+      context: {
+        env: env,
+        cdata: [],
+      },
+      edata: {
+        id: `Search query - ${selectedquery}`,
+        type: TelemetryEventType.CLICK,
+        subtype: '',
+        pageid: cleanedUrl,
+      },
+    };
+    telemetryFactory.interact(telemetryInteract);
     if (selectedType && selectedType !== framework) {
       console.log('Updating framework to:', selectedType); // Debugging
 
