@@ -14,7 +14,9 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CloseIcon from '@mui/icons-material/Close';
 import { useRouter } from 'next/router';
-import { ContentSearch } from '@shared-lib';
+import { ContentSearch, trackEvent } from '@shared-lib';
+import { TelemetryEventType } from '../utils/app.constant';
+import { telemetryFactory } from '../utils/telemetry';
 
 interface SearchTypeModalProps {
   open: boolean;
@@ -49,7 +51,28 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
     setSearchQuery(query);
+    trackEvent({
+      action: 'Search by',
+      category: 'engagement',
+      label: `${query}`,
+    });
+    const windowUrl = window.location.pathname;
+    const cleanedUrl = windowUrl.replace(/^\//, '');
+    const env = cleanedUrl.split('/')[0];
 
+    const telemetryInteract = {
+      context: {
+        env: env,
+        cdata: [],
+      },
+      edata: {
+        id: `Search by - ${query}`,
+        type: TelemetryEventType.CLICK,
+        subtype: '',
+        pageid: cleanedUrl,
+      },
+    };
+    telemetryFactory.interact(telemetryInteract);
     if (query.trim()) {
       try {
         const filters: {
@@ -98,6 +121,28 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
   const handleKeyPress = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
       event.preventDefault();
+      trackEvent({
+        action: 'Search by',
+        category: 'engagement',
+        label: `${searchQuery}`,
+      });
+      const windowUrl = window.location.pathname;
+      const cleanedUrl = windowUrl.replace(/^\//, '');
+      const env = cleanedUrl.split('/')[0];
+
+      const telemetryInteract = {
+        context: {
+          env: env,
+          cdata: [],
+        },
+        edata: {
+          id: `Search by - ${searchQuery}`,
+          type: TelemetryEventType.CLICK,
+          subtype: '',
+          pageid: cleanedUrl,
+        },
+      };
+      telemetryFactory.interact(telemetryInteract);
       navigateToSearchPage(searchQuery);
     }
   };

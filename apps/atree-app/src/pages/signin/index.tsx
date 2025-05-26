@@ -10,7 +10,7 @@ import {
   Paper,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { CommonTextField } from '@shared-lib';
+import { CommonTextField, trackEvent } from '@shared-lib';
 import Link from 'next/link';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -24,6 +24,8 @@ import {
   validateEmail,
   validatePassword,
 } from '../../utils/authUtils';
+import { TelemetryEventType } from '../../utils/app.constant';
+import { telemetryFactory } from '../../utils/telemetry';
 
 interface ListProps {}
 
@@ -97,6 +99,31 @@ const Login: React.FC<ListProps> = () => {
           );
           dispatchLoginEvent(user, 'credentials');
           setAlert({ message: 'Login successful!', severity: 'success' });
+          trackEvent({
+            action: 'signin',
+            category: 'engagement',
+            label: `Login successful - ${
+              authInfo?.result?.userId || 'Anonymous'
+            }`,
+          });
+          const windowUrl = window.location.pathname;
+          const cleanedUrl = windowUrl.replace(/^\//, '');
+          const env = cleanedUrl.split('/')[0];
+
+          const telemetryInteract = {
+            context: {
+              env: env,
+              cdata: [],
+            },
+            edata: {
+              id: 'Login successful',
+              type: TelemetryEventType.CLICK,
+              subtype: '',
+              pageid: cleanedUrl,
+              uid: authInfo?.result?.userId || 'Anonymous',
+            },
+          };
+          telemetryFactory.interact(telemetryInteract);
           router.push('/home');
         } else {
           setAlert({
@@ -310,6 +337,7 @@ const MyCustomGoogleLogin = () => {
         localStorage.setItem('token', keycloak.token || '');
         localStorage.setItem('refreshToken', keycloak.refreshToken || '');
         const user = keycloak.tokenParsed?.preferred_username || 'Unknown User';
+
         dispatchLoginEvent(user, 'google');
       } else {
         console.error('No token received after login.');

@@ -6,7 +6,7 @@ const DigitalHubBanner = () => {
     <Box
       sx={{
         width: '100%', // Full width on mobile, fixed 1440px on desktop
-        height: { xs: 'auto', sm: '160px' }, // Auto height on mobile
+        height: { xs: 'auto', sm: '80px' }, // Auto height on mobile
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -21,7 +21,7 @@ const DigitalHubBanner = () => {
         sx={{
           fontFamily: 'Poppins',
           fontWeight: 'Bold',
-          fontSize: { xs: '14px', sm: '60px' }, // Smaller on mobile
+          fontSize: { xs: '14px', sm: '35px' }, // Smaller on mobile
           // lineHeight: '20px', // Adjusted for mobile
           letterSpacing: '0px',
           textAlign: 'center',

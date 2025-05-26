@@ -23,6 +23,8 @@ import {
 import React, { useEffect, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import { TelemetryEventType } from '../../utils/app.constant';
+import { telemetryFactory } from '../../utils/telemetry';
 const formControlStyles = {
   '&.Mui-focused': { color: '#1D1B20' },
   '& .MuiInputLabel-root.Mui-focused': { color: '#1D1B20' },
@@ -246,6 +248,23 @@ export const FilterDialog = ({
         ? [...currentValues, value]
         : currentValues.filter((v: string) => v !== value);
       localStorage.setItem('subcategory', subCategory);
+      const windowUrl = window.location.pathname;
+      const cleanedUrl = windowUrl.replace(/^\//, '');
+      const env = cleanedUrl.split('/')[0];
+
+      const telemetryInteract = {
+        context: {
+          env: env,
+          cdata: [],
+        },
+        edata: {
+          id: 'center-created-successfully',
+          type: TelemetryEventType.CLICK,
+          subtype: '',
+          pageid: cleanedUrl,
+        },
+      };
+      telemetryFactory.interact(telemetryInteract);
       return {
         ...prev,
         [filterCode]: checked
@@ -278,6 +297,23 @@ export const FilterDialog = ({
     }));
 
     localStorage.setItem('selectedFilters', JSON.stringify(updatedFilters));
+    const windowUrl = window.location.pathname;
+    const cleanedUrl = windowUrl.replace(/^\//, '');
+    const env = cleanedUrl.split('/')[0];
+
+    const telemetryInteract = {
+      context: {
+        env: env,
+        cdata: [],
+      },
+      edata: {
+        id: `${updatedFilters?.resource}`,
+        type: TelemetryEventType.CLICK,
+        subtype: '',
+        pageid: cleanedUrl,
+      },
+    };
+    telemetryFactory.interact(telemetryInteract);
     onApply?.(updatedFilters);
   };
 
