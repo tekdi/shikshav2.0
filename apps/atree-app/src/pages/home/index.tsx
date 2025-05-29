@@ -728,7 +728,19 @@ const FrameworkFilter = React.memo<{
     }
   };
   return (
-    <Grid container spacing={1} display="flex" justifyContent="center">
+    <Grid
+      container
+      spacing={1}
+      display="flex"
+      sx={{
+        justifyContent: {
+          xs: 'flex-start', // mobile
+          md: 'center', // desktop and up
+          marginLeft: { xs: '15px', sm: '15px', md: '0px' },
+          paddingRight: { xs: '15px', md: '0px' },
+        },
+      }}
+    >
       {frameworkFilter?.map((frameworkItem: any) => (
         <Grid key={frameworkItem.identifier}>
           <Button

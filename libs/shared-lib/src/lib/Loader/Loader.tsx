@@ -11,7 +11,7 @@ interface LoaderProps {
   children: ReactNode;
 }
 const MOBILE_PADDING_MAP: Record<string, string> = {
-  '/contents/[identifier]': '138px',
+  '/contents/[identifier]': '68px',
   '/contents': '60px',
   '/home': '47px',
   '/': '40px',
@@ -35,10 +35,7 @@ const DESKTOP_PADDING_MAP: Record<string, string> = {
   '/searchpage': '118px',
 };
 
-const getPaddingTop = (
-  isMobile: boolean,
-  router: any,
-): string => {
+const getPaddingTop = (isMobile: boolean, router: any): string => {
   const defaultPadding = isMobile ? '40px' : '95px';
 
   // Remove padding for root path "/"

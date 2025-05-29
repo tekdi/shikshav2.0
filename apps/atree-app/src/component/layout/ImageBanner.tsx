@@ -88,7 +88,7 @@ export const ImageBanner = ({
             ..._textPosition,
           }}
         >
-          {_showAvatar && (
+          {/* {_showAvatar && (
             <Avatar
               sx={{
                 bgcolor: '#CEE5FF',
@@ -102,17 +102,19 @@ export const ImageBanner = ({
             >
               {name.charAt(0).toUpperCase()}
             </Avatar>
-          )}
+          )} */}
           <Typography
             sx={{
-              width: '245px',
+              width: '290px',
+              textAlign: 'center',
               color: 'white',
               fontWeight: 800,
               fontFamily: 'Poppins',
-              fontSize: { xs: '18px', md: '24px' },
+              fontSize: { xs: '18px', md: '34px' },
+              textTransform: 'capitalize',
             }}
           >
-            {name}
+            {name?.toUpperCase()}
           </Typography>
         </CardContent>
       </CardActionArea>

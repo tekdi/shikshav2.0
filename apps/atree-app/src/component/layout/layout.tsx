@@ -334,7 +334,7 @@ export default function Layout({
               <TopAppBar
                 logoUrl={atreeLogo?.src ?? ''}
                 _appBar={{
-                  py: '30.5px',
+                  py: { xs: '10px', md: '30.5px' },
                   backgroundColor: '#fff',
                 }}
                 _title={{
