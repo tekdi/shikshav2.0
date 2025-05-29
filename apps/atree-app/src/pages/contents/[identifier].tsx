@@ -68,6 +68,9 @@ interface ContentItem {
   url: string;
   previewUrl: string;
   downloadurl: string;
+  image?: string; // Added the 'image' property
+  appicon?: string; // Added the 'appicon' property
+  access?: string; // Added the 'access' property
 }
 
 export default function Content() {
@@ -481,7 +484,7 @@ export default function Content() {
                     {/* Content Image */}
                     <Grid size={{ xs: 12, md: 3 }}>
                       <ImageCard
-                        image={contentData?.posterImage ?? landingBanner?.src}
+                        image={contentData?.appicon ?? landingBanner?.src}
                         name={''}
                       />
                     </Grid>
@@ -564,6 +567,7 @@ export default function Content() {
                               backgroundColor: '#fcd804',
                             }}
                             onClick={handlePreview}
+                            disabled={contentData?.access === 'Full'}
                             startIcon={<VisibilityOutlinedIcon />}
                           >
                             Preview
@@ -582,7 +586,10 @@ export default function Content() {
                               fontFamily: 'Poppins',
                             }}
                             startIcon={<FileDownloadOutlinedIcon />}
-                            disabled={!contentData?.downloadurl}
+                            disabled={
+                              contentData?.access === 'Sample' ||
+                              contentData?.access === 'Link'
+                            }
                             onClick={handleOnDownload}
                           >
                             Download
@@ -760,8 +767,55 @@ export default function Content() {
               }}
             >
               <Box sx={{ px: 2 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <IconButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push('/home');
+                    }}
+                    sx={{
+                      padding: '4px',
+                      backgroundColor: 'transparent',
+                      color: '#000000',
+                      borderRadius: '50%',
+                      '&:hover': {
+                        backgroundColor: 'rgba(0,0,0,0.04)',
+                      },
+                      '&:focus': {
+                        outline: 'none',
+                      },
+                    }}
+                  >
+                    <ArrowBackIcon />
+                  </IconButton>
+                  {subFrameworkFilter && subFrameworkFilter.length > 0 && (
+                    <Title>Browse by Sub Categories</Title>
+                  )}
+                </Box>
+                <Box
+                  sx={{
+                    width: '100%',
+                    padding: '12px 0px',
+                    gap: '16px',
+                    flexDirection: 'column',
+                    display: 'flex',
+                  }}
+                >
+                  <SubFrameworkFilter
+                    subFramework={subFramework}
+                    setSubFramework={setSubFramework}
+                    lastButton={true}
+                    subFrameworkFilter={subFrameworkFilter || []}
+                  />
+                </Box>
                 <ImageCard
-                  image={contentData?.posterImage ?? landingBanner?.src}
+                  image={contentData?.appicon ?? landingBanner?.src}
                   name={
                     <Box display="flex" alignItems="center" gap={1}>
                       <Box>
@@ -789,6 +843,7 @@ export default function Content() {
                 <Button
                   variant="contained"
                   color="secondary"
+                  disabled={contentData?.access === 'Full'}
                   sx={{
                     borderRadius: '50px',
                     height: '40px',
@@ -828,7 +883,10 @@ export default function Content() {
                     }}
                     startIcon={<FileDownloadOutlinedIcon />}
                     onClick={handleOnDownload}
-                    disabled={!contentData?.previewUrl?.endsWith('.pdf')}
+                    disabled={
+                      contentData?.access === 'Sample' ||
+                      contentData?.access === 'Link'
+                    }
                   >
                     Download
                   </Button>
@@ -1013,7 +1071,7 @@ const Title: React.FC<{
         sx={{
           fontFamily: 'Poppins',
           fontWeight: 500,
-          fontSize: { xs: '20px', md: '24px' },
+          fontSize: { xs: '16px', md: '24px' },
           lineHeight: '28px',
           color: '#000000',
         }}

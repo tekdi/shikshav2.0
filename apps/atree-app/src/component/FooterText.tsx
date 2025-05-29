@@ -9,7 +9,7 @@ export default function FooterText({ page }: FooterTextProps) {
       sx={{
         px: 4,
         py: 1,
-        background: 'linear-gradient(90deg, #FFD500 0%, #EDA145 100%)',
+        background: '#fcd804',
       }}
     >
       <Typography

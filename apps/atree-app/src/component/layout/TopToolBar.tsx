@@ -131,7 +131,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
         sx={{
           boxShadow: '0px 2px 2px 0px #00000040',
           ..._appBar,
-          height: { xs: '64px', md: '129px' },
+          height: { xs: '68px', md: '129px' },
           objectFit: 'contain',
         }}
       >

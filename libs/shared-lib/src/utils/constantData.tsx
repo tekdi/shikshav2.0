@@ -11,6 +11,7 @@ export const RESOURCE_TYPES = [
   { label: 'Magazine', value: 'magazine' },
   { label: 'Poster', value: 'poster' },
   { label: 'Board Game', value: 'boardGame' },
+  { label: 'Video', value: 'video/x-youtube' },
 ];
 
 export const MIME_TYPES = [

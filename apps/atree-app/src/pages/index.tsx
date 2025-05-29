@@ -2,14 +2,14 @@
 import { Box, Typography, useMediaQuery, useTheme } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import Image from 'next/image';
-import ActivityBooks from '../../assets/images/ActivityBooks.jpeg';
-import Climatechangebookcover from '../../assets/images/Climatechangebookcover.png';
-import Forests from '../../assets/images/Forests.png';
+import ActivityBooks from '../../assets/images/Activity-Book.jpg';
+import Climatechangebookcover from '../../assets/images/Climatechangebookcover.jpg';
+import Forests from '../../assets/images/Forests.jpg';
 import instagram_logo from '../../assets/images/instagram_logo.png';
-import Land from '../../assets/images/Land.png';
+import Land from '../../assets/images/Land.jpg';
 import landingBanner from '../../assets/images/landingBanner.png';
-import ReferenceBooks from '../../assets/images/LetsTalkAboutTreesCover.png';
-import Water from '../../assets/images/WatercoverTekdi.png';
+import ReferenceBooks from '../../assets/images/Potpourri.jpg';
+import Water from '../../assets/images/Water.jpg';
 import Insta from '../component/Insta';
 import Layout from '../component/layout/layout';
 import { ImageBanner } from '../component/layout/ImageBanner';
@@ -351,23 +351,23 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
               display: 'flex',
               alignItems: 'center',
               flexDirection: 'column',
-              padding: '10px 15px',
+              padding: '72px',
             }}
           >
             <Typography
               align="center"
-              gutterBottom
               sx={{
                 fontWeight: 400,
-                fontSize: '18px',
+                fontSize: '24px',
                 lineHeight: '24px',
                 textAlign: 'center',
-                fontFamily: 'poppins',
+                fontFamily: 'Poppins',
+                marginBottom: '72px',
               }}
             >
-              {t('Follow Us On')}
+              Follow us on Instagram
             </Typography>
-            <Image src={instagram_logo} alt="instagram_logo" />
+            {/* <Image src={instagram_logo} alt="instagram_logo" /> */}
             <Insta />
           </Grid>
         </Grid>

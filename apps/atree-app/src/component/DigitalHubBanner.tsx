@@ -20,9 +20,10 @@ const DigitalHubBanner = () => {
       <Typography
         sx={{
           fontFamily: 'Poppins',
-          fontWeight: 'Bold',
-          fontSize: { xs: '14px', sm: '35px' }, // Smaller on mobile
+          fontWeight: 700,
+          fontSize: { xs: '14px', sm: '36px' }, // Smaller on mobile
           // lineHeight: '20px', // Adjusted for mobile
+          lineHeight: { xs: '20px', sm: '20px' }, // Adjusted for mobile
           letterSpacing: '0px',
           textAlign: 'center',
           color: '#2B3133',

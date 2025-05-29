@@ -113,6 +113,7 @@ export interface ContentSearchResponse {
   topic?: string | string[];
   subTopic?: string | string[];
   reader?: string;
+  image?: string;
 }
 // Define the payload
 const data = {
