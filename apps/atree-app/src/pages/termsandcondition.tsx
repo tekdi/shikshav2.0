@@ -15,7 +15,6 @@ export default function Aboutus() {
       footerComponent={<FooterText page="" />}
     >
       <Banner />
-      <DigitalHubBanner />
 
       <Grid
         container
@@ -33,15 +32,22 @@ export default function Aboutus() {
             textAlign: 'center',
             fontWeight: { xs: 500, md: 500 },
             lineHeight: { xs: '30px', md: '64px' },
-            fontSize: { xs: '24px', md: '24px' },
+            fontSize: { xs: '24px', md: '57px' },
             fontFamily: 'Poppins',
             color: '#000000',
+            marginTop: { xs: '20px', md: '47px' },
+            marginBottom: { xs: '20px', md: '47px' },
           }}
         >
           Terms and Conditions
         </Typography>
         <Typography
-          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+          sx={{
+            fontSize: '16px',
+            fontFamily: 'Poppins',
+            color: '#000000',
+            fontWeight: 400,
+          }}
         >
           Welcome to the Jal Jungle Jameen in classrooms digital library
           platform (herein after referred to as “Platform”). Please read the
@@ -59,6 +65,7 @@ export default function Aboutus() {
           sx={{
             textAlign: 'left',
             fontSize: '16px',
+            fontWeight: 400,
             fontFamily: 'Poppins',
             color: '#000000',
           }}
@@ -71,6 +78,7 @@ export default function Aboutus() {
           sx={{
             textAlign: 'left',
             fontSize: '16px',
+            fontWeight: 400,
             fontFamily: 'Poppins',
             color: '#000000',
           }}
@@ -80,7 +88,12 @@ export default function Aboutus() {
 
         {/* Content */}
         <Typography
-          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+          sx={{
+            fontSize: '16px',
+            fontWeight: 400,
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
         >
           1.1 General Readers. Access to the environment education resources
           (either sample or full) on the Platform is free but repeat users
@@ -88,7 +101,12 @@ export default function Aboutus() {
           can be accessed through the website, or mobile application
         </Typography>
         <Typography
-          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+          sx={{
+            fontSize: '16px',
+            fontWeight: 400,
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
         >
           1.2 Logged-in Readers. Logins are required to personalize the Jal
           Jungle Jameen in classrooms digital library experience through the
@@ -101,16 +119,21 @@ export default function Aboutus() {
         <Typography
           sx={{
             fontSize: '16px',
+            fontWeight: 400,
             fontFamily: 'Poppins',
             color: '#000000',
-            fontWeight: 700,
           }}
           gutterBottom
         >
           2. Termination
         </Typography>
         <Typography
-          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+          sx={{
+            fontSize: '16px',
+            fontWeight: 400,
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
         >
           ATREE may, in its sole discretion, terminate or suspend access to the
           reader /user community for any reason, including, without limitation,
@@ -120,15 +143,20 @@ export default function Aboutus() {
           gutterBottom
           sx={{
             fontSize: '16px',
+            fontWeight: 400,
             fontFamily: 'Poppins',
             color: '#000000',
-            fontWeight: 700,
           }}
         >
           3. Content & Intellectual Property
         </Typography>
         <Typography
-          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+          sx={{
+            fontSize: '16px',
+            fontWeight: 400,
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
         >
           3.1 General Reader and Logged-in Readers. The Platform strives to be
           an open and freely accessible digital library of environment education
@@ -143,7 +171,12 @@ export default function Aboutus() {
           trademark rules, and any other restrictions set forth.
         </Typography>
         <Typography
-          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+          sx={{
+            fontSize: '16px',
+            fontWeight: 400,
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
         >
           3.2 Prohibited Content The Platform is designed to be an open,
           productive, safe, and inviting space for users across cultures,
@@ -165,16 +198,21 @@ export default function Aboutus() {
         <Typography
           sx={{
             fontSize: '16px',
+            fontWeight: 400,
             fontFamily: 'Poppins',
             color: '#000000',
-            fontWeight: 700,
           }}
           gutterBottom
         >
           4. ATREE’s Role
         </Typography>
         <Typography
-          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+          sx={{
+            fontSize: '16px',
+            fontWeight: 400,
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
         >
           6.1 User Community. While we strive to enforce these terms and
           conditions that will allow for an open, productive, safe and inviting
@@ -189,7 +227,12 @@ export default function Aboutus() {
           has no control over.
         </Typography>
         <Typography
-          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+          sx={{
+            fontSize: '16px',
+            fontWeight: 400,
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
         >
           By agreeing to these terms, you understand that ATREE is only
           providing a means for communication between the various users of the
@@ -200,16 +243,21 @@ export default function Aboutus() {
         <Typography
           sx={{
             fontSize: '16px',
+            fontWeight: 400,
             fontFamily: 'Poppins',
             color: '#000000',
-            fontWeight: 700,
           }}
           gutterBottom
         >
           Privacy Policy
         </Typography>
         <Typography
-          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+          sx={{
+            fontSize: '16px',
+            fontWeight: 400,
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
         >
           Your privacy is very important to us. Please completely read and
           understand the following privacy policy before using the Platform. For
@@ -219,16 +267,21 @@ export default function Aboutus() {
         <Typography
           sx={{
             fontSize: '16px',
+            fontWeight: 400,
             fontFamily: 'Poppins',
             color: '#000000',
-            fontWeight: 700,
           }}
           gutterBottom
         >
           1. Data Collection and Storage
         </Typography>
         <Typography
-          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+          sx={{
+            fontSize: '16px',
+            fontWeight: 400,
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
         >
           By using the Platform you consent to the collection and use by
           ATREE/TEKDI? of certain types of data, such as but not limited to IP
@@ -243,7 +296,12 @@ export default function Aboutus() {
           Usage data from the platform is stored anonymously.
         </Typography>
         <Typography
-          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+          sx={{
+            fontSize: '16px',
+            fontWeight: 400,
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
         >
           Any data created during the use of the Platform is anonymized
           automatically when it is stored by ATREE. This data is retained for
@@ -253,16 +311,21 @@ export default function Aboutus() {
         <Typography
           sx={{
             fontSize: '16px',
+            fontWeight: 400,
             fontFamily: 'Poppins',
             color: '#000000',
-            fontWeight: 700,
           }}
           gutterBottom
         >
           2. Cookies
         </Typography>
         <Typography
-          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+          sx={{
+            fontSize: '16px',
+            fontWeight: 400,
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
         >
           Cookies are small text files that the Platform can send to your
           browser for storage on your computer's hard drive. They make your use
@@ -281,23 +344,28 @@ export default function Aboutus() {
         <Typography
           sx={{
             fontSize: '16px',
+            fontWeight: 400,
             fontFamily: 'Poppins',
             color: '#000000',
-            fontWeight: 700,
           }}
           gutterBottom
         >
           3. Children's Privacy
         </Typography>
         <Typography
-          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+          sx={{
+            fontSize: '16px',
+            fontWeight: 400,
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
         >
           <span
             style={{
               fontSize: '16px',
+              fontWeight: 400,
               fontFamily: 'Poppins',
               color: '#000000',
-              fontWeight: 700,
             }}
           >
             3.1 General Readers and Logged-in Readers.
@@ -310,14 +378,19 @@ export default function Aboutus() {
           personal information to the Platform, please contact ATREE.
         </Typography>
         <Typography
-          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+          sx={{
+            fontSize: '16px',
+            fontWeight: 400,
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
         >
           <span
             style={{
               fontSize: '16px',
+              fontWeight: 400,
               fontFamily: 'Poppins',
               color: '#000000',
-              fontWeight: 700,
             }}
           >
             3.2 Translator Community.
@@ -328,16 +401,21 @@ export default function Aboutus() {
         <Typography
           sx={{
             fontSize: '16px',
+            fontWeight: 400,
             fontFamily: 'Poppins',
             color: '#000000',
-            fontWeight: 700,
           }}
           gutterBottom
         >
           4. Security
         </Typography>
         <Typography
-          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+          sx={{
+            fontSize: '16px',
+            fontWeight: 400,
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
         >
           The Platform has security measures in place to protect the loss,
           misuse, and alteration of the information under our control. However,
@@ -350,16 +428,21 @@ export default function Aboutus() {
         <Typography
           style={{
             fontSize: '16px',
+            fontWeight: 400,
             fontFamily: 'Poppins',
             color: '#000000',
-            fontWeight: 700,
           }}
           gutterBottom
         >
           5. Other Websites
         </Typography>
         <Typography
-          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+          sx={{
+            fontSize: '16px',
+            fontWeight: 400,
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
         >
           Material on the Platform may link to independently run websites
           outside of the Jal Jungle Jameen in classrooms domain. ATREE is not
@@ -371,29 +454,39 @@ export default function Aboutus() {
         <Typography
           style={{
             fontSize: '16px',
+            fontWeight: 400,
             fontFamily: 'Poppins',
             color: '#000000',
-            fontWeight: 700,
           }}
           gutterBottom
         >
           6. Disclosure to Third Parties
         </Typography>
         <Typography
-          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+          sx={{
+            fontSize: '16px',
+            fontWeight: 400,
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
         >
           No reader data is sold or traded to third parties.
         </Typography>
 
         <Typography
-          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+          sx={{
+            fontSize: '16px',
+            fontWeight: 400,
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
         >
           <span
             style={{
               fontSize: '16px',
+              fontWeight: 400,
               fontFamily: 'Poppins',
               color: '#000000',
-              fontWeight: 700,
             }}
           >
             6.1 General Readers.
@@ -404,14 +497,19 @@ export default function Aboutus() {
           form that cannot be directly connected to individual users.
         </Typography>
         <Typography
-          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+          sx={{
+            fontSize: '16px',
+            fontWeight: 400,
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
         >
           <span
             style={{
               fontSize: '16px',
+              fontWeight: 400,
               fontFamily: 'Poppins',
               color: '#000000',
-              fontWeight: 700,
             }}
           >
             6.2 Logged-in Readers Community.
@@ -426,16 +524,21 @@ export default function Aboutus() {
         <Typography
           style={{
             fontSize: '16px',
+            fontWeight: 400,
             fontFamily: 'Poppins',
             color: '#000000',
-            fontWeight: 700,
           }}
           gutterBottom
         >
           6. Disclosure to Third Parties
         </Typography>
         <Typography
-          sx={{ fontSize: '16px', fontFamily: 'Poppins', color: '#000000' }}
+          sx={{
+            fontSize: '16px',
+            fontWeight: 400,
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
         >
           XXXX. The Platform uses xxxxx to help support an issue ticketing
           system. When submitting an issue through xxxxx for the purpose of

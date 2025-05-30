@@ -619,7 +619,7 @@ export const FilterDialog = ({
                     >
                       Resource Type
                     </Typography>
-                    <IconButton
+                    <Button
                       size="small"
                       onClick={() => {
                         setSelectedValues({});
@@ -636,7 +636,7 @@ export const FilterDialog = ({
                       }}
                     >
                       <RestartAltIcon fontSize="small" />
-                    </IconButton>
+                    </Button>
                   </Box>
                   {resources?.map((option: any) => (
                     <CustomResourceCheckbox

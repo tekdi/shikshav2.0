@@ -134,6 +134,7 @@ export const Loader: React.FC<LoaderProps> = memo(
           style={{
             width: '100%',
             overflowY: 'auto',
+            overflowX: 'hidden',
             display: isLoading ? 'none' : 'block',
             height:
               !isMobile && shouldUnsetHeight
