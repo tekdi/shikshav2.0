@@ -367,7 +367,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
               display: 'flex',
               alignItems: 'center',
               flexDirection: 'column',
-              padding: '72px',
+              padding: '72px 72px 20px 72px',
             }}
           >
             <Typography
