@@ -1,4 +1,4 @@
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import {
   Button,
@@ -380,7 +380,7 @@ export default function Layout({
           >
             {showBack && (
               <IconButton onClick={backIconClick ?? console.log} sx={{ p: 0 }}>
-                <ArrowBackIosIcon />
+                <ArrowBackIcon />
               </IconButton>
             )}
             <Box

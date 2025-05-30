@@ -399,57 +399,41 @@ export default function Content() {
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'center',
+                      overflowX: 'hidden',
                     }}
                   >
-                    <IconButton
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push('/home');
-                      }}
+                    <Box
                       sx={{
-                        padding: '4px',
-                        backgroundColor: 'transparent',
-                        color: '#000000',
-                        borderRadius: '50%',
-                        '&:hover': {
-                          backgroundColor: 'rgba(0,0,0,0.04)',
-                        },
-                        '&:focus': {
-                          outline: 'none',
-                        },
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
                       }}
                     >
-                      <ArrowBackIcon />
-                    </IconButton>
-                    {subFrameworkFilter && subFrameworkFilter.length > 0 && (
-                      <Title>Browse by Sub Categories</Title>
-                    )}
-                  </Box>
-
-                  <Box
-                    sx={{
-                      width: '100%',
-                      padding: '12px 0px',
-                      gap: '16px',
-                      flexDirection: 'column',
-                      display: 'flex',
-                    }}
-                  >
-                    <SubFrameworkFilter
-                      subFramework={subFramework}
-                      setSubFramework={setSubFramework}
-                      lastButton={true}
-                      subFrameworkFilter={subFrameworkFilter || []}
-                    />
-                  </Box>
-                  <div
-                    style={{
-                      flexGrow: 1,
-                      justifyContent: 'flex-end',
-                      display: 'flex',
-                      marginBottom: '3px',
-                    }}
-                  >
+                      <IconButton
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push('/home');
+                        }}
+                        sx={{
+                          padding: '4px',
+                          // marginTop: '5%',
+                          backgroundColor: 'transparent',
+                          color: '#000000',
+                          borderRadius: '50%',
+                          '&:hover': {
+                            backgroundColor: 'rgba(0,0,0,0.04)',
+                          },
+                          '&:focus': {
+                            outline: 'none',
+                          },
+                        }}
+                      >
+                        <ArrowBackIcon />
+                      </IconButton>
+                      {subFrameworkFilter && subFrameworkFilter.length > 0 && (
+                        <Title>Browse by Sub Categories</Title>
+                      )}
+                    </Box>
                     <IconButton
                       onClick={handleOpen}
                       color="primary"
@@ -470,7 +454,24 @@ export default function Content() {
                       open={open}
                       handleClose={() => setOpen(false)}
                     />
-                  </div>
+                  </Box>
+                  <Box
+                    sx={{
+                      width: '100%',
+                      padding: '12px 0px',
+                      gap: '16px',
+                      flexDirection: 'column',
+                      display: 'flex',
+                    }}
+                  >
+                    <SubFrameworkFilter
+                      subFramework={subFramework}
+                      setSubFramework={setSubFramework}
+                      lastButton={true}
+                      subFrameworkFilter={subFrameworkFilter || []}
+                    />
+                  </Box>
+
                   <Box
                     sx={{
                       display: 'flex',
@@ -478,7 +479,7 @@ export default function Content() {
                       padding: '10px',
                       gap: 2,
                       borderRadius: '10px',
-                      ml: 4,
+                      // ml: 4,
                     }}
                   >
                     {/* Content Image */}

@@ -84,7 +84,10 @@ const AnimatedCounter = ({
   return (
     <Typography
       fontWeight="Bold"
-      sx={{ fontFamily: 'Poppins', fontSize: { xs: '24px', md: '60px' } }}
+      sx={{
+        fontFamily: 'Poppins',
+        fontSize: { xs: '24px', md: '64px', fontWeight: 700 },
+      }}
     >
       {count}
     </Typography>
@@ -220,7 +223,17 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                   </Typography>
                 </Box>
               ) : (
-                <Box sx={{ marginTop: '50px', marginBottom: '50px' }}>
+                <Box
+                  sx={{
+                    marginTop: '50px',
+                    marginBottom: '50px',
+                    height: { xs: '72px', md: '132px' }, // 3 lines (24px * 3) for mobile, (44px * 3) for desktop
+                    overflow: 'hidden',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
                   <Typography
                     align="center"
                     gutterBottom
@@ -229,10 +242,13 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                       fontFamily: 'Poppins',
                       fontSize: { xs: '14px', md: '24px' },
                       lineHeight: { xs: '24px', md: '44px' },
-                      pl: '55px',
-                      pr: '55px',
+                      // pl: '55px',
+                      // pr: '55px',
                       textAlign: 'center',
                       color: '#000000',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 3, // Limit to 3 lines
+                      WebkitBoxOrient: 'vertical',
                     }}
                   >
                     {t(
@@ -276,7 +292,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                         xs: '10px',
                         md: '24px',
                         fontFamily: 'Poppins',
-                        fontWeight: 500,
+                        fontWeight: 400,
                       },
                     }}
                   >
@@ -289,7 +305,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                     sx={{
                       fontFamily: 'Poppins',
                       fontSize: { xs: '10px', md: '24px' },
-                      fontWeight: 500,
+                      fontWeight: 400,
                     }}
                   >
                     CATEGORIES
@@ -300,7 +316,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                   <Typography
                     sx={{
                       fontFamily: 'Poppins',
-                      fontSize: { xs: '10px', md: '24px', fontWeight: 500 },
+                      fontSize: { xs: '10px', md: '24px', fontWeight: 400 },
                     }}
                   >
                     LANGUAGES

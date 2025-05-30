@@ -18,7 +18,6 @@ export default function Aboutus() {
       footerComponent={<FooterText page="" />}
     >
       <Banner />
-      <DigitalHubBanner />
       <Grid
         container
         spacing={2}
@@ -33,9 +32,11 @@ export default function Aboutus() {
             textAlign: 'center',
             lineHeight: { xs: '30px', md: '64px' },
             fontWeight: { xs: 500, md: 500 },
-            fontSize: { xs: '24px', md: '24px' },
+            fontSize: { xs: '24px', md: '57px' },
             fontFamily: 'Poppins',
             color: '#000000',
+            marginTop: { xs: '20px', md: '47px' },
+            marginBottom: { xs: '20px', md: '47px' },
           }}
         >
           About Us
@@ -43,8 +44,8 @@ export default function Aboutus() {
         <Typography
           sx={{
             textAlign: 'left',
-            fontWeight: { xs: 500, md: 500 },
-            fontSize: { xs: '14px', md: '24px' },
+            fontWeight: { xs: 500, md: 400 },
+            fontSize: { xs: '14px', md: '16px' },
             pl: { xs: 2, md: 10 },
             pr: { xs: 2, md: 10 },
             fontFamily: 'Poppins',
@@ -61,6 +62,7 @@ export default function Aboutus() {
             fontSize: '16px',
             fontFamily: 'Poppins',
             color: '#000000',
+            fontWeight: 400,
           }}
         >
           We are a collective of passionate environmental educators based at
@@ -77,6 +79,7 @@ export default function Aboutus() {
             fontFamily: 'Poppins',
             color: '#000000',
             fontSize: '16px',
+            fontWeight: 400,
           }}
         >
           Our mission is to enrich school-level curricula and pedagogy across
@@ -90,8 +93,8 @@ export default function Aboutus() {
         <Typography
           sx={{
             textAlign: 'left',
-            fontWeight: { xs: 400, md: 500 },
-            fontSize: { xs: '14px', md: '24px' },
+            fontWeight: { xs: 400, md: 400 },
+            fontSize: { xs: '14px', md: '16px' },
             pl: { xs: 2, md: 10 },
             pr: { xs: 2, md: 10 },
             fontFamily: 'Poppins',
@@ -108,6 +111,7 @@ export default function Aboutus() {
             fontFamily: 'Poppins',
             color: '#000000',
             fontSize: '16px',
+            fontWeight: 400,
           }}
         >
           Our Digital Hub of Education Resources is a dynamic space designed for
@@ -127,8 +131,8 @@ export default function Aboutus() {
         <Typography
           sx={{
             textAlign: 'left',
-            fontWeight: { xs: 400, md: 500 },
-            fontSize: { xs: '14px', md: '24px' },
+            fontWeight: { xs: 400, md: 400 },
+            fontSize: { xs: '14px', md: '16px' },
             pl: { xs: 2, md: 10 },
             pr: { xs: 2, md: 10 },
             fontFamily: 'Poppins',
@@ -145,6 +149,7 @@ export default function Aboutus() {
             fontFamily: 'Poppins',
             color: '#000000',
             fontSize: '16px',
+            fontWeight: 400,
           }}
         >
           We are proud to collaborate with over 60 leading environmental
@@ -157,8 +162,8 @@ export default function Aboutus() {
         <Typography
           sx={{
             textAlign: { xs: 'left', md: 'left' },
-            fontWeight: { xs: 400, md: 500 },
-            fontSize: { xs: '14px', md: '24px' },
+            fontWeight: { xs: 400, md: 400 },
+            fontSize: { xs: '14px', md: '16px' },
             pl: { xs: 2, md: 10 },
             pr: { xs: 2, md: 10 },
             whiteSpace: 'pre-line',
@@ -177,23 +182,34 @@ export default function Aboutus() {
             fontFamily: 'Poppins',
             color: '#000000',
             fontSize: '16px',
+            fontWeight: 400,
           }}
         >
           We’d love to hear from you!
         </Typography>
         <Box sx={{ pl: { xs: 2, md: 10 }, pr: { xs: 2, md: 10 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <EmailOutlinedIcon sx={{ mr: 1 }} />
+            <EmailOutlinedIcon sx={{ mr: 1, fontSize: '24px' }} />
             <Typography
-              sx={{ fontFamily: 'Poppins', color: '#000000', fontSize: '16px' }}
+              sx={{
+                fontFamily: 'Poppins',
+                color: '#000000',
+                fontSize: '24px',
+                fontWeight: 400,
+              }}
             >
               Email: envedu@atree.org
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <LocationOnOutlinedIcon sx={{ mr: 1 }} />
+            <LocationOnOutlinedIcon sx={{ mr: 1, fontSize: '24px' }} />
             <Typography
-              sx={{ fontFamily: 'Poppins', color: '#000000', fontSize: '16px' }}
+              sx={{
+                fontFamily: 'Poppins',
+                color: '#000000',
+                fontSize: '24px',
+                fontWeight: 400,
+              }}
             >
               Address: ATREE, Royal Enclave, Sriramapura, Jakkur Post, Bangalore
               560 064, Karnataka
@@ -205,11 +221,16 @@ export default function Aboutus() {
                 mr: 1,
                 fontFamily: 'Poppins',
                 color: '#000000',
-                fontSize: '16px',
+                fontSize: '24px',
               }}
             />
             <Typography
-              sx={{ fontFamily: 'Poppins', color: '#000000', fontSize: '16px' }}
+              sx={{
+                fontFamily: 'Poppins',
+                color: '#000000',
+                fontSize: '24px',
+                fontWeight: 400,
+              }}
             >
               Phone: +91-80-23635555 (EPABX)
             </Typography>
