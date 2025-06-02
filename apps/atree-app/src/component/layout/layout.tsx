@@ -182,11 +182,15 @@ export default function Layout({
   const drawerItems = [
     { text: 'Home', icon: <HomeOutlinedIcon fontSize="small" />, to: '/' },
 
-    {
-      text: token ? 'Logout' : 'Login',
-      icon: <AccountCircleOutlinedIcon fontSize="small" />,
-      to: '/signin',
-    },
+    ...(!token
+      ? [
+          {
+            text: 'Login',
+            icon: <AccountCircleOutlinedIcon fontSize="small" />,
+            to: '/signin',
+          },
+        ]
+      : []),
     {
       text: 'About Us',
       icon: <ParkOutlinedIcon fontSize="small" />,
@@ -203,19 +207,28 @@ export default function Layout({
       icon: <ContactSupportOutlinedIcon fontSize="small" />,
       to: '/termsandcondition',
     },
-    {
-      text: token ? (
-        <Typography
-          sx={{ color: '#ff0000', fontWeight: 700, fontSize: '20px' }}
-        >
-          Delete My Account
-        </Typography>
-      ) : null,
-      icon: token ? (
-        <DeleteOutlineOutlinedIcon sx={{ color: '#ff0000' }} fontSize="small" />
-      ) : null,
-      to: 'delete-account',
-    },
+    ...(token
+      ? [
+          {
+            text: (
+              <Typography
+                sx={{ color: '#ff0000', fontWeight: 700, fontSize: '20px' }}
+              >
+                Delete My Account
+              </Typography>
+            ),
+            icon: (
+              <DeleteOutlineOutlinedIcon sx={{ color: '#ff0000' }} fontSize="small" />
+            ),
+            to: 'delete-account',
+          },
+          {
+            text: 'Logout',
+            icon: <AccountCircleOutlinedIcon fontSize="small" />,
+            to: '/signin',
+          },
+        ]
+      : []),
   ];
   const handleOpen = () => setOpen(true);
 

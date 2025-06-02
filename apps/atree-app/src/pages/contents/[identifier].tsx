@@ -493,6 +493,17 @@ export default function Content() {
                     {/* Content Details */}
                     <Grid size={{ xs: 12, md: 9 }}>
                       <Stack spacing={2}>
+                        <Typography
+                          textAlign="left"
+                          sx={{
+                            fontFamily: 'Poppins',
+                            fontSize: '24px',
+                            fontWeight: 400,
+                            color: '#000000',
+                          }}
+                        >
+                          {contentData?.name ?? ''}
+                        </Typography>
                         {/* Keywords */}
                         <Box
                           sx={{
@@ -568,7 +579,10 @@ export default function Content() {
                               backgroundColor: '#fcd804',
                             }}
                             onClick={handlePreview}
-                            disabled={contentData?.access === 'Full'}
+                            disabled={
+                              contentData?.access === 'Full' ||
+                              contentData?.access === 'Link'
+                            }
                             startIcon={<VisibilityOutlinedIcon />}
                           >
                             Preview
@@ -844,7 +858,10 @@ export default function Content() {
                 <Button
                   variant="contained"
                   color="secondary"
-                  disabled={contentData?.access === 'Full'}
+                  disabled={
+                    contentData?.access?.trim() === 'Full' ||
+                    contentData?.access?.trim() === 'Link'
+                  }
                   sx={{
                     borderRadius: '50px',
                     height: '40px',
@@ -885,8 +902,8 @@ export default function Content() {
                     startIcon={<FileDownloadOutlinedIcon />}
                     onClick={handleOnDownload}
                     disabled={
-                      contentData?.access === 'Sample' ||
-                      contentData?.access === 'Link'
+                      contentData?.access?.trim() === 'Sample' ||
+                      contentData?.access?.trim() === 'Link'
                     }
                   >
                     Download
@@ -907,7 +924,10 @@ export default function Content() {
                       whiteSpace: 'nowrap',
                     }}
                     startIcon={<LinkOutlinedIcon />}
-                    disabled={!contentData?.url}
+                    disabled={
+                      contentData?.access?.trim() === 'Sample' ||
+                      contentData?.access?.trim() === 'Full'
+                    }
                     onClick={handleOnCLick}
                   >
                     Resource Link
@@ -959,7 +979,7 @@ export default function Content() {
                   textAlign="left"
                   fontFamily={'Arial'}
                 >
-                  {contentData?.year ?? ''}
+                  {contentData?.year ?? 'n.d'}
                 </Typography>
                 <Typography
                   variant="body1"

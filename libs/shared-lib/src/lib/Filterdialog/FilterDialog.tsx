@@ -7,7 +7,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Divider,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -22,9 +21,10 @@ import {
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
-import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { TelemetryEventType } from '../../utils/app.constant';
 import { telemetryFactory } from '../../utils/telemetry';
+import ResetImage from '../../assets/images/Component 1.svg';
+import Image from 'next/image';
 const formControlStyles = {
   '&.Mui-focused': { color: '#1D1B20' },
   '& .MuiInputLabel-root.Mui-focused': { color: '#1D1B20' },
@@ -605,7 +605,8 @@ export const FilterDialog = ({
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      margin: '3px 0px',
+                      // margin: '3px 0px',
+                      marginTop: '-7px',
                     }}
                   >
                     <Typography
@@ -628,14 +629,16 @@ export const FilterDialog = ({
                         localStorage.removeItem('selectedFilters');
                         onApply?.({});
                       }}
-                      sx={{
-                        color: '#1D1B20',
-                        '&:hover': {
-                          color: '#FFBD0D',
-                        },
-                      }}
                     >
-                      <RestartAltIcon fontSize="small" />
+                      <Box display="flex" alignItems="center">
+                        <Image
+                          src={ResetImage}
+                          alt="Reset"
+                          width={47}
+                          height={45}
+                          style={{ marginRight: 4 }}
+                        />
+                      </Box>
                     </Button>
                   </Box>
                   {resources?.map((option: any) => (
