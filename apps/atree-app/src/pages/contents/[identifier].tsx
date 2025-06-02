@@ -1136,6 +1136,10 @@ const SubFrameworkFilter = React.memo<{
     router.push(`/contents`);
   };
   const capitalizeFirstLetter = (str: string) => {
+    if (str === 'Water based STEM and STEM Activities') {
+      return 'Water based STEM and STEAM Activities';
+    }
+    // Default case for other strings
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   };
   return (
@@ -1258,6 +1262,12 @@ const FrameworkFilter = React.memo<{
   const router = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const transformName = (name: string) => {
+    if (name === 'Water based STEM and STEM Activities') {
+      return 'Water based STEM and STEAM Activities';
+    }
+    return name;
+  };
   const handleItemClick = (item: any) => {
     if (fromSubcategory) {
       localStorage.setItem('subcategory', item.name);
@@ -1292,7 +1302,7 @@ const FrameworkFilter = React.memo<{
             }}
             onClick={() => handleItemClick(frameworkItem)}
           >
-            {frameworkItem.name}
+            {transformName(frameworkItem.name)}
           </Button>
         </Grid>
       ))}
