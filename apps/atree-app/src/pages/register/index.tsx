@@ -202,11 +202,7 @@ export default function Registration() {
     }
   }, [showAlertMsg]);
   return (
-    <Layout
-      showTopAppBar={{
-        title: ' Sign up to Engage, Educate, and Inspire.', // Add this
-      }}
-    >
+    <Layout showTopAppBar>
       <Box>
         {loading ? (
           <Loader />
@@ -238,6 +234,20 @@ export default function Registration() {
               },
             }}
           >
+            <Typography
+              variant="h4"
+              component="h1"
+              sx={{
+                mb: 2,
+                fontWeight: 500,
+                fontSize: '24px !important',
+                color: '#000000',
+                fontFamily: 'Poppins',
+                textAlign: 'center',
+              }}
+            >
+              Sign up to Engage, Educate, and Inspire.
+            </Typography>
             <Grid container direction="column" spacing={1.5}>
               {[
                 {

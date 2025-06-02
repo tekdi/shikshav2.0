@@ -145,11 +145,7 @@ const Login: React.FC<ListProps> = () => {
   };
 
   return (
-    <Layout
-      showTopAppBar={{
-        title: 'Sign Up/Log In', // Add this
-      }}
-    >
+    <Layout showTopAppBar>
       <Box>
         {loading ? (
           <Loader />
@@ -181,6 +177,20 @@ const Login: React.FC<ListProps> = () => {
               },
             }}
           >
+            <Typography
+              variant="h4"
+              component="h1"
+              sx={{
+                mb: 4,
+                fontWeight: 500,
+                fontSize: '24px !important',
+                color: '#000000',
+                fontFamily: 'Poppins',
+                textAlign: 'center',
+              }}
+            >
+              Sign Up/Log In
+            </Typography>
             <Grid container direction="column" spacing={3}>
               {['email', 'password'].map((field) => (
                 <Grid
