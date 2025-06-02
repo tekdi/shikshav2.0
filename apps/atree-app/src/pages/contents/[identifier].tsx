@@ -580,8 +580,8 @@ export default function Content() {
                             }}
                             onClick={handlePreview}
                             disabled={
-                              contentData?.access === 'Full' ||
-                              contentData?.access === 'Link'
+                              contentData?.access?.trim() === 'Full' ||
+                              contentData?.access?.trim() === 'Link'
                             }
                             startIcon={<VisibilityOutlinedIcon />}
                           >
@@ -602,8 +602,8 @@ export default function Content() {
                             }}
                             startIcon={<FileDownloadOutlinedIcon />}
                             disabled={
-                              contentData?.access === 'Sample' ||
-                              contentData?.access === 'Link'
+                              contentData?.access?.trim() === 'Sample' ||
+                              contentData?.access?.trim() === 'Link'
                             }
                             onClick={handleOnDownload}
                           >
@@ -623,7 +623,10 @@ export default function Content() {
                               borderColor: '#fcd804',
                             }}
                             startIcon={<LinkOutlinedIcon />}
-                            disabled={!contentData?.url}
+                            disabled={
+                              contentData?.access?.trim() === 'Sample' ||
+                              contentData?.access?.trim() === 'Full'
+                            }
                             onClick={handleOnCLick}
                           >
                             Resource Link
@@ -683,11 +686,7 @@ export default function Content() {
                               fontFamily: 'Poppins',
                             }}
                           >
-                            {contentData?.year === 'n.d.' ||
-                            contentData?.year === 'ND' ||
-                            !contentData?.year
-                              ? 'N/A'
-                              : contentData?.year}
+                            {contentData?.year ?? 'n.d'}
                           </Typography>
                           <Typography
                             textAlign="left"
