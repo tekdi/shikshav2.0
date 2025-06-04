@@ -264,7 +264,7 @@ export default function Registration() {
                 },
                 {
                   key: 'mobile',
-                  label: 'Contact Number',
+                  label: 'Mobile Number',
                   type: 'text',
                   required: false,
                 },

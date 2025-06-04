@@ -40,12 +40,15 @@ type AnimatedCounterProps = {
   target: number;
   duration?: number;
   restartDelay?: number;
+  fontSize?: string | { xs?: string; sm?: string; md?: string; lg?: string };
+  fontWeight?: string | { xs?: string; sm?: string; md?: string; lg?: string };
 };
 
 const AnimatedCounter = ({
   target = 2000,
   duration = 20000,
   restartDelay = 2000,
+  fontSize = { xs: '24px', md: '64px' },
 }: AnimatedCounterProps) => {
   const [count, setCount] = useState(0);
   const [key, setKey] = useState(0);
@@ -83,10 +86,10 @@ const AnimatedCounter = ({
 
   return (
     <Typography
-      fontWeight="Bold"
       sx={{
         fontFamily: 'Poppins',
-        fontSize: { xs: '24px', md: '64px', fontWeight: 700 },
+        fontSize: fontSize,
+        fontWeight: 700,
       }}
     >
       {count}
@@ -163,12 +166,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
               zIndex: 10,
             }}
           >
-            <Image
-              src={atreeLogo}
-              alt="Logo"
-              width={isMobile ? 50 : 100}
-              // height="auto"
-            />
+            <Image src={atreeLogo} alt="Logo" width={isMobile ? 50 : 100} />
           </Box>
 
           <Banner />
@@ -186,34 +184,32 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
               alignItems="center"
             >
               {isMobile ? (
-                <Box>
+                <Box sx={{ px: 1, py: 1 }}>
                   <Typography
                     variant="body1"
-                    align="center"
-                    gutterBottom
+                    // align="center"
                     sx={{
                       fontWeight: 400,
                       fontFamily: 'Poppins',
-                      fontSize: { xs: '14px', md: '24px' },
-                      lineHeight: { xs: '24px', md: '44px' },
-                      textAlign: 'center',
+                      fontSize: '16px',
+                      lineHeight: '24px',
                       color: '#000000',
+                      mb: 2,
                     }}
                   >
                     {t(
-                      'Change stems from local action. Hope stems from children’s empowerment to act upon local environmental problems.'
+                      'Change stems from local action. Hope stems from childrens empowerment to act upon local environmental problems.'
                     )}
                   </Typography>
+
                   <Typography
                     variant="body1"
-                    align="center"
-                    gutterBottom
+                    // align="center"
                     sx={{
                       fontWeight: 500,
                       fontFamily: 'Poppins',
-                      fontSize: { xs: '14px', md: '24px' },
-                      lineHeight: { xs: '24px', md: '44px' },
-                      textAlign: 'center',
+                      fontSize: '16px',
+                      lineHeight: '26px',
                       color: '#000000',
                     }}
                   >
@@ -227,7 +223,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                   sx={{
                     marginTop: '50px',
                     marginBottom: '50px',
-                    height: { xs: '72px', md: '132px' }, // 3 lines (24px * 3) for mobile, (44px * 3) for desktop
+                    height: { xs: '72px', md: '132px' },
                     overflow: 'hidden',
                     display: 'flex',
                     alignItems: 'center',
@@ -242,17 +238,15 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                       fontFamily: 'Poppins',
                       fontSize: { xs: '14px', md: '24px' },
                       lineHeight: { xs: '24px', md: '44px' },
-                      // pl: '55px',
-                      // pr: '55px',
                       textAlign: 'center',
                       color: '#000000',
                       display: '-webkit-box',
-                      WebkitLineClamp: 3, // Limit to 3 lines
+                      WebkitLineClamp: 3,
                       WebkitBoxOrient: 'vertical',
                     }}
                   >
                     {t(
-                      'Change stems from local action. Hope stems from children’s empowerment to act upon local environmental problems. Our mission is to empower environment educators with both hope and action in times of climate change.'
+                      'Change stems from local action. Hope stems from childrens empowerment to act upon local environmental problems. Our mission is to empower environment educators with both hope and action in times of climate change.'
                     )}
                   </Typography>
                 </Box>
@@ -285,7 +279,11 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                 }}
               >
                 <Box>
-                  <AnimatedCounter target={1000} duration={2000} />
+                  <AnimatedCounter
+                    target={1000}
+                    duration={2000}
+                    fontSize={{ xs: '24px', md: '64px' }}
+                  />
                   <Typography
                     sx={{
                       fontSize: {
@@ -300,7 +298,11 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                   </Typography>
                 </Box>
                 <Box>
-                  <AnimatedCounter target={15} duration={2000} />
+                  <AnimatedCounter
+                    target={15}
+                    duration={2000}
+                    fontSize={{ xs: '24px', md: '64px' }}
+                  />
                   <Typography
                     sx={{
                       fontFamily: 'Poppins',
@@ -312,7 +314,11 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                   </Typography>
                 </Box>
                 <Box>
-                  <AnimatedCounter target={8} duration={2000} />
+                  <AnimatedCounter
+                    target={8}
+                    duration={2000}
+                    fontSize={{ xs: '24px', md: '64px' }}
+                  />
                   <Typography
                     sx={{
                       fontFamily: 'Poppins',
@@ -328,12 +334,11 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
           <Grid sx={{ px: 1 }}>
             <Grid container spacing={1}>
               {categories
-                ?.filter((category) => category.name !== 'General') // Remove "General"
+                ?.filter((category) => category.name !== 'General')
                 ?.sort((a, b) => {
                   const indexA = customOrder.indexOf(a.name);
                   const indexB = customOrder.indexOf(b.name);
 
-                  // If a category is not found in customOrder, push it to the end
                   return (
                     (indexA === -1 ? customOrder.length : indexA) -
                     (indexB === -1 ? customOrder.length : indexB)
@@ -361,13 +366,15 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
           </Grid>
           <Grid
             sx={{
-              px: 4,
-              textAlign: 'center',
               width: '100%',
+              textAlign: 'center',
               display: 'flex',
               alignItems: 'center',
               flexDirection: 'column',
-              padding: '72px 72px 20px 72px',
+              px: 4, // Keep consistent horizontal padding
+              py: { xs: 4, sm: '72px' }, // Responsive vertical padding
+              pt: { xs: '32px', sm: '72px' },
+              pb: { xs: '16px', sm: '20px' },
             }}
           >
             <Typography
@@ -376,14 +383,12 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                 fontWeight: 400,
                 fontSize: '24px',
                 lineHeight: '24px',
-                textAlign: 'center',
                 fontFamily: 'Poppins',
-                marginBottom: '72px',
+                mb: { xs: '32px', sm: '72px' },
               }}
             >
               Follow us on Instagram
             </Typography>
-            {/* <Image src={instagram_logo} alt="instagram_logo" /> */}
             <Insta />
           </Grid>
         </Grid>

@@ -119,7 +119,7 @@ export const FrameworkFilter = ({
         !isMobile
           ? {
               position: 'relative',
-              left: '38%',
+              left: '50%',
               transform: 'translateX(-50%)',
               display: 'flex',
               alignItems: 'center',
@@ -153,7 +153,7 @@ export const FrameworkFilter = ({
                 fontFamily: 'Poppins',
                 fontWeight: isSelected ? 'bold' : 500,
                 textTransform: 'none',
-                fontSize: '20px',
+                fontSize: '16px',
                 color: isSelected ? '#000000' : '#4D4C4C',
                 backgroundColor: 'transparent',
                 border: 'none',

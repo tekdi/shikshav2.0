@@ -168,11 +168,8 @@ export const AtreeCard: React.FC<{
                         fontFamily: 'Poppins',
                       }}
                     >
-                      {(content as any)?.year?.toLowerCase?.() === 'n.d.' ||
-                      (content as any)?.year?.toLowerCase?.() === 'nd' ||
-                      !(content as any)?.year
-                        ? 'N/A'
-                        : (content as any)?.year}
+                      
+                      {(content as any)?.year || 'n.d.' }
                     </Typography>
 
                     {/* Native Language Tag */}

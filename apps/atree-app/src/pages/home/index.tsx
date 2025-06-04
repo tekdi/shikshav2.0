@@ -19,6 +19,7 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
+  Stack,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import {
@@ -738,38 +739,42 @@ const FrameworkFilter = React.memo<{
     <Grid
       container
       spacing={1}
-      display="flex"
       sx={{
-        justifyContent: {
-          xs: 'flex-start', // mobile
-          md: 'center', // desktop and up
-          marginLeft: { xs: '15px', sm: '15px', md: '0px' },
-          paddingRight: { xs: '15px', md: '0px' },
-        },
+        justifyContent: 'flex-start',
+        paddingX: 2,
+        marginTop: 1,
       }}
     >
-      {frameworkFilter?.map((frameworkItem: any) => (
-        <Grid key={frameworkItem.identifier}>
+      {frameworkFilter?.map((frameworkItem: any, index: number) => (
+        <Grid
+          key={frameworkItem.identifier}
+          item
+          xs={3} // 12 / 4 = 3 (4 items per row)
+          sm={2} // Optional: 6 per row on small+ screens
+        >
           <Button
-            variant={
-              framework === frameworkItem.identifier ? 'contained' : 'outlined'
-            }
-            sx={{
-              borderRadius: '8px',
-              borderColor:
-                framework !== frameworkItem.identifier ? '#CEE5FF' : '',
-              color: framework !== frameworkItem.identifier ? '#171D1E' : '',
-              backgroundColor:
-                framework === frameworkItem.identifier
-                  ? frameworkItem?.name?.toLowerCase() in buttonColors
-                    ? buttonColors[
-                        frameworkItem?.name?.toLowerCase() as keyof typeof buttonColors
-                      ]
-                    : ''
-                  : '',
-            }}
-            // onClick={() => setFramework(frameworkItem.identifier)}
+            variant="text"
+            fullWidth
+            disableRipple
             onClick={() => handleItemClick(frameworkItem)}
+            sx={{
+              fontFamily: 'Poppins',
+              fontSize: '14px',
+              fontWeight: framework === frameworkItem.identifier ? 'bold' : 500,
+              textTransform: 'none',
+              color:
+                framework !== frameworkItem.identifier ? '#4D4C4C' : '#000',
+              borderBottom:
+                framework === frameworkItem.identifier
+                  ? '2px solid #000'
+                  : '2px solid transparent',
+              borderRadius: 0,
+              paddingY: 1,
+              minWidth: 'auto',
+              '&:hover': {
+                backgroundColor: 'transparent',
+              },
+            }}
           >
             {transformName(frameworkItem.name)}
           </Button>

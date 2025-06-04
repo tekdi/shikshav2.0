@@ -448,7 +448,7 @@ export default function Layout({
         />
       )}
 
-      <Loader isLoading={isLoadingChildren} layoutHeight={layoutHeight}>
+      <Loader isLoading={false} layoutHeight={layoutHeight}>
         {React.Children.map(children, (child) => {
           if (React.isValidElement(child)) {
             return React.cloneElement(child as React.ReactElement<any>, {
