@@ -591,6 +591,7 @@ export const FilterDialog = ({
           sx={{
             padding: '8px 18px',
             borderRadius: '16px',
+            marginTop: '13.5px',
             border: '1px solid #DDDDDD',
             boxShadow: '0px 20px 24px -1px #0A0D121A',
           }}

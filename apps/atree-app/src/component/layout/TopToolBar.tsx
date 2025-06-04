@@ -216,7 +216,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
 
             {/* Middle section with FrameworkFilter and Search */}
             <Box display="flex" alignItems="center" gap={2}>
-              {!isMobile && !isAuthPage && (
+              {!isMobile && (
                 <Box
                   sx={{
                     // minWidth: '200px',

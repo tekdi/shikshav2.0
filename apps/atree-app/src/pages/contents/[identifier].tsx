@@ -686,7 +686,7 @@ export default function Content() {
                               fontFamily: 'Poppins',
                             }}
                           >
-                            {contentData?.year ?? 'n.d'}
+                            {contentData?.year ?? 'n.d.'}
                           </Typography>
                           <Typography
                             textAlign="left"
@@ -978,7 +978,7 @@ export default function Content() {
                   textAlign="left"
                   fontFamily={'Arial'}
                 >
-                  {contentData?.year ?? 'n.d'}
+                  {contentData?.year ?? 'n.d.'}
                 </Typography>
                 <Typography
                   variant="body1"

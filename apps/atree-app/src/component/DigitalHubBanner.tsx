@@ -1,35 +1,36 @@
 import React from 'react';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Typography, useTheme, useMediaQuery } from '@mui/material';
 
 const DigitalHubBanner = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   return (
     <Box
       sx={{
-        width: '100%', // Full width on mobile, fixed 1440px on desktop
-        height: { xs: 'auto', sm: '80px' }, // Auto height on mobile
+        width: '100%',
+        backgroundColor: '#fcd804',
         display: 'flex',
-        flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        gap: '24px',
-        // padding: { xs: '16px', sm: '5' }, // Add padding on mobile
-        margin: '0 auto', // Center the container
-        backgroundColor: '#fcd804', // Change as needed
+        px: 1,
+        py: isMobile ? 1 : 1.5,
+        textAlign: 'center',
       }}
     >
       <Typography
+        variant="h6"
         sx={{
           fontFamily: 'Poppins',
           fontWeight: 700,
-          fontSize: { xs: '14px', sm: '36px' }, // Smaller on mobile
-          // lineHeight: '20px', // Adjusted for mobile
-          lineHeight: { xs: '20px', sm: '20px' }, // Adjusted for mobile
-          letterSpacing: '0px',
-          textAlign: 'center',
+          fontSize: {
+            xs: 'clamp(14px, 2vw, 18px)',
+            sm: 'clamp(18px, 3vw, 24px)',
+            md: 'clamp(20px, 2vw, 32px)',
+            lg: '36px',
+          },
+          lineHeight: 1.2,
           color: '#2B3133',
-          width: '100%',
-          maxWidth: '1440px',
-          padding: { xs: '8px 16px', sm: '10px', md: '10px' }, // Padding on mobile
         }}
       >
         A digital hub of Environment Education resources contextual to India

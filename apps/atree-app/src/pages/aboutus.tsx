@@ -9,6 +9,7 @@ import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import CallOutlinedIcon from '@mui/icons-material/CallOutlined';
 import { commonStyles } from '../utils/commonStyle';
 import DigitalHubBanner from '../component/DigitalHubBanner';
+import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 export default function Aboutus() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -117,13 +118,15 @@ export default function Aboutus() {
           Our Digital Hub of Education Resources is a dynamic space designed for
           educators looking to bring place-based learning into their classrooms.
           It features:
-          <li>
-            Peer-reviewed, multilingual, multi-format teaching learning
-            resources
-          </li>
-          <li>Age- and context-adaptable curricula</li>
-          <li> Real-world activities and case studies</li>
-          <li> Facilitation guides, toolkits, and educator training modules</li>
+          <br></br>
+          Peer-reviewed, multilingual, multi-format teaching learning resources
+          <br></br>
+          Age- and context-adaptable curricula
+          <br></br>
+          Real-world activities and case studies
+          <br></br>
+          Facilitation guides, toolkits, and educator training modules
+          <br></br>
           This hub is more than a repository—it&#39;s a growing, collaborative
           space for learning, dialogue, and shared inquiry, inspired by the
           original spirit of what a school can be.
@@ -189,7 +192,7 @@ export default function Aboutus() {
         </Typography>
         <Box sx={{ pl: { xs: 2, md: 10 }, pr: { xs: 2, md: 10 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <EmailOutlinedIcon sx={{ mr: 1, fontSize: '24px' }} />
+            <AlternateEmailIcon sx={{ mr: 1, fontSize: '24px' }} />
             <Typography
               sx={{
                 fontFamily: 'Poppins',
@@ -198,7 +201,7 @@ export default function Aboutus() {
                 fontWeight: 400,
               }}
             >
-              Email: envedu@atree.org
+              envedu@atree.org
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -211,8 +214,8 @@ export default function Aboutus() {
                 fontWeight: 400,
               }}
             >
-              Address: ATREE, Royal Enclave, Sriramapura, Jakkur Post, Bangalore
-              560 064, Karnataka
+              ATREE, Royal Enclave, Srirampura, Jakkur, Bengaluru, Karnataka
+              560064
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -232,7 +235,7 @@ export default function Aboutus() {
                 fontWeight: 400,
               }}
             >
-              Phone: +91-80-23635555 (EPABX)
+              +91-80-23635555
             </Typography>
           </Box>
         </Box>
