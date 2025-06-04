@@ -147,7 +147,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
   return (
     <Layout
       showTopAppBar={true}
-      footerComponent={<FooterText page={''} />}
+      // footerComponent={<FooterText page={''} />}
       sx={{ padding: 0, margin: 0 }}
     >
       {loading ? (
@@ -393,6 +393,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
           </Grid>
         </Grid>
       )}
+      <FooterText page={''} />
     </Layout>
   );
 };

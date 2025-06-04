@@ -365,11 +365,7 @@ export default function Index() {
   };
 
   return (
-    <Layout
-      isLoadingChildren={isLoadingChildren}
-      isFooter={isMobile} // add this when on mobile
-      footerComponent={!isMobile ? <FooterText page="" /> : <Footer />}
-    >
+    <Layout isLoadingChildren={isLoadingChildren}>
       <Box display="flex" flexDirection="column" gap="1rem" py="1rem" px="8px">
         {!isMobile ? (
           <Grid container spacing={2}>
@@ -460,7 +456,7 @@ export default function Index() {
             )}
           </Grid>
         ) : (
-          <Box sx={{ marginTop: '1rem' }}>
+          <Box sx={{ marginTop: '1rem', marginBottom: '2rem' }}>
             <FrameworkFilter
               frameworkFilter={frameworkFilter || []}
               framework={framework}
@@ -571,6 +567,7 @@ export default function Index() {
           </Button>
         </DialogActions>
       </Dialog>
+      {!isMobile ? <FooterText page="" /> : <Footer />}
     </Layout>
   );
 }

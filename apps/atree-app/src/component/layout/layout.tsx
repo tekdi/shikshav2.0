@@ -25,6 +25,8 @@ import { useKeycloak } from '@react-keycloak/web';
 import { deleteUserAccount } from '../../service/content';
 import ShareIcon from '@mui/icons-material/Share';
 import ShareDialog from '../ShareDialog';
+import FooterText from '../FooterText';
+import Footer from './Footer';
 
 interface LayoutProps {
   children?: React.ReactNode;
@@ -218,7 +220,10 @@ export default function Layout({
               </Typography>
             ),
             icon: (
-              <DeleteOutlineOutlinedIcon sx={{ color: '#ff0000' }} fontSize="small" />
+              <DeleteOutlineOutlinedIcon
+                sx={{ color: '#ff0000' }}
+                fontSize="small"
+              />
             ),
             to: 'delete-account',
           },
@@ -448,21 +453,11 @@ export default function Layout({
         />
       )}
 
-      <Loader isLoading={false} layoutHeight={layoutHeight}>
-        {React.Children.map(children, (child) => {
-          if (React.isValidElement(child)) {
-            return React.cloneElement(child as React.ReactElement<any>, {
-              frameworkData,
-              frameworkFilter,
-              framework,
-              setFramework,
-            });
-          }
-          return child;
-        })}
+      <Loader isLoading={isLoadingChildren} layoutHeight={layoutHeight}>
+        {children}
       </Loader>
 
-      {isMobile && (
+      {/* {footerComponent && (
         <Box
           ref={(refFoot) => {
             if (!Object.prototype.hasOwnProperty.call(refs.current, 'footer')) {
@@ -477,23 +472,8 @@ export default function Layout({
         >
           {footerComponent}
         </Box>
-      )}
-      {!isMobile && footerComponent && (
-        <Box
-          ref={(refFoot) => {
-            if (!Object.prototype.hasOwnProperty.call(refs.current, 'footer')) {
-              refs.current = { ...refs.current, footer: refFoot };
-            }
-          }}
-          sx={{
-            width: '100%',
-            bgcolor: 'white',
-            ..._footer,
-          }}
-        >
-          {footerComponent}
-        </Box>
-      )}
+      )} */}
+
       <CommonDialog
         isOpen={openDeleteDialog}
         onClose={() => setOpenDeleteDialog(false)}

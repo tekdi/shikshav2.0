@@ -375,7 +375,7 @@ export default function Content() {
         <Layout
           // showBack
           isFooter={isMobile} // add this when on mobile
-          footerComponent={!isMobile ? <FooterText page="" /> : <Footer />}
+          // footerComponent={!isMobile ? <FooterText page="" /> : <Footer />}
           isLoadingChildren={isLoading}
           // backIconClick={() => router.back()}
           // backTitle={contentData?.name || ''}
@@ -778,6 +778,7 @@ export default function Content() {
                 display: 'flex',
                 flexDirection: 'column',
                 pt: '18px',
+                marginBottom: '15%',
               }}
             >
               <Box sx={{ px: 2 }}>
@@ -1044,6 +1045,7 @@ export default function Content() {
               </Button>
             </DialogActions>
           </Dialog>
+          {!isMobile ? <FooterText page="" /> : <Footer />}
         </Layout>
       ) : (
         <Loader />
