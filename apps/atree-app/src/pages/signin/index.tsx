@@ -158,11 +158,14 @@ const Login: React.FC<ListProps> = () => {
               borderRadius: 8,
               overflow: 'hidden',
               mx: 'auto',
-              mt: 8,
-              p: { xs: 3, sm: 4 },
+              mt: { xs: 2, sm: 8 },
+              p: { xs: 2, sm: 4 },
               bgcolor: '#ffffff',
               position: 'relative', // For gradient shadow effect
-              boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.2)',
+              boxShadow: {
+                xs: 'none', // No shadow on mobile
+                sm: '0px 8px 24px rgba(0, 0, 0, 0.2)', // Shadow from sm and up
+              },
               '&::before': {
                 content: '""',
                 position: 'absolute',
@@ -183,7 +186,7 @@ const Login: React.FC<ListProps> = () => {
               sx={{
                 mb: 4,
                 fontWeight: 500,
-                fontSize: '24px !important',
+                fontSize: { xs: '22px !important', sm: '24px !important' },
                 color: '#000000',
                 fontFamily: 'Poppins',
                 textAlign: 'center',
@@ -200,7 +203,7 @@ const Login: React.FC<ListProps> = () => {
                   alignItems="center"
                   justifyContent="flex-start"
                 >
-                  <Grid item xs={4}>
+                  <Grid item xs={12} sm={4}>
                     <FormLabel
                       component="label"
                       sx={{
@@ -215,7 +218,7 @@ const Login: React.FC<ListProps> = () => {
                       &nbsp; <span style={{ color: 'red' }}> *</span>
                     </FormLabel>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={12} sm={8}>
                     <CommonTextField
                       value={credentials[field as 'email' | 'password']}
                       onChange={handleChange(field as 'email' | 'password')}
@@ -246,7 +249,7 @@ const Login: React.FC<ListProps> = () => {
               {/* Proceed and Google buttons */}
               <Grid item>
                 <Grid container spacing={2} justifyContent="center">
-                  <Grid item xs={8} md={5}>
+                  <Grid item xs={12} sm={5} width="100%">
                     <Button
                       onClick={handleSigninClick}
                       sx={{
@@ -269,7 +272,7 @@ const Login: React.FC<ListProps> = () => {
                       Proceed
                     </Button>
                   </Grid>
-                  <Grid item xs={8} md={5}>
+                  <Grid item xs={12} sm={5} width="100%">
                     <GoogleOAuthProvider
                       clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ''}
                     >

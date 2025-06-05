@@ -215,11 +215,14 @@ export default function Registration() {
               borderRadius: 4,
               overflow: 'hidden',
               mx: 'auto',
-              mt: 6,
+              mt: { xs: 2, sm: 6 },
               p: { xs: 2, sm: 3 },
               bgcolor: '#ffffff',
               position: 'relative',
-              boxShadow: '0px 6px 18px rgba(0, 0, 0, 0.15)',
+              boxShadow: {
+                xs: 'none', // No shadow on mobile
+                sm: '0px 8px 24px rgba(0, 0, 0, 0.2)', // Shadow from sm and up
+              },
               '&::before': {
                 content: '""',
                 position: 'absolute',
@@ -240,7 +243,7 @@ export default function Registration() {
               sx={{
                 mb: 2,
                 fontWeight: 500,
-                fontSize: '24px !important',
+                fontSize: { xs: '22px !important', sm: '24px !important' },
                 color: '#000000',
                 fontFamily: 'Poppins',
                 textAlign: 'center',
