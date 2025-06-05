@@ -427,7 +427,7 @@ export const FilterDialog = ({
               renderValue={(selected) => (selected as string[]).join(', ')}
               label="Subject"
             >
-              {filter.subject.map((subject) => (
+              {filter.subject.map((subject: any) => (
                 <MenuItem key={subject} value={subject}>
                   <Checkbox
                     checked={(selectedSubjects || []).includes(subject)}
@@ -453,7 +453,7 @@ export const FilterDialog = ({
               renderValue={(selected) => (selected as string[]).join(', ')}
               label="Content Type"
             >
-              {filter.contentType.map((type) => (
+              {filter.contentType.map((type: any) => (
                 <MenuItem key={type} value={type}>
                   <Checkbox
                     checked={(selectedContentTypes || []).includes(type)}
