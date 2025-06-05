@@ -52,7 +52,7 @@ export default function Aboutus() {
             fontFamily: 'Poppins',
           }}
         >
-          SNAIL: Slow. Intentional. Transformative.
+          <b>SNAIL:</b> Slow. Intentional. Transformative.
         </Typography>
         {/* About Us Description */}
         <Typography
@@ -102,7 +102,7 @@ export default function Aboutus() {
             color: '#000000',
           }}
         >
-          What We Offer
+          <b>What We Offer</b>
         </Typography>
         <Typography
           sx={{
@@ -142,7 +142,7 @@ export default function Aboutus() {
             color: '#000000',
           }}
         >
-          Our Network
+          <b> Our Network</b>
         </Typography>
         <Typography
           sx={{
@@ -192,12 +192,12 @@ export default function Aboutus() {
         </Typography>
         <Box sx={{ pl: { xs: 2, md: 10 }, pr: { xs: 2, md: 10 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <AlternateEmailIcon sx={{ mr: 1, fontSize: '24px' }} />
+            <AlternateEmailIcon sx={{ mr: 1, fontSize: '18px' }} />
             <Typography
               sx={{
                 fontFamily: 'Poppins',
                 color: '#000000',
-                fontSize: '24px',
+                fontSize: '18px',
                 fontWeight: 400,
               }}
             >
@@ -205,12 +205,12 @@ export default function Aboutus() {
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <LocationOnOutlinedIcon sx={{ mr: 1, fontSize: '24px' }} />
+            <LocationOnOutlinedIcon sx={{ mr: 1, fontSize: '18px' }} />
             <Typography
               sx={{
                 fontFamily: 'Poppins',
                 color: '#000000',
-                fontSize: '24px',
+                fontSize: '18px',
                 fontWeight: 400,
               }}
             >
@@ -224,14 +224,14 @@ export default function Aboutus() {
                 mr: 1,
                 fontFamily: 'Poppins',
                 color: '#000000',
-                fontSize: '24px',
+                fontSize: '18px',
               }}
             />
             <Typography
               sx={{
                 fontFamily: 'Poppins',
                 color: '#000000',
-                fontSize: '24px',
+                fontSize: '18px',
                 fontWeight: 400,
               }}
             >

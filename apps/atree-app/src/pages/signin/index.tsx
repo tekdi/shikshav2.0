@@ -50,9 +50,9 @@ const Login: React.FC<ListProps> = () => {
 
       if (field === 'email') {
         if (!value) {
-          errorMessage = 'Username is required.';
+          errorMessage = 'Email id is required.';
         } else if (!validateEmail(value)) {
-          errorMessage = 'Enter valid username.';
+          errorMessage = 'Enter a valid registered email ID.';
         }
       } else if (field === 'password') {
         if (!value) {
