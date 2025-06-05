@@ -130,7 +130,7 @@ export const AtreeCard: React.FC<{
                     component="div"
                     sx={{
                       fontWeight: 500,
-                      fontSize: '16px',
+                      fontSize: { xs: '14px', md: '16px' },
                       lineHeight: '20px',
                       color: '#000000',
                       // display: '-webkit-box',
@@ -162,14 +162,13 @@ export const AtreeCard: React.FC<{
                       color="text.secondary"
                       sx={{
                         fontWeight: 400,
-                        fontSize: '16px',
+                        fontSize: { xs: '14px', md: '16px' },
                         lineHeight: '20px',
                         color: '#000000',
                         fontFamily: 'Poppins',
                       }}
                     >
-                      
-                      {(content as any)?.year || 'n.d.' }
+                      {(content as any)?.year || 'n.d.'}
                     </Typography>
 
                     {/* Native Language Tag */}
@@ -180,7 +179,7 @@ export const AtreeCard: React.FC<{
                           padding: '2px 8px',
                           // borderRadius: '8px',
                           fontWeight: 400,
-                          fontSize: '16px',
+                          fontSize: { xs: '14px', md: '16px' },
                           color: '#000000',
                           fontFamily: 'Poppins',
                         }}

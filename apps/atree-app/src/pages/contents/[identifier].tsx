@@ -375,7 +375,7 @@ export default function Content() {
         <Layout
           // showBack
           isFooter={isMobile} // add this when on mobile
-          footerComponent={!isMobile ? <FooterText page="" /> : <Footer />}
+          // footerComponent={!isMobile ? <FooterText page="" /> : <Footer />}
           isLoadingChildren={isLoading}
           // backIconClick={() => router.back()}
           // backTitle={contentData?.name || ''}
@@ -779,6 +779,7 @@ export default function Content() {
                 display: 'flex',
                 flexDirection: 'column',
                 pt: '18px',
+                marginBottom: '15%',
               }}
             >
               <Box sx={{ px: 2 }}>
@@ -1045,6 +1046,7 @@ export default function Content() {
               </Button>
             </DialogActions>
           </Dialog>
+          {!isMobile ? <FooterText page="" /> : <Footer />}
         </Layout>
       ) : (
         <Loader />
@@ -1138,6 +1140,9 @@ const SubFrameworkFilter = React.memo<{
   const capitalizeFirstLetter = (str: string) => {
     if (str === 'Water based STEM and STEM Activities') {
       return 'Water based STEM and STEAM Activities';
+    }
+    if (str === 'Grassland') {
+      return 'Grasslands';
     }
     // Default case for other strings
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
@@ -1265,6 +1270,9 @@ const FrameworkFilter = React.memo<{
   const transformName = (name: string) => {
     if (name === 'Water based STEM and STEM Activities') {
       return 'Water based STEM and STEAM Activities';
+    }
+    if (name === 'Grassland') {
+      return 'Grasslands';
     }
     return name;
   };

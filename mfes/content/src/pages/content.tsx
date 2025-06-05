@@ -297,6 +297,17 @@ export default function Content(props: ContentProps) {
     localStorage.removeItem('subcategory');
     router.back();
   }, [router]);
+  const transformName = (name: string) => {
+    console.log('name', name);
+    if (name === 'Water : Water based STEM and STEM Activities') {
+      return 'Water : Water based STEM and STEAM Activities';
+    }
+    if (name === 'Land : Grassland') {
+      return 'Land : Grasslands';
+    }
+    return name;
+  };
+
   return (
     // <Loader isLoading={isPageLoading} layoutHeight={70}>
     <Box sx={{ p: 2 }}>
@@ -322,7 +333,7 @@ export default function Content(props: ContentProps) {
                 marginLeft: 1,
               }}
             >
-              {categoryLabel}
+              {transformName(categoryLabel)}
             </Typography>
           )}
         </Box>

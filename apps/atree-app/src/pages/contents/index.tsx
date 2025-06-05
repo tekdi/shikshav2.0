@@ -128,11 +128,7 @@ const List: React.FC<ListProps> = () => {
   };
 
   return (
-    <Layout
-      isLoadingChildren={isLoadingChildren}
-      isFooter={isMobile}
-      footerComponent={!isMobile ? <FooterText page="" /> : <Footer />}
-    >
+    <Layout isLoadingChildren={isLoadingChildren} isFooter={isMobile}>
       {!isMobile ? (
         <Grid container spacing={2}>
           <Grid size={{ xs: 3 }}>
@@ -158,6 +154,7 @@ const List: React.FC<ListProps> = () => {
           <Content {...contentProps} />
         </Box>
       )}
+      {!isMobile ? <FooterText page="" /> : <Footer />}
     </Layout>
   );
 };

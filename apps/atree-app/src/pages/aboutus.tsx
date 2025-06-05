@@ -16,7 +16,6 @@ export default function Aboutus() {
   return (
     <Layout
       isFooter={isMobile} // add this when on mobile
-      footerComponent={<FooterText page="" />}
     >
       <Banner />
       <Grid
@@ -240,6 +239,7 @@ export default function Aboutus() {
           </Box>
         </Box>
       </Grid>
+      <FooterText page="" />
     </Layout>
   );
 }
