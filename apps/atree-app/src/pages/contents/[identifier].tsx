@@ -926,8 +926,9 @@ export default function Content() {
                     }}
                     startIcon={<LinkOutlinedIcon />}
                     disabled={
-                      contentData?.access?.trim() === 'Sample' ||
-                      contentData?.access?.trim() === 'Full'
+                      (contentData?.access?.trim() === 'Sample' ||
+                        contentData?.access?.trim() === 'Full') &&
+                      !contentData?.url
                     }
                     onClick={handleOnCLick}
                   >
@@ -1148,7 +1149,7 @@ const SubFrameworkFilter = React.memo<{
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   };
   return (
-    <Grid container spacing={1} ml={4}>
+    <Grid container spacing={1}>
       {filterItems?.map((subFrameworkItem: any) => (
         <Grid key={subFrameworkItem.identifier}>
           <Chip
