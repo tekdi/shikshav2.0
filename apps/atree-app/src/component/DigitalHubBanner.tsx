@@ -16,6 +16,7 @@ const DigitalHubBanner = () => {
         px: 1,
         py: isMobile ? 1 : 1.5,
         textAlign: 'center',
+        overflowX: 'auto', // Add horizontal scroll if needed at high zoom
       }}
     >
       <Typography
@@ -31,6 +32,7 @@ const DigitalHubBanner = () => {
           },
           lineHeight: 1.2,
           color: '#2B3133',
+          whiteSpace: 'nowrap', // Prevent line break
         }}
       >
         A digital hub of Environment Education resources contextual to India

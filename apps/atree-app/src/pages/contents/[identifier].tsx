@@ -624,8 +624,9 @@ export default function Content() {
                             }}
                             startIcon={<LinkOutlinedIcon />}
                             disabled={
-                              contentData?.access?.trim() === 'Sample' ||
-                              contentData?.access?.trim() === 'Full'
+                              (contentData?.access?.trim() === 'Sample' ||
+                                contentData?.access?.trim() === 'Full') &&
+                              !contentData?.url
                             }
                             onClick={handleOnCLick}
                           >
@@ -733,7 +734,7 @@ export default function Content() {
                   display: 'flex',
                   flexDirection: 'column',
                   padding: '20px',
-                  ml: 4,
+                  // ml: 4,
                 }}
               >
                 <Box

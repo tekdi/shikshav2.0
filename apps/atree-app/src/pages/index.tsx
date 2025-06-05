@@ -60,30 +60,23 @@ const AnimatedCounter = ({
     });
   }, []);
 
-  useEffect(() => {
-    const totalSteps = duration / 10;
-    const increment = target / totalSteps;
+useEffect(() => {
+  const totalSteps = duration / 10;
+  const increment = target / totalSteps;
 
-    let current = 0;
-    const interval = setInterval(() => {
-      current += increment;
-      if (current >= target) {
-        setCount(target);
-        clearInterval(interval);
+  let current = 0;
+  const interval = setInterval(() => {
+    current += increment;
+    if (current >= target) {
+      setCount(target);
+      clearInterval(interval);
+    } else {
+      setCount(Math.ceil(current));
+    }
+  }, 10);
 
-        // Wait for restartDelay and restart
-        setTimeout(() => {
-          setCount(0);
-          setKey((prev) => prev + 1);
-        }, restartDelay);
-      } else {
-        setCount(Math.ceil(current));
-      }
-    }, 10);
-
-    return () => clearInterval(interval);
-  }, [key, target, duration, restartDelay]);
-
+  return () => clearInterval(interval);
+}, [target, duration]);
   return (
     <Typography
       sx={{
@@ -350,8 +343,8 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                       key={index}
                       name={category?.name}
                       _showAvatar={true}
-                      _text={{ textAline: 'center' }}
-                      _image={{ height: { xs: '200px', md: '300px' } }}
+                      _text={{ textAlign: 'center' }}
+                      _image={{ height: { xs: 'auto', md: '300px' } }}
                       image={
                         (
                           catImages?.[
