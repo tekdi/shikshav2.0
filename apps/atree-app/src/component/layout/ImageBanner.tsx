@@ -79,11 +79,16 @@ export const ImageBanner = ({
             right: 0,
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'flex-end',
             gap: 1,
-            padding: 5,
-            background:
-              'linear-gradient(180deg, rgba(102, 102, 102, 0) 0%, #000000 100%)',
+            padding: {
+              xs: 2,
+              sm: 5,
+            },
+            background: {
+              xs: 'transparent', // no shadow (background) on mobile
+              sm: 'linear-gradient(180deg, rgba(102, 102, 102, 0) 0%, #000000 100%)',
+            },
             ..._text,
             ..._textPosition,
           }}

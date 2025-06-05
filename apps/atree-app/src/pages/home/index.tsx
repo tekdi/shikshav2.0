@@ -722,6 +722,9 @@ const FrameworkFilter = React.memo<{
     if (name === 'Water based STEM and STEM Activities') {
       return 'Water based STEM and STEAM Activities';
     }
+    if (name === 'Grassland') {
+      return 'Grasslands';
+    }
     return name;
   };
   const handleItemClick = (item: any) => {
@@ -835,6 +838,9 @@ const SubFrameworkFilter = React.memo<{
   const capitalizeFirstLetter = (str: string) => {
     if (str === 'Water based STEM and STEM Activities') {
       return 'Water based STEM and STEAM Activities';
+    }
+    if (str === 'Grassland') {
+      return 'Grasslands';
     }
     // Default case for other strings
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();

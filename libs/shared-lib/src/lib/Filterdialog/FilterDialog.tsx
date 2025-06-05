@@ -331,6 +331,143 @@ export const FilterDialog = ({
     localStorage.removeItem('selectedFilters');
     onClose?.();
   };
+
+  const CommonFilterContent = ({
+    resources,
+    selectedFilters,
+    handleResourceCheckboxChange,
+    onApply,
+    setSelectedValues,
+    mimeType,
+    filter,
+    selectedSubjects,
+    onSubjectsChange,
+    selectedContentTypes,
+    onContentTypeChange,
+  }: any) => {
+    return (
+      <Box
+        sx={{
+          padding: '8px 18px',
+          borderRadius: '16px',
+          marginTop: '13.5px',
+          border: '1px solid #DDDDDD',
+          boxShadow: '0px 20px 24px -1px #0A0D121A',
+        }}
+      >
+        <Box sx={{ flexDirection: 'column' }}>
+          <FormControl fullWidth sx={formControlStyles}>
+            {resources?.length > 0 && (
+              <Box sx={{ display: 'grid' }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginTop: '-7px',
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: '24px',
+                      fontWeight: 500,
+                      color: '#181D27',
+                      margin: '3px 0px',
+                      fontFamily: 'Poppins',
+                    }}
+                  >
+                    Resource Type
+                  </Typography>
+                  <Button
+                    size="small"
+                    onClick={() => {
+                      setSelectedValues({});
+                      selectedFilters.mimeType = [];
+                      selectedFilters.resource = [];
+                      localStorage.removeItem('selectedFilters');
+                      onApply?.({});
+                    }}
+                  >
+                    <Box display="flex" alignItems="center">
+                      <Image
+                        src={ResetImage}
+                        alt="Reset"
+                        width={47}
+                        height={45}
+                        style={{ marginRight: 4 }}
+                      />
+                    </Box>
+                  </Button>
+                </Box>
+                {resources?.map((option: any) => (
+                  <CustomResourceCheckbox
+                    key={option?.label}
+                    option={option}
+                    filterCode="resource"
+                    handleCheckboxChange={handleResourceCheckboxChange}
+                    currentSelectedValues={selectedFilters.resource}
+                  />
+                ))}
+              </Box>
+            )}
+          </FormControl>
+        </Box>
+
+        {/* Subject Filter */}
+        {filter?.subject?.length > 0 && (
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Subject</InputLabel>
+            <Select
+              multiple
+              value={selectedSubjects || []}
+              onChange={(e) => {
+                const value = e.target.value as string[];
+                onSubjectsChange?.(value);
+              }}
+              renderValue={(selected) => (selected as string[]).join(', ')}
+              label="Subject"
+            >
+              {filter.subject.map((subject) => (
+                <MenuItem key={subject} value={subject}>
+                  <Checkbox
+                    checked={(selectedSubjects || []).includes(subject)}
+                  />
+                  <ListItemText primary={subject} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+
+        {/* Content Type Filter */}
+        {filter?.contentType?.length > 0 && (
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Content Type</InputLabel>
+            <Select
+              multiple
+              value={selectedContentTypes || []}
+              onChange={(e) => {
+                const value = e.target.value as string[];
+                onContentTypeChange?.(value);
+              }}
+              renderValue={(selected) => (selected as string[]).join(', ')}
+              label="Content Type"
+            >
+              {filter.contentType.map((type) => (
+                <MenuItem key={type} value={type}>
+                  <Checkbox
+                    checked={(selectedContentTypes || []).includes(type)}
+                  />
+                  <ListItemText primary={type} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+      </Box>
+    );
+  };
+
   return (
     <>
       {isMobile ? (
@@ -371,197 +508,19 @@ export const FilterDialog = ({
               padding: '0px 16px',
             }}
           >
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              {/* new filter frameworkFilter */}
-              {frameworkFilter?.categories
-                ?.filter((category: any) => category.code !== 'subTopic') // ✅ Skip subTopic
-                ?.map((category: any) => {
-                  const filterCode = category?.code;
-
-                  // Transform terms into options
-                  const options =
-                    category?.terms?.map((term: any) => ({
-                      label: term?.name,
-                      value: term?.name,
-                    })) ?? [];
-
-                  // Get selected values for the current category
-
-                  const normalizedSelectedTopic = Array.isArray(
-                    selectedValues?.topic
-                  )
-                    ? selectedValues.topic.map((val: any) =>
-                        val.replace(/\s/g, '').toLowerCase()
-                      )
-                    : typeof selectedValues?.topic === 'string'
-                    ? selectedValues.topic.replace(/\s/g, '').toLowerCase()
-                    : '';
-
-                  return (
-                    <FormControl
-                      fullWidth
-                      key={filterCode}
-                      sx={formControlStyles}
-                    >
-                      <FormLabel
-                        component="legend"
-                        sx={{
-                          fontSize: '18px',
-                          fontWeight: 600,
-                          color: '#000000',
-                          '&.Mui-focused': {
-                            color: '#000000', // Prevent color change on focus
-                          },
-                        }}
-                      >
-                        Select {category?.name}{' '}
-                      </FormLabel>
-
-                      {/* Topic - RadioGroup */}
-                      {filterCode === 'topic' && (
-                        <RadioGroup
-                          value={normalizedSelectedTopic}
-                          onChange={(event) => handleChange(event, filterCode)}
-                        >
-                          {options?.map((option: any) => {
-                            const normalizedOptionValue = option.value
-                              .replace(/\s/g, '')
-                              .toLowerCase();
-                            return (
-                              <CustomRadio
-                                key={option?.value}
-                                option={{
-                                  ...option,
-                                  value: normalizedOptionValue,
-                                }}
-                              />
-                            );
-                          })}
-                        </RadioGroup>
-                      )}
-                    </FormControl>
-                  );
-                })}
-
-              {frameworkFilter.categories?.some(
-                (cat: any) => cat.code === 'subTopic'
-              ) &&
-                (() => {
-                  const selectedTopicCode = Array.isArray(selectedValues?.topic)
-                    ? selectedValues.topic[0]?.replace(/\s/g, '').toLowerCase()
-                    : selectedValues?.topic?.replace(/\s/g, '').toLowerCase();
-
-                  const topicTerm = frameworkFilter.categories
-                    ?.find((cat: any) => cat.code === 'topic')
-                    ?.terms?.find(
-                      (term: any) =>
-                        term.code.replace(/\s/g, '').toLowerCase() ===
-                        selectedTopicCode
-                    );
-
-                  const associations =
-                    topicTerm?.associations?.filter(
-                      (a: any) => a.status === 'Live'
-                    ) ?? [];
-
-                  if (associations.length > 0) {
-                    return (
-                      <FormControl
-                        fullWidth
-                        key="subTopic"
-                        sx={formControlStyles}
-                      >
-                        <FormLabel
-                          component="legend"
-                          sx={{
-                            fontSize: '18px',
-                            fontWeight: 600,
-                            color: '#000000',
-                            '&.Mui-focused': {
-                              color: '#000000',
-                            },
-                          }}
-                        >
-                          Select Sub Category
-                        </FormLabel>
-                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                          {associations.map((option: any) => (
-                            <CustomCheckbox
-                              key={option.code}
-                              option={{
-                                label: option.name,
-                                value: option.code,
-                              }}
-                              filterCode="subTopic"
-                              handleCheckboxChange={handleCheckboxChange}
-                              currentSelectedValues={
-                                selectedValues?.subTopic ?? []
-                              }
-                            />
-                          ))}
-                        </Box>
-                      </FormControl>
-                    );
-                  }
-                  return null;
-                })()}
-            </Box>
-
-            {/* Subject */}
-            {filter?.subject && filter.subject.length > 0 && (
-              <FormControl fullWidth margin="normal">
-                <InputLabel>Subject</InputLabel>
-                <Select
-                  multiple
-                  value={selectedSubjects || []}
-                  onChange={(e) => {
-                    const value = e.target.value as string[]; // Ensure TypeScript recognizes it as an array
-                    //@ts-ignore
-                    onSubjectsChange?.(value);
-                  }}
-                  renderValue={(selected) => (selected as string[]).join(', ')} // Join array values for display
-                  label="Subject"
-                >
-                  {filter.subject.map((subject) => (
-                    <MenuItem key={subject} value={subject}>
-                      <Checkbox
-                        checked={(selectedSubjects || []).indexOf(subject) > -1}
-                      />
-                      <ListItemText primary={subject} />
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            )}
-            {/* Content Type */}
-            {filter?.contentType && filter.contentType.length > 0 && (
-              <FormControl fullWidth margin="normal">
-                <InputLabel>Content Type</InputLabel>
-                <Select
-                  multiple
-                  value={selectedContentTypes || []}
-                  onChange={(e) => {
-                    const value = e.target.value as string[];
-                    //@ts-ignore
-                    onContentTypeChange?.(value);
-                  }}
-                  renderValue={(selected) => (selected as string[]).join(', ')}
-                  label="Content Type"
-                >
-                  {filter.contentType.map((type) => (
-                    <MenuItem key={type} value={type}>
-                      <Checkbox
-                        checked={
-                          (selectedContentTypes || []).indexOf(type) > -1
-                        }
-                      />
-                      <ListItemText primary={type} />
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            )}
-
+            <CommonFilterContent
+              resources={resources}
+              selectedFilters={selectedFilters}
+              handleResourceCheckboxChange={handleResourceCheckboxChange}
+              onApply={onApply}
+              setSelectedValues={setSelectedValues}
+              mimeType={mimeType}
+              filter={filter}
+              selectedSubjects={selectedSubjects}
+              onSubjectsChange={onSubjectsChange}
+              selectedContentTypes={selectedContentTypes}
+              onContentTypeChange={onContentTypeChange}
+            />
             {/* Buttons */}
           </DialogContent>
           <DialogActions sx={{ justifyContent: 'center' }}>

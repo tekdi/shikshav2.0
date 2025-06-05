@@ -1141,6 +1141,9 @@ const SubFrameworkFilter = React.memo<{
     if (str === 'Water based STEM and STEM Activities') {
       return 'Water based STEM and STEAM Activities';
     }
+    if (str === 'Grassland') {
+      return 'Grasslands';
+    }
     // Default case for other strings
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   };
@@ -1267,6 +1270,9 @@ const FrameworkFilter = React.memo<{
   const transformName = (name: string) => {
     if (name === 'Water based STEM and STEM Activities') {
       return 'Water based STEM and STEAM Activities';
+    }
+    if (name === 'Grassland') {
+      return 'Grasslands';
     }
     return name;
   };
