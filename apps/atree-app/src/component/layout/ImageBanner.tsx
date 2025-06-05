@@ -85,10 +85,6 @@ export const ImageBanner = ({
               xs: 2,
               sm: 5,
             },
-            background: {
-              xs: 'transparent', // no shadow (background) on mobile
-              sm: 'linear-gradient(180deg, rgba(102, 102, 102, 0) 0%, #000000 100%)',
-            },
             ..._text,
             ..._textPosition,
           }}
