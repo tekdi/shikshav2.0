@@ -9,6 +9,7 @@ import {
   Avatar,
   useMediaQuery,
   useTheme,
+  Box,
 } from '@mui/material';
 import { TelemetryEventType } from '../../utils/app.constant';
 import { telemetryFactory } from '../../utils/telemetry';
@@ -22,6 +23,8 @@ export const ImageBanner = ({
   _textPosition = { bottom: 0, left: 0, right: 0 },
   _showAvatar = false,
   _eventClick = false,
+  verticalText,
+  _verticalTextPosition = 'left',
 }: {
   image: string;
   name: string;
@@ -30,6 +33,8 @@ export const ImageBanner = ({
   _textPosition?: object;
   _showAvatar?: boolean;
   _eventClick?: boolean;
+  verticalText?: string;
+  _verticalTextPosition?: 'left' | 'right';
 }) => {
   const router = useRouter();
   const theme = useTheme();
@@ -71,6 +76,38 @@ export const ImageBanner = ({
           sx={{ objectFit: 'cover', ..._image }}
           image={image}
         />
+        {verticalText && (
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              [_verticalTextPosition]: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '50px', // Adjust as needed
+              // backgroundColor: 'rgba(0,0,0,0.5)', // Optional background
+            }}
+          >
+            <Typography
+              sx={{
+                color: 'white',
+                fontWeight: 800,
+                fontFamily: 'Poppins',
+                fontSize: { xs: '2vw', md: '11px' },
+                writingMode: 'vertical-rl',
+                textOrientation: 'mixed',
+                transform: 'rotate(180deg)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em',
+                height: { xs: '90%', md: '90%' },
+              }}
+            >
+              {verticalText}
+            </Typography>
+          </Box>
+        )}
         <CardContent
           sx={{
             position: 'absolute',
@@ -106,12 +143,12 @@ export const ImageBanner = ({
           )} */}
           <Typography
             sx={{
-              width: '290px',
+              width: '100%',
               textAlign: 'center',
               color: 'white',
               fontWeight: 800,
               fontFamily: 'Poppins',
-              fontSize: { xs: '18px', md: '34px' },
+              fontSize: { xs: '16px', md: '34px' },
               textTransform: 'capitalize',
             }}
           >

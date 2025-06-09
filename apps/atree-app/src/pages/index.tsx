@@ -35,7 +35,38 @@ const catImages = {
   'Activity Books': ActivityBooks,
   Potpourri: ReferenceBooks,
 };
-
+const bannerData = [
+  {
+    image: Water,
+    name: 'Banner 1',
+    verticalText: 'Adira Andlay/Current Conservation',
+  },
+  {
+    image: Forests,
+    name: 'Banner 2',
+    verticalText: 'Sriya Singh/Current Conservation',
+  },
+  {
+    image: Land,
+    name: 'Banner 3',
+    verticalText: 'Aditi Rajan/Current Conservation',
+  },
+  {
+    image: Climatechangebookcover,
+    name: 'Banner 4',
+    verticalText: 'Prabha Mallya/Current Conservation',
+  },
+  {
+    image: ActivityBooks,
+    name: 'Banner 5',
+    verticalText: 'Ekisha Poddar/Current Conservation',
+  },
+  {
+    image: ReferenceBooks,
+    name: 'Banner 6',
+    verticalText: 'Norzin Norbhu/Current Conservation',
+  },
+];
 type AnimatedCounterProps = {
   target: number;
   duration?: number;
@@ -60,29 +91,30 @@ const AnimatedCounter = ({
     });
   }, []);
 
-useEffect(() => {
-  const totalSteps = duration / 10;
-  const increment = target / totalSteps;
+  useEffect(() => {
+    const totalSteps = duration / 10;
+    const increment = target / totalSteps;
 
-  let current = 0;
-  const interval = setInterval(() => {
-    current += increment;
-    if (current >= target) {
-      setCount(target);
-      clearInterval(interval);
-    } else {
-      setCount(Math.ceil(current));
-    }
-  }, 10);
+    let current = 0;
+    const interval = setInterval(() => {
+      current += increment;
+      if (current >= target) {
+        setCount(target);
+        clearInterval(interval);
+      } else {
+        setCount(Math.ceil(current));
+      }
+    }, 10);
 
-  return () => clearInterval(interval);
-}, [target, duration]);
+    return () => clearInterval(interval);
+  }, [target, duration]);
   return (
     <Typography
       sx={{
         fontFamily: 'Poppins',
         fontSize: fontSize,
         fontWeight: 700,
+        lineHeight: '0.9',
       }}
     >
       {count}
@@ -239,7 +271,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                     }}
                   >
                     {t(
-                      'Change stems from local action. Hope stems from childrens empowerment to act upon local environmental problems. Our mission is to empower environment educators with both hope and action in times of climate change.'
+                      `Change stems from local action. Hope stems from children's empowerment to act upon local environmental problems. Our mission is to empower environment educators with both hope and action in times of climate change.`
                     )}
                   </Typography>
                 </Box>
@@ -342,8 +374,14 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                     <ImageBanner
                       key={index}
                       name={category?.name}
-                      _showAvatar={true}
+                      _showAvatar={false}
                       _text={{ textAlign: 'center' }}
+                      verticalText={
+                        bannerData?.map((item) => {
+                          return item.verticalText;
+                        })[index] || ''
+                      }
+                      _verticalTextPosition="left"
                       _image={{ height: { xs: 'auto', md: '300px' } }}
                       image={
                         (

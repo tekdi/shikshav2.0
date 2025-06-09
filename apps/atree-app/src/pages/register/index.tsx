@@ -441,7 +441,7 @@ export default function Registration() {
                 <Button
                   onClick={handleCreateUser}
                   sx={{
-                    width: { xs: '100%', sm: '70%', md: '60%' },
+                    width: { xs: '100%', sm: '60%', md: '50%' },
                     height: '40px',
                     background: '#fcd804',
                     borderRadius: '50px',

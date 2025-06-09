@@ -369,8 +369,8 @@ export const FilterDialog = ({
                 >
                   <Typography
                     sx={{
-                      fontSize: '24px',
-                      fontWeight: 500,
+                      fontSize: '18px',
+                      fontWeight: 600,
                       color: '#181D27',
                       margin: '3px 0px',
                       fontFamily: 'Poppins',
@@ -571,8 +571,8 @@ export const FilterDialog = ({
                   >
                     <Typography
                       sx={{
-                        fontSize: '24px',
-                        fontWeight: 500,
+                        fontSize: '18px',
+                        fontWeight: 600,
                         color: '#181D27',
                         margin: '3px 0px',
                         fontFamily: 'Poppins',

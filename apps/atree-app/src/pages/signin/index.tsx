@@ -192,7 +192,7 @@ const Login: React.FC<ListProps> = () => {
                 textAlign: 'center',
               }}
             >
-              Sign Up/Log In
+              Sign Up/Login
             </Typography>
             <Grid container direction="column" spacing={3}>
               {['email', 'password'].map((field) => (
@@ -249,7 +249,7 @@ const Login: React.FC<ListProps> = () => {
               {/* Proceed and Google buttons */}
               <Grid item>
                 <Grid container spacing={2} justifyContent="center">
-                  <Grid item xs={12} sm={5} width="100%">
+                  <Grid item xs={12} sm={4} width="100%">
                     <Button
                       onClick={handleSigninClick}
                       sx={{
@@ -365,7 +365,7 @@ const MyCustomGoogleLogin = () => {
       <Button
         variant="outlined"
         sx={{
-          width: '100%',
+          width: '85%',
           height: '48px',
           background: 'transparent',
           color: '#2B3133',
@@ -383,13 +383,13 @@ const MyCustomGoogleLogin = () => {
         }}
         onClick={() => handleLogin()}
       >
-        <Box display="flex" alignItems="center" gap="10px">
+        <Box display="flex" alignItems="center" gap="8px">
           <img
             src="https://developers.google.com/identity/images/g-logo.png"
             alt="Google logo"
             style={{ width: 24, height: 24 }}
           />
-          <Typography>Log in with Google</Typography>
+          <Typography>Google Login</Typography>
         </Box>
       </Button>
     </Box>

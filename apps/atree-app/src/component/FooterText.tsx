@@ -18,7 +18,8 @@ export default function FooterText({ page }: FooterTextProps) {
         fontFamily="poppins"
         sx={{ fontSize: { xs: '10px', md: '14px', fontWeight: 400 } }}
       >
-        Curated by ATREE: For, Of, and By Environment Educators of India
+        Curated by Ashoka Trust for Research in Ecology and the Environment
+        (ATREE): For, Of, and By Environment Educators of India
       </Typography>
     </Grid>
   );

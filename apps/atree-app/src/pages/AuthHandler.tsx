@@ -342,8 +342,7 @@ const AuthHandler = () => {
                 width: '100%',
                 height: '40px',
 
-                background:
-                  'linear-gradient(271.8deg, #E68907 1.15%, #FFBD0D 78.68%)',
+                background: '#fcd804',
                 borderRadius: '50px',
                 fontSize: '14px',
                 fontWeight: 500,

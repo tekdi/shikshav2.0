@@ -5,7 +5,8 @@ import { Typography, useMediaQuery, useTheme } from '@mui/material';
 import Banner from '../component/Banner';
 import FooterText from '../component/FooterText';
 import { commonStyles } from '../utils/commonStyle';
-import DigitalHubBanner from '../component/DigitalHubBanner';
+import landingBanner4 from '../../assets/images/png/4.png';
+
 export default function Aboutus() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -13,7 +14,7 @@ export default function Aboutus() {
     <Layout
       isFooter={isMobile} // add this when on mobile
     >
-      <Banner />
+      <Banner singleImage={landingBanner4.src} />
 
       <Grid
         container
@@ -77,7 +78,7 @@ export default function Aboutus() {
           sx={{
             textAlign: 'left',
             fontSize: '16px',
-            fontWeight: 400,
+            fontWeight: 700,
             fontFamily: 'Poppins',
             color: '#000000',
           }}
@@ -118,7 +119,7 @@ export default function Aboutus() {
         <Typography
           sx={{
             fontSize: '16px',
-            fontWeight: 400,
+            fontWeight: 700,
             fontFamily: 'Poppins',
             color: '#000000',
           }}
@@ -142,7 +143,7 @@ export default function Aboutus() {
           gutterBottom
           sx={{
             fontSize: '16px',
-            fontWeight: 400,
+            fontWeight: 700,
             fontFamily: 'Poppins',
             color: '#000000',
           }}
@@ -197,7 +198,7 @@ export default function Aboutus() {
         <Typography
           sx={{
             fontSize: '16px',
-            fontWeight: 400,
+            fontWeight: 700,
             fontFamily: 'Poppins',
             color: '#000000',
           }}
@@ -213,7 +214,7 @@ export default function Aboutus() {
             color: '#000000',
           }}
         >
-          6.1 User Community. While we strive to enforce these terms and
+          4.1 User Community. While we strive to enforce these terms and
           conditions that will allow for an open, productive, safe and inviting
           space for diverse users to access, share, recommend, and otherwise
           enjoy the curated resources on offer, we do not and cannot guarantee
@@ -242,7 +243,7 @@ export default function Aboutus() {
         <Typography
           sx={{
             fontSize: '16px',
-            fontWeight: 400,
+            fontWeight: 700,
             fontFamily: 'Poppins',
             color: '#000000',
           }}
@@ -266,7 +267,7 @@ export default function Aboutus() {
         <Typography
           sx={{
             fontSize: '16px',
-            fontWeight: 400,
+            fontWeight: 700,
             fontFamily: 'Poppins',
             color: '#000000',
           }}
@@ -310,7 +311,7 @@ export default function Aboutus() {
         <Typography
           sx={{
             fontSize: '16px',
-            fontWeight: 400,
+            fontWeight: 700,
             fontFamily: 'Poppins',
             color: '#000000',
           }}
@@ -343,7 +344,7 @@ export default function Aboutus() {
         <Typography
           sx={{
             fontSize: '16px',
-            fontWeight: 400,
+            fontWeight: 700,
             fontFamily: 'Poppins',
             color: '#000000',
           }}
@@ -400,7 +401,7 @@ export default function Aboutus() {
         <Typography
           sx={{
             fontSize: '16px',
-            fontWeight: 400,
+            fontWeight: 700,
             fontFamily: 'Poppins',
             color: '#000000',
           }}
@@ -427,7 +428,7 @@ export default function Aboutus() {
         <Typography
           style={{
             fontSize: '16px',
-            fontWeight: 400,
+            fontWeight: 700,
             fontFamily: 'Poppins',
             color: '#000000',
           }}
@@ -453,7 +454,7 @@ export default function Aboutus() {
         <Typography
           style={{
             fontSize: '16px',
-            fontWeight: 400,
+            fontWeight: 700,
             fontFamily: 'Poppins',
             color: '#000000',
           }}
@@ -523,13 +524,13 @@ export default function Aboutus() {
         <Typography
           style={{
             fontSize: '16px',
-            fontWeight: 400,
+            fontWeight: 700,
             fontFamily: 'Poppins',
             color: '#000000',
           }}
           gutterBottom
         >
-          6. Disclosure to Third Parties
+          7. Disclosure to Third Parties
         </Typography>
         <Typography
           sx={{

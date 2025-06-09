@@ -97,6 +97,8 @@ export default function Content() {
       limit: 5,
     },
   });
+  const [homeCategory, setHomeCategory] = useState('');
+
   const languageDisplayMap: Record<string, string> = {
     english: 'English',
     hindi: 'हिन्दी',
@@ -108,6 +110,10 @@ export default function Content() {
     malayalam: 'മലയാളം',
   };
   const handleOpen = () => setOpen(true);
+  useEffect(() => {
+    const storedCategory = localStorage.getItem('category') || '';
+    setHomeCategory(storedCategory);
+  }, []);
   const handleOnCLick = () => {
     trackEvent({
       action: 'resource_open',
@@ -387,7 +393,7 @@ export default function Content() {
                 container
                 spacing={2}
                 sx={{
-                  padding: 2,
+                  padding: '25px',
                   // marginTop: '60px',
                 }}
               >
@@ -412,7 +418,7 @@ export default function Content() {
                       <IconButton
                         onClick={(e) => {
                           e.stopPropagation();
-                          router.push('/home');
+                          router.push(`/home?category=${homeCategory}`);
                         }}
                         sx={{
                           padding: '4px',
@@ -544,6 +550,8 @@ export default function Content() {
                             fontSize: '16px',
                             fontWeight: 400,
                             color: '#000000',
+                            width: '84%',
+                            textAlign: 'left',
                           }}
                         >
                           {contentData?.description ?? ''}
@@ -746,8 +754,8 @@ export default function Content() {
                 >
                   <Typography
                     sx={{
-                      fontSize: '24px',
-                      fontWeight: 500,
+                      fontSize: '18px',
+                      fontWeight: 700,
                       fontFamily: 'Poppins',
                       color: '#000000',
                     }}
@@ -764,7 +772,7 @@ export default function Content() {
                   }
                   handleCardClick={handleCardClick}
                   _grid={{ size: { xs: 6, sm: 6, md: 3, lg: 2 } }}
-                  _card={{ image: atreeLogo.src }}
+                  _card={{ image: atreeLogo.src, paddingBottom: '40px' }}
                 />
               </Box>
             </>
@@ -1094,8 +1102,8 @@ const Title: React.FC<{
       <Typography
         sx={{
           fontFamily: 'Poppins',
-          fontWeight: 500,
-          fontSize: { xs: '16px', md: '24px' },
+          fontWeight: 600,
+          fontSize: { xs: '16px', md: '18px' },
           lineHeight: '28px',
           color: '#000000',
         }}
