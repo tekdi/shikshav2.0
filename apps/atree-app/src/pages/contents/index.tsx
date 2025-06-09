@@ -154,7 +154,7 @@ const List: React.FC<ListProps> = () => {
           <Content {...contentProps} />
         </Box>
       )}
-      {!isMobile ? <FooterText page="" /> : <Footer />}
+      {/* {!isMobile ? <FooterText page="" /> : <Footer />} */}
     </Layout>
   );
 };

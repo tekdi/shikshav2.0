@@ -4,12 +4,12 @@ import Layout from '../component/layout/layout';
 import { Box, Typography, useMediaQuery, useTheme } from '@mui/material';
 import Banner from '../component/Banner';
 import FooterText from '../component/FooterText';
-import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import CallOutlinedIcon from '@mui/icons-material/CallOutlined';
 import { commonStyles } from '../utils/commonStyle';
-import DigitalHubBanner from '../component/DigitalHubBanner';
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
+import landingBanner2 from '../../assets/images/png/2.png';
+
 export default function Aboutus() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -17,7 +17,7 @@ export default function Aboutus() {
     <Layout
       isFooter={isMobile} // add this when on mobile
     >
-      <Banner />
+      <Banner singleImage={landingBanner2.src} />
       <Grid
         container
         spacing={2}

@@ -12,9 +12,9 @@ import landingBanner6 from '../../assets/images/png/6.png';
 
 import Carousel from 'react-material-ui-carousel';
 type BannerProps = Readonly<{
-  text: string;
+  singleImage?: string;
 }>;
-export default function Banner() {
+export default function Banner({ singleImage }: BannerProps) {
   const landingImages = [
     { image: landingBanner1?.src, id: 1 },
     { image: landingBanner2?.src, id: 2 },
@@ -23,7 +23,29 @@ export default function Banner() {
     { image: landingBanner5?.src, id: 5 },
     { image: landingBanner6?.src, id: 6 },
   ];
-
+  if (singleImage) {
+    return (
+      <Grid width="100%" sx={{ marginTop: 0 }}>
+        <Box
+          sx={{
+            position: 'relative',
+            width: '100%',
+            minHeight: { md: '500px' },
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <ImageBanner
+            name=""
+            image={singleImage}
+            _eventClick={true}
+            _image={{ height: { xs: 'auto', md: '500px' } }}
+          />
+        </Box>
+      </Grid>
+    );
+  }
   // Remove duplicate images (if any)
   const uniqueLandingImages = Array.from(
     new Map(landingImages.map((img) => [img.id, img])).values()

@@ -130,6 +130,10 @@ export default function Layout({
   const [frameworkData, setFrameworkData] = useState<any>(null);
   const [frameworkFilter, setFrameworkFilter] = useState<any[]>([]);
   const [framework, setFramework] = useState<string>('');
+  const isAuthPage =
+    router.pathname === '/signin' || router.pathname === '/register';
+  const bottomFooter =
+    router.pathname === '/searchpage' || router.pathname === '/contents';
   useEffect(() => {
     let isMounted = true;
     const fetchFrameworkData = async () => {
@@ -456,7 +460,8 @@ export default function Layout({
       <Loader isLoading={isLoadingChildren} layoutHeight={layoutHeight}>
         {children}
       </Loader>
-
+      {!isAuthPage && !isMobile && bottomFooter && <FooterText page="" />}
+      {!isAuthPage && isMobile && bottomFooter && <Footer />}
       {/* {footerComponent && (
         <Box
           ref={(refFoot) => {

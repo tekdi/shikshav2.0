@@ -226,8 +226,8 @@ export default function Searchpage() {
             {selectedquery && (
               <Typography
                 sx={{
-                  fontWeight: 500,
-                  fontSize: '24px',
+                  fontWeight: 700,
+                  fontSize: { xs: '14px', md: '18px' },
                   fontFamily: 'Poppins',
                 }}
               >
@@ -297,7 +297,7 @@ export default function Searchpage() {
                 </Grid>
               </>
             ) : (
-              <Grid item xs={12} sm={4} md={12}>
+              <Grid item xs={12} sm={4} md={12} sx={{ marginTop: '1.8rem' }}>
                 {/* <Box
                   display="flex"
                   alignItems="center"
@@ -316,38 +316,40 @@ export default function Searchpage() {
                     resources={RESOURCE_TYPES}
                   />
                 </Box> */}
-                <Content
-                  {...{
-                    _grid: {
-                      size: { xs: 6, sm: 6, md: 4, lg: 3 },
-                    },
-                    handleCardClick: (content: ContentSearchResponse) => {
-                      router.push(`/contents/${content?.identifier}`);
-                    },
-                    contentTabs: ['content'],
-                    filters: {
-                      filters: {
-                        channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
-                        ...(selectedType
-                          ? { [selectedType]: selectedquery }
-                          : { query: selectedquery }),
-                        ...filters.request.filters,
+                <Box>
+                  <Content
+                    {...{
+                      _grid: {
+                        size: { xs: 6, sm: 6, md: 4, lg: 3 },
                       },
-                    },
-                    _card: {
-                      cardName: 'AtreeCard',
-                      image: atreeLogo.src,
-                    },
-                    showSearch: false,
-                    showFilter: false,
-                  }}
-                />
+                      handleCardClick: (content: ContentSearchResponse) => {
+                        router.push(`/contents/${content?.identifier}`);
+                      },
+                      contentTabs: ['content'],
+                      filters: {
+                        filters: {
+                          channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
+                          ...(selectedType
+                            ? { [selectedType]: selectedquery }
+                            : { query: selectedquery }),
+                          ...filters.request.filters,
+                        },
+                      },
+                      _card: {
+                        cardName: 'AtreeCard',
+                        image: atreeLogo.src,
+                      },
+                      showSearch: false,
+                      showFilter: false,
+                    }}
+                  />
+                </Box>
               </Grid>
             )}
           </Grid>
-          <Box sx={{ width: '100%' }}>
+          {/* <Box sx={{ width: '100%' }}>
             {!isMobile ? <FooterText page="" /> : <Footer />}
-          </Box>
+          </Box> */}
         </Box>
       </Box>
     </Layout>

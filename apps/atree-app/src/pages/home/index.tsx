@@ -90,6 +90,13 @@ export default function Index() {
   const frameworkName = searchParams.get('category')?.toLocaleUpperCase();
 
   // **Handle API Calls with Updated Filters**
+  useEffect(() => {
+    // Scroll to top when framework or filterCategory changes
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  }, [framework, filterCategory, subFramework]);
   const fetchContentData = async (updatedFilters: any) => {
     try {
       setIsLoadingChildren(true);
@@ -368,7 +375,7 @@ export default function Index() {
     <Layout isLoadingChildren={isLoadingChildren}>
       <Box display="flex" flexDirection="column" gap="1rem" py="1rem" px="8px">
         {!isMobile ? (
-          <Grid container spacing={2}>
+          <Grid container spacing={2} sx={{ padding: '25px' }}>
             <Grid size={{ xs: 3 }}>
               <Box>
                 <FilterDialog
@@ -733,6 +740,10 @@ const FrameworkFilter = React.memo<{
       router.push(`/contents`);
     } else {
       setFramework(item.identifier);
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
     }
   };
   return (
@@ -833,6 +844,10 @@ const SubFrameworkFilter = React.memo<{
       },
     };
     telemetryFactory.interact(telemetryInteract);
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
     router.push(`/contents`);
   };
   const capitalizeFirstLetter = (str: string) => {
@@ -967,8 +982,8 @@ const Title: React.FC<{
       <Typography
         sx={{
           fontFamily: 'Poppins',
-          fontWeight: 500,
-          fontSize: { xs: '20px', md: '24px' },
+          fontWeight: 600,
+          fontSize: { xs: '20px', md: '18px' },
           lineHeight: '28px',
           color: '#000000',
         }}

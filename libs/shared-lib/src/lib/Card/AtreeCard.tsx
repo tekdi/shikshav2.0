@@ -1,17 +1,12 @@
-import React, { useState } from 'react';
-import {
-  Card,
-  CardContent,
-  CardMedia,
-  Typography,
-  Button,
-  Box,
-} from '@mui/material';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Card, CardContent, CardMedia, Typography, Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { ContentSearchResponse } from '../Services/Content/Search';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+
 const ITEMS_PER_PAGE = 20;
+
 export const AtreeCard: React.FC<{
   contents: ContentSearchResponse[];
   _grid: object;
@@ -26,11 +21,9 @@ export const AtreeCard: React.FC<{
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const pathname = usePathname();
   const isHome = pathname.includes('/home');
-  const handleLoadMore = () => {
-    setVisibleCount((prev) => prev + ITEMS_PER_PAGE);
-  };
-  const visibleContents = contents?.slice(0, visibleCount);
+  const loaderRef = useRef<HTMLDivElement>(null);
   const maxChars = 20;
+
   const languageDisplayMap: Record<string, string> = {
     english: 'ENG',
     hindi: 'हिन्दी',
@@ -41,8 +34,47 @@ export const AtreeCard: React.FC<{
     tamil: 'தமிழ்',
     malayalam: 'മലയാളം',
   };
+  useEffect(() => {
+    setVisibleCount(ITEMS_PER_PAGE);
+  }, [contents]);
+  const handleObserver = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const [target] = entries;
+      if (target.isIntersecting && contents && visibleCount < contents.length) {
+        setVisibleCount((prev) => prev + ITEMS_PER_PAGE);
+      }
+    },
+    [contents, visibleCount]
+  );
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleObserver, {
+      root: null,
+      rootMargin: '20px',
+      threshold: 0.1,
+    });
+
+    if (loaderRef.current) {
+      observer.observe(loaderRef.current);
+    }
+
+    return () => {
+      if (loaderRef.current) {
+        observer.unobserve(loaderRef.current);
+      }
+    };
+  }, [handleObserver]);
+
+  const visibleContents = isHome ? contents?.slice(0, visibleCount) : contents;
+
   return (
-    <Grid container spacing={2} width="100%">
+    <Grid
+      container
+      spacing={2}
+      width="100%"
+      sx={{ paddingBottom: _card?.paddingBottom || '0px' }}
+    >
+      {/* Display a message if contents is empty */}
       {contents?.length === 0 ? (
         <Typography
           variant="h6"
@@ -50,7 +82,6 @@ export const AtreeCard: React.FC<{
             textAlign: 'center',
             width: '100%',
             fontWeight: 500,
-
             mt: 2,
           }}
         >
@@ -67,7 +98,7 @@ export const AtreeCard: React.FC<{
         </Typography>
       ) : (
         <>
-          {(isHome ? visibleContents : contents).map((content) => (
+          {visibleContents?.map((content) => (
             <Grid
               size={{ xs: 12, sm: 6, md: 4 }}
               sx={{
@@ -111,7 +142,7 @@ export const AtreeCard: React.FC<{
                       left: 0,
                       width: '100%',
                       height: '100%',
-                      objectFit: 'cover', // Changed from 'cover' to 'contain'
+                      objectFit: 'cover',
                       backgroundColor: '#f5f5f5', // Fallback background
                     }}
                   />
@@ -133,19 +164,13 @@ export const AtreeCard: React.FC<{
                       fontSize: { xs: '14px', md: '16px' },
                       lineHeight: '20px',
                       color: '#000000',
-                      // display: '-webkit-box',
                       whiteSpace: 'nowrap',
-                      WebkitLineClamp: 1,
-                      WebkitBoxOrient: 'vertical',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       fontFamily: 'Poppins',
                     }}
                   >
                     {content?.name}
-                    {/* {(content?.name ?? '').length > maxChars
-                      ? (content?.name ?? '').slice(0, maxChars) + '...'
-                      : content?.name ?? ''} */}
                   </Typography>
 
                   {/* Year and Language Row */}
@@ -175,9 +200,8 @@ export const AtreeCard: React.FC<{
                     {content?.language?.[0] && (
                       <Box
                         sx={{
-                          backgroundColor: '#FCD905', // highlighted yellow
+                          backgroundColor: '#FCD905',
                           padding: '2px 8px',
-                          // borderRadius: '8px',
                           fontWeight: 400,
                           fontSize: { xs: '14px', md: '16px' },
                           color: '#000000',
@@ -195,33 +219,9 @@ export const AtreeCard: React.FC<{
             </Grid>
           ))}
 
-          {isHome && visibleCount < contents.length && (
-            <Box
-              width="100%"
-              display="flex"
-              justifyContent="center"
-              mt={3}
-              sx={{
-                mb: { xs: 2, sm: 0 },
-              }}
-            >
-              <Button
-                variant="contained"
-                onClick={handleLoadMore}
-                sx={{
-                  background: '#fcd804',
-                  color: '#000000',
-                  fontFamily: 'Poppins',
-                  fontSize: '16px',
-                  borderRadius: '50px',
-                  height: '40px',
-                  padding: '16px',
-                  textTransform: 'none',
-                }}
-              >
-                Load More
-              </Button>
-            </Box>
+          {/* Infinite scroll loader */}
+          {isHome && visibleCount < (contents?.length || 0) && (
+            <div ref={loaderRef} style={{ width: '100%', height: '20px' }} />
           )}
         </>
       )}

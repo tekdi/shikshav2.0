@@ -21,7 +21,7 @@ const MOBILE_PADDING_MAP: Record<string, string> = {
   '/termsandcondition': '76px',
   '/aboutus': '76px',
   '/register': '52px',
-  '/searchpage': '65px',
+  '/searchpage': '80px',
   '/signin': '48px',
 };
 
@@ -34,6 +34,10 @@ const DESKTOP_PADDING_MAP: Record<string, string> = {
   '/contents': '132px',
   '/contents/[identifier]': '126px',
   '/searchpage': '118px',
+  '/signin': '125px',
+  '/termsandcondition': '134px',
+  '/aboutus': '134px',
+  // '/register': '90px',
 };
 
 const getPaddingTop = (isMobile: boolean, router: any): string => {
