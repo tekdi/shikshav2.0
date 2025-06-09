@@ -1158,34 +1158,36 @@ const SubFrameworkFilter = React.memo<{
   };
   return (
     <Grid container spacing={1}>
-      {filterItems?.map((subFrameworkItem: any) => (
-        <Grid key={subFrameworkItem.identifier}>
-          <Chip
-            key={subFrameworkItem.name}
-            label={capitalizeFirstLetter(subFrameworkItem.name)}
-            variant="outlined"
-            sx={{
-              height: 32,
-              padding: '4px 6px',
-              borderRadius: '8px',
-              '& .MuiChip-label': {
-                fontSize: '14px',
-                fontFamily: 'Poppins',
-                fontWeight: 500,
-                color: '#000000',
-              },
-            }}
-            onClick={() => {
-              trackEvent({
-                action: 'subcategory_click',
-                category: 'user',
-                label: 'Home Page',
-              });
-              handleItemClick(subFrameworkItem);
-            }}
-          />
-        </Grid>
-      ))}
+      {filterItems
+        ?.filter((item) => item.name !== 'Magazines, Newspapers and Websities')
+        ?.map((subFrameworkItem: any) => (
+          <Grid key={subFrameworkItem.identifier}>
+            <Chip
+              key={subFrameworkItem.name}
+              label={capitalizeFirstLetter(subFrameworkItem.name)}
+              variant="outlined"
+              sx={{
+                height: 32,
+                padding: '4px 6px',
+                borderRadius: '8px',
+                '& .MuiChip-label': {
+                  fontSize: '14px',
+                  fontFamily: 'Poppins',
+                  fontWeight: 500,
+                  color: '#000000',
+                },
+              }}
+              onClick={() => {
+                trackEvent({
+                  action: 'subcategory_click',
+                  category: 'user',
+                  label: 'Home Page',
+                });
+                handleItemClick(subFrameworkItem);
+              }}
+            />
+          </Grid>
+        ))}
       {subFrameworkFilter?.length > (isMobile ? 3 : 6) && (
         <Chip
           label={
