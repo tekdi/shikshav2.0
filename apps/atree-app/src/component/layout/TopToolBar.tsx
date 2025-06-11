@@ -278,15 +278,47 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                         zIndex: 1100,
                       }}
                     >
-                      <IconButton
-                        size="large"
-                        edge="start"
-                        sx={{ color: 'text.secondary' }}
-                        aria-label="search"
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1.5,
+                          px: 2,
+                          py: '6px',
+                          borderRadius: '10px',
+                          border: '1px solid',
+                          borderColor: 'divider',
+                          backgroundColor: 'action.hover',
+                          '&:hover': {
+                            backgroundColor: 'action.hover',
+                            cursor: 'text',
+                          },
+                          width: '100%',
+                            maxWidth: '500px',
+                          marginRight: '10px',
+                        }}
                         onClick={handleSearchOpen}
                       >
-                        <SearchIcon />
-                      </IconButton>
+                       
+
+                        {/* Search icon */}
+                        <SearchIcon
+                          fontSize="small"
+                          sx={{ color: 'text.secondary' }}
+                        />
+
+                        {/* Search text */}
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            color: 'text.secondary',
+                            flexGrow: 1,
+                            fontSize: 14,
+                          }}
+                        >
+                          Search...
+                        </Typography>
+                      </Box>
                       <IconButton
                         size="large"
                         edge="start"

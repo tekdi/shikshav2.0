@@ -216,10 +216,10 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                     sx={{
                       fontWeight: 400,
                       fontFamily: 'Poppins',
-                      fontSize: '16px',
-                      lineHeight: '24px',
+                      fontSize: '14px',
+                      lineHeight: '20px',
                       color: '#000000',
-                      mb: 2,
+                      mb: 1,
                     }}
                   >
                     {t(
@@ -233,8 +233,8 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                     sx={{
                       fontWeight: 500,
                       fontFamily: 'Poppins',
-                      fontSize: '16px',
-                      lineHeight: '26px',
+                      fontSize: '14px',
+                      lineHeight: '20px',
                       color: '#000000',
                     }}
                   >
@@ -296,11 +296,12 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                   display: 'flex',
                   justifyContent: { xs: 'space-around', md: 'center' },
                   flexWrap: 'wrap',
-                  gap: isMobile ? 4 : 8,
+                  gap: isMobile ? 0 : 8,
                   alignItems: 'center',
                   color: '#2B3133',
                   textAlign: 'center',
                   marginBottom: '25px',
+                  padding: '10px',
                 }}
               >
                 <Box>
@@ -411,9 +412,9 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
             <Typography
               align="center"
               sx={{
-                fontWeight: 400,
-                fontSize: '24px',
-                lineHeight: '24px',
+                fontWeight: 600,
+                fontSize: { xs: '18px', sm: '24px' },
+                lineHeight: { xs: '22px', sm: '24px' },
                 fontFamily: 'Poppins',
                 mb: { xs: '32px', sm: '72px' },
               }}

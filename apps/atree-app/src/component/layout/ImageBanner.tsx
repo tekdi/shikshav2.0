@@ -38,6 +38,7 @@ export const ImageBanner = ({
 }) => {
   const router = useRouter();
   const theme = useTheme();
+
   const handleClick = () => {
     trackEvent({
       action: 'landing_page_click',
@@ -76,18 +77,19 @@ export const ImageBanner = ({
           sx={{ objectFit: 'cover', ..._image }}
           image={image}
         />
+
+        {/* Vertical text (Desktop) */}
         {verticalText && (
           <Box
             sx={{
+              display: { xs: 'none', md: 'flex' },
               position: 'absolute',
               top: 0,
               bottom: 0,
               [_verticalTextPosition]: 0,
-              display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: '50px', // Adjust as needed
-              // backgroundColor: 'rgba(0,0,0,0.5)', // Optional background
+              width: '50px',
             }}
           >
             <Typography
@@ -95,19 +97,19 @@ export const ImageBanner = ({
                 color: 'white',
                 fontWeight: 800,
                 fontFamily: 'Poppins',
-                fontSize: { xs: '2vw', md: '11px' },
+                fontSize: '11px',
                 writingMode: 'vertical-rl',
                 textOrientation: 'mixed',
                 transform: 'rotate(180deg)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.1em',
-                height: { xs: '90%', md: '90%' },
               }}
             >
               {verticalText}
             </Typography>
           </Box>
         )}
+
         <CardContent
           sx={{
             position: 'absolute',
@@ -116,7 +118,7 @@ export const ImageBanner = ({
             right: 0,
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'flex-end',
+            justifyContent: 'center',
             gap: 1,
             padding: {
               xs: 2,
@@ -126,21 +128,6 @@ export const ImageBanner = ({
             ..._textPosition,
           }}
         >
-          {/* {_showAvatar && (
-            <Avatar
-              sx={{
-                bgcolor: '#CEE5FF',
-                color: '#000',
-                width: { xs: 40, md: 85 },
-                height: { xs: 40, md: 85 },
-                fontFamily: 'Poppins',
-                fontSize: { xs: '18px', md: '45px' },
-                fontWeight: 800,
-              }}
-            >
-              {name.charAt(0).toUpperCase()}
-            </Avatar>
-          )} */}
           <Typography
             sx={{
               width: '100%',
@@ -155,6 +142,34 @@ export const ImageBanner = ({
             {name?.toUpperCase()}
           </Typography>
         </CardContent>
+
+        {/* Horizontal text at bottom edge (Mobile only) */}
+        {verticalText && (
+          <Box
+            sx={{
+              display: { xs: 'flex', md: 'none' },
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+               justifyContent: 'center',
+              // backgroundColor: 'rgba(0,0,0,0.6)', // Optional for readability
+              py: 0.5,
+            }}
+          >
+            <Typography
+              sx={{
+                color: 'white',
+                fontWeight: 600,
+                fontFamily: 'Poppins',
+                fontSize: '5px',
+                textTransform: 'uppercase',
+              }}
+            >
+              {verticalText}
+            </Typography>
+          </Box>
+        )}
       </CardActionArea>
     </Card>
   );
