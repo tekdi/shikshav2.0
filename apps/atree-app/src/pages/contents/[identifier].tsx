@@ -859,11 +859,10 @@ export default function Content() {
                 sx={{
                   display: 'flex',
                   flexDirection: 'row',
-                  // gap: 2,
-                  flexWrap: 'nowrap',
-                  justifyContent: 'space-between',
+                  flexWrap: 'wrap', // Wrap if space is tight
+                  justifyContent: 'center', // ✅ Center buttons horizontally
+                  gap: 1,
                   width: '100%',
-                  overflowX: 'auto',
                 }}
               >
                 <Button
@@ -875,14 +874,17 @@ export default function Content() {
                   }
                   sx={{
                     borderRadius: '50px',
-                    height: '40px',
+                    height: '36px',
                     fontSize: '10px',
                     fontWeight: 500,
                     textTransform: 'none',
-                    minWidth: '100px',
-                    flexShrink: 0,
+                    px: 1,
+                    minWidth: '95px',
+                    gap: '5px',
                   }}
-                  startIcon={<VisibilityOutlinedIcon />}
+                  startIcon={
+                    <VisibilityOutlinedIcon sx={{ fontSize: '14px' }} />
+                  }
                   onClick={handlePreview}
                 >
                   Preview
@@ -893,15 +895,18 @@ export default function Content() {
                   color="secondary"
                   sx={{
                     borderRadius: '50px',
-                    height: '40px',
-                    color: 'black',
+                    height: '36px',
                     fontSize: '10px',
                     fontWeight: 500,
                     textTransform: 'none',
-                    minWidth: '100px',
-                    flexShrink: 0,
+                    px: 1,
+                    minWidth: '95px',
+                    gap: '5px',
+                    color: 'black',
                   }}
-                  startIcon={<FileDownloadOutlinedIcon />}
+                  startIcon={
+                    <FileDownloadOutlinedIcon sx={{ fontSize: '14px' }} />
+                  }
                   onClick={handleOnDownload}
                   disabled={
                     contentData?.access?.trim() === 'Sample' ||
@@ -916,16 +921,16 @@ export default function Content() {
                   color="secondary"
                   sx={{
                     borderRadius: '50px',
-                    height: '40px',
-                    color: 'black',
+                    height: '36px',
                     fontSize: '10px',
                     fontWeight: 500,
                     textTransform: 'none',
-                    minWidth: '120px',
-                    flexShrink: 0,
-                    whiteSpace: 'nowrap',
+                    px: 1,
+                    minWidth: '95px',
+                    gap: '5px',
+                    color: 'black',
                   }}
-                  startIcon={<LinkOutlinedIcon />}
+                  startIcon={<LinkOutlinedIcon sx={{ fontSize: '14px' }} />}
                   disabled={
                     (contentData?.access?.trim() === 'Sample' ||
                       contentData?.access?.trim() === 'Full') &&

@@ -249,7 +249,8 @@ const Login: React.FC<ListProps> = () => {
               {/* Proceed and Google buttons */}
               <Grid item>
                 <Grid container spacing={2} justifyContent="center">
-                  <Grid item xs={12} sm={4} width="100%">
+                  {/* Proceed Button */}
+                  <Grid item xs={10} sm={8} md={6}>
                     <Button
                       onClick={handleSigninClick}
                       sx={{
@@ -260,7 +261,7 @@ const Login: React.FC<ListProps> = () => {
                         borderRadius: '30px',
                         fontSize: '16px',
                         fontWeight: 500,
-                        fontFamily: 'poppins',
+                        fontFamily: 'Poppins',
                         textTransform: 'none',
                         boxShadow: '0px 4px 12px rgba(0,0,0,0.1)',
                         transition: 'all 0.3s ease',
@@ -272,16 +273,33 @@ const Login: React.FC<ListProps> = () => {
                       Proceed
                     </Button>
                   </Grid>
-                  <Grid item xs={12} sm={5} width="100%">
-                    <GoogleOAuthProvider
-                      clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ''}
+
+                  {/* Google Login Button */}
+                  <Grid item xs={10} sm={8} md={6}>
+                    <Box
+                      sx={{
+                        width: '100%',
+                        height: '48px',
+                        '& button': {
+                          // Targets the Google button
+                          width: '100% !important',
+                          height: '48px !important',
+                          borderRadius: '30px !important',
+                          boxShadow: '0px 4px 12px rgba(0,0,0,0.1) !important',
+                        },
+                      }}
                     >
-                      <MyCustomGoogleLogin />
-                    </GoogleOAuthProvider>
+                      <GoogleOAuthProvider
+                        clientId={
+                          process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ''
+                        }
+                      >
+                        <MyCustomGoogleLogin />
+                      </GoogleOAuthProvider>
+                    </Box>
                   </Grid>
                 </Grid>
               </Grid>
-
               <Grid item textAlign="center">
                 <Typography
                   fontSize="16px"

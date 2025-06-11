@@ -24,10 +24,10 @@ interface SearchTypeModalProps {
   onSelect: (type: string) => void;
 }
 
-const searchTypes = [
+const searchTypes: any[] = [
   // { type: 'author', label: 'Author', icon: 'A' },
   // { type: 'publisher', label: 'Publisher', icon: 'P' },
-  { type: 'language', label: 'Language', icon: 'L' },
+  // { type: 'language', label: 'Language', icon: 'L' },
 ];
 
 const SearchTypeModal: React.FC<SearchTypeModalProps> = ({

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import Grid from '@mui/material/Grid2';
+// import Grid from '@mui/material/Grid2';
 import Layout from '../component/layout/layout';
-import { Box, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Typography, useMediaQuery, useTheme, Grid } from '@mui/material';
 import Banner from '../component/Banner';
 import FooterText from '../component/FooterText';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
@@ -9,6 +9,8 @@ import CallOutlinedIcon from '@mui/icons-material/CallOutlined';
 import { commonStyles } from '../utils/commonStyle';
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 import landingBanner2 from '../../assets/images/png/2.png';
+import atreelogo from '../../assets/images/ATREE.png';
+import Image from 'next/image';
 
 export default function Aboutus() {
   const theme = useTheme();
@@ -46,8 +48,8 @@ export default function Aboutus() {
             textAlign: 'left',
             fontWeight: { xs: 500, md: 400 },
             fontSize: { xs: '14px', md: '16px' },
-            pl: { xs: 2, md: 10 },
-            pr: { xs: 2, md: 10 },
+            pl: { xs: 3, md: 10 },
+            pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
           }}
         >
@@ -57,8 +59,8 @@ export default function Aboutus() {
         <Typography
           sx={{
             textAlign: { xs: 'left', md: 'left' },
-            pl: { xs: 2, md: 10 },
-            pr: { xs: 2, md: 10 },
+            pl: { xs: 3, md: 10 },
+            pr: { xs: 3, md: 10 },
             fontSize: { xs: '14px', md: '16px' },
             fontFamily: 'Poppins',
             color: '#000000',
@@ -74,8 +76,8 @@ export default function Aboutus() {
         <Typography
           sx={{
             textAlign: { xs: 'left', md: 'left' },
-            pl: { xs: 2, md: 10 },
-            pr: { xs: 2, md: 10 },
+            pl: { xs: 3, md: 10 },
+            pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
             color: '#000000',
             fontSize: { xs: '14px', md: '16px' },
@@ -92,8 +94,8 @@ export default function Aboutus() {
         <Typography
           sx={{
             textAlign: { xs: 'left', md: 'left' },
-            pl: { xs: 2, md: 10 },
-            pr: { xs: 2, md: 10 },
+            pl: { xs: 3, md: 10 },
+            pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
             color: '#000000',
             fontSize: { xs: '14px', md: '16px' },
@@ -110,8 +112,8 @@ export default function Aboutus() {
         <Typography
           sx={{
             textAlign: { xs: 'left', md: 'left' },
-            pl: { xs: 2, md: 10 },
-            pr: { xs: 2, md: 10 },
+            pl: { xs: 3, md: 10 },
+            pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
             color: '#000000',
             fontSize: { xs: '14px', md: '16px' },
@@ -127,8 +129,8 @@ export default function Aboutus() {
         <Typography
           sx={{
             textAlign: { xs: 'left', md: 'left' },
-            pl: { xs: 2, md: 10 },
-            pr: { xs: 2, md: 10 },
+            pl: { xs: 3, md: 10 },
+            pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
             color: '#000000',
             fontSize: { xs: '14px', md: '16px' },
@@ -141,13 +143,14 @@ export default function Aboutus() {
           state and non-state actors across India. We welcome your suggestions
           to help us continue improving and expanding this collection!
         </Typography>
+        <br></br>
         <Typography
           sx={{
             textAlign: 'left',
             fontWeight: { xs: 400, md: 400 },
             fontSize: { xs: '14px', md: '16px' },
-            pl: { xs: 2, md: 10 },
-            pr: { xs: 2, md: 10 },
+            pl: { xs: 3, md: 10 },
+            pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
             color: '#000000',
           }}
@@ -157,8 +160,8 @@ export default function Aboutus() {
         <Typography
           sx={{
             textAlign: { xs: 'left', md: 'left' },
-            pl: { xs: 2, md: 10 },
-            pr: { xs: 2, md: 10 },
+            pl: { xs: 3, md: 10 },
+            pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
             color: '#000000',
             fontSize: { xs: '14px', md: '16px' },
@@ -169,14 +172,14 @@ export default function Aboutus() {
           <br></br>
           Dr. Kamal Bawa for his encouraging mentorship
         </Typography>
-
+        <br></br>
         <Typography
           sx={{
             textAlign: 'left',
             fontWeight: { xs: 400, md: 400 },
             fontSize: { xs: '14px', md: '16px' },
-            pl: { xs: 2, md: 10 },
-            pr: { xs: 2, md: 10 },
+            pl: { xs: 3, md: 10 },
+            pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
             color: '#000000',
           }}
@@ -186,8 +189,8 @@ export default function Aboutus() {
         <Typography
           sx={{
             textAlign: { xs: 'left', md: 'left' },
-            pl: { xs: 2, md: 10 },
-            pr: { xs: 2, md: 10 },
+            pl: { xs: 3, md: 10 },
+            pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
             color: '#000000',
             fontSize: { xs: '14px', md: '16px' },
@@ -198,14 +201,14 @@ export default function Aboutus() {
           <br></br>
           Irani : Research Associate, ATREE Academy
         </Typography>
-
+        <br></br>
         <Typography
           sx={{
             textAlign: 'left',
             fontWeight: { xs: 400, md: 400 },
             fontSize: { xs: '14px', md: '16px' },
-            pl: { xs: 2, md: 10 },
-            pr: { xs: 2, md: 10 },
+            pl: { xs: 3, md: 10 },
+            pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
             color: '#000000',
           }}
@@ -215,8 +218,8 @@ export default function Aboutus() {
         <Typography
           sx={{
             textAlign: { xs: 'left', md: 'left' },
-            pl: { xs: 2, md: 10 },
-            pr: { xs: 2, md: 10 },
+            pl: { xs: 3, md: 10 },
+            pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
             color: '#000000',
             fontSize: { xs: '14px', md: '16px' },
@@ -237,85 +240,140 @@ export default function Aboutus() {
           project
         </Typography>
 
-        <Typography
+        <Box
           sx={{
-            textAlign: 'left',
-            fontWeight: { xs: 400, md: 400 },
-            fontSize: { xs: '14px', md: '16px' },
-            pl: { xs: 2, md: 10 },
-            pr: { xs: 2, md: 10 },
-            fontFamily: 'Poppins',
-            color: '#000000',
+            width: '100%',
+            boxSizing: 'border-box',
+            px: { xs: 2, md: 10 },
+            mt: 4,
+            // paddingRight: { xs: 0, md: '20%' },
+            // paddingLeft: { xs: 0, md: '20%' },
           }}
         >
-          <b>Contact us:</b>
-        </Typography>
-        <Typography
-          sx={{
-            textAlign: { xs: 'left', md: 'left' },
-            pl: { xs: 2, md: 10 },
-            pr: { xs: 2, md: 10 },
-            mb: 1,
-            fontFamily: 'Poppins',
-            color: '#000000',
-            fontSize: { xs: '14px', md: '16px' },
-            fontWeight: 400,
-          }}
-        >
-          Please feel free to reach out to us with suggestions, comments and
-          feedback!
-        </Typography>
-        <Box sx={{ pl: { xs: 2, md: 10 }, pr: { xs: 2, md: 10 } }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <AlternateEmailIcon
-              sx={{ mr: 1, fontSize: { xs: '14px', md: '16px' } }}
-            />
-            <Typography
-              sx={{
-                fontFamily: 'Poppins',
-                color: '#000000',
-                fontSize: { xs: '14px', md: '16px' },
-                fontWeight: 400,
-              }}
+          <Box
+            sx={{
+              width: '100%',
+              boxSizing: 'border-box',
+              border: '1px solid #ccc',
+              px: { xs: 2, md: 4 },
+              py: { xs: 3, md: 4 },
+            }}
+          >
+            <Grid
+              container
+              spacing={4}
+              direction={isMobile ? 'column' : 'row'}
+              alignItems="center"
+              justifyContent="center"
             >
-              envedu@atree.org
-            </Typography>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <LocationOnOutlinedIcon
-              sx={{ mr: 1, fontSize: { xs: '14px', md: '16px' } }}
-            />
-            <Typography
-              sx={{
-                fontFamily: 'Poppins',
-                color: '#000000',
-                fontSize: { xs: '14px', md: '16px' },
-                fontWeight: 400,
-              }}
-            >
-              Ashoka Trust for Research in Ecology and the Environment (ATREE),
-              Royal Enclave, Srirampura, Jakkur, Bengaluru, Karnataka 560064.
-            </Typography>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <CallOutlinedIcon
-              sx={{
-                mr: 1,
-                fontFamily: 'Poppins',
-                color: '#000000',
-                fontSize: { xs: '14px', md: '16px' },
-              }}
-            />
-            <Typography
-              sx={{
-                fontFamily: 'Poppins',
-                color: '#000000',
-                fontSize: { xs: '14px', md: '16px' },
-                fontWeight: 400,
-              }}
-            >
-              Phone: +91-80-23635555
-            </Typography>
+              {/* Logo Section */}
+              <Grid
+                item
+                xs={12}
+                md={3}
+                sx={{
+                  display: 'flex',
+                  justifyContent: { xs: 'center', md: 'flex-start' },
+                }}
+              >
+                <Box
+                  sx={{
+                    width: { xs: '120px', md: '200px' },
+                    height: { xs: '120px', md: '200px' },
+                    position: 'relative',
+                  }}
+                >
+                  <Image
+                    src={atreelogo}
+                    alt="Organization Logo"
+                    fill
+                    style={{ objectFit: 'contain' }}
+                  />
+                </Box>
+              </Grid>
+
+              {/* Contact Info Section */}
+              <Grid
+                item
+                xs={12}
+                md={4}
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  textAlign: { xs: 'center', md: 'left' },
+                }}
+              >
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    // gap: 1,
+                    px: { xs: 1, md: 2 },
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontWeight: 900,
+                      fontSize: { xs: '14px', md: '16px' },
+                      fontFamily: 'Poppins',
+                      color: '#000',
+                    }}
+                  >
+                    <b>Contact Us:</b>
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      fontSize: { xs: '14px', md: '16px' },
+                      fontFamily: 'Poppins',
+                      color: '#000',
+                    }}
+                  >
+                    Ashoka Trust for Research in Ecology and the Environment
+                    (ATREE), Royal Enclave, Srirampura, Jakkur, Bengaluru,
+                    Karnataka 560064.
+                  </Typography>
+
+                  <Typography sx={{ fontFamily: 'Poppins' }}>
+                    +91-80-23635555
+                  </Typography>
+                  <Typography sx={{ fontFamily: 'Poppins' }}>
+                    envedu@atree.org | www.atree.org
+                  </Typography>
+                </Box>
+              </Grid>
+
+              {/* Map Section */}
+              <Grid
+                item
+                xs={12}
+                md={4}
+                sx={{
+                  display: 'flex',
+                  justifyContent: { xs: 'center', md: 'flex-end' },
+                }}
+              >
+                <Box
+                  sx={{
+                    width: { xs: '100%', md: '100%' },
+                    height: { xs: '250px', md: '300px' },
+                    overflow: 'hidden',
+                    px: { xs: 0, md: 2 },
+                  }}
+                >
+                  <iframe
+                    title="Google Map"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0, borderRadius: '8px' }}
+                    loading="lazy"
+                    allowFullScreen
+                    referrerPolicy="no-referrer-when-downgrade"
+                    src="https://www.google.com/maps?q=Royal+Enclave,+Srirampura,+Jakkur,+Bengaluru,+Karnataka+560064&output=embed"
+                  ></iframe>
+                </Box>
+              </Grid>
+            </Grid>
           </Box>
         </Box>
       </Grid>
