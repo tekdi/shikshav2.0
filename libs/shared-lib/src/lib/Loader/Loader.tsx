@@ -18,7 +18,7 @@ const MOBILE_PADDING_MAP: Record<string, string> = {
   '/quick-access': '132px',
   '/quick-access/[category]': '132px',
   '/quick-access/contents/[category]': '132px',
-  '/termsandcondition': '76px',
+  '/termsandcondition': '70px',
   '/aboutus': '76px',
   '/register': '52px',
   '/searchpage': '80px',

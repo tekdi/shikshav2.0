@@ -16,7 +16,7 @@ export default function FooterText({ page }: FooterTextProps) {
         align="center"
         gutterBottom
         fontFamily="poppins"
-        sx={{ fontSize: { xs: '9px', md: '14px', fontWeight: 400 } }}
+        sx={{ fontSize: { xs: '8px', md: '14px', fontWeight: 400 } }}
       >
         Curated by Ashoka Trust for Research in Ecology and the Environment
         (ATREE): For, Of, and By Environment Educators of India

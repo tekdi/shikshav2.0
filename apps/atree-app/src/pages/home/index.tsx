@@ -414,7 +414,7 @@ export default function Index() {
 
   return (
     <Layout isLoadingChildren={isLoadingChildren}>
-      <Box display="flex" flexDirection="column" gap="1rem" py="1rem" px="8px">
+      <Box display="flex" flexDirection="column" gap="1rem" py="1rem" >
         {!isMobile ? (
           <Grid container spacing={2} sx={{ padding: '25px' }}>
             <Grid size={{ xs: 3 }}>
@@ -550,7 +550,7 @@ export default function Index() {
                   renderValue={(selected) => {
                     if (!selected || selected === '') {
                       return (
-                        <span style={{ color: '#999', fontStyle: 'italic' }}>
+                        <span style={{ color: '#999' }}>
                           Browse by Sub Categories
                         </span>
                       );
@@ -569,7 +569,7 @@ export default function Index() {
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    border: '2px solid #000',
+                    border: '1px solid #000',
                   }}
                   MenuProps={{
                     PaperProps: {
@@ -580,9 +580,6 @@ export default function Index() {
                     },
                   }}
                 >
-                  <MenuItem value="" disabled>
-                    Browse by Sub Categories
-                  </MenuItem>
                   {subFrameworkFilter?.map((item) => (
                     <MenuItem key={item.identifier} value={item.identifier}>
                       {item.name}
@@ -911,14 +908,14 @@ const FrameworkFilter = React.memo<{
         ref={scrollRef}
         sx={{
           display: 'flex',
-          gap: 1,
+        
           overflowX: 'auto',
           flex: 1,
           scrollbarWidth: 'none',
           '&::-webkit-scrollbar': { display: 'none' },
         }}
       >
-        {frameworkFilter?.map((frameworkItem, index) => (
+        {frameworkFilter?.map((frameworkItem) => (
           <Box
             key={frameworkItem.identifier}
             onClick={() => handleItemClick(frameworkItem)}
@@ -929,13 +926,10 @@ const FrameworkFilter = React.memo<{
               fontWeight: framework === frameworkItem.identifier ? 700 : 500,
               color:
                 framework === frameworkItem.identifier ? 'black' : '#5E5E5E',
-              borderRight:
-                index !== frameworkFilter.length - 1
-                  ? '2px solid black'
-                  : 'none',
+              
               whiteSpace: 'nowrap',
               minWidth: 'fit-content',
-              px: 2,
+              px: 1,
               backgroundColor: 'transparent',
               '&:hover': {
                 color: '#000',

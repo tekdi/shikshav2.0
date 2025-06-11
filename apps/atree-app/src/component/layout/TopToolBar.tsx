@@ -284,13 +284,13 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                           alignItems: 'center',
                           gap: 1.5,
                           px: 2,
-                          py: '6px',
+                          py: '4px',
                           borderRadius: '10px',
                           border: '1px solid',
                           borderColor: 'divider',
-                          backgroundColor: 'action.hover',
+                        
                           '&:hover': {
-                            backgroundColor: 'action.hover',
+                           
                             cursor: 'text',
                           },
                           width: '100%',
