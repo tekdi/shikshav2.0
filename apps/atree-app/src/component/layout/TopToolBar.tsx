@@ -288,7 +288,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                           borderRadius: '10px',
                           border: '1px solid',
                           borderColor: 'divider',
-                          backgroundColor: 'background.paper',
+                          backgroundColor: 'action.hover',
                           '&:hover': {
                             backgroundColor: 'action.hover',
                             cursor: 'text',
