@@ -31,12 +31,12 @@ export default function Aboutus() {
           sx={{
             textAlign: 'center',
             lineHeight: { xs: '30px', md: '64px' },
-            fontWeight: { xs: 500, md: 500 },
-            fontSize: { xs: '24px', md: '57px' },
+            fontWeight: { xs: 600, md: 600 },
+            fontSize: { xs: '22px', md: '57px' },
             fontFamily: 'Poppins',
             color: '#000000',
             marginTop: { xs: '20px', md: '47px' },
-            marginBottom: { xs: '20px', md: '47px' },
+            marginBottom: { xs: '10px', md: '47px' },
           }}
         >
           About Us
@@ -51,7 +51,7 @@ export default function Aboutus() {
             fontFamily: 'Poppins',
           }}
         >
-          <b>SNAIL:</b> Slow. Intentional. Transformative.
+          <b>SNAIL: Slow. Intentional. Transformative</b>
         </Typography>
         {/* About Us Description */}
         <Typography
@@ -59,17 +59,17 @@ export default function Aboutus() {
             textAlign: { xs: 'left', md: 'left' },
             pl: { xs: 2, md: 10 },
             pr: { xs: 2, md: 10 },
-            fontSize: '16px',
+            fontSize: { xs: '14px', md: '16px' },
             fontFamily: 'Poppins',
             color: '#000000',
             fontWeight: 400,
           }}
         >
-          We are a collective of passionate environmental educators based at
-          ATREE (Ashoka Trust for Research in Ecology and the Environment) in
-          Bengaluru, India. At SNAIL – the School of Nature, Action, Inquiry,
-          and Learning, we champion place-based environmental education which is
-          hands- on, local, and rooted in real-world experiences.
+          S.N.A.I.L stands for the School of Nature, Action, Inquiry, and
+          Learning; wherein we reclaim the original meaning of the word ‘school’
+          -- a place of discussion and learning. SNAIL is an initiative of
+          Ashoka Trust for Research in Ecology and the Environment (ATREE)
+          Academy, Bengaluru, India.
         </Typography>
         <Typography
           sx={{
@@ -78,17 +78,68 @@ export default function Aboutus() {
             pr: { xs: 2, md: 10 },
             fontFamily: 'Poppins',
             color: '#000000',
-            fontSize: '16px',
+            fontSize: { xs: '14px', md: '16px' },
             fontWeight: 400,
           }}
         >
-          Our mission is to enrich school-level curricula and pedagogy across
-          India by helping children engage meaningfully with the natural world
-          around them—whether in bustling urban neighborhoods or quiet rural
-          landscapes. We believe that such immersive, context-rich learning
-          doesn’t just teach children about nature or the links between society
-          and the environment—it empowers them to take ecological and civic
-          action with hope and passion in our times of extreme climate change.
+          Its vision is to enrich Place Based Environment Education (PBEE) at
+          school level in India by offering curriculum and pedagogy related
+          inputs. Towards this vision, it offers training, workshops, resources,
+          and a growing network of environmental education organisations in
+          India that inspire children with knowledge, hope, and action to care
+          for their local natural resources.
+        </Typography>
+        <Typography
+          sx={{
+            textAlign: { xs: 'left', md: 'left' },
+            pl: { xs: 2, md: 10 },
+            pr: { xs: 2, md: 10 },
+            fontFamily: 'Poppins',
+            color: '#000000',
+            fontSize: { xs: '14px', md: '16px' },
+            fontWeight: 400,
+          }}
+        >
+          The digital repository contains multilingual, multi-format teaching-
+          learning resources that are contextual to India’s biodiversity. These,
+          peer-reviewed, annotated resources support STEAM (Science, Technology,
+          Engineering, Arts, and Maths) education that promotes
+          interdisciplinary learning, while encouraging students to apply what
+          they learn to help solve complex environmental issues locally.
+        </Typography>
+        <Typography
+          sx={{
+            textAlign: { xs: 'left', md: 'left' },
+            pl: { xs: 2, md: 10 },
+            pr: { xs: 2, md: 10 },
+            fontFamily: 'Poppins',
+            color: '#000000',
+            fontSize: { xs: '14px', md: '16px' },
+            fontWeight: 400,
+          }}
+        >
+          We encourage you to explore our curated collection of engaging and
+          relevant environment education resources. Browse through picture
+          books, activity books, worksheets, teachers’ manuals, textbook
+          chapters, classroom posters, board games, comic books, graphic novels,
+          magazines, websites, field guides, stories, songs, films and more.
+        </Typography>
+        <Typography
+          sx={{
+            textAlign: { xs: 'left', md: 'left' },
+            pl: { xs: 2, md: 10 },
+            pr: { xs: 2, md: 10 },
+            fontFamily: 'Poppins',
+            color: '#000000',
+            fontSize: { xs: '14px', md: '16px' },
+            fontWeight: 400,
+          }}
+        >
+          This growing repository welcomes contributions from all dedicated to
+          promoting environment education content at middle and high school
+          level in India. It currently features resources sourced from over 70
+          state and non-state actors across India. We welcome your suggestions
+          to help us continue improving and expanding this collection!
         </Typography>
         <Typography
           sx={{
@@ -101,7 +152,7 @@ export default function Aboutus() {
             color: '#000000',
           }}
         >
-          <b>What We Offer</b>
+          <b>Leadership Support:</b>
         </Typography>
         <Typography
           sx={{
@@ -110,26 +161,15 @@ export default function Aboutus() {
             pr: { xs: 2, md: 10 },
             fontFamily: 'Poppins',
             color: '#000000',
-            fontSize: '16px',
+            fontSize: { xs: '14px', md: '16px' },
             fontWeight: 400,
           }}
         >
-          Our Digital Hub of Education Resources is a dynamic space designed for
-          educators looking to bring place-based learning into their classrooms.
-          It features:
+          Anita Arjundas for her vision, guidance, and administrative support
           <br></br>
-          Peer-reviewed, multilingual, multi-format teaching learning resources
-          <br></br>
-          Age- and context-adaptable curricula
-          <br></br>
-          Real-world activities and case studies
-          <br></br>
-          Facilitation guides, toolkits, and educator training modules
-          <br></br>
-          This hub is more than a repository—it&#39;s a growing, collaborative
-          space for learning, dialogue, and shared inquiry, inspired by the
-          original spirit of what a school can be.
+          Dr. Kamal Bawa for his encouraging mentorship
         </Typography>
+
         <Typography
           sx={{
             textAlign: 'left',
@@ -141,7 +181,7 @@ export default function Aboutus() {
             color: '#000000',
           }}
         >
-          <b> Our Network</b>
+          <b>Team:</b>
         </Typography>
         <Typography
           sx={{
@@ -150,30 +190,68 @@ export default function Aboutus() {
             pr: { xs: 2, md: 10 },
             fontFamily: 'Poppins',
             color: '#000000',
-            fontSize: '16px',
+            fontSize: { xs: '14px', md: '16px' },
             fontWeight: 400,
           }}
         >
-          We are proud to collaborate with over 60 leading environmental
-          organizations across India—spanning both public and non-profit
-          sectors—as well as an inspiring community of educators and
-          conservationists. Together, we’re working to create a future where
-          every child can grow up connected to their environment and equipped to
-          care for it.
+          Pallavi Varma Patil: Lead, Environment Education, ATREE Academy Rushad
+          <br></br>
+          Irani : Research Associate, ATREE Academy
         </Typography>
+
         <Typography
           sx={{
-            textAlign: { xs: 'left', md: 'left' },
+            textAlign: 'left',
             fontWeight: { xs: 400, md: 400 },
             fontSize: { xs: '14px', md: '16px' },
             pl: { xs: 2, md: 10 },
             pr: { xs: 2, md: 10 },
-            whiteSpace: 'pre-line',
             fontFamily: 'Poppins',
             color: '#000000',
           }}
         >
-          Get in Touch
+          <b>Acknowledgments:</b>
+        </Typography>
+        <Typography
+          sx={{
+            textAlign: { xs: 'left', md: 'left' },
+            pl: { xs: 2, md: 10 },
+            pr: { xs: 2, md: 10 },
+            fontFamily: 'Poppins',
+            color: '#000000',
+            fontSize: { xs: '14px', md: '16px' },
+            fontWeight: 400,
+          }}
+        >
+          We sincerely thank the following for their generous support in terms
+          of time, resources, and commitment:
+          <br></br>
+          <b>Funding Support:</b> Patrick J McGovern Foundation and Rainmatter
+          Foundation
+          <br></br>
+          <b>Technical Support:</b> Vijay Rasquinha, Teerath Rawat, ATREE for
+          their valuable technical and design expertise. TEKDI Technologies for
+          their execution of the project
+          <br></br>
+          <b>Content Support:</b> Public and Private school teachers who
+          actively participated in the ‘Jal-Jungle-Jameen in classrooms’
+          workshops;, partner NGOs; middle school students; volunteers, and
+          part-time consultants (Madhushri, Ankit, Vaishnavi, Angela) of the
+          project
+        </Typography>
+
+        <Typography
+          sx={{
+            textAlign: 'left',
+            fontWeight: { xs: 400, md: 400 },
+            fontSize: { xs: '14px', md: '16px' },
+            pl: { xs: 2, md: 10 },
+            pr: { xs: 2, md: 10 },
+            fontFamily: 'Poppins',
+            color: '#000000',
+          }}
+        >
+          <b>Contact us:</b>
         </Typography>
         <Typography
           sx={{
@@ -183,20 +261,23 @@ export default function Aboutus() {
             mb: 1,
             fontFamily: 'Poppins',
             color: '#000000',
-            fontSize: '16px',
+            fontSize: { xs: '14px', md: '16px' },
             fontWeight: 400,
           }}
         >
-          We’d love to hear from you!
+          Please feel free to reach out to us with suggestions, comments and
+          feedback!
         </Typography>
         <Box sx={{ pl: { xs: 2, md: 10 }, pr: { xs: 2, md: 10 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <AlternateEmailIcon sx={{ mr: 1, fontSize: '18px' }} />
+            <AlternateEmailIcon
+              sx={{ mr: 1, fontSize: { xs: '14px', md: '16px' } }}
+            />
             <Typography
               sx={{
                 fontFamily: 'Poppins',
                 color: '#000000',
-                fontSize: '18px',
+                fontSize: { xs: '14px', md: '16px' },
                 fontWeight: 400,
               }}
             >
@@ -204,17 +285,19 @@ export default function Aboutus() {
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <LocationOnOutlinedIcon sx={{ mr: 1, fontSize: '18px' }} />
+            <LocationOnOutlinedIcon
+              sx={{ mr: 1, fontSize: { xs: '14px', md: '16px' } }}
+            />
             <Typography
               sx={{
                 fontFamily: 'Poppins',
                 color: '#000000',
-                fontSize: '18px',
+                fontSize: { xs: '14px', md: '16px' },
                 fontWeight: 400,
               }}
             >
-              ATREE, Royal Enclave, Srirampura, Jakkur, Bengaluru, Karnataka
-              560064
+              Ashoka Trust for Research in Ecology and the Environment (ATREE),
+              Royal Enclave, Srirampura, Jakkur, Bengaluru, Karnataka 560064.
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -223,18 +306,18 @@ export default function Aboutus() {
                 mr: 1,
                 fontFamily: 'Poppins',
                 color: '#000000',
-                fontSize: '18px',
+                fontSize: { xs: '14px', md: '16px' },
               }}
             />
             <Typography
               sx={{
                 fontFamily: 'Poppins',
                 color: '#000000',
-                fontSize: '18px',
+                fontSize: { xs: '14px', md: '16px' },
                 fontWeight: 400,
               }}
             >
-              +91-80-23635555
+              Phone: +91-80-23635555
             </Typography>
           </Box>
         </Box>

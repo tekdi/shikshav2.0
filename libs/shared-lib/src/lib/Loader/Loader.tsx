@@ -13,7 +13,7 @@ interface LoaderProps {
 const MOBILE_PADDING_MAP: Record<string, string> = {
   '/contents/[identifier]': '68px',
   '/contents': '60px',
-  '/home': '47px',
+  '/home': '40px',
   '/': '40px',
   '/quick-access': '132px',
   '/quick-access/[category]': '132px',
@@ -64,19 +64,22 @@ const getPaddingTop = (isMobile: boolean, router: any): string => {
 
     const hasLoginError = window.location.hash.includes('error=login_required');
     if (hasLoginError && !router.pathname.includes('searchpage')) {
-      return '76px';
+      return '40px';
     }
     if (router.pathname === '/searchpage' && hasLoginError) {
       return '97px';
     }
+     if (router.pathname === '/' && hasLoginError) {
+       return '65px';
+     }
     if (router.pathname === '/home' && router.query.category) {
-      return '47px';
+      return '40px';
     }
     if (
       router.pathname === '/home' &&
       window.location.hash.includes('error=login_required')
     ) {
-      return '47px';
+      return '50px';
     }
     if (
       router.pathname === '/termsandcondition' &&

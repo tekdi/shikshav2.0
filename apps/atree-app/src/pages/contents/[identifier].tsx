@@ -787,7 +787,7 @@ export default function Content() {
                 display: 'flex',
                 flexDirection: 'column',
                 pt: '18px',
-                marginBottom: '15%',
+                // marginBottom: '15%',
               }}
             >
               <Box sx={{ px: 2 }}>
@@ -818,11 +818,11 @@ export default function Content() {
                   >
                     <ArrowBackIcon />
                   </IconButton>
-                  {subFrameworkFilter && subFrameworkFilter.length > 0 && (
+                  {/* {subFrameworkFilter && subFrameworkFilter.length > 0 && (
                     <Title>Browse by Sub Categories</Title>
-                  )}
+                  )} */}
                 </Box>
-                <Box
+                {/* <Box
                   sx={{
                     width: '100%',
                     padding: '12px 0px',
@@ -837,7 +837,8 @@ export default function Content() {
                     lastButton={true}
                     subFrameworkFilter={subFrameworkFilter || []}
                   />
-                </Box>
+                </Box> */}
+                <br></br>
                 <ImageCard
                   image={contentData?.appicon ?? landingBanner?.src}
                   name={
@@ -857,11 +858,12 @@ export default function Content() {
               <Box
                 sx={{
                   display: 'flex',
-                  flexDirection: 'column',
-                  gap: 2,
+                  flexDirection: 'row',
+                  // gap: 2,
+                  flexWrap: 'nowrap',
+                  justifyContent: 'space-between',
                   width: '100%',
-                  textTransform: 'none',
-                  alignItems: 'center',
+                  overflowX: 'auto',
                 }}
               >
                 <Button
@@ -874,77 +876,80 @@ export default function Content() {
                   sx={{
                     borderRadius: '50px',
                     height: '40px',
-                    flex: 0.3,
-                    width: '100%',
-                    fontSize: '14px',
+                    fontSize: '10px',
                     fontWeight: 500,
                     textTransform: 'none',
-                    maxWidth: '344px',
+                    minWidth: '100px',
+                    flexShrink: 0,
                   }}
                   startIcon={<VisibilityOutlinedIcon />}
                   onClick={handlePreview}
                 >
                   Preview
                 </Button>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    gap: 1,
-                    width: '100%',
-                    maxWidth: '300px',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    sx={{
-                      borderRadius: '50px',
-                      height: '40px',
-                      flex: 1,
-                      color: 'black',
-                      fontSize: '14px',
-                      fontWeight: 500,
-                      textTransform: 'none',
-                      width: '48%',
-                    }}
-                    startIcon={<FileDownloadOutlinedIcon />}
-                    onClick={handleOnDownload}
-                    disabled={
-                      contentData?.access?.trim() === 'Sample' ||
-                      contentData?.access?.trim() === 'Link'
-                    }
-                  >
-                    Download
-                  </Button>
 
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    sx={{
-                      borderRadius: '50px',
-                      height: '40px',
-                      flex: 1,
-                      color: 'black',
-                      fontSize: '14px',
-                      fontWeight: 500,
-                      textTransform: 'none',
-                      width: '48%',
-                      whiteSpace: 'nowrap',
-                    }}
-                    startIcon={<LinkOutlinedIcon />}
-                    disabled={
-                      (contentData?.access?.trim() === 'Sample' ||
-                        contentData?.access?.trim() === 'Full') &&
-                      !contentData?.url
-                    }
-                    onClick={handleOnCLick}
-                  >
-                    Resource Link
-                  </Button>
-                </Box>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  sx={{
+                    borderRadius: '50px',
+                    height: '40px',
+                    color: 'black',
+                    fontSize: '10px',
+                    fontWeight: 500,
+                    textTransform: 'none',
+                    minWidth: '100px',
+                    flexShrink: 0,
+                  }}
+                  startIcon={<FileDownloadOutlinedIcon />}
+                  onClick={handleOnDownload}
+                  disabled={
+                    contentData?.access?.trim() === 'Sample' ||
+                    contentData?.access?.trim() === 'Link'
+                  }
+                >
+                  Download
+                </Button>
+
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  sx={{
+                    borderRadius: '50px',
+                    height: '40px',
+                    color: 'black',
+                    fontSize: '10px',
+                    fontWeight: 500,
+                    textTransform: 'none',
+                    minWidth: '120px',
+                    flexShrink: 0,
+                    whiteSpace: 'nowrap',
+                  }}
+                  startIcon={<LinkOutlinedIcon />}
+                  disabled={
+                    (contentData?.access?.trim() === 'Sample' ||
+                      contentData?.access?.trim() === 'Full') &&
+                    !contentData?.url
+                  }
+                  onClick={handleOnCLick}
+                >
+                  Resource Link
+                </Button>
               </Box>
 
+              <Typography
+                variant="body1"
+                sx={{
+                  mt: 0,
+                  textAlign: 'left',
+                  fontFamily: 'Arial',
+                  lineHeight: '18px',
+                  fontWeight: '800',
+                  fontSize: '18px',
+                }}
+              >
+                {contentData?.name ?? ''}
+              </Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 {displayedKeywords?.map((label: any, index: any) => (
                   <Chip
@@ -964,7 +969,12 @@ export default function Content() {
 
               <Typography
                 variant="body1"
-                sx={{ mt: 0, textAlign: 'left', fontFamily: 'Arial' }}
+                sx={{
+                  mt: 0,
+                  textAlign: 'left',
+                  fontFamily: 'Arial',
+                  lineHeight: '18px',
+                }}
               >
                 {contentData?.description ?? ''}
               </Typography>
@@ -974,6 +984,7 @@ export default function Content() {
                   variant="body1"
                   textAlign="left"
                   fontFamily={'Arial'}
+                  lineHeight={'18px'}
                 >
                   <b>Author:</b> {contentData?.author || ''}
                 </Typography>
@@ -981,6 +992,7 @@ export default function Content() {
                   variant="body1"
                   textAlign="left"
                   fontFamily={'Arial'}
+                  lineHeight={'18px'}
                 >
                   <b>Publisher:</b> {contentData?.publisher ?? ''}
                 </Typography>
@@ -988,6 +1000,7 @@ export default function Content() {
                   variant="body1"
                   textAlign="left"
                   fontFamily={'Arial'}
+                  lineHeight={'18px'}
                 >
                   {contentData?.year ?? 'n.d.'}
                 </Typography>
@@ -1055,7 +1068,7 @@ export default function Content() {
               </Button>
             </DialogActions>
           </Dialog>
-          {!isMobile ? <FooterText page="" /> : <Footer />}
+          <FooterText page="" />
         </Layout>
       ) : (
         <Loader />

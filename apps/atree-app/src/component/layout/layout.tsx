@@ -460,8 +460,8 @@ export default function Layout({
       <Loader isLoading={isLoadingChildren} layoutHeight={layoutHeight}>
         {children}
       </Loader>
-      {!isAuthPage && !isMobile && bottomFooter && <FooterText page="" />}
-      {!isAuthPage && isMobile && bottomFooter && <Footer />}
+      {!isAuthPage &&  bottomFooter && <FooterText page="" />}
+      {/* {!isAuthPage && isMobile && bottomFooter && <Footer />} */}
       {/* {footerComponent && (
         <Box
           ref={(refFoot) => {

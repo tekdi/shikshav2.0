@@ -25,8 +25,8 @@ const DigitalHubBanner = () => {
           fontFamily: 'Poppins',
           fontWeight: 700,
           fontSize: {
-            xs: 'clamp(14px, 2vw, 18px)',
-            sm: 'clamp(18px, 3vw, 24px)',
+            xs: 'clamp(12px, 2vw, 18px)',
+            sm: 'clamp(14px, 3vw, 24px)',
             md: 'clamp(20px, 2vw, 32px)',
             lg: '36px',
           },
@@ -35,7 +35,7 @@ const DigitalHubBanner = () => {
           whiteSpace: 'nowrap', // Prevent line break
         }}
       >
-        A digital hub of Environment Education resources contextual to India
+        India's digital hub for environment education resources
       </Typography>
     </Box>
   );

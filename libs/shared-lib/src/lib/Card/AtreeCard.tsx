@@ -160,9 +160,9 @@ export const AtreeCard: React.FC<{
                     variant="h6"
                     component="div"
                     sx={{
-                      fontWeight: 500,
-                      fontSize: { xs: '14px', md: '16px' },
-                      lineHeight: '20px',
+                      fontWeight: 600,
+                      fontSize: { xs: '12px', md: '16px' },
+                      lineHeight: { xs: '12px', md: '20px' },
                       color: '#000000',
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
@@ -187,8 +187,8 @@ export const AtreeCard: React.FC<{
                       color="text.secondary"
                       sx={{
                         fontWeight: 400,
-                        fontSize: { xs: '14px', md: '16px' },
-                        lineHeight: '20px',
+                        fontSize: { xs: '12px', md: '16px' },
+                        lineHeight: { xs: '12px', md: '20px' },
                         color: '#000000',
                         fontFamily: 'Poppins',
                       }}
@@ -203,7 +203,8 @@ export const AtreeCard: React.FC<{
                           backgroundColor: '#FCD905',
                           padding: '2px 8px',
                           fontWeight: 400,
-                          fontSize: { xs: '14px', md: '16px' },
+                          fontSize: { xs: '12px', md: '16px' },
+                          // lineHeight: { xs: '12px', md: '20px' },
                           color: '#000000',
                           fontFamily: 'Poppins',
                         }}

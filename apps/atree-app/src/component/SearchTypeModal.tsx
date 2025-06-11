@@ -25,8 +25,8 @@ interface SearchTypeModalProps {
 }
 
 const searchTypes = [
-  { type: 'author', label: 'Author', icon: 'A' },
-  { type: 'publisher', label: 'Publisher', icon: 'P' },
+  // { type: 'author', label: 'Author', icon: 'A' },
+  // { type: 'publisher', label: 'Publisher', icon: 'P' },
   { type: 'language', label: 'Language', icon: 'L' },
 ];
 

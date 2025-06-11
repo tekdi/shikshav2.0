@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 //@ts-nocheck
 'use client';
-
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CloseIcon from '@mui/icons-material/Close';
@@ -20,6 +19,10 @@ import {
   useMediaQuery,
   useTheme,
   Stack,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import {
@@ -31,7 +34,7 @@ import {
   trackEvent,
 } from '@shared-lib';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import atreeLogo from '../../../assets/images/placeholder.jpg';
 import Layout from '../../component/layout/layout';
 import { useTranslation } from 'react-i18next';
@@ -43,7 +46,8 @@ import Footer from '../../component/layout/Footer';
 import Link from 'next/link';
 import { TelemetryEventType } from '../../utils/app.constant';
 import { telemetryFactory } from '../../utils/telemetry';
-
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 const buttonColors = {
   water: '#0E28AE',
   land: '#8F4A50',
@@ -370,6 +374,43 @@ export default function Index() {
     }
     return undefined;
   };
+  useEffect(() => {
+    if (subFramework) {
+      const selectedSubFramework = subFrameworkFilter.find(
+        (item) => item.identifier === subFramework
+      );
+
+      if (selectedSubFramework) {
+        const newFilters = {
+          ...filters.request.filters,
+          topic: filterCategory ? [filterCategory] : ['Water'],
+          subTopic: [selectedSubFramework.name], // Add subTopic filter
+        };
+
+        setFilters({
+          request: {
+            filters: newFilters,
+            offset: 0,
+            limit: 5,
+          },
+        });
+
+        fetchContentData(newFilters);
+      }
+    }
+  }, [subFramework, subFrameworkFilter]);
+
+  useEffect(() => {
+    if (framework && frameworkFilter) {
+      // Reset subFramework when framework changes
+      setSubFramework(''); // Add this line
+
+      const subFrameworkData = frameworkFilter?.find(
+        (item: any) => item.identifier === framework
+      );
+      // ... rest of your code
+    }
+  }, [framework, frameworkFilter, frameworkName]);
 
   return (
     <Layout isLoadingChildren={isLoadingChildren}>
@@ -469,27 +510,88 @@ export default function Index() {
               framework={framework}
               setFramework={setFramework}
               fromSubcategory={false}
+              onClick={() => {
+                setFramework(item.identifier);
+                setSubFramework('');
+              }}
             />
+
             <Box
-              sx={{
+                sx={{
+                paddingTop:'5%',
+                width: '80%',
+                margin: '0 auto',
                 display: 'flex',
-                width: '100%',
-                // gap: '16px',
                 flexDirection: 'column',
-                padding: '0px',
+                alignItems: 'center',
+                // padding: 0,
               }}
             >
-              {subFrameworkFilter && subFrameworkFilter.length > 0 && (
-                <Title>{t('Browse by Sub Categories')}</Title>
-              )}
+              {/* <Typography
+                variant="h6"
+                sx={{
+                  fontSize: '14px',
+                  textAlign: 'center',
+                  mb: 1,
+                }}
+              >
+                Browse by Sub Categories
+              </Typography> */}
 
-              <SubFrameworkFilter
-                subFrameworkFilter={subFrameworkFilter || []}
-                setSubFramework={setSubFramework}
-                subFramework={subFramework}
-                lastButton={true}
-              />
+              <FormControl fullWidth sx={{ maxWidth: 400 }}>
+                <Select
+                  value={subFramework || ''}
+                  displayEmpty
+                  onChange={(e) => {
+                    const selectedValue = e.target.value;
+                    setSubFramework(selectedValue);
+                    // ... rest of your onChange logic
+                  }}
+                  renderValue={(selected) => {
+                    if (!selected || selected === '') {
+                      return (
+                        <span style={{ color: '#999', fontStyle: 'italic' }}>
+                          Browse by Sub Categories
+                        </span>
+                      );
+                    }
+                    const selectedItem = subFrameworkFilter.find(
+                      (item) => item.identifier === selected
+                    );
+                    return selectedItem ? selectedItem.name : selected;
+                  }}
+                  sx={{
+                    borderRadius: '50px',
+                    fontSize: '14px',
+                    height: 40,
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    border: '2px solid #000',
+                  }}
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        borderRadius: '16px',
+                        fontSize: '14px',
+                      },
+                    },
+                  }}
+                >
+                  <MenuItem value="" disabled>
+                    Browse by Sub Categories
+                  </MenuItem>
+                  {subFrameworkFilter?.map((item) => (
+                    <MenuItem key={item.identifier} value={item.identifier}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Box>
+
             <Box
               sx={{
                 flexDirection: 'column',
@@ -574,7 +676,7 @@ export default function Index() {
           </Button>
         </DialogActions>
       </Dialog>
-      {!isMobile ? <FooterText page="" /> : <Footer />}
+      <FooterText page="" />
     </Layout>
   );
 }
@@ -715,15 +817,14 @@ const FrameworkFilter = React.memo<{
   framework: string;
   fromSubcategory?: boolean;
   setFramework: (framework: string) => void;
-}>(function FrameworkFilter({
-  frameworkFilter,
-  framework,
-  setFramework,
-  fromSubcategory,
-}) {
+}>(({ frameworkFilter, framework, setFramework, fromSubcategory }) => {
   const router = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [showForwardArrow, setShowForwardArrow] = useState(true);
+  const hasMultipleItems = frameworkFilter?.length > 1;
+  const showArrow = hasMultipleItems && frameworkFilter?.length > 0;
 
   const transformName = (name: string) => {
     if (name === 'Water based STEM and STEM Activities') {
@@ -734,64 +835,132 @@ const FrameworkFilter = React.memo<{
     }
     return name;
   };
+
   const handleItemClick = (item: any) => {
     if (fromSubcategory) {
       localStorage.setItem('subcategory', item.name);
       router.push(`/contents`);
     } else {
       setFramework(item.identifier);
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
+
+  const handleScrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 200, behavior: 'smooth' });
+
+      // Check if we've reached the end after scrolling
+      setTimeout(() => {
+        if (scrollRef.current) {
+          const { scrollWidth, scrollLeft, clientWidth } = scrollRef.current;
+          const isAtEnd = Math.abs(scrollWidth - scrollLeft - clientWidth) < 1;
+          setShowForwardArrow(!isAtEnd);
+        }
+      }, 300); // Wait for the scroll to complete
+    }
+  };
+
+  const handleScrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -200, behavior: 'smooth' });
+
+      // Check if we've reached the start after scrolling
+      setTimeout(() => {
+        if (scrollRef.current) {
+          const { scrollLeft } = scrollRef.current;
+          const isAtStart = scrollLeft <= 1;
+          setShowForwardArrow(isAtStart);
+        }
+      }, 300); // Wait for the scroll to complete
+    }
+  };
+
+  // Initial check for scroll position
+  useEffect(() => {
+    const checkScrollPosition = () => {
+      if (scrollRef.current) {
+        const { scrollWidth, scrollLeft, clientWidth } = scrollRef.current;
+        const isAtEnd = Math.abs(scrollWidth - scrollLeft - clientWidth) < 1;
+        setShowForwardArrow(!isAtEnd);
+      }
+    };
+
+    checkScrollPosition();
+
+    // Add event listener for scroll
+    const currentRef = scrollRef.current;
+    currentRef?.addEventListener('scroll', checkScrollPosition);
+
+    return () => {
+      currentRef?.removeEventListener('scroll', checkScrollPosition);
+    };
+  }, [frameworkFilter]);
+
   return (
-    <Grid
-      container
-      spacing={1}
+    <Box
       sx={{
-        justifyContent: 'flex-start',
-        paddingX: 2,
-        marginTop: 1,
+        display: 'flex',
+        alignItems: 'center',
+        backgroundColor: '#fcd804',
+         padding: '2px 16px',
+        overflow: 'hidden',
       }}
     >
-      {frameworkFilter?.map((frameworkItem: any, index: number) => (
-        <Grid
-          key={frameworkItem.identifier}
-          item
-          xs={3} // 12 / 4 = 3 (4 items per row)
-          sm={2} // Optional: 6 per row on small+ screens
-        >
-          <Button
-            variant="text"
-            fullWidth
-            disableRipple
+      <Box
+        ref={scrollRef}
+        sx={{
+          display: 'flex',
+          gap: 1,
+          overflowX: 'auto',
+          flex: 1,
+          scrollbarWidth: 'none',
+          '&::-webkit-scrollbar': { display: 'none' },
+        }}
+      >
+        {frameworkFilter?.map((frameworkItem, index) => (
+          <Box
+            key={frameworkItem.identifier}
             onClick={() => handleItemClick(frameworkItem)}
             sx={{
+              cursor: 'pointer',
               fontFamily: 'Poppins',
-              fontSize: '14px',
-              fontWeight: framework === frameworkItem.identifier ? 'bold' : 500,
-              textTransform: 'none',
+              fontSize: { xs: '14px', sm: '16px' },
+              fontWeight: framework === frameworkItem.identifier ? 700 : 500,
               color:
-                framework !== frameworkItem.identifier ? '#4D4C4C' : '#000',
-              borderBottom:
-                framework === frameworkItem.identifier
-                  ? '2px solid #000'
-                  : '2px solid transparent',
-              borderRadius: 0,
-              paddingY: 1,
-              minWidth: 'auto',
+                framework === frameworkItem.identifier ? 'black' : '#5E5E5E',
+              borderRight:
+                index !== frameworkFilter.length - 1
+                  ? '2px solid black'
+                  : 'none',
+              whiteSpace: 'nowrap',
+              minWidth: 'fit-content',
+              px: 2,
+              backgroundColor: 'transparent',
               '&:hover': {
-                backgroundColor: 'transparent',
+                color: '#000',
+               
               },
             }}
           >
             {transformName(frameworkItem.name)}
-          </Button>
-        </Grid>
-      ))}
-    </Grid>
+          </Box>
+        ))}
+      </Box>
+
+      {showArrow && (
+        <IconButton
+          onClick={showForwardArrow ? handleScrollRight : handleScrollLeft}
+          sx={{ ml: 1 }}
+        >
+          {showForwardArrow ? (
+            <ArrowForwardIosIcon fontSize="small" />
+          ) : (
+            <ArrowBackIosIcon fontSize="small" />
+          )}
+        </IconButton>
+      )}
+    </Box>
   );
 });
 
