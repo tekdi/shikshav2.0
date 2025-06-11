@@ -226,9 +226,6 @@ export default function Aboutus() {
           We sincerely thank the following for their generous support in terms
           of time, resources, and commitment:
           <br></br>
-          <b>Funding Support:</b> Patrick J McGovern Foundation and Rainmatter
-          Foundation
-          <br></br>
           <b>Technical Support:</b> Vijay Rasquinha, Teerath Rawat, ATREE for
           their valuable technical and design expertise. TEKDI Technologies for
           their execution of the project
