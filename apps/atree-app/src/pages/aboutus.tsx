@@ -54,7 +54,7 @@ export default function Aboutus() {
         >
           <b>SNAIL: Slow. Intentional. Transformative</b>
         </Typography>
-        
+
         {/* About Us Description */}
         <Typography
           sx={{
@@ -232,6 +232,9 @@ export default function Aboutus() {
         >
           We sincerely thank the following for their generous support in terms
           of time, resources, and commitment:
+          <br></br>
+          <br></br>
+          <b>Funding Support:</b> Rainmatter Foundation
           <br></br>
           <br></br>
           <b>Technical Support:</b> Vijay Rasquinha, Teerath Rawat, ATREE for
