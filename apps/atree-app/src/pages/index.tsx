@@ -137,28 +137,6 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
   ];
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-useEffect(() => {
-  const cleanupHash = () => {
-    if (
-      window.location.hash &&
-      window.location.hash.includes('error=login_required')
-    ) {
-      history.replaceState(
-        null,
-        '',
-        window.location.pathname + window.location.search
-      );
-    }
-  };
-
-  // Run immediately in case the hash is already there
-  cleanupHash();
-
-  // Also run after a slight delay to catch late hash injection
-  const timeout = setTimeout(cleanupHash, 500);
-
-  return () => clearTimeout(timeout);
-}, []);
 
   useEffect(() => {
     const init = async () => {
