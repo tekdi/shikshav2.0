@@ -411,10 +411,19 @@ export default function Index() {
       // ... rest of your code
     }
   }, [framework, frameworkFilter, frameworkName]);
+  const transformDisplayName = (name: string) => {
+    if (name === 'Water based STEM and STEM Activities') {
+      return 'STEM and STEAM Activities';
+    }
+    if (name === 'Grassland') {
+      return 'Grasslands';
+    }
+    return name;
+  };
 
   return (
     <Layout isLoadingChildren={isLoadingChildren}>
-      <Box display="flex" flexDirection="column" gap="1rem" py="1rem" >
+      <Box display="flex" flexDirection="column" gap="1rem" py="1rem">
         {!isMobile ? (
           <Grid container spacing={2} sx={{ padding: '25px' }}>
             <Grid size={{ xs: 3 }}>
@@ -516,78 +525,74 @@ export default function Index() {
               }}
             />
 
-            <Box
+            {subFrameworkFilter && subFrameworkFilter.length > 0 && (
+              <Box
                 sx={{
-                paddingTop:'5%',
-                width: '80%',
-                margin: '0 auto',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                // padding: 0,
-              }}
-            >
-              {/* <Typography
-                variant="h6"
-                sx={{
-                  fontSize: '14px',
-                  textAlign: 'center',
-                  mb: 1,
+                  paddingTop: '5%',
+                  width: '80%',
+                  margin: '0 auto',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
                 }}
               >
-                Browse by Sub Categories
-              </Typography> */}
-
-              <FormControl fullWidth sx={{ maxWidth: 400 }}>
-                <Select
-                  value={subFramework || ''}
-                  displayEmpty
-                  onChange={(e) => {
-                    const selectedValue = e.target.value;
-                    setSubFramework(selectedValue);
-                    // ... rest of your onChange logic
-                  }}
-                  renderValue={(selected) => {
-                    if (!selected || selected === '') {
-                      return (
-                        <span style={{ color: '#999' }}>
-                          Browse by Sub Categories
-                        </span>
+                <FormControl fullWidth sx={{ maxWidth: 400 }}>
+                  <Select
+                    value={subFramework || ''}
+                    displayEmpty
+                    onChange={(e) => {
+                      const selectedValue = e.target.value;
+                      setSubFramework(selectedValue);
+                    }}
+                    renderValue={(selected) => {
+                      if (!selected || selected === '') {
+                        return (
+                          <span style={{ color: '#999' }}>
+                            Browse by Sub Categories
+                          </span>
+                        );
+                      }
+                      const selectedItem = subFrameworkFilter.find(
+                        (item) => item.identifier === selected
                       );
-                    }
-                    const selectedItem = subFrameworkFilter.find(
-                      (item) => item.identifier === selected
-                    );
-                    return selectedItem ? selectedItem.name : selected;
-                  }}
-                  sx={{
-                    borderRadius: '50px',
-                    fontSize: '14px',
-                    height: 40,
-                    fontWeight: 'bold',
-                    textAlign: 'center',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    border: '1px solid #000',
-                  }}
-                  MenuProps={{
-                    PaperProps: {
-                      sx: {
-                        borderRadius: '16px',
-                        fontSize: '14px',
+                      return selectedItem
+                        ? transformDisplayName(selectedItem.name)
+                        : selected;
+                    }}
+                    sx={{
+                      borderRadius: '50px',
+                      fontSize: '14px',
+                      height: 40,
+                      fontWeight: 'bold',
+                      textAlign: 'center',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      border: '1px solid #000',
+                    }}
+                    MenuProps={{
+                      PaperProps: {
+                        sx: {
+                          borderRadius: '16px',
+                          fontSize: '14px',
+                        },
                       },
-                    },
-                  }}
-                >
-                  {subFrameworkFilter?.map((item) => (
-                    <MenuItem key={item.identifier} value={item.identifier}>
-                      {item.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
+                    }}
+                  >
+                    {subFrameworkFilter
+                      ?.filter(
+                        (item) =>
+                          item.name !== 'Magazines, Newspapers and Websities'
+                      )
+                      .map((item) => (
+                        <MenuItem key={item.identifier} value={item.identifier}>
+                          {transformDisplayName(item.name)}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            )}
 
             <Box
               sx={{
@@ -900,7 +905,7 @@ const FrameworkFilter = React.memo<{
         display: 'flex',
         alignItems: 'center',
         backgroundColor: '#fcd804',
-         padding: '2px 16px',
+        padding: '2px 16px',
         overflow: 'hidden',
       }}
     >
@@ -908,7 +913,7 @@ const FrameworkFilter = React.memo<{
         ref={scrollRef}
         sx={{
           display: 'flex',
-        
+
           overflowX: 'auto',
           flex: 1,
           scrollbarWidth: 'none',
@@ -926,14 +931,13 @@ const FrameworkFilter = React.memo<{
               fontWeight: framework === frameworkItem.identifier ? 700 : 500,
               color:
                 framework === frameworkItem.identifier ? 'black' : '#5E5E5E',
-              
+
               whiteSpace: 'nowrap',
               minWidth: 'fit-content',
               px: 1,
               backgroundColor: 'transparent',
               '&:hover': {
                 color: '#000',
-               
               },
             }}
           >

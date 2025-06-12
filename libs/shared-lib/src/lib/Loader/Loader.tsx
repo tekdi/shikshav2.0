@@ -35,8 +35,8 @@ const DESKTOP_PADDING_MAP: Record<string, string> = {
   '/contents/[identifier]': '126px',
   '/searchpage': '118px',
   '/signin': '125px',
-  '/termsandcondition': '134px',
-  '/aboutus': '134px',
+  '/termsandcondition': '128px',
+  '/aboutus': '128px',
   // '/register': '90px',
 };
 
@@ -49,6 +49,9 @@ const getPaddingTop = (isMobile: boolean, router: any): string => {
   // }
 
   if (isMobile) {
+    if (router.pathname === '/') {
+      return '70px';
+    }
     if (
       router.pathname === '/register' &&
       window.location.hash.includes('error=login_required')
@@ -69,9 +72,9 @@ const getPaddingTop = (isMobile: boolean, router: any): string => {
     if (router.pathname === '/searchpage' && hasLoginError) {
       return '97px';
     }
-     if (router.pathname === '/' && hasLoginError) {
-       return '65px';
-     }
+    if (router.pathname === '/' && hasLoginError) {
+      return '65px';
+    }
     if (router.pathname === '/home' && router.query.category) {
       return '40px';
     }

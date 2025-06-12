@@ -129,32 +129,39 @@ export default function Content() {
       label: 'Content Details Page',
     });
     router.push(`/player/${identifier}`);
-  };
-  const handleOnDownload = async () => {
-    if (contentData?.downloadurl) {
-      try {
-        const response = await fetch(contentData?.downloadurl);
-        const blob = await response?.blob();
-        const blobUrl = window.URL.createObjectURL(blob);
 
-        const link = document.createElement('a');
-        link.href = blobUrl;
-        link.download = contentData?.name ?? ''; // Default filename
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        trackEvent({
-          action: 'download_content',
-          category: 'user',
-          label: 'Content Details Page',
-        });
-        // Revoke the blob URL after download to free up memory
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
-      } catch (error) {
-        console.error('Download failed:', error);
-      }
-    }
   };
+const handleOnDownload = async () => {
+  const downloadLink = contentData?.downloadurl || contentData?.previewUrl;
+
+  if (!downloadLink) {
+    console.error('No valid download or preview URL available');
+    return;
+  }
+
+  try {
+    const response = await fetch(downloadLink);
+    const blob = await response.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = blobUrl;
+    link.download = contentData?.name ?? 'download'; // Default filename
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    trackEvent({
+      action: 'download_content',
+      category: 'user',
+      label: 'Content Details Page',
+    });
+
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+  } catch (error) {
+    console.error('Download failed:', error);
+  }
+};
 
   const fetchContent = useCallback(
     async (updatedFilters: any) => {
@@ -165,6 +172,8 @@ export default function Content() {
         } = await getContentDetails(identifier as string);
         if (result && typeof result === 'object') {
           setContentData(result);
+              localStorage.setItem('contentData', result?.name);
+
         }
         const cleanKeywords = (
           result?.keywords?.filter((item: any) => item) ?? []
@@ -818,6 +827,23 @@ export default function Content() {
                   >
                     <ArrowBackIcon />
                   </IconButton>
+                  <IconButton
+                    onClick={handleOpen}
+                    color="primary"
+                    style={{
+                      marginLeft: 'auto',
+                      backgroundColor: 'white',
+                      color: '#2B3133',
+                      boxShadow:
+                        '-0.73px 0.73px 0.73px -1.46px rgba(255, 255, 255, 0.35) inset, 0px 8px 10px rgba(0, 0, 0, 0.05)',
+                    }}
+                  >
+                    <ShareIcon />
+                  </IconButton>
+
+                  {/* Share Dialog */}
+
+                  <ShareDialog open={open} handleClose={() => setOpen(false)} />
                   {/* {subFrameworkFilter && subFrameworkFilter.length > 0 && (
                     <Title>Browse by Sub Categories</Title>
                   )} */}
