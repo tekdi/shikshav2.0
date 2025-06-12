@@ -215,22 +215,22 @@ export default function Layout({
     },
     ...(token
       ? [
-          {
-            text: (
-              <Typography
-                sx={{ color: '#ff0000', fontWeight: 700, fontSize: '20px' }}
-              >
-                Delete My Account
-              </Typography>
-            ),
-            icon: (
-              <DeleteOutlineOutlinedIcon
-                sx={{ color: '#ff0000' }}
-                fontSize="small"
-              />
-            ),
-            to: 'delete-account',
-          },
+          // {
+          //   text: (
+          //     <Typography
+          //       sx={{ color: '#ff0000', fontWeight: 700, fontSize: '20px' }}
+          //     >
+          //       Delete My Account
+          //     </Typography>
+          //   ),
+          //   icon: (
+          //     <DeleteOutlineOutlinedIcon
+          //       sx={{ color: '#ff0000' }}
+          //       fontSize="small"
+          //     />
+          //   ),
+          //   to: 'delete-account',
+          // },
           {
             text: 'Logout',
             icon: <AccountCircleOutlinedIcon fontSize="small" />,
