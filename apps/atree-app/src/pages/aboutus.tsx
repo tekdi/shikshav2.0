@@ -244,7 +244,7 @@ export default function Aboutus() {
           <br></br>
           <b>Content Support:</b> Public and Private school teachers who
           actively participated in the ‘Jal-Jungle-Jameen in classrooms’
-          workshops;, partner NGOs; middle school students; volunteers, and
+          workshops; partner NGOs; middle school students; volunteers, and
           part-time consultants (Madhushri, Ankit, Vaishnavi, Angela) of the
           project.
         </Typography>
