@@ -131,7 +131,7 @@ export default function Registration() {
     setLoading(true);
     try {
       const [firstName, ...lastNameArr] = formData.name.trim().split(' ');
-      const lastName = lastNameArr.join(' ');
+      const lastName = lastNameArr.length > 0 ? lastNameArr.join(' ') : ' ';
       const username = formData.email;
       const payload = {
         firstName,
@@ -151,6 +151,9 @@ export default function Registration() {
         });
         setShowAlertMsg('User registered successfully!');
         setAlertSeverity('success');
+        setTimeout(() => {
+          router.push('/signin');
+        }, 2000);
         const windowUrl = window.location.pathname;
         const cleanedUrl = windowUrl.replace(/^\//, '');
         const env = cleanedUrl.split('/')[0];
@@ -302,7 +305,9 @@ export default function Registration() {
                       fullWidth
                       error={error[key as keyof typeof error]}
                       helperText={
-                        error[key as keyof typeof error]
+                        key === 'password' && error.password
+                          ? 'Password must contain at least 8 characters, including uppercase, lowercase, number, and special character.'
+                          : error[key as keyof typeof error]
                           ? `Please enter valid ${label.toLowerCase()}`
                           : ''
                       }
@@ -428,6 +433,8 @@ export default function Registration() {
                           color: '#0047D4',
                           textDecoration: 'underline',
                         }}
+                        target="_blank" 
+                        rel="noopener noreferrer"
                       >
                         Terms and Conditions
                       </Link>
@@ -481,8 +488,8 @@ export default function Registration() {
             {showAlertMsg && (
               <Box
                 display="flex"
-                justifyContent="center"
-                alignItems="center"
+                justifyContent="center" // This centers horizontally
+                alignItems="flex-start" // This aligns to the top vertically
                 position="fixed"
                 top={0}
                 left={0}
@@ -492,6 +499,7 @@ export default function Registration() {
                   pointerEvents: 'auto',
                   bgcolor: 'rgba(0, 0, 0, 0.2)',
                   zIndex: 9999,
+                  pt: 2, // Add some padding at the top (optional)
                 }}
                 onClick={() => {
                   setShowAlertMsg('');
@@ -508,7 +516,7 @@ export default function Registration() {
                     width: 'auto',
                     minWidth: '300px',
                     '&:hover': {
-                      cursor: 'default', // Prevent cursor change on hover
+                      cursor: 'default',
                     },
                   }}
                   onClose={() => {
@@ -517,7 +525,7 @@ export default function Registration() {
                       router.push('/signin');
                     }
                   }}
-                  onClick={(e) => e.stopPropagation()} // Prevent click-through to overlay
+                  onClick={(e) => e.stopPropagation()}
                 >
                   {showAlertMsg}
                 </Alert>

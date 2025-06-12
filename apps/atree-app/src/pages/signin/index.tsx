@@ -58,8 +58,8 @@ const Login: React.FC<ListProps> = () => {
         if (!value) {
           errorMessage = 'Password is required.';
         } else if (!validatePassword(value)) {
-          errorMessage =
-            'Password must contain at least 8 characters, including uppercase, lowercase, number, and special character';
+          errorMessage = 'Please enter valid password'
+
         }
       }
       setCredentials((prev) => ({ ...prev, [field]: value }));

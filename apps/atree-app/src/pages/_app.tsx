@@ -1,4 +1,4 @@
-'use client'; // Required in Next.js App Router for using hooks
+'use client'; // Required for App Router with hooks
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme } from '@mui/material/styles';
@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react';
 import { telemetryFactory } from '../utils/telemetry';
 import { useRouter } from 'next/router';
 import { TelemetryEventType } from '../utils/app.constant';
+
 const AuthHandler = dynamic(() => import('./AuthHandler'), {
   ssr: false,
 });
@@ -29,11 +30,10 @@ const theme = createTheme({
     secondary: {
       main: '#FFBD0D',
     },
-
     text: {
       secondary: 'grey',
     },
-    mode: 'light', // or "dark"
+    mode: 'light',
     info: {
       main: '#3E6837',
     },
@@ -43,6 +43,31 @@ const theme = createTheme({
   },
 });
 
+// ✅ Utility function to clear error hash from URL
+const clearLoginErrorHash = () => {
+  if (
+    typeof window !== 'undefined' &&
+    window.location.hash.includes('error=login_required')
+  ) {
+    history.replaceState(
+      null,
+      '',
+      window.location.pathname + window.location.search
+    );
+  }
+};
+
+// ✅ Use requestIdleCallback if available, fallback to timeout
+const runWhenIdle = (cb: () => void) => {
+  if (typeof window !== 'undefined') {
+    if ('requestIdleCallback' in window) {
+      (window as any).requestIdleCallback(cb);
+    } else {
+      setTimeout(cb, 200);
+    }
+  }
+};
+
 export default function RootLayout({ Component, pageProps }: AppProps) {
   const [frameworkState, setFrameworkState] = useState({
     frameworkData: null,
@@ -50,35 +75,18 @@ export default function RootLayout({ Component, pageProps }: AppProps) {
     framework: '',
   });
   const router = useRouter();
+
   useEffect(() => {
     telemetryFactory.init();
   }, []);
+
   useEffect(() => {
-    const cleanupHash = () => {
-      if (
-        window.location.hash &&
-        window.location.hash.includes('error=login_required')
-      ) {
-        history.replaceState(
-          null,
-          '',
-          window.location.pathname + window.location.search
-        );
-      }
-    };
-
-    // Run immediately in case the hash is already there
-    cleanupHash();
-
-    // Also run after a slight delay to catch late hash injection
-    const timeout = setTimeout(cleanupHash, 500);
-
-    return () => clearTimeout(timeout);
+    runWhenIdle(clearLoginErrorHash);
   }, []);
+
   useEffect(() => {
     const handleRouteChange = (url: string) => {
-      const windowUrl = url;
-      const cleanedUrl = windowUrl.replace(/^\//, '');
+      const cleanedUrl = url.replace(/^\//, '');
 
       const telemetryImpression = {
         context: {
@@ -88,7 +96,7 @@ export default function RootLayout({ Component, pageProps }: AppProps) {
         edata: {
           type: TelemetryEventType.VIEW,
           subtype: '',
-          pageid: cleanedUrl ? cleanedUrl : 'landing_page',
+          pageid: cleanedUrl || 'landing_page',
           uri: '',
         },
       };
@@ -98,6 +106,7 @@ export default function RootLayout({ Component, pageProps }: AppProps) {
     // Log initial page load
     handleRouteChange(window.location.pathname);
   }, [router]);
+
   useEffect(() => {
     let isMounted = true;
 
@@ -126,16 +135,17 @@ export default function RootLayout({ Component, pageProps }: AppProps) {
     ...pageProps,
     ...frameworkState,
   };
+
   return (
     <ReactKeycloakProvider
       authClient={keycloak}
       initOptions={{
-        onLoad: 'check-sso', // Ensures it doesn't force login again
+        onLoad: 'check-sso',
         checkLoginIframe: false,
       }}
     >
       <ThemeProvider theme={theme}>
-        <CssBaseline /> {/* Normalize styles */}
+        <CssBaseline />
         <AuthHandler />
         <Component {...enhancedPageProps} />
       </ThemeProvider>

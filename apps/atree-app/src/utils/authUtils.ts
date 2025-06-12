@@ -15,7 +15,7 @@ export const validateMobile = (mobile: string) => {
 
 export const validateName = (name: string) => {
   const hasNumbers = /\d/;
-  return !hasNumbers.test(name) && name.trim().split(' ').length >= 2;
+  return !hasNumbers.test(name) && name.trim().split(' ').length >= 1;
 };
 
 export const dispatchLoginEvent = (
