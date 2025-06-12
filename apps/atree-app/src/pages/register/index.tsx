@@ -131,7 +131,7 @@ export default function Registration() {
     setLoading(true);
     try {
       const [firstName, ...lastNameArr] = formData.name.trim().split(' ');
-      const lastName = lastNameArr.length > 0 ? lastNameArr.join(' ') : ' ';
+    const lastName = lastNameArr.join(' ');
       const username = formData.email;
       const payload = {
         firstName,
