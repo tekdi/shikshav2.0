@@ -23,24 +23,33 @@ export default function Banner({ singleImage }: BannerProps) {
     { image: landingBanner5?.src, id: 5 },
     { image: landingBanner6?.src, id: 6 },
   ];
+  const commonBoxSx = {
+    position: 'relative',
+    width: '100%',
+    // Use a minHeight to prevent content collapsing completely,
+    // but allow height to be auto or determined by content (ImageBanner)
+    minHeight: { xs: 'auto', md: '400px' }, // Adjust minimum height as needed
+    height: 'auto', // Allow height to expand based on content
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden', // Crucial to prevent content from spilling out if child overflows
+  };
+  // Helper for ImageBanner's image styling prop
+  const imageBannerImageProp = {
+    // Let the image fill its container, which will have auto height
+    height: '100%',
+    width: '100%', // Ensure width is 100% to fill container
+  };
   if (singleImage) {
     return (
       <Grid width="100%" sx={{ marginTop: 0 }}>
-        <Box
-          sx={{
-            position: 'relative',
-            width: '100%',
-            minHeight: { md: '500px' },
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
+        <Box sx={commonBoxSx}>
           <ImageBanner
             name=""
             image={singleImage}
             _eventClick={true}
-            _image={{ height: { xs: 'auto', md: '500px' } }}
+            _image={imageBannerImageProp}
           />
         </Box>
       </Grid>
@@ -83,21 +92,12 @@ export default function Banner({ singleImage }: BannerProps) {
           }}
         >
           {uniqueLandingImages.map((image) => (
-            <Box
-              key={image.id}
-              sx={{
-                width: '100%',
-                height: { md: '500px' },
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
+            <Box key={image.id} sx={commonBoxSx}>
               <ImageBanner
                 name=""
                 image={image.image}
                 _eventClick={true}
-                _image={{ height: { xs: 'auto', md: '500px' } }}
+                _image={imageBannerImageProp}
               />
             </Box>
           ))}

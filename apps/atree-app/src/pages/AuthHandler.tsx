@@ -309,7 +309,7 @@ const AuthHandler = () => {
             onClick={handleDialogOk}
             sx={{ borderRadius: '50px', height: '40px', width: '100%' }}
           >
-            Procced
+            PROCEED
           </Button>
         </DialogActions>
       </Dialog>
@@ -324,9 +324,9 @@ const AuthHandler = () => {
             <Typography variant="body1">
               <strong>Username:</strong> {formData.username}
             </Typography>
-            <Typography variant="body1">
+            {/* <Typography variant="body1">
               <strong>Password:</strong> {formData.password}
-            </Typography>
+            </Typography> */}
             <Typography variant="body1">
               <strong>Note:</strong> Please save your username and password for
               future use.
@@ -348,7 +348,7 @@ const AuthHandler = () => {
                 fontWeight: 500,
               }}
             >
-              Procced
+              PROCEED
             </Button>
           </Box>
         }

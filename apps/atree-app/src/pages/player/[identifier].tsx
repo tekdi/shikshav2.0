@@ -1,14 +1,22 @@
 import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SunbirdPlayer } from '@shared-lib';
 import Layout from '../../component/layout/layout';
-import { Typography } from '@mui/material';
-interface PlayerPageProps {
-  id: string; // Define the type for the 'id' prop
-}
-const PlayerPage: React.FC<PlayerPageProps> = ({ id }) => {
+import { Box, Typography } from '@mui/material';
+
+const PlayerPage: React.FC = () => {
   const router = useRouter();
-  const { identifier } = router.query; // Access the identifier from the URL
+  const { identifier } = router.query;
+
+  const [contentTitle, setContentTitle] = useState<string | null>(null);
+
+  useEffect(() => {
+    console.log('All localStorage:', localStorage);
+    const title = localStorage.getItem('contentData');
+    console.log('Retrieved title:', title);
+    setContentTitle(title);
+  }, []);
+
   if (!identifier) {
     return <div>Loading...</div>;
   }
@@ -17,10 +25,28 @@ const PlayerPage: React.FC<PlayerPageProps> = ({ id }) => {
     <Layout
       isFooter={false}
       backIconClick={() => router.back()}
-      showBack
+      showBack={true}
+      backTitle={
+        <Typography
+          style={{
+            fontWeight: 900,
+            fontSize: '22px',
+            lineHeight: '28px',
+            letterSpacing: 0,
+          }}
+        >
+          {contentTitle || 'Content Player'} {/* Fallback title */}
+        </Typography>
+      }
       _backButton={{ alignItems: 'center' }}
     >
-      <SunbirdPlayer identifier={id ? id : (identifier as string)} />
+      {/* <h2>{Contenttitle}</h2> */}
+      <Box sx={{ marginTop: '5%' }}>
+        <SunbirdPlayer
+          identifier={identifier as string}
+          // contentData={Contenttitle}
+        />
+      </Box>
     </Layout>
   );
 };

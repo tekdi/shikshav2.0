@@ -33,21 +33,19 @@ export default function Aboutus() {
           sx={{
             textAlign: 'center',
             lineHeight: { xs: '30px', md: '64px' },
-            fontWeight: { xs: 600, md: 600 },
+            fontWeight: { xs: 800, md: 800 },
             fontSize: { xs: '22px', md: '57px' },
             fontFamily: 'Poppins',
             color: '#000000',
-            marginTop: { xs: '40px', md: '47px' },
+            marginTop: '10px',
             marginBottom: { xs: '10px', md: '47px' },
           }}
-        >
-          About Us
-        </Typography><br>
-        </br>
+        ></Typography>
+        <br></br>
         <Typography
           sx={{
             textAlign: 'left',
-            fontWeight: { xs: 500, md: 400 },
+            fontWeight: 900,
             fontSize: { xs: '14px', md: '16px' },
             pl: { xs: 3, md: 10 },
             pr: { xs: 3, md: 10 },
@@ -56,6 +54,7 @@ export default function Aboutus() {
         >
           <b>SNAIL: Slow. Intentional. Transformative</b>
         </Typography>
+        
         {/* About Us Description */}
         <Typography
           sx={{
@@ -74,8 +73,7 @@ export default function Aboutus() {
           Ashoka Trust for Research in Ecology and the Environment (ATREE)
           Academy, Bengaluru, India.
         </Typography>
-        <br>
-        </br>
+        <br></br>
         <Typography
           sx={{
             textAlign: { xs: 'left', md: 'left' },
@@ -94,8 +92,7 @@ export default function Aboutus() {
           India that inspire children with knowledge, hope, and action to care
           for their local natural resources.
         </Typography>
-        <br>
-        </br>
+        <br></br>
         <Typography
           sx={{
             textAlign: { xs: 'left', md: 'left' },
@@ -114,8 +111,7 @@ export default function Aboutus() {
           interdisciplinary learning, while encouraging students to apply what
           they learn to help solve complex environmental issues locally.
         </Typography>
-        <br>
-        </br>
+        <br></br>
         <Typography
           sx={{
             textAlign: { xs: 'left', md: 'left' },
@@ -133,8 +129,7 @@ export default function Aboutus() {
           chapters, classroom posters, board games, comic books, graphic novels,
           magazines, websites, field guides, stories, songs, films and more.
         </Typography>
-        <br>
-        </br>
+        <br></br>
         <Typography
           sx={{
             textAlign: { xs: 'left', md: 'left' },
@@ -206,9 +201,9 @@ export default function Aboutus() {
             fontWeight: 400,
           }}
         >
-          Pallavi Varma Patil: Lead, Environment Education, ATREE Academy Rushad
+          Pallavi Varma Patil: Lead, Environment Education, ATREE Academy
           <br></br>
-          Irani : Research Associate, ATREE Academy
+          Rushad Irani : Research Associate, ATREE Academy
         </Typography>
         <br></br>
         <Typography
@@ -237,16 +232,18 @@ export default function Aboutus() {
         >
           We sincerely thank the following for their generous support in terms
           of time, resources, and commitment:
-          <br></br><br></br>
+          <br></br>
+          <br></br>
           <b>Technical Support:</b> Vijay Rasquinha, Teerath Rawat, ATREE for
           their valuable technical and design expertise. TEKDI Technologies for
           their execution of the project
-          <br></br><br></br>
+          <br></br>
+          <br></br>
           <b>Content Support:</b> Public and Private school teachers who
           actively participated in the ‘Jal-Jungle-Jameen in classrooms’
           workshops;, partner NGOs; middle school students; volunteers, and
           part-time consultants (Madhushri, Ankit, Vaishnavi, Angela) of the
-          project
+          project.
         </Typography>
 
         <Box
