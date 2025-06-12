@@ -37,12 +37,13 @@ export default function Aboutus() {
             fontSize: { xs: '22px', md: '57px' },
             fontFamily: 'Poppins',
             color: '#000000',
-            marginTop: { xs: '20px', md: '47px' },
+            marginTop: { xs: '40px', md: '47px' },
             marginBottom: { xs: '10px', md: '47px' },
           }}
         >
           About Us
-        </Typography>
+        </Typography><br>
+        </br>
         <Typography
           sx={{
             textAlign: 'left',
@@ -73,6 +74,8 @@ export default function Aboutus() {
           Ashoka Trust for Research in Ecology and the Environment (ATREE)
           Academy, Bengaluru, India.
         </Typography>
+        <br>
+        </br>
         <Typography
           sx={{
             textAlign: { xs: 'left', md: 'left' },
@@ -91,6 +94,8 @@ export default function Aboutus() {
           India that inspire children with knowledge, hope, and action to care
           for their local natural resources.
         </Typography>
+        <br>
+        </br>
         <Typography
           sx={{
             textAlign: { xs: 'left', md: 'left' },
@@ -109,6 +114,8 @@ export default function Aboutus() {
           interdisciplinary learning, while encouraging students to apply what
           they learn to help solve complex environmental issues locally.
         </Typography>
+        <br>
+        </br>
         <Typography
           sx={{
             textAlign: { xs: 'left', md: 'left' },
@@ -126,6 +133,8 @@ export default function Aboutus() {
           chapters, classroom posters, board games, comic books, graphic novels,
           magazines, websites, field guides, stories, songs, films and more.
         </Typography>
+        <br>
+        </br>
         <Typography
           sx={{
             textAlign: { xs: 'left', md: 'left' },
@@ -228,11 +237,11 @@ export default function Aboutus() {
         >
           We sincerely thank the following for their generous support in terms
           of time, resources, and commitment:
-          <br></br>
+          <br></br><br></br>
           <b>Technical Support:</b> Vijay Rasquinha, Teerath Rawat, ATREE for
           their valuable technical and design expertise. TEKDI Technologies for
           their execution of the project
-          <br></br>
+          <br></br><br></br>
           <b>Content Support:</b> Public and Private school teachers who
           actively participated in the ‘Jal-Jungle-Jameen in classrooms’
           workshops;, partner NGOs; middle school students; volunteers, and
