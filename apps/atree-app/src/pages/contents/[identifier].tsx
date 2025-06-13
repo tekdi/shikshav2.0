@@ -1003,8 +1003,11 @@ const handleOnDownload = async () => {
                 sx={{
                   mt: 0,
                   textAlign: 'left',
-                  fontFamily: 'Arial',
-                  lineHeight: '18px',
+                  fontWeight: 400,
+                  fontFamily: 'Poppins',
+                  fontSize: '14px',
+                  lineHeight: '20px',
+                  color: '#000000',
                 }}
               >
                 {contentData?.description ?? ''}
