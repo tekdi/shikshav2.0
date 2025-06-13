@@ -36,9 +36,16 @@ import {
 } from '../../utils/authUtils';
 import { TelemetryEventType } from '../../utils/app.constant';
 import { telemetryFactory } from '../../utils/telemetry';
+import Forgotpassword from '../forgotpassword';
+import { OtpVerificationScreen } from '../otpverification';
+import { NewPasswordScreen } from '../newpassword';
 
 interface ListProps {}
-
+interface ForgotErrors {
+  email: string;
+  newPassword: string;
+  confirmPassword: string;
+}
 const Login: React.FC<ListProps> = () => {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({ email: '', password: '' });
@@ -57,7 +64,7 @@ const Login: React.FC<ListProps> = () => {
     confirmPassword: '',
     registeredWithGoogle: false,
   });
-  const [forgotErrors, setForgotErrors] = useState({
+  const [forgotErrors, setForgotErrors] = useState<ForgotErrors>({
     email: '',
     newPassword: '',
     confirmPassword: '',
@@ -66,6 +73,7 @@ const Login: React.FC<ListProps> = () => {
     newPassword: false,
     confirmPassword: false,
   });
+
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
   const [openOtpDialog, setOpenOtpDialog] = useState(false);
   const [otp, setOtp] = useState('');
@@ -652,7 +660,7 @@ const Login: React.FC<ListProps> = () => {
                   }}
                   onClick={() => setOpenForgotDialog(true)}
                 >
-                  Forget Password?
+                  Forgot Password?
                 </Typography>
               </Grid>
               <Grid item textAlign="center">
@@ -709,7 +717,30 @@ const Login: React.FC<ListProps> = () => {
           </Alert>
         </Box>
       )}
-      <Dialog
+      {openForgotDialog && (
+        <Forgotpassword
+          open={openForgotDialog}
+          onClose={() => setOpenForgotDialog(false)}
+          forgotData={forgotData}
+          setForgotData={setForgotData}
+          forgotErrors={forgotErrors}
+          handleSendOtp={handleSendOtp}
+          setForgotErrors={setForgotErrors}
+        />
+      )}
+      {openForgotDialog && forgotStep === 'otp' && (
+        <OtpVerificationScreen
+          open={openForgotDialog && forgotStep === 'otp'}
+          onClose={handleCloseForgotDialog}
+          otp={otp}
+          setOtp={setOtp}
+          otpTimer={otpTimer}
+          verifyOtp={verifyOtp}
+          formatTime={formatTime}
+          email={forgotData?.email}
+        />
+      )}
+      {/* <Dialog
         open={openForgotDialog && forgotStep === 'email'}
         onClose={(event, reason) => {
           if (reason === 'backdropClick') return;
@@ -821,9 +852,9 @@ const Login: React.FC<ListProps> = () => {
             Send OTP
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
       {/* Forgot Password Dialog - Step 2: OTP Verification */}
-      <Dialog
+      {/* <Dialog
         open={openForgotDialog && forgotStep === 'otp'}
         onClose={(event, reason) => {
           if (reason === 'backdropClick') return;
@@ -886,180 +917,24 @@ const Login: React.FC<ListProps> = () => {
             Verify OTP
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
 
       {/* Forgot Password Dialog - Step 3: New Password */}
-      <Dialog
-        open={openForgotDialog && forgotStep === 'newPassword'}
-        onClose={(event, reason) => {
-          if (reason === 'backdropClick') return;
-          handleCloseForgotDialog();
-        }}
-        disableEscapeKeyDown
-        PaperProps={{
-          style: {
-            maxWidth: '600px',
-            maxHeight: 'calc(100vh - 64px)',
-            overflow: 'auto',
-          },
-        }}
-      >
-        <DialogTitle
-          sx={{ fontFamily: 'Poppins', fontSize: '18px', fontWeight: 800 }}
-        >
-          Set New Password
-        </DialogTitle>
-        <DialogContent sx={{ overflowWrap: 'break-word' }}>
-          {/* New Password Field */}
-          <Box mt={2} sx={{ position: 'relative' }}>
-            <CommonTextField
-              fullWidth
-              type={showPasswords.newPassword ? 'text' : 'password'}
-              label="New Password"
-              value={forgotData.newPassword}
-              onChange={(e) => {
-                const newPassword = e.target.value;
-                setForgotData((prev) => ({ ...prev, newPassword }));
-
-                if (
-                  forgotData.confirmPassword &&
-                  newPassword !== forgotData.confirmPassword
-                ) {
-                  setForgotErrors((prev) => ({
-                    ...prev,
-                    confirmPassword: 'Passwords do not match',
-                  }));
-                } else {
-                  setForgotErrors((prev) => ({
-                    ...prev,
-                    confirmPassword: '',
-                  }));
-                }
-              }}
-              helperText={forgotErrors.newPassword}
-              error={Boolean(
-                forgotErrors.newPassword ||
-                  (forgotData.newPassword &&
-                    !passwordRegex.test(forgotData.newPassword))
-              )}
-              endIcon={
-                <IconButton
-                  onClick={() => togglePasswordVisibility('newPassword')}
-                  edge="end"
-                >
-                  {showPasswords.newPassword ? (
-                    <Visibility />
-                  ) : (
-                    <VisibilityOff />
-                  )}
-                </IconButton>
-              }
-            />
-            {/* Custom error display that won't affect layout */}
-            {(forgotErrors.newPassword ||
-              (forgotData.newPassword &&
-                !passwordRegex.test(forgotData.newPassword))) && (
-              <Typography
-                variant="caption"
-                color="error"
-                sx={{
-                  display: 'block',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  width: '100%',
-                  position: 'absolute',
-                  bottom: -20,
-                  left: 0,
-                }}
-              >
-                {forgotErrors.newPassword ||
-                  '8+ chars with A-Z, a-z, 0-9, special'}
-              </Typography>
-            )}
-          </Box>
-
-          {/* Confirm Password Field */}
-          <Box mt={4} sx={{ position: 'relative' }}>
-            {' '}
-            {/* Increased margin top */}
-            <CommonTextField
-              fullWidth
-              type={showPasswords.confirmPassword ? 'text' : 'password'}
-              label="Confirm Password"
-              value={forgotData.confirmPassword}
-              onChange={(e) => {
-                const confirmPassword = e.target.value;
-                setForgotData((prev) => ({ ...prev, confirmPassword }));
-
-                if (forgotData.newPassword !== confirmPassword) {
-                  setForgotErrors((prev) => ({
-                    ...prev,
-                    confirmPassword: 'Passwords do not match',
-                  }));
-                } else {
-                  setForgotErrors((prev) => ({
-                    ...prev,
-                    confirmPassword: '',
-                  }));
-                }
-              }}
-              helperText="" // Empty string to satisfy the prop type
-              error={Boolean(forgotErrors.confirmPassword)}
-              endIcon={
-                <IconButton
-                  onClick={() => togglePasswordVisibility('confirmPassword')}
-                  edge="end"
-                >
-                  {showPasswords.confirmPassword ? (
-                    <Visibility />
-                  ) : (
-                    <VisibilityOff />
-                  )}
-                </IconButton>
-              }
-            />
-            {forgotErrors.confirmPassword && (
-              <Typography
-                variant="caption"
-                color="error"
-                sx={{
-                  display: 'block',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  width: '100%',
-                  position: 'absolute',
-                  bottom: -20,
-                  left: 0,
-                }}
-              >
-                {forgotErrors.confirmPassword}
-              </Typography>
-            )}
-          </Box>
-        </DialogContent>
-
-        <DialogActions sx={{ justifyContent: 'center', py: 2, px: 3 }}>
-          <Button
-            variant="contained"
-            onClick={resetPassword}
-            sx={{
-              borderRadius: '50px',
-              height: '40px',
-              width: '100%',
-              backgroundColor: '#fcd804',
-              color: '#000000',
-              fontFamily: 'Poppins',
-              fontSize: '16px',
-              fontWeight: '500',
-            }}
-            disabled={isResetDisabled}
-          >
-            Reset Password
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {openForgotDialog && forgotStep === 'newPassword' && (
+        <NewPasswordScreen
+          open={openForgotDialog && forgotStep === 'newPassword'}
+          onClose={handleCloseForgotDialog}
+          forgotData={forgotData}
+          setForgotData={setForgotData}
+          forgotErrors={forgotErrors}
+          setForgotErrors={setForgotErrors}
+          showPasswords={showPasswords}
+          togglePasswordVisibility={togglePasswordVisibility}
+          resetPassword={resetPassword}
+          isResetDisabled={isResetDisabled}
+          passwordRegex={passwordRegex}
+        />
+      )}
     </Layout>
   );
 };
