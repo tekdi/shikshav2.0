@@ -217,10 +217,10 @@ const Login: React.FC<ListProps> = () => {
           body: JSON.stringify({
             email,
             reason: 'forgot',
-            key: 'SendOtpOnMail',
+            key: 'SendOtpOn',
             replacements: {
-              '{eventName}': 'ATree OTP',
-              '{programName}': 'Atree',
+              '{eventName}': 'ATREE OTP',
+              '{programName}': 'ATREE',
             },
           }),
         }
@@ -269,7 +269,7 @@ const Login: React.FC<ListProps> = () => {
         setForgotStep('newPassword');
       } else {
         setAlert({
-          message: data?.params?.errmsg || 'Invalid OTP.',
+          message: data?.params?.err || 'Invalid OTP.',
           severity: 'error',
         });
       }
@@ -855,7 +855,7 @@ const Login: React.FC<ListProps> = () => {
         </DialogTitle>
         <DialogContent>
           <Typography variant="body2" sx={{ mb: 1 }}>
-            Enter the OTP sent to your email ID ({forgotData.email}).
+            Enter the OTP.
           </Typography>
           <TextField
             fullWidth
