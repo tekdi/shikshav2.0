@@ -79,7 +79,7 @@ export default function Aboutus() {
           sx={{
             textAlign: 'left',
             fontWeight: { xs: 800, md: 800 },
-            fontSize: { xs: '14px', md: '16px' },
+            fontSize: { xs: '18px', md: '18px' },
             pl: { xs: 3, md: 10 },
             pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
@@ -109,7 +109,7 @@ export default function Aboutus() {
           sx={{
             textAlign: 'left',
             fontWeight: { xs: 800, md: 800 },
-            fontSize: { xs: '14px', md: '16px' },
+            fontSize: { xs: '18px', md: '18px' },
             pl: { xs: 3, md: 10 },
             pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
@@ -133,12 +133,12 @@ export default function Aboutus() {
           to the reader /user community for any reason, including, without
           limitation, breach, or assignment of these terms.
         </Typography>
-  
+
         <Typography
           sx={{
             textAlign: 'left',
             fontWeight: { xs: 800, md: 800 },
-            fontSize: { xs: '14px', md: '16px' },
+            fontSize: { xs: '18px', md: '18px' },
             pl: { xs: 3, md: 10 },
             pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
@@ -206,21 +206,21 @@ export default function Aboutus() {
             color: '#000000',
           }}
         >
-          <span style={{fontWeight: 800}}>3.2 User Community: </span>While we strive to enforce these
-          terms and conditions that will allow for an open, productive, safe and
-          inviting space for diverse users to access, share, recommend, and
-          otherwise enjoy the curated resources on offer, we do not and cannot
-          guarantee that users of the Platform will conform, fully abide by, and
-          use the platform in compliance with these terms. We reserve the right
-          to remove any inappropriate language or behaviour that violates
-          community guidelines.
+          <span style={{ fontWeight: 800 }}>3.2 User Community: </span>While we
+          strive to enforce these terms and conditions that will allow for an
+          open, productive, safe and inviting space for diverse users to access,
+          share, recommend, and otherwise enjoy the curated resources on offer,
+          we do not and cannot guarantee that users of the Platform will
+          conform, fully abide by, and use the platform in compliance with these
+          terms. We reserve the right to remove any inappropriate language or
+          behaviour that violates community guidelines.
         </Typography>
-        
+
         <Typography
           sx={{
             textAlign: 'left',
             fontWeight: { xs: 800, md: 800 },
-            fontSize: { xs: '14px', md: '16px' },
+            fontSize: { xs: '18px', md: '18px' },
             pl: { xs: 3, md: 10 },
             pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
@@ -303,12 +303,12 @@ export default function Aboutus() {
           parents and legal guardians to review the privacy policies of the
           companies that provide log-in services to the Platform.
         </Typography>
-      
+
         <Typography
           sx={{
             textAlign: 'left',
             fontWeight: { xs: 800, md: 800 },
-            fontSize: { xs: '14px', md: '16px' },
+            fontSize: { xs: '18px', md: '18px' },
             pl: { xs: 3, md: 10 },
             pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
@@ -335,12 +335,11 @@ export default function Aboutus() {
           website.
         </Typography>
 
-       
         <Typography
           sx={{
             textAlign: 'left',
             fontWeight: { xs: 800, md: 800 },
-            fontSize: { xs: '14px', md: '16px' },
+            fontSize: { xs: '18px', md: '18px' },
             pl: { xs: 3, md: 10 },
             pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
@@ -394,12 +393,11 @@ export default function Aboutus() {
           terms and privacy policies of the third parties.
         </Typography>
 
-        
         <Typography
           sx={{
             textAlign: 'left',
             fontWeight: { xs: 800, md: 800 },
-            fontSize: { xs: '14px', md: '16px' },
+            fontSize: { xs: '18px', md: '18px' },
             pl: { xs: 3, md: 10 },
             pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
@@ -425,8 +423,6 @@ export default function Aboutus() {
           to update us that your contact details have changed or change your
           preferences, please let us know.
         </Typography>
-       
-      
       </Grid>
 
       {<FooterText page="" />}
