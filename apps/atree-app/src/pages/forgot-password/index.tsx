@@ -216,6 +216,20 @@ const OtpStep = React.memo(
       }
     };
 
+    const handlePaste = (e: React.ClipboardEvent) => {
+      e.preventDefault();
+      const pasteData = e.clipboardData.getData('text/plain').trim();
+      const otpDigits = pasteData.replace(/\D/g, '').split('').slice(0, 6);
+
+      if (otpDigits.length === 6) {
+        otpDigits.forEach((digit, index) => {
+          onOtpChange(index, digit);
+        });
+        // Focus the last input field after paste
+        inputRefs.current[5]?.focus();
+      }
+    };
+
     const renderOtpInputs = () => {
       return (
         <Box
@@ -228,6 +242,7 @@ const OtpStep = React.memo(
             maxWidth: '400px',
             margin: '0 auto',
           }}
+          onPaste={handlePaste}
         >
           {Array(6)
             .fill('')
@@ -238,6 +253,7 @@ const OtpStep = React.memo(
                 value={otp[i] || ''}
                 onChange={(e) => handleChange(i, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(i, e)}
+                onPaste={handlePaste}
                 inputProps={{
                   maxLength: 1,
                   inputMode: 'numeric',
@@ -352,7 +368,6 @@ const OtpStep = React.memo(
     );
   }
 );
-
 const NewPasswordStep = React.memo(
   ({
     data,
