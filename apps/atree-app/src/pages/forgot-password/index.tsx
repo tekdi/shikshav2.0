@@ -12,6 +12,8 @@ import {
   InputAdornment,
   FormHelperText,
 } from '@mui/material';
+import { TextFieldProps } from '@mui/material/TextField';
+
 import { Visibility, VisibilityOff, ArrowBack } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import { getUserAuthInfo, signin } from '../../service/content';
@@ -62,7 +64,7 @@ type NewPasswordStepProps = {
 };
 
 // Custom TextField with password toggle
-interface CustomTextFieldProps {
+type CustomTextFieldProps = TextFieldProps &{
   fullWidth?: boolean;
   type?: string;
   label?: string;
@@ -77,6 +79,8 @@ interface CustomTextFieldProps {
 
 const CustomTextField = React.forwardRef<HTMLDivElement, CustomTextFieldProps>(
   ({ showPassword, onTogglePassword, type, error = false, ...props }, ref) => {
+    const isPasswordType = props.label?.toLowerCase().includes('password'); // or use a dedicated prop
+
     return (
       <MuiTextField
         {...props}
@@ -84,7 +88,8 @@ const CustomTextField = React.forwardRef<HTMLDivElement, CustomTextFieldProps>(
         type={type}
         error={error}
         InputProps={{
-          endAdornment: type === 'password' && (
+          ...props.InputProps,
+          endAdornment: isPasswordType && (
             <InputAdornment position="end">
               <IconButton
                 onClick={onTogglePassword}
@@ -100,6 +105,7 @@ const CustomTextField = React.forwardRef<HTMLDivElement, CustomTextFieldProps>(
     );
   }
 );
+
 CustomTextField.displayName = 'CustomTextField';
 
 // Step Components
@@ -454,7 +460,7 @@ const NewPasswordStep = React.memo(
             onChange={(e) => onChange('confirmPassword', e.target.value)}
             error={!!errors.confirmPassword || Boolean(passwordsMismatch)}
             helperText={errors.confirmPassword}
-            showPassword={showPasswords.confirmPassword}
+            showPassword={showPasswords.confirmPassword} // Make sure this is passed
             onTogglePassword={() => onTogglePassword('confirmPassword')}
             sx={{
               '& .MuiInputLabel-root': {
