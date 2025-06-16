@@ -46,7 +46,7 @@ export default function Aboutus() {
           sx={{
             textAlign: 'left',
             fontWeight: 900,
-            fontSize: { xs: '14px', md: '16px' },
+            fontSize: { xs: '18px', md: '18px' },
             pl: { xs: 3, md: 10 },
             pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
@@ -152,7 +152,7 @@ export default function Aboutus() {
           sx={{
             textAlign: 'left',
             fontWeight: { xs: 400, md: 400 },
-            fontSize: { xs: '14px', md: '16px' },
+            fontSize: { xs: '18px', md: '18px' },
             pl: { xs: 3, md: 10 },
             pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
@@ -181,7 +181,7 @@ export default function Aboutus() {
           sx={{
             textAlign: 'left',
             fontWeight: { xs: 400, md: 400 },
-            fontSize: { xs: '14px', md: '16px' },
+            fontSize: { xs: '18px', md: '18px' },
             pl: { xs: 3, md: 10 },
             pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
@@ -210,7 +210,7 @@ export default function Aboutus() {
           sx={{
             textAlign: 'left',
             fontWeight: { xs: 400, md: 400 },
-            fontSize: { xs: '14px', md: '16px' },
+            fontSize: { xs: '18px', md: '18px' },
             pl: { xs: 3, md: 10 },
             pr: { xs: 3, md: 10 },
             fontFamily: 'Poppins',
@@ -234,19 +234,57 @@ export default function Aboutus() {
           of time, resources, and commitment:
           <br></br>
           <br></br>
-          <b>Funding Support:</b> Rainmatter Foundation
+          <Typography
+            component="div"
+            sx={{ fontSize: { xs: '14px', md: '16px' } }}
+          >
+            <Typography
+              component="span"
+              sx={{
+                fontWeight: 'bold',
+                fontSize: { xs: '18px', md: '18px' }, // Now using sx prop correctly
+              }}
+            >
+              Funding Support:
+            </Typography>{' '}
+            <Typography component="span">Rainmatter Foundation</Typography>
+          </Typography>
           <br></br>
+          <Typography
+            component="div"
+            sx={{ fontSize: { xs: '14px', md: '16px' } }}
+          >
+            <Typography
+              component="span"
+              sx={{
+                fontWeight: 'bold',
+                fontSize: { xs: '18px', md: '18px' }, // Now using sx prop correctly
+              }}
+            >
+              Technical Support:
+            </Typography>{' '}
+            <Typography component="span">
+              Vijay Rasquinha, Teerath Rawat, ATREE for their valuable technical
+              and design expertise. TEKDI Technologies for their execution of
+              the project
+            </Typography>
+          </Typography>
           <br></br>
-          <b>Technical Support:</b> Vijay Rasquinha, Teerath Rawat, ATREE for
-          their valuable technical and design expertise. TEKDI Technologies for
-          their execution of the project
-          <br></br>
-          <br></br>
-          <b>Content Support:</b> Public and Private school teachers who
-          actively participated in the ‘Jal-Jungle-Jameen in classrooms’
-          workshops; partner NGOs; middle school students; volunteers, and
-          part-time consultants (Madhushri, Ankit, Vaishnavi, Angela) of the
-          project.
+          <Typography
+            component="span"
+            sx={{
+              fontWeight: 'bold',
+              fontSize: { xs: '18px', md: '18px' }, // Now using sx prop correctly
+            }}
+          >
+            Content Support:
+          </Typography>{' '}
+          <Typography component="span">
+            Public and Private school teachers who actively participated in the
+            ‘Jal-Jungle-Jameen in classrooms’ workshops; partner NGOs; middle
+            school students; volunteers, and part-time consultants (Madhushri,
+            Ankit, Vaishnavi, Angela) of the project.
+          </Typography>
         </Typography>
 
         <Box
