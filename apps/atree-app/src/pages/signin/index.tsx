@@ -36,16 +36,9 @@ import {
 } from '../../utils/authUtils';
 import { TelemetryEventType } from '../../utils/app.constant';
 import { telemetryFactory } from '../../utils/telemetry';
-import Forgotpassword from '../forgotpassword';
-import { OtpVerificationScreen } from '../otpverification';
-import { NewPasswordScreen } from '../newpassword';
 
 interface ListProps {}
-interface ForgotErrors {
-  email: string;
-  newPassword: string;
-  confirmPassword: string;
-}
+
 const Login: React.FC<ListProps> = () => {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({ email: '', password: '' });
@@ -64,7 +57,7 @@ const Login: React.FC<ListProps> = () => {
     confirmPassword: '',
     registeredWithGoogle: false,
   });
-  const [forgotErrors, setForgotErrors] = useState<ForgotErrors>({
+  const [forgotErrors, setForgotErrors] = useState({
     email: '',
     newPassword: '',
     confirmPassword: '',
@@ -73,7 +66,6 @@ const Login: React.FC<ListProps> = () => {
     newPassword: false,
     confirmPassword: false,
   });
-
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
   const [openOtpDialog, setOpenOtpDialog] = useState(false);
   const [otp, setOtp] = useState('');
@@ -192,9 +184,7 @@ const Login: React.FC<ListProps> = () => {
     }
   };
 
-  const [forgotStep, setForgotStep] = useState<'email' | 'otp' | 'newPassword'>(
-    'email'
-  );
+
   useEffect(() => {
     if (alert.message) {
       const timer = setTimeout(
@@ -206,296 +196,7 @@ const Login: React.FC<ListProps> = () => {
       return () => clearTimeout(timer);
     }
   }, [alert]);
-  const handleSendOtp = async () => {
-    const { email } = forgotData;
 
-    if (!validateEmail(email)) {
-      setForgotErrors({ ...forgotErrors, email: 'Enter a valid email.' });
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        'https://shiksha-dev-interface.tekdinext.com/interface/v1/user/send-otp',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email,
-            reason: 'forgot',
-            key: 'SendOtpOn',
-            replacements: {
-              '{eventName}': 'ATREE OTP',
-              '{programName}': 'ATREE',
-            },
-          }),
-        }
-      );
-
-      const result = await response.json();
-      if (response.ok) {
-        setOtpHash(result?.result?.data?.hash);
-        setForgotStep('otp');
-      } else {
-        setAlert({
-          message: result?.params?.errmsg || 'Failed to send OTP',
-          severity: 'error',
-        });
-      }
-    } catch (err) {
-      console.error(err);
-      setAlert({ message: 'An error occurred.', severity: 'error' });
-    }
-  };
-
-  const verifyOtp = async () => {
-    try {
-      const response = await fetch(
-        'https://shiksha-dev-interface.tekdinext.com/interface/v1/user/verify-otp',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-          body: JSON.stringify({
-            username: forgotData.email,
-            email: forgotData.email,
-            reason: 'forgot',
-            otp,
-            hash: otpHash,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok && data.result?.token) {
-        setOtpHash(data.result.token); // Store the token for password reset
-        setForgotStep('newPassword');
-      } else {
-        setAlert({
-          message: data?.params?.err || 'Invalid OTP.',
-          severity: 'error',
-        });
-      }
-    } catch (error) {
-      setAlert({
-        message: 'An error occurred while verifying OTP.',
-        severity: 'error',
-      });
-    }
-  };
-
-  const resetPassword = async () => {
-    // Reset errors
-    const { newPassword, confirmPassword } = forgotData;
-    const newErrors = {
-      email: '',
-      newPassword: '',
-      confirmPassword: '',
-    };
-
-    // Validate new password
-    if (!newPassword) {
-      newErrors.newPassword = 'Password is required';
-    } else if (!passwordRegex.test(newPassword)) {
-      newErrors.newPassword =
-        'Password must contain at least 8 characters, including uppercase, lowercase, number, and special character.';
-    }
-    if (forgotData.newPassword !== forgotData.confirmPassword) {
-      setForgotErrors((prev) => ({
-        ...prev,
-        confirmPassword: 'Passwords do not match',
-      }));
-      return;
-    }
-    setForgotErrors(newErrors);
-
-    // If there are any errors, stop here
-    if (Object.values(newErrors).some((error) => error)) {
-      return;
-    }
-    try {
-      const response = await fetch(
-        'https://shiksha-dev-interface.tekdinext.com/interface/v1/user/forgot-password',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-          body: JSON.stringify({
-            newPassword: forgotData.newPassword,
-            token: otpHash, // Using the token we got from OTP verification
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Now login the user automatically
-        try {
-          const loginResponse = await signin({
-            email: forgotData.email,
-            password: forgotData.newPassword,
-          });
-
-          if (loginResponse?.result?.access_token) {
-            localStorage.setItem('token', loginResponse.result.access_token);
-            localStorage.setItem(
-              'refreshToken',
-              loginResponse.result.refresh_token
-            );
-
-            const authInfo = await getUserAuthInfo({
-              token: loginResponse.result.access_token,
-            });
-
-            if (authInfo?.result?.status !== 'archived') {
-              const capitalizeFirstLetter = (word: string) =>
-                word.charAt(0).toUpperCase() + word.slice(1);
-              const user = `${capitalizeFirstLetter(
-                authInfo?.result?.firstName
-              )} ${capitalizeFirstLetter(authInfo?.result?.lastName)}`.trim();
-
-              localStorage.setItem('username', user);
-              localStorage.setItem('userId', authInfo?.result?.userId);
-              localStorage.setItem(
-                'role',
-                authInfo?.result?.tenantData?.[0]?.roleName
-              );
-
-              dispatchLoginEvent(user, 'credentials');
-              setAlert({
-                message: 'Password reset and login successful!',
-                severity: 'success',
-              });
-
-              // Track events and telemetry as before
-              trackEvent({
-                action: 'signin',
-                category: 'engagement',
-                label: `Login successful - ${
-                  authInfo?.result?.userId || 'Anonymous'
-                }`,
-              });
-
-              const windowUrl = window.location.pathname;
-              const cleanedUrl = windowUrl.replace(/^\//, '');
-              const env = cleanedUrl.split('/')[0];
-
-              const telemetryInteract = {
-                context: {
-                  env: env,
-                  cdata: [],
-                },
-                edata: {
-                  id: 'Login successful',
-                  type: TelemetryEventType.CLICK,
-                  subtype: '',
-                  pageid: cleanedUrl,
-                  uid: authInfo?.result?.userId || 'Anonymous',
-                },
-              };
-              telemetryFactory.interact(telemetryInteract);
-
-              router.push('/home');
-            } else {
-              setAlert({
-                message: 'Your account has been deleted.',
-                severity: 'error',
-              });
-            }
-          } else {
-            setAlert({
-              message:
-                loginResponse?.response?.data?.params?.errmsg ||
-                'Login failed after password reset',
-              severity: 'error',
-            });
-          }
-        } catch (loginError) {
-          setAlert({
-            message:
-              'Password reset successful but login failed. Please try logging in manually.',
-            severity: 'warning',
-          });
-        }
-
-        // Close all dialogs
-        setOpenOtpDialog(false);
-        setOpenForgotDialog(false);
-        setForgotStep('email');
-      } else {
-        setAlert({
-          message: data?.params?.errmsg || 'Password reset failed.',
-          severity: 'error',
-        });
-      }
-    } catch (err) {
-      setAlert({
-        message: 'An error occurred while resetting password.',
-        severity: 'error',
-      });
-    }
-  };
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-
-    if (openForgotDialog && forgotStep === 'otp') {
-      setOtpTimer(600); // reset to 10 minutes
-
-      interval = setInterval(() => {
-        setOtpTimer((prev) => {
-          if (prev <= 1) {
-            clearInterval(interval);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-
-    return () => clearInterval(interval); // cleanup
-  }, [openForgotDialog, forgotStep]);
-  const formatTime = (seconds: number) => {
-    const min = Math.floor(seconds / 60)
-      .toString()
-      .padStart(2, '0');
-    const sec = (seconds % 60).toString().padStart(2, '0');
-    return `${min}:${sec}`;
-  };
-
-  const handleCloseForgotDialog = () => {
-    setOpenForgotDialog(false);
-    setForgotStep('email');
-    setForgotData({
-      email: '',
-      newPassword: '',
-      confirmPassword: '',
-      registeredWithGoogle: false,
-    });
-    setForgotErrors({ email: '', newPassword: '', confirmPassword: '' });
-    setShowPasswords({ newPassword: false, confirmPassword: false });
-    setOtp('');
-    setOtpHash('');
-  };
-
-  const togglePasswordVisibility = (
-    field: 'newPassword' | 'confirmPassword'
-  ) => {
-    setShowPasswords((prev) => ({ ...prev, [field]: !prev[field] }));
-  };
-
-  const isResetDisabled =
-    !forgotData.newPassword ||
-    !forgotData.confirmPassword ||
-    !passwordRegex.test(forgotData.newPassword) ||
-    forgotData.newPassword !== forgotData.confirmPassword;
   return (
     <Layout showTopAppBar>
       <Box>
@@ -658,7 +359,13 @@ const Login: React.FC<ListProps> = () => {
                     textDecoration: 'underline',
                     cursor: 'pointer',
                   }}
-                  onClick={() => setOpenForgotDialog(true)}
+                  onClick={async () => {
+                    try {
+                      await router.push('/forgotpasswords');
+                    } catch (error) {
+                      console.error('Navigation failed:', error);
+                    }
+                  }}
                 >
                   Forgot Password?
                 </Typography>
@@ -717,224 +424,7 @@ const Login: React.FC<ListProps> = () => {
           </Alert>
         </Box>
       )}
-      {openForgotDialog && (
-        <Forgotpassword
-          open={openForgotDialog}
-          onClose={() => setOpenForgotDialog(false)}
-          forgotData={forgotData}
-          setForgotData={setForgotData}
-          forgotErrors={forgotErrors}
-          handleSendOtp={handleSendOtp}
-          setForgotErrors={setForgotErrors}
-        />
-      )}
-      {openForgotDialog && forgotStep === 'otp' && (
-        <OtpVerificationScreen
-          open={openForgotDialog && forgotStep === 'otp'}
-          onClose={handleCloseForgotDialog}
-          otp={otp}
-          setOtp={setOtp}
-          otpTimer={otpTimer}
-          verifyOtp={verifyOtp}
-          formatTime={formatTime}
-          email={forgotData?.email}
-        />
-      )}
-      {/* <Dialog
-        open={openForgotDialog && forgotStep === 'email'}
-        onClose={(event, reason) => {
-          if (reason === 'backdropClick') return;
-          handleCloseForgotDialog();
-        }}
-        disableEscapeKeyDown
-        PaperProps={{
-          style: {
-            maxWidth: '600px',
-            // Remove maxHeight to prevent dialog from expanding
-            overflow: 'auto',
-          },
-        }}
-      >
-        <DialogTitle
-          sx={{
-            fontFamily: 'Poppins',
-            fontSize: '18px',
-            fontWeight: 800,
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          Reset Password
-          <IconButton onClick={handleCloseForgotDialog}>
-            <Close />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent>
-          <Box mt={1} mb={2}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={forgotData.registeredWithGoogle}
-                  sx={{
-                    transform: 'scale(0.9)',
-                    color: '#fcd804',
-                    '&.Mui-checked': { color: '#fcd804' },
-                    p: 0.5,
-                  }}
-                  onChange={(e) => {
-                    setForgotData((prev) => ({
-                      ...prev,
-                      registeredWithGoogle: e.target.checked,
-                      email: e.target.checked ? '' : prev.email,
-                    }));
-                  }}
-                />
-              }
-              label="I registered using Google account"
-              sx={{ fontFamily: 'Poppins' }}
-            />
-
-            {forgotData.registeredWithGoogle ? (
-              <Box
-                sx={{
-                  backgroundColor: '#fff8e1',
-                  p: 2,
-                  borderRadius: 1,
-                  width: '100%',
-                  mt: 1,
-                }}
-              >
-                <Typography variant="body2" sx={{ fontFamily: 'Poppins' }}>
-                  Password reset is not available for Google-registeredaccounts.
-                </Typography>
-              </Box>
-            ) : (
-              <Box mt={2}>
-                <CommonTextField
-                  fullWidth
-                  type="email"
-                  label="Email"
-                  value={forgotData.email}
-                  onChange={(e) =>
-                    setForgotData((prev) => ({
-                      ...prev,
-                      email: e.target.value,
-                    }))
-                  }
-                  helperText={forgotErrors.email}
-                  error={Boolean(forgotErrors.email)}
-                />
-              </Box>
-            )}
-          </Box>
-        </DialogContent>
-        <DialogActions sx={{ justifyContent: 'center', py: 2, px: 3 }}>
-          <Button
-            variant="contained"
-            onClick={handleSendOtp}
-            sx={{
-              borderRadius: '50px',
-              height: '40px',
-              width: '100%',
-              backgroundColor: '#fcd804',
-              color: '#000000',
-              fontFamily: 'Poppins',
-              fontSize: '16px',
-              fontWeight: '500',
-            }}
-            disabled={
-              forgotData.registeredWithGoogle ||
-              !forgotData.email ||
-              !!forgotErrors.email
-            }
-          >
-            Send OTP
-          </Button>
-        </DialogActions>
-      </Dialog> */}
-      {/* Forgot Password Dialog - Step 2: OTP Verification */}
-      {/* <Dialog
-        open={openForgotDialog && forgotStep === 'otp'}
-        onClose={(event, reason) => {
-          if (reason === 'backdropClick') return;
-          handleCloseForgotDialog();
-        }}
-        disableEscapeKeyDown
-        PaperProps={{
-          style: {
-            maxWidth: '600px',
-            maxHeight: 'calc(100vh - 64px)',
-            overflow: 'auto',
-          },
-        }}
-      >
-        <DialogTitle
-          sx={{
-            fontFamily: 'Poppins',
-            fontSize: '18px',
-            fontWeight: 800,
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          Enter OTP
-          <IconButton onClick={handleCloseForgotDialog}>
-            <Close />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent>
-          <Typography variant="body2" sx={{ mb: 1 }}>
-            Enter the OTP.
-          </Typography>
-          <TextField
-            fullWidth
-            label="OTP"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-          />
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-            OTP is valid for: <strong>{formatTime(otpTimer)}</strong>
-          </Typography>
-        </DialogContent>
-        <DialogActions sx={{ justifyContent: 'center', py: 2, px: 3 }}>
-          <Button
-            variant="contained"
-            onClick={verifyOtp}
-            sx={{
-              borderRadius: '50px',
-              height: '40px',
-              width: '100%',
-              backgroundColor: '#fcd804',
-              color: '#000000',
-              fontFamily: 'Poppins',
-              fontSize: '16px',
-              fontWeight: '500',
-            }}
-            disabled={!otp}
-          >
-            Verify OTP
-          </Button>
-        </DialogActions>
-      </Dialog> */}
-
-      {/* Forgot Password Dialog - Step 3: New Password */}
-      {openForgotDialog && forgotStep === 'newPassword' && (
-        <NewPasswordScreen
-          open={openForgotDialog && forgotStep === 'newPassword'}
-          onClose={handleCloseForgotDialog}
-          forgotData={forgotData}
-          setForgotData={setForgotData}
-          forgotErrors={forgotErrors}
-          setForgotErrors={setForgotErrors}
-          showPasswords={showPasswords}
-          togglePasswordVisibility={togglePasswordVisibility}
-          resetPassword={resetPassword}
-          isResetDisabled={isResetDisabled}
-          passwordRegex={passwordRegex}
-        />
-      )}
+ 
     </Layout>
   );
 };

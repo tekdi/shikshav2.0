@@ -1,5 +1,4 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-
 import {
   Button,
   debounce,
@@ -26,7 +25,6 @@ import { deleteUserAccount } from '../../service/content';
 import ShareIcon from '@mui/icons-material/Share';
 import ShareDialog from '../ShareDialog';
 import FooterText from '../FooterText';
-import Footer from './Footer';
 
 interface LayoutProps {
   children?: React.ReactNode;
@@ -41,7 +39,6 @@ interface LayoutProps {
     to: string;
     icon?: React.ReactNode;
   }[];
-
   onItemClick?: (to: string) => void | undefined;
   onBackIconClick?: () => void;
   showTopAppBar?:
@@ -91,6 +88,14 @@ interface LayoutProps {
   isDrawer?: boolean;
 }
 
+// Helper function to detect iOS
+const isIOS = () => {
+  return (
+    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  );
+};
+
 export default function Layout({
   children,
   isLoadingChildren = false,
@@ -109,8 +114,7 @@ export default function Layout({
   isDrawer = true,
 }: Readonly<LayoutProps>) {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Detect mobile screen
-
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [layoutHeight, setLayoutHeight] = useState(0);
   const refs = useRef({});
@@ -118,14 +122,11 @@ export default function Layout({
   const [openDialog, setOpenDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [openDeleteMessageDialog, setOpenDeleteMessageDialog] = useState(false); // [openDeleteMessageDialog]
+  const [openDeleteMessageDialog, setOpenDeleteMessageDialog] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const token =
     typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
-  };
   const { keycloak } = useKeycloak();
   const [frameworkData, setFrameworkData] = useState<any>(null);
   const [frameworkFilter, setFrameworkFilter] = useState<any[]>([]);
@@ -134,6 +135,7 @@ export default function Layout({
     router.pathname === '/signin' || router.pathname === '/register';
   const bottomFooter =
     router.pathname === '/searchpage' || router.pathname === '/contents';
+
   useEffect(() => {
     let isMounted = true;
     const fetchFrameworkData = async () => {
@@ -187,7 +189,6 @@ export default function Layout({
 
   const drawerItems = [
     { text: 'Home', icon: <HomeOutlinedIcon fontSize="small" />, to: '/' },
-
     ...(!token
       ? [
           {
@@ -202,7 +203,6 @@ export default function Layout({
       icon: <ParkOutlinedIcon fontSize="small" />,
       to: '/aboutus',
     },
-
     {
       text: 'Recommend Resources',
       icon: <PostAddOutlinedIcon fontSize="small" />,
@@ -215,22 +215,6 @@ export default function Layout({
     },
     ...(token
       ? [
-          // {
-          //   text: (
-          //     <Typography
-          //       sx={{ color: '#ff0000', fontWeight: 700, fontSize: '20px' }}
-          //     >
-          //       Delete My Account
-          //     </Typography>
-          //   ),
-          //   icon: (
-          //     <DeleteOutlineOutlinedIcon
-          //       sx={{ color: '#ff0000' }}
-          //       fontSize="small"
-          //     />
-          //   ),
-          //   to: 'delete-account',
-          // },
           {
             text: 'Logout',
             icon: <AccountCircleOutlinedIcon fontSize="small" />,
@@ -239,87 +223,85 @@ export default function Layout({
         ]
       : []),
   ];
+
   const handleOpen = () => setOpen(true);
+
+  const clearAllStorage = () => {
+    // Clear localStorage and sessionStorage
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // Clear all cookies
+    document.cookie.split(';').forEach((cookie) => {
+      const eqPos = cookie.indexOf('=');
+      const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie.trim();
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname}`;
+    });
+
+    // Clear Keycloak specific storage
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith('kc-') || key.startsWith('keycloak')) {
+        localStorage.removeItem(key);
+      }
+    });
+  };
+
+  const performLogout = async () => {
+    try {
+      clearAllStorage();
+
+      if (isIOS()) {
+        // For iOS, we need to do a full page reload after logout
+        localStorage.setItem('performing_logout', 'true');
+        await keycloak.logout({ redirectUri: window.location.origin });
+        window.location.href = window.location.origin;
+      } else {
+        await keycloak.logout({ redirectUri: window.location.origin });
+      }
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // Fallback to hard redirect if logout fails
+      window.location.href = window.location.origin;
+    }
+  };
 
   const handleItemClick = async (to: string) => {
     if (to === 'delete-account') {
       setOpenDeleteDialog(true);
-      return; // prevent navigation!
+      return;
     }
-    if (to === 'delete-account') {
-      setOpenDeleteDialog(true);
-      const accToken = localStorage.getItem('token') || '';
-      const userId = localStorage.getItem('userId') ?? '';
-      if (confirmDelete) {
-        try {
-          await deleteUserAccount({
-            token: accToken,
-            userId: userId,
-          });
-        } catch (error) {
-          console.error('Error updating user status:', error);
-          return error;
-        }
-      }
-    }
+
     if (to.startsWith('http')) {
-      // Open external links in a new tab
       window.open(to, '_blank');
       return;
     }
+
     if (to === '/signin') {
       if (token) {
-        // If logged in, clear localStorage and log out
-        localStorage.clear();
-        localStorage.removeItem('token');
-        sessionStorage.removeItem('token');
-        Object.keys(localStorage).forEach((key) => {
-          if (key.startsWith('kc-callback-')) {
-            localStorage.removeItem(key);
-          }
-        });
-
-        keycloak.logout({
-          redirectUri: window.location.origin, // Redirect to home page after logout
-        });
-        // Clear Google OAuth session (important for some cases)
-        document.cookie =
-          'g_state=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        router.push('/'); // Redirect to home on logout
+        await performLogout();
       } else {
-        // If not logged in, go to sign-in page
         router.push('/signin');
       }
-    } else {
-      router.push(to);
+      return;
     }
+
+    router.push(to);
   };
+
   const handleCloseDeleteDialog = async () => {
     setOpenDeleteDialog(false);
     const accToken = localStorage.getItem('token') ?? '';
     const userId = localStorage.getItem('userId') ?? '';
+
     try {
       const deleteResponse = await deleteUserAccount({
         token: accToken,
         userId: userId,
       });
+
       if (deleteResponse?.responseCode === 200) {
         setOpenDeleteMessageDialog(true);
-        localStorage.removeItem('token');
-        sessionStorage.removeItem('token');
-        localStorage.removeItem('role');
-        localStorage.removeItem('username');
-        Object.keys(localStorage).forEach((key) => {
-          if (key.startsWith('kc-callback-')) {
-            localStorage.removeItem(key);
-          }
-        });
-
-        keycloak.logout({
-          redirectUri: window.location.origin, // Redirect to home page after logout
-        });
-        document.cookie =
-          'g_state=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        await performLogout();
       }
     } catch (error) {
       console.error('Error deleting account:', error);
@@ -378,7 +360,7 @@ export default function Layout({
                 actionIcons={topAppBarIcons}
                 menuIconClick={() => setIsDrawerOpen(true)}
                 searchQuery={searchQuery}
-                onSearchChange={handleSearchChange}
+                onSearchChange={(e) => setSearchQuery(e.target.value)}
                 frameworkData={frameworkData}
                 frameworkFilter={frameworkFilter}
                 framework={framework}
@@ -393,7 +375,7 @@ export default function Layout({
             sx={{
               width: '100%',
               display: 'flex',
-              alignItems: 'center', // Changed from 'flex-start' to 'center' for vertical alignment
+              alignItems: 'center',
               p: 2,
               bgcolor: '#FFFFFF',
               gap: 2,
@@ -443,6 +425,7 @@ export default function Layout({
           </Box>
         )}
       </Box>
+
       {isDrawer && (
         <CommonDrawer
           anchor="right"
@@ -451,7 +434,7 @@ export default function Layout({
           items={drawerItems}
           categories={categorieItems}
           onItemClick={(to) => {
-            handleItemClick?.(to ?? '');
+            handleItemClick(to ?? '');
             setIsDrawerOpen(false);
           }}
         />
@@ -460,25 +443,10 @@ export default function Layout({
       <Loader isLoading={isLoadingChildren} layoutHeight={layoutHeight}>
         {children}
       </Loader>
-      {!isAuthPage &&  bottomFooter && <FooterText page="" />}
-      {/* {!isAuthPage && isMobile && bottomFooter && <Footer />} */}
-      {/* {footerComponent && (
-        <Box
-          ref={(refFoot) => {
-            if (!Object.prototype.hasOwnProperty.call(refs.current, 'footer')) {
-              refs.current = { ...refs.current, footer: refFoot };
-            }
-          }}
-          sx={{
-            width: '100%',
-            bgcolor: 'white',
-            ..._footer,
-          }}
-        >
-          {footerComponent}
-        </Box>
-      )} */}
 
+      {!isAuthPage && bottomFooter && <FooterText page="" />}
+
+      {/* Delete Account Confirmation Dialog */}
       <CommonDialog
         isOpen={openDeleteDialog}
         onClose={() => setOpenDeleteDialog(false)}
@@ -535,11 +503,15 @@ export default function Layout({
           height: '206px',
         }}
       />
+
       <ShareDialog open={open} handleClose={() => setOpen(false)} />
+
+      {/* Delete Success Message Dialog */}
       <CommonDialog
         isOpen={openDeleteMessageDialog}
         onClose={() => {
-          setOpenDeleteMessageDialog(false), router.push('/');
+          setOpenDeleteMessageDialog(false);
+          router.push('/');
         }}
         disableCloseOnBackdropClick={true}
         header="User Details"
@@ -547,7 +519,7 @@ export default function Layout({
         content={
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Typography variant="body1">
-              User account deleted successfully !
+              User account deleted successfully!
             </Typography>
           </Box>
         }
@@ -578,6 +550,7 @@ export default function Layout({
           borderRadius: '16px',
         }}
       />
+
       {openDialog && (
         <TermsAndCondition
           isOpen={openDialog}

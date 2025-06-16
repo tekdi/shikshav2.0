@@ -43,8 +43,8 @@ export default function Searchpage() {
   const [filters, setFilters] = useState<any>({
     request: {
       filters: {},
-      offset: 0,
-      limit: 5,
+      // offset: 0,
+      // limit: 5,
     },
   });
   React.useEffect(() => {
@@ -122,7 +122,7 @@ export default function Searchpage() {
       category: 'user',
       label: 'Home Page',
     });
-    const { offset, limit, ...filters } = selectedValues;
+    const { ...filters } = selectedValues;
     setFilters((prevFilters: any) => {
       // Create a new filters object, preserving previous filters
       let cleanedFilters = {
@@ -147,8 +147,8 @@ export default function Searchpage() {
       const newFilters = {
         request: {
           filters: cleanedFilters,
-          offset: offset ?? prevFilters.request.offset ?? 0,
-          limit: limit ?? prevFilters.request.limit ?? 5,
+          // offset: offset ?? prevFilters.request.offset ?? 0,
+          // limit: limit ?? prevFilters.request.limit ?? 5,
         },
       };
 
