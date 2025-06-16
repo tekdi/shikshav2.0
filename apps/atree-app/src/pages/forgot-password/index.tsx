@@ -833,7 +833,18 @@ const ForgotPasswordPage = () => {
 
       if (response.ok) {
         try {
-           router.push('/signin');
+          // router.push('/signin');
+           setState((prev) => ({
+                ...prev,
+                alert: {
+                  message: 'Password reset was successful!',
+                  severity: 'success',
+                },
+           }));
+          
+           setTimeout(() => {
+                router.push('/signin');
+              }, 4000);
           // const loginResponse = await signin({
           //   email: state.forgotData.email,
           //   password: state.forgotData.newPassword,
