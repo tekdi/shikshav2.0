@@ -13,7 +13,7 @@ import {
   FormHelperText,
 } from '@mui/material';
 import { TextFieldProps } from '@mui/material/TextField';
-
+import { Theme } from '@mui/material/styles';
 import { Visibility, VisibilityOff, ArrowBack } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import { getUserAuthInfo, signin } from '../../service/content';
@@ -21,7 +21,7 @@ import Layout from '../../component/layout/layout';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 // Helper functions
 const formatTime = (seconds: number) => {
   const min = Math.floor(seconds / 60)
@@ -32,7 +32,7 @@ const formatTime = (seconds: number) => {
 };
 
 const validateEmail = (email: string) => {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  return emailRegex.test(email);
 };
 
 // Define types for the component props
@@ -110,83 +110,121 @@ CustomTextField.displayName = 'CustomTextField';
 
 // Step Components
 const EmailStep = React.memo(
-  ({ onNext, data, errors, onChange }: EmailStepProps) => (
-    <>
-      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <LockOpenIcon sx={{ fontSize: 40, color: 'black' }} />
-      </Box>
-      <Typography
-        variant="h6"
-        align="center"
-        sx={{
-          mt: 2,
-          mb: 3,
-          fontWeight: 600,
-          fontFamily: 'Poppins',
-          fontSize: { xs: '16px', md: '18px' },
-        }}
-      >
-        Forgot Password?
-      </Typography>
-      <Typography
-        variant="body1"
-        align="center"
-        sx={{
-          mb: 3,
-          color: '#666',
-          fontFamily: 'Poppins',
-          fontSize: { xs: '14px', md: '16px' },
-        }}
-      >
-        Enter the email address associated with your account.
-      </Typography>
+  ({ onNext, data, errors, onChange }: EmailStepProps) => {
+    const [touched, setTouched] = useState(false);
+    const showEmailValidation =
+      touched && data.email && !validateEmail(data.email);
 
-      <Box sx={{ mb: 2 }}>
-        <CustomTextField
-          fullWidth
-          type="email"
-          label="Enter email"
-          value={data.email}
-          onChange={(e) => onChange('email', e.target.value)}
-          error={!!errors.email}
-          helperText={errors.email}
+    return (
+      <>
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <LockOpenIcon sx={{ fontSize: 40, color: 'black' }} />
+        </Box>
+        <Typography
+          variant="h6"
+          align="center"
           sx={{
-            '& .MuiInputLabel-root': {
-              color: 'gray',
-            },
-            '& .Mui-focused .MuiInputLabel-root': {
-              color: 'black',
-            },
-            '& .MuiOutlinedInput-root': {
-              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                borderColor: 'black',
-              },
-            },
+            mt: 2,
+            mb: 3,
+            fontWeight: 600,
+            fontFamily: 'Poppins',
+            fontSize: { xs: '16px', md: '18px' },
           }}
-        />
-      </Box>
-      <Button
-        fullWidth
-        variant="contained"
-        onClick={onNext}
-        disabled={data.registeredWithGoogle || !data.email}
-        sx={{
-          mt: 2,
-          height: 48,
-          borderRadius: '24px',
-          backgroundColor: '#fcd804',
-          color: '#000',
-          fontWeight: 600,
-          fontFamily: 'Poppins',
-          textTransform: 'none',
-          '&:hover': { backgroundColor: '#e6c200' },
-          '&:disabled': { backgroundColor: '#e0e0e0' },
-        }}
-      >
-        Next
-      </Button>
-    </>
-  )
+        >
+          Forgot Password?
+        </Typography>
+        <Typography
+          variant="body1"
+          align="center"
+          sx={{
+            mb: 3,
+            color: '#666',
+            fontFamily: 'Poppins',
+            fontSize: { xs: '14px', md: '16px' },
+          }}
+        >
+          Enter the email address associated with your account.
+        </Typography>
+
+        <Box sx={{ mb: 2 }}>
+          <CustomTextField
+            fullWidth
+            type="email"
+            label="Enter email"
+            value={data.email}
+            onChange={(e) => {
+              onChange('email', e.target.value);
+              setTouched(true);
+            }}
+            onBlur={() => setTouched(true)}
+            error={!!errors.email || !!showEmailValidation}
+            helperText={errors.email}
+            sx={{
+              '& .MuiInputLabel-root': {
+                color: 'gray',
+              },
+              '& .Mui-focused .MuiInputLabel-root': {
+                color: (theme: Theme) =>
+                  theme.palette.mode === 'light' ? 'black' : 'white',
+              },
+              '& .Mui-error.MuiInputLabel-root': {
+                // Target label in error state
+                color: 'gray', // Keep gray even in error
+              },
+              '& .Mui-focused .Mui-error.MuiInputLabel-root': {
+                // Focused error state
+                color: 'black',
+              },
+              '& .MuiOutlinedInput-root': {
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: 'black',
+                },
+                '&.Mui-error .MuiOutlinedInput-notchedOutline': {
+                  // Error border
+                  borderColor: 'red', // Or your preferred error color
+                },
+              },
+            }}
+          />
+          {showEmailValidation && !errors.email && (
+            <FormHelperText
+              sx={{
+                color: 'red',
+                mt: 1,
+                ml: 1,
+              }}
+            >
+              Please enter a valid email address.
+            </FormHelperText>
+          )}
+        </Box>
+        <Button
+          fullWidth
+          variant="contained"
+          onClick={onNext}
+          disabled={
+            data.registeredWithGoogle ||
+            !data.email ||
+            !validateEmail(data.email)
+          }
+          sx={{
+            mt: 2,
+            height: 48,
+            borderRadius: '24px',
+            backgroundColor: '#fcd804',
+            color: '#000',
+            fontWeight: 600,
+            fontFamily: 'Poppins',
+            textTransform: 'none',
+            '&:hover': { backgroundColor: '#e6c200' },
+            '&:disabled': { backgroundColor: '#e0e0e0' },
+          }}
+        >
+          Next
+        </Button>
+      </>
+    );
+  }
 );
 
 const OtpStep = React.memo(
@@ -587,16 +625,18 @@ const ForgotPasswordPage = () => {
   });
 
   const handleSendOtp = useCallback(async () => {
-    const { email } = state.forgotData;
+  const { email } = state.forgotData;
 
-    if (!validateEmail(email)) {
-      setState((prev) => ({
-        ...prev,
-        forgotErrors: { ...prev.forgotErrors, email: 'Enter a valid email.' },
-      }));
-      return;
-    }
-
+  if (!validateEmail(email)) {
+    setState((prev) => ({
+      ...prev,
+      forgotErrors: {
+        ...prev.forgotErrors,
+        email: 'Please enter a valid email address',
+      },
+    }));
+    return;
+  }
     try {
       const response = await fetch(
         'https://shiksha-dev-interface.tekdinext.com/interface/v1/user/send-otp',
@@ -778,7 +818,9 @@ const ForgotPasswordPage = () => {
                 },
               }));
 
-              router.push('/');
+               setTimeout(() => {
+                 router.push('/');
+               }, 3000);
             } else {
               setState((prev) => ({
                 ...prev,
