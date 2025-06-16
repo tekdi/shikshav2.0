@@ -12,6 +12,8 @@ import {
   InputAdornment,
   FormHelperText,
 } from '@mui/material';
+import { TextFieldProps } from '@mui/material/TextField';
+
 import { Visibility, VisibilityOff, ArrowBack } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import { getUserAuthInfo, signin } from '../../service/content';
@@ -62,7 +64,7 @@ type NewPasswordStepProps = {
 };
 
 // Custom TextField with password toggle
-interface CustomTextFieldProps {
+type CustomTextFieldProps = TextFieldProps &{
   fullWidth?: boolean;
   type?: string;
   label?: string;
@@ -77,6 +79,8 @@ interface CustomTextFieldProps {
 
 const CustomTextField = React.forwardRef<HTMLDivElement, CustomTextFieldProps>(
   ({ showPassword, onTogglePassword, type, error = false, ...props }, ref) => {
+    const isPasswordType = props.label?.toLowerCase().includes('password'); // or use a dedicated prop
+
     return (
       <MuiTextField
         {...props}
@@ -84,7 +88,8 @@ const CustomTextField = React.forwardRef<HTMLDivElement, CustomTextFieldProps>(
         type={type}
         error={error}
         InputProps={{
-          endAdornment: type === 'password' && (
+          ...props.InputProps,
+          endAdornment: isPasswordType && (
             <InputAdornment position="end">
               <IconButton
                 onClick={onTogglePassword}
@@ -100,6 +105,7 @@ const CustomTextField = React.forwardRef<HTMLDivElement, CustomTextFieldProps>(
     );
   }
 );
+
 CustomTextField.displayName = 'CustomTextField';
 
 // Step Components
@@ -210,6 +216,20 @@ const OtpStep = React.memo(
       }
     };
 
+    const handlePaste = (e: React.ClipboardEvent) => {
+      e.preventDefault();
+      const pasteData = e.clipboardData.getData('text/plain').trim();
+      const otpDigits = pasteData.replace(/\D/g, '').split('').slice(0, 6);
+
+      if (otpDigits.length === 6) {
+        otpDigits.forEach((digit, index) => {
+          onOtpChange(index, digit);
+        });
+        // Focus the last input field after paste
+        inputRefs.current[5]?.focus();
+      }
+    };
+
     const renderOtpInputs = () => {
       return (
         <Box
@@ -222,6 +242,7 @@ const OtpStep = React.memo(
             maxWidth: '400px',
             margin: '0 auto',
           }}
+          onPaste={handlePaste}
         >
           {Array(6)
             .fill('')
@@ -232,6 +253,7 @@ const OtpStep = React.memo(
                 value={otp[i] || ''}
                 onChange={(e) => handleChange(i, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(i, e)}
+                onPaste={handlePaste}
                 inputProps={{
                   maxLength: 1,
                   inputMode: 'numeric',
@@ -346,7 +368,6 @@ const OtpStep = React.memo(
     );
   }
 );
-
 const NewPasswordStep = React.memo(
   ({
     data,
@@ -454,7 +475,7 @@ const NewPasswordStep = React.memo(
             onChange={(e) => onChange('confirmPassword', e.target.value)}
             error={!!errors.confirmPassword || Boolean(passwordsMismatch)}
             helperText={errors.confirmPassword}
-            showPassword={showPasswords.confirmPassword}
+            showPassword={showPasswords.confirmPassword} // Make sure this is passed
             onTogglePassword={() => onTogglePassword('confirmPassword')}
             sx={{
               '& .MuiInputLabel-root': {

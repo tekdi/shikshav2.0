@@ -324,7 +324,7 @@ const Login: React.FC<ListProps> = () => {
                     </Button>
                   </Grid>
 
-                  <Grid item xs={10} sm={8} md={6}>
+                  {/* <Grid item xs={10} sm={8} md={6}>
                     <Box
                       sx={{
                         width: '100%',
@@ -345,7 +345,7 @@ const Login: React.FC<ListProps> = () => {
                         <MyCustomGoogleLogin />
                       </GoogleOAuthProvider>
                     </Box>
-                  </Grid>
+                  </Grid> */}
                 </Grid>
               </Grid>
               <Grid item textAlign="center">
@@ -361,7 +361,7 @@ const Login: React.FC<ListProps> = () => {
                   }}
                   onClick={async () => {
                     try {
-                      await router.push('/forgotpasswords');
+                      await router.push('/forgot-password');
                     } catch (error) {
                       console.error('Navigation failed:', error);
                     }
