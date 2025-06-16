@@ -47,6 +47,7 @@ type OtpStepProps = {
   email: string;
   otp: string;
   otpTimer: number;
+  otpAttempts: number;
   onVerify: () => void;
   onResend: () => void;
   onOtpChange: (index: number, value: string) => void;
@@ -64,7 +65,7 @@ type NewPasswordStepProps = {
 };
 
 // Custom TextField with password toggle
-type CustomTextFieldProps = TextFieldProps &{
+type CustomTextFieldProps = TextFieldProps & {
   fullWidth?: boolean;
   type?: string;
   label?: string;
@@ -75,7 +76,7 @@ type CustomTextFieldProps = TextFieldProps &{
   showPassword?: boolean;
   onTogglePassword?: () => void;
   sx?: any;
-}
+};
 
 const CustomTextField = React.forwardRef<HTMLDivElement, CustomTextFieldProps>(
   ({ showPassword, onTogglePassword, type, error = false, ...props }, ref) => {
@@ -114,7 +115,12 @@ const EmailStep = React.memo(
     const [touched, setTouched] = useState(false);
     const showEmailValidation =
       touched && data.email && !validateEmail(data.email);
+    const [clicked, setClicked] = useState(false);
 
+    const handleClick = () => {
+      setClicked(true);
+      onNext(); // existing callback
+    };
     return (
       <>
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -201,8 +207,9 @@ const EmailStep = React.memo(
         <Button
           fullWidth
           variant="contained"
-          onClick={onNext}
+          onClick={handleClick}
           disabled={
+            clicked || // disable after click
             data.registeredWithGoogle ||
             !data.email ||
             !validateEmail(data.email)
@@ -235,9 +242,46 @@ const OtpStep = React.memo(
     onVerify,
     onResend,
     onOtpChange,
+    otpAttempts,
     onBack,
-  }: OtpStepProps) => {
+  }: OtpStepProps & { otpAttempts: number }) => {
     const inputRefs = React.useRef<(HTMLInputElement | null)[]>([]);
+    const [resendDisabled, setResendDisabled] = useState(true); // Disabled initially
+    const [resendTimer, setResendTimer] = useState(90);
+
+    // Initialize the timer when component mounts
+    useEffect(() => {
+      const timer = setInterval(() => {
+        setResendTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            setResendDisabled(false);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }, []);
+
+    const handleResendClick = () => {
+      onResend(); // Call the parent resend function
+      setResendDisabled(true);
+      setResendTimer(90);
+
+      // Restart the timer after resend
+      const timer = setInterval(() => {
+        setResendTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            setResendDisabled(false);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    };
 
     const handleChange = (index: number, value: string) => {
       if (/^\d?$/.test(value)) {
@@ -263,7 +307,6 @@ const OtpStep = React.memo(
         otpDigits.forEach((digit, index) => {
           onOtpChange(index, digit);
         });
-        // Focus the last input field after paste
         inputRefs.current[5]?.focus();
       }
     };
@@ -361,27 +404,34 @@ const OtpStep = React.memo(
 
         {renderOtpInputs()}
 
-        <Typography variant="body2" align="center" sx={{ mt: 2, mb: 3 }}>
-          {otpTimer > 0 ? (
-            <>
-              <span style={{ textDecoration: 'underline' }}>
-                {' '}
-                Resend code in:
-              </span>{' '}
-              <strong>{formatTime(otpTimer)}</strong>
-            </>
-          ) : (
-            <span
-              style={{
-                color: '#1a73e8',
-                cursor: 'pointer',
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
+          <Button
+            variant="text"
+            onClick={handleResendClick}
+            disabled={resendDisabled || otpAttempts >= 3}
+            sx={{
+              color:
+                resendDisabled || otpAttempts >= 3
+                  ? 'text.disabled'
+                  : '#0E28AE',
+              textDecoration: 'underline',
+              textTransform: 'none',
+              '&:hover': {
+                backgroundColor: 'transparent',
                 textDecoration: 'underline',
-              }}
-              onClick={onResend}
-            >
-              Resend Code
-            </span>
-          )}
+              },
+            }}
+          >
+            {resendDisabled
+              ? `Resend code in: ${formatTime(resendTimer)}`
+              : otpAttempts < 3
+              ? 'Resend Code'
+              : 'Maximum attempts reached'}
+          </Button>
+        </Box>
+
+        <Typography variant="body2" align="center" sx={{ mb: 1 }}>
+          Attempts remaining: {3 - otpAttempts}
         </Typography>
 
         <Button
@@ -586,6 +636,7 @@ type ForgotPasswordState = {
     newPassword: boolean;
     confirmPassword: boolean;
   };
+  otpAttempts: number;
   otp: string;
   otpHash: string;
   otpTimer: number;
@@ -616,6 +667,7 @@ const ForgotPasswordPage = () => {
     },
     otp: '',
     otpHash: '',
+    otpAttempts: 0,
     otpTimer: 600,
     currentStep: 'email',
     alert: {
@@ -625,18 +677,18 @@ const ForgotPasswordPage = () => {
   });
 
   const handleSendOtp = useCallback(async () => {
-  const { email } = state.forgotData;
+    const { email } = state.forgotData;
 
-  if (!validateEmail(email)) {
-    setState((prev) => ({
-      ...prev,
-      forgotErrors: {
-        ...prev.forgotErrors,
-        email: 'Please enter a valid email address',
-      },
-    }));
-    return;
-  }
+    if (!validateEmail(email)) {
+      setState((prev) => ({
+        ...prev,
+        forgotErrors: {
+          ...prev.forgotErrors,
+          email: 'Please enter a valid email address',
+        },
+      }));
+      return;
+    }
     try {
       const response = await fetch(
         'https://shiksha-dev-interface.tekdinext.com/interface/v1/user/send-otp',
@@ -663,7 +715,8 @@ const ForgotPasswordPage = () => {
           ...prev,
           otpHash: result?.result?.data?.hash || '',
           currentStep: 'otp',
-          otpTimer: 600,
+          otpTimer: 90,
+          otpAttempts: prev.otpAttempts + 1,
           forgotErrors: { ...prev.forgotErrors, email: '' },
         }));
       } else {
@@ -780,73 +833,76 @@ const ForgotPasswordPage = () => {
 
       if (response.ok) {
         try {
-          const loginResponse = await signin({
-            email: state.forgotData.email,
-            password: state.forgotData.newPassword,
-          });
+           router.push('/signin');
+          // const loginResponse = await signin({
+          //   email: state.forgotData.email,
+          //   password: state.forgotData.newPassword,
+          // });
 
-          if (loginResponse?.result?.access_token) {
-            localStorage.setItem('token', loginResponse.result.access_token);
-            localStorage.setItem(
-              'refreshToken',
-              loginResponse.result.refresh_token
-            );
+          // if (loginResponse?.result?.access_token) {
+          //   localStorage.setItem('token', loginResponse.result.access_token);
+          //   localStorage.setItem(
+          //     'refreshToken',
+          //     loginResponse.result.refresh_token
+          //   );
 
-            const authInfo = await getUserAuthInfo({
-              token: loginResponse.result.access_token,
-            });
+          //   const authInfo = await getUserAuthInfo({
+          //     token: loginResponse.result.access_token,
+          //   });
 
-            if (authInfo?.result?.status !== 'archived') {
-              const capitalizeFirstLetter = (word: string) =>
-                word.charAt(0).toUpperCase() + word.slice(1);
-              const user = `${capitalizeFirstLetter(
-                authInfo?.result?.firstName
-              )} ${capitalizeFirstLetter(authInfo?.result?.lastName)}`.trim();
+          //   if (authInfo?.result?.status !== 'archived') {
+          //     const capitalizeFirstLetter = (word: string) =>
+          //       word.charAt(0).toUpperCase() + word.slice(1);
+          //     const user = `${capitalizeFirstLetter(
+          //       authInfo?.result?.firstName
+          //     )} ${capitalizeFirstLetter(authInfo?.result?.lastName)}`.trim();
 
-              localStorage.setItem('username', user);
-              localStorage.setItem('userId', authInfo?.result?.userId);
-              localStorage.setItem(
-                'role',
-                authInfo?.result?.tenantData?.[0]?.roleName
-              );
+          //     localStorage.setItem('username', user);
+          //     localStorage.setItem('userId', authInfo?.result?.userId);
+          //     localStorage.setItem(
+          //       'role',
+          //       authInfo?.result?.tenantData?.[0]?.roleName
+          //     );
 
-              setState((prev) => ({
-                ...prev,
-                alert: {
-                  message: 'Password reset and login successful!',
-                  severity: 'success',
-                },
-              }));
+          //     setState((prev) => ({
+          //       ...prev,
+          //       alert: {
+          //         message: 'Password reset and login successful!',
+          //         severity: 'success',
+          //       },
+          //     }));
 
-               setTimeout(() => {
-                 router.push('/');
-               }, 3000);
-            } else {
-              setState((prev) => ({
-                ...prev,
-                alert: {
-                  message: 'Your account has been deleted.',
-                  severity: 'error',
-                },
-              }));
-            }
-          } else {
-            setState((prev) => ({
-              ...prev,
-              alert: {
-                message:
-                  loginResponse?.response?.data?.params?.errmsg ||
-                  'Login failed after password reset',
-                severity: 'error',
-              },
-            }));
-          }
-        } catch (loginError) {
+          //     setTimeout(() => {
+          //       router.push('/signin');
+          //     }, 3000);
+          //   } else {
+          //     setState((prev) => ({
+          //       ...prev,
+          //       alert: {
+          //         message: 'Your account has been deleted.',
+          //         severity: 'error',
+          //       },
+          //     }));
+          //   }
+        // } 
+          // else {
+          //   setState((prev) => ({
+          //     ...prev,
+          //     alert: {
+          //       message:
+          //         loginResponse?.response?.data?.params?.errmsg ||
+          //         'Login failed after password reset',
+          //       severity: 'error',
+          //     },
+          //   }));
+          // }
+        }
+        catch (loginError) {
           setState((prev) => ({
             ...prev,
             alert: {
               message:
-                'Password reset successful but login failed. Please try logging in manually.',
+                'Password reset failed. Please try again.',
               severity: 'warning',
             },
           }));
@@ -858,7 +914,8 @@ const ForgotPasswordPage = () => {
           openForgotDialog: false,
           forgotStep: 'email',
         }));
-      } else {
+      }
+      else {
         setState((prev) => ({
           ...prev,
           alert: {
@@ -976,6 +1033,7 @@ const ForgotPasswordPage = () => {
                 currentStep: 'email',
               }))
             }
+            otpAttempts={state.otpAttempts}
           />
         );
       case 'newPassword':
