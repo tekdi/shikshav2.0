@@ -122,7 +122,7 @@ const RenderTabContent = memo(
             </Box>
           )}
         </Box>
-        <Box sx={{ textAlign: 'center', mt: 4 }}>
+        {/* <Box sx={{ textAlign: 'center', mt: 4 }}>
           {hasMoreData ? (
             <Button
               variant="contained"
@@ -144,7 +144,7 @@ const RenderTabContent = memo(
           ) : (
             <Typography variant="body1"></Typography>
           )}
-        </Box>
+        </Box> */}
       </Box>
     );
   }
