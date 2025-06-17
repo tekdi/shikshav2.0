@@ -22,6 +22,7 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
 // Helper functions
 const formatTime = (seconds: number) => {
   const min = Math.floor(seconds / 60)
@@ -80,7 +81,7 @@ type CustomTextFieldProps = TextFieldProps & {
 
 const CustomTextField = React.forwardRef<HTMLDivElement, CustomTextFieldProps>(
   ({ showPassword, onTogglePassword, type, error = false, ...props }, ref) => {
-    const isPasswordType = props.label?.toLowerCase().includes('password'); // or use a dedicated prop
+    const isPasswordType = props.label?.toLowerCase().includes('password');
 
     return (
       <MuiTextField
@@ -112,15 +113,19 @@ CustomTextField.displayName = 'CustomTextField';
 // Step Components
 const EmailStep = React.memo(
   ({ onNext, data, errors, onChange }: EmailStepProps) => {
-    const [touched, setTouched] = useState(false);
-    const showEmailValidation =
-      touched && data.email && !validateEmail(data.email);
+    const [localTouched, setLocalTouched] = useState(false);
     const [clicked, setClicked] = useState(false);
+    useEffect(() => {
+      setClicked(false);
+    }, [data.email]);
+    const showEmailValidation =
+      localTouched && data.email && !validateEmail(data.email);
 
     const handleClick = () => {
       setClicked(true);
-      onNext(); // existing callback
+      onNext();
     };
+
     return (
       <>
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -160,9 +165,8 @@ const EmailStep = React.memo(
             value={data.email}
             onChange={(e) => {
               onChange('email', e.target.value);
-              setTouched(true);
             }}
-            onBlur={() => setTouched(true)}
+            onBlur={() => setLocalTouched(true)}
             error={!!errors.email || !!showEmailValidation}
             helperText={errors.email}
             sx={{
@@ -174,11 +178,9 @@ const EmailStep = React.memo(
                   theme.palette.mode === 'light' ? 'black' : 'white',
               },
               '& .Mui-error.MuiInputLabel-root': {
-                // Target label in error state
-                color: 'gray', // Keep gray even in error
+                color: 'gray',
               },
               '& .Mui-focused .Mui-error.MuiInputLabel-root': {
-                // Focused error state
                 color: 'black',
               },
               '& .MuiOutlinedInput-root': {
@@ -186,8 +188,7 @@ const EmailStep = React.memo(
                   borderColor: 'black',
                 },
                 '&.Mui-error .MuiOutlinedInput-notchedOutline': {
-                  // Error border
-                  borderColor: 'red', // Or your preferred error color
+                  borderColor: 'red',
                 },
               },
             }}
@@ -209,7 +210,7 @@ const EmailStep = React.memo(
           variant="contained"
           onClick={handleClick}
           disabled={
-            clicked || // disable after click
+            clicked ||
             data.registeredWithGoogle ||
             !data.email ||
             !validateEmail(data.email)
@@ -246,10 +247,9 @@ const OtpStep = React.memo(
     onBack,
   }: OtpStepProps & { otpAttempts: number }) => {
     const inputRefs = React.useRef<(HTMLInputElement | null)[]>([]);
-    const [resendDisabled, setResendDisabled] = useState(true); // Disabled initially
-    const [resendTimer, setResendTimer] = useState(90);
+    const [resendDisabled, setResendDisabled] = useState(true);
+    const [resendTimer, setResendTimer] = useState(600);
 
-    // Initialize the timer when component mounts
     useEffect(() => {
       const timer = setInterval(() => {
         setResendTimer((prev) => {
@@ -266,11 +266,10 @@ const OtpStep = React.memo(
     }, []);
 
     const handleResendClick = () => {
-      onResend(); // Call the parent resend function
+      onResend();
       setResendDisabled(true);
-      setResendTimer(90);
+      setResendTimer(600);
 
-      // Restart the timer after resend
       const timer = setInterval(() => {
         setResendTimer((prev) => {
           if (prev <= 1) {
@@ -456,6 +455,7 @@ const OtpStep = React.memo(
     );
   }
 );
+
 const NewPasswordStep = React.memo(
   ({
     data,
@@ -563,7 +563,7 @@ const NewPasswordStep = React.memo(
             onChange={(e) => onChange('confirmPassword', e.target.value)}
             error={!!errors.confirmPassword || Boolean(passwordsMismatch)}
             helperText={errors.confirmPassword}
-            showPassword={showPasswords.confirmPassword} // Make sure this is passed
+            showPassword={showPasswords.confirmPassword}
             onTogglePassword={() => onTogglePassword('confirmPassword')}
             sx={{
               '& .MuiInputLabel-root': {
@@ -649,6 +649,7 @@ type ForgotPasswordState = {
 
 const ForgotPasswordPage = () => {
   const router = useRouter();
+  const [touched, setTouched] = useState(false);
   const [state, setState] = useState<ForgotPasswordState>({
     forgotData: {
       email: '',
@@ -678,7 +679,7 @@ const ForgotPasswordPage = () => {
 
   const handleSendOtp = useCallback(async () => {
     const { email } = state.forgotData;
-
+    setTouched(true);
     if (!validateEmail(email)) {
       setState((prev) => ({
         ...prev,
@@ -689,7 +690,36 @@ const ForgotPasswordPage = () => {
       }));
       return;
     }
+
     try {
+      const checkResponse = await fetch(
+        'https://shiksha-dev-interface.tekdinext.com/interface/v1/user/check',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            tenantId: '3a849655-30f6-4c2b-8707-315f1ed64fbd',
+          },
+          body: JSON.stringify({ username: email }),
+        }
+      );
+
+      const checkResult = await checkResponse.json();
+      const userData = checkResult?.result?.[0];
+
+      if (!userData) {
+        setState((prev) => ({
+          ...prev,
+          alert: {
+            message: 'User does not exist with this email.',
+            severity: 'error',
+          },
+        }));
+        return;
+      }
+
+      const firstName = userData.firstName || '';
+
       const response = await fetch(
         'https://shiksha-dev-interface.tekdinext.com/interface/v1/user/send-otp',
         {
@@ -701,6 +731,7 @@ const ForgotPasswordPage = () => {
             email,
             reason: 'forgot',
             key: 'SendOtpOn',
+            firstName,
             replacements: {
               '{eventName}': 'ATREE OTP',
               '{programName}': 'ATREE',
@@ -715,7 +746,7 @@ const ForgotPasswordPage = () => {
           ...prev,
           otpHash: result?.result?.data?.hash || '',
           currentStep: 'otp',
-          otpTimer: 90,
+          otpTimer: 600,
           otpAttempts: prev.otpAttempts + 1,
           forgotErrors: { ...prev.forgotErrors, email: '' },
         }));
@@ -729,6 +760,7 @@ const ForgotPasswordPage = () => {
         }));
       }
     } catch (err) {
+      console.error('Error during OTP send flow:', err);
       setState((prev) => ({
         ...prev,
         alert: { message: 'An error occurred.', severity: 'error' },
@@ -833,100 +865,27 @@ const ForgotPasswordPage = () => {
 
       if (response.ok) {
         try {
-          // router.push('/signin');
-           setState((prev) => ({
-                ...prev,
-                alert: {
-                  message: 'Password reset was successful!',
-                  severity: 'success',
-                },
-           }));
-          
-           setTimeout(() => {
-                router.push('/signin');
-              }, 4000);
-          // const loginResponse = await signin({
-          //   email: state.forgotData.email,
-          //   password: state.forgotData.newPassword,
-          // });
-
-          // if (loginResponse?.result?.access_token) {
-          //   localStorage.setItem('token', loginResponse.result.access_token);
-          //   localStorage.setItem(
-          //     'refreshToken',
-          //     loginResponse.result.refresh_token
-          //   );
-
-          //   const authInfo = await getUserAuthInfo({
-          //     token: loginResponse.result.access_token,
-          //   });
-
-          //   if (authInfo?.result?.status !== 'archived') {
-          //     const capitalizeFirstLetter = (word: string) =>
-          //       word.charAt(0).toUpperCase() + word.slice(1);
-          //     const user = `${capitalizeFirstLetter(
-          //       authInfo?.result?.firstName
-          //     )} ${capitalizeFirstLetter(authInfo?.result?.lastName)}`.trim();
-
-          //     localStorage.setItem('username', user);
-          //     localStorage.setItem('userId', authInfo?.result?.userId);
-          //     localStorage.setItem(
-          //       'role',
-          //       authInfo?.result?.tenantData?.[0]?.roleName
-          //     );
-
-          //     setState((prev) => ({
-          //       ...prev,
-          //       alert: {
-          //         message: 'Password reset and login successful!',
-          //         severity: 'success',
-          //       },
-          //     }));
-
-          //     setTimeout(() => {
-          //       router.push('/signin');
-          //     }, 3000);
-          //   } else {
-          //     setState((prev) => ({
-          //       ...prev,
-          //       alert: {
-          //         message: 'Your account has been deleted.',
-          //         severity: 'error',
-          //       },
-          //     }));
-          //   }
-        // } 
-          // else {
-          //   setState((prev) => ({
-          //     ...prev,
-          //     alert: {
-          //       message:
-          //         loginResponse?.response?.data?.params?.errmsg ||
-          //         'Login failed after password reset',
-          //       severity: 'error',
-          //     },
-          //   }));
-          // }
-        }
-        catch (loginError) {
           setState((prev) => ({
             ...prev,
             alert: {
-              message:
-                'Password reset failed. Please try again.',
+              message: 'Password reset was successful!',
+              severity: 'success',
+            },
+          }));
+
+          setTimeout(() => {
+            router.push('/signin');
+          }, 4000);
+        } catch (loginError) {
+          setState((prev) => ({
+            ...prev,
+            alert: {
+              message: 'Password reset failed. Please try again.',
               severity: 'warning',
             },
           }));
         }
-
-        setState((prev) => ({
-          ...prev,
-          openOtpDialog: false,
-          openForgotDialog: false,
-          forgotStep: 'email',
-        }));
-      }
-      else {
+      } else {
         setState((prev) => ({
           ...prev,
           alert: {
