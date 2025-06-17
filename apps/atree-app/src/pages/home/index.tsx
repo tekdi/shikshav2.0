@@ -900,65 +900,112 @@ const FrameworkFilter = React.memo<{
   }, [frameworkFilter]);
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        backgroundColor: '#fcd804',
-        padding: '2px 16px',
-        overflow: 'hidden',
-      }}
-    >
-      <Box
-        ref={scrollRef}
-        sx={{
-          display: 'flex',
-
-          overflowX: 'auto',
-          flex: 1,
-          scrollbarWidth: 'none',
-          '&::-webkit-scrollbar': { display: 'none' },
-        }}
-      >
-        {frameworkFilter?.map((frameworkItem) => (
+    <>
+      {!isMobile ? (
+        <Grid
+          container
+          spacing={1}
+          sx={{
+            justifyContent: 'flex-start',
+            paddingX: 2,
+            marginTop: 1,
+          }}
+        >
+          {frameworkFilter?.map((frameworkItem: any, index: number) => (
+            <Grid key={frameworkItem.identifier} item xs={3} sm={2}>
+              <Button
+                variant="text"
+                fullWidth
+                disableRipple
+                onClick={() => handleItemClick(frameworkItem)}
+                sx={{
+                  fontFamily: 'Poppins',
+                  fontSize: '14px',
+                  fontWeight:
+                    framework === frameworkItem.identifier ? 'bold' : 500,
+                  textTransform: 'none',
+                  color:
+                    framework !== frameworkItem.identifier ? '#4D4C4C' : '#000',
+                  borderBottom:
+                    framework === frameworkItem.identifier
+                      ? '2px solid #000'
+                      : '2px solid transparent',
+                  borderRadius: 0,
+                  paddingY: 1,
+                  minWidth: 'auto',
+                  '&:hover': {
+                    backgroundColor: 'transparent',
+                  },
+                }}
+              >
+                {transformName(frameworkItem.name)}
+              </Button>
+            </Grid>
+          ))}
+        </Grid>
+      ) : (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            backgroundColor: '#fcd804',
+            padding: '2px 16px',
+            overflow: 'hidden',
+          }}
+        >
           <Box
-            key={frameworkItem.identifier}
-            onClick={() => handleItemClick(frameworkItem)}
+            ref={scrollRef}
             sx={{
-              cursor: 'pointer',
-              fontFamily: 'Poppins',
-              fontSize: { xs: '14px', sm: '16px' },
-              fontWeight: framework === frameworkItem.identifier ? 700 : 500,
-              color:
-                framework === frameworkItem.identifier ? 'black' : '#5E5E5E',
-
-              whiteSpace: 'nowrap',
-              minWidth: 'fit-content',
-              px: 1,
-              backgroundColor: 'transparent',
-              '&:hover': {
-                color: '#000',
-              },
+              display: 'flex',
+              overflowX: 'auto',
+              flex: 1,
+              scrollbarWidth: 'none',
+              '&::-webkit-scrollbar': { display: 'none' },
             }}
           >
-            {transformName(frameworkItem.name)}
+            {frameworkFilter?.map((frameworkItem) => (
+              <Box
+                key={frameworkItem.identifier}
+                onClick={() => handleItemClick(frameworkItem)}
+                sx={{
+                  cursor: 'pointer',
+                  fontFamily: 'Poppins',
+                  fontSize: { xs: '14px', sm: '16px' },
+                  fontWeight:
+                    framework === frameworkItem.identifier ? 700 : 500,
+                  color:
+                    framework === frameworkItem.identifier
+                      ? 'black'
+                      : '#5E5E5E',
+                  whiteSpace: 'nowrap',
+                  minWidth: 'fit-content',
+                  px: 1,
+                  backgroundColor: 'transparent',
+                  '&:hover': {
+                    color: '#000',
+                  },
+                }}
+              >
+                {transformName(frameworkItem.name)}
+              </Box>
+            ))}
           </Box>
-        ))}
-      </Box>
 
-      {showArrow && (
-        <IconButton
-          onClick={showForwardArrow ? handleScrollRight : handleScrollLeft}
-          sx={{ ml: 1 }}
-        >
-          {showForwardArrow ? (
-            <ArrowForwardIosIcon fontSize="small" />
-          ) : (
-            <ArrowBackIosIcon fontSize="small" />
+          {showArrow && (
+            <IconButton
+              onClick={showForwardArrow ? handleScrollRight : handleScrollLeft}
+              sx={{ ml: 1 }}
+            >
+              {showForwardArrow ? (
+                <ArrowForwardIosIcon fontSize="small" />
+              ) : (
+                <ArrowBackIosIcon fontSize="small" />
+              )}
+            </IconButton>
           )}
-        </IconButton>
+        </Box>
       )}
-    </Box>
+    </>
   );
 });
 
