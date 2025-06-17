@@ -30,7 +30,7 @@ const PlayerPage: React.FC = () => {
         <Typography
           style={{
             fontWeight: 900,
-            fontSize: '22px',
+            fontSize: '18px',
             lineHeight: '28px',
             letterSpacing: 0,
           }}

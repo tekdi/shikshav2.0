@@ -187,7 +187,14 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
       fullWidth
       maxWidth="sm"
       PaperProps={{
-        sx: { borderRadius: '28px', backgroundColor: '#E9E7EF' },
+        sx: {
+          borderRadius: '28px',
+          backgroundColor: '#E9E7EF',
+          // paddingTop: '-20%',
+
+          // Add marginTop for mobile
+          mt: { xs: -15, sm: 4 },
+        },
       }}
     >
       <DialogTitle>
