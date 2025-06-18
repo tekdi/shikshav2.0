@@ -184,7 +184,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
             zIndex: 10,
           }}
         >
-          <Image src={atreeLogo} alt="Logo" width={isMobile ? 50 : 100} />
+          {/* <Image src={atreeLogo} alt="Logo" width={isMobile ? 50 : 100} /> */}
         </Box>
 
         <Banner />
