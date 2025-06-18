@@ -19,7 +19,19 @@ export default function FooterText({ page }: FooterTextProps) {
         sx={{ fontSize: { xs: '8px', md: '14px', fontWeight: 400 } }}
       >
         Curated by Ashoka Trust for Research in Ecology and the Environment
-        (ATREE): For, Of, and By Environment Educators of India
+        <a
+          style={{
+            marginLeft: 8,
+            color: 'blue',
+            textDecoration: 'underline',
+          }}
+          href="https://www.atree.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+         (ATREE)
+        </a>
+         : For, Of, and By Environment Educators of India
       </Typography>
     </Grid>
   );

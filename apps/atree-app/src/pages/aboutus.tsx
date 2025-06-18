@@ -37,11 +37,12 @@ export default function Aboutus() {
             fontSize: { xs: '22px', md: '57px' },
             fontFamily: 'Poppins',
             color: '#000000',
-            marginTop: '10px',
+            marginTop: '50px',
             marginBottom: { xs: '10px', md: '47px' },
           }}
         ></Typography>
-        <br></br>
+
+        {/* <br></br> */}
         <Typography
           sx={{
             textAlign: 'left',
@@ -65,6 +66,7 @@ export default function Aboutus() {
             fontFamily: 'Poppins',
             color: '#000000',
             fontWeight: 400,
+            marginBottom: '20px',
           }}
         >
           S.N.A.I.L stands for the School of Nature, Action, Inquiry, and
@@ -73,7 +75,8 @@ export default function Aboutus() {
           Ashoka Trust for Research in Ecology and the Environment (ATREE)
           Academy, Bengaluru, India.
         </Typography>
-        <br></br>
+
+        {/* <br></br> */}
         <Typography
           sx={{
             textAlign: { xs: 'left', md: 'left' },
@@ -83,6 +86,7 @@ export default function Aboutus() {
             color: '#000000',
             fontSize: { xs: '14px', md: '16px' },
             fontWeight: 400,
+            marginBottom: '20px',
           }}
         >
           Its vision is to enrich Place Based Environment Education (PBEE) at
@@ -92,7 +96,8 @@ export default function Aboutus() {
           India that inspire children with knowledge, hope, and action to care
           for their local natural resources.
         </Typography>
-        <br></br>
+
+        {/* <br></br> */}
         <Typography
           sx={{
             textAlign: { xs: 'left', md: 'left' },
@@ -102,6 +107,7 @@ export default function Aboutus() {
             color: '#000000',
             fontSize: { xs: '14px', md: '16px' },
             fontWeight: 400,
+            marginBottom: '20px',
           }}
         >
           The digital repository contains multilingual, multi-format teaching-
@@ -111,7 +117,8 @@ export default function Aboutus() {
           interdisciplinary learning, while encouraging students to apply what
           they learn to help solve complex environmental issues locally.
         </Typography>
-        <br></br>
+        {/* <br></br> */}
+
         <Typography
           sx={{
             textAlign: { xs: 'left', md: 'left' },
@@ -121,6 +128,7 @@ export default function Aboutus() {
             color: '#000000',
             fontSize: { xs: '14px', md: '16px' },
             fontWeight: 400,
+            marginBottom: '20px',
           }}
         >
           We encourage you to explore our curated collection of engaging and
@@ -129,7 +137,7 @@ export default function Aboutus() {
           chapters, classroom posters, board games, comic books, graphic novels,
           magazines, websites, field guides, stories, songs, films and more.
         </Typography>
-        <br></br>
+        {/* <br></br> */}
         <Typography
           sx={{
             textAlign: { xs: 'left', md: 'left' },
@@ -139,6 +147,7 @@ export default function Aboutus() {
             color: '#000000',
             fontSize: { xs: '14px', md: '16px' },
             fontWeight: 400,
+            marginBottom: '20px',
           }}
         >
           This growing repository welcomes contributions from all dedicated to
@@ -147,7 +156,8 @@ export default function Aboutus() {
           state and non-state actors across India. We welcome your suggestions
           to help us continue improving and expanding this collection!
         </Typography>
-        <br></br>
+
+        {/* <br></br> */}
         <Typography
           sx={{
             textAlign: 'left',
@@ -170,13 +180,14 @@ export default function Aboutus() {
             color: '#000000',
             fontSize: { xs: '14px', md: '16px' },
             fontWeight: 400,
+            marginBottom: '20px',
           }}
         >
           Anita Arjundas for her vision, guidance, and administrative support
           <br></br>
           Dr. Kamal Bawa for his encouraging mentorship
         </Typography>
-        <br></br>
+        {/* <br></br> */}
         <Typography
           sx={{
             textAlign: 'left',
@@ -199,13 +210,14 @@ export default function Aboutus() {
             color: '#000000',
             fontSize: { xs: '14px', md: '16px' },
             fontWeight: 400,
+            marginBottom: '20px',
           }}
         >
           Pallavi Varma Patil: Lead, Environment Education, ATREE Academy
           <br></br>
           Rushad Irani : Research Associate, ATREE Academy
         </Typography>
-        <br></br>
+        {/* <br></br> */}
         <Typography
           sx={{
             textAlign: 'left',
@@ -228,20 +240,22 @@ export default function Aboutus() {
             color: '#000000',
             fontSize: { xs: '14px', md: '16px' },
             fontWeight: 400,
+            marginBottom: '20px',
           }}
         >
           We sincerely thank the following for their generous support in terms
           of time, resources, and commitment:
-          <br></br>
-          <br></br>
+          {/* <br></br>
+          <br></br> */}
           <Typography
             component="div"
-            sx={{ fontSize: { xs: '14px', md: '16px' } }}
+            sx={{ fontSize: { xs: '14px', md: '16px' }, marginTop: '20px' }}
           >
             <Typography
               component="span"
               sx={{
                 fontWeight: 'bold',
+                marginBottom: '20px',
                 fontSize: { xs: '18px', md: '18px' }, // Now using sx prop correctly
               }}
             >
@@ -249,10 +263,10 @@ export default function Aboutus() {
             </Typography>{' '}
             <Typography component="span">Rainmatter Foundation</Typography>
           </Typography>
-          <br></br>
+          {/* <br></br> */}
           <Typography
             component="div"
-            sx={{ fontSize: { xs: '14px', md: '16px' } }}
+            sx={{ fontSize: { xs: '14px', md: '16px' }, marginTop: '20px' }}
           >
             <Typography
               component="span"
@@ -274,6 +288,7 @@ export default function Aboutus() {
             component="span"
             sx={{
               fontWeight: 'bold',
+              marginTop: '20px',
               fontSize: { xs: '18px', md: '18px' }, // Now using sx prop correctly
             }}
           >
@@ -385,7 +400,19 @@ export default function Aboutus() {
                     +91-80-23635555
                   </Typography>
                   <Typography sx={{ fontFamily: 'Poppins' }}>
-                    envedu@atree.org | www.atree.org
+                    envedu@atree.org |
+                    <a
+                      style={{
+                        marginLeft: 8,
+                        color: 'blue',
+                        textDecoration: 'underline',
+                      }}
+                      href="https://www.atree.org"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      www.atree.org
+                    </a>
                   </Typography>
                 </Box>
               </Grid>
