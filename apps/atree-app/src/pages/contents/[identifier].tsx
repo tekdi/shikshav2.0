@@ -1015,26 +1015,42 @@ const handleOnDownload = async () => {
 
               <Stack spacing={0.5}>
                 <Typography
-                  variant="body1"
-                  textAlign="left"
-                  fontFamily={'Arial'}
-                  lineHeight={'18px'}
+                  sx={{
+                    mt: 0,
+                    textAlign: 'left',
+                    fontWeight: 400,
+                    fontFamily: 'Poppins',
+                    fontSize: '14px',
+                    lineHeight: '20px',
+                    color: '#000000',
+                  }}
                 >
                   <b>Author:</b> {contentData?.author || ''}
                 </Typography>
+
                 <Typography
-                  variant="body1"
-                  textAlign="left"
-                  fontFamily={'Arial'}
-                  lineHeight={'18px'}
+                  sx={{
+                    mt: 0,
+                    textAlign: 'left',
+                    fontWeight: 400,
+                    fontFamily: 'Poppins',
+                    fontSize: '14px',
+                    lineHeight: '20px',
+                    color: '#000000',
+                  }}
                 >
                   <b>Publisher:</b> {contentData?.publisher ?? ''}
                 </Typography>
                 <Typography
-                  variant="body1"
-                  textAlign="left"
-                  fontFamily={'Arial'}
-                  lineHeight={'18px'}
+                  sx={{
+                    mt: 0,
+                    textAlign: 'left',
+                    fontWeight: 400,
+                    fontFamily: 'Poppins',
+                    fontSize: '14px',
+                    lineHeight: '20px',
+                    color: '#000000',
+                  }}
                 >
                   {contentData?.year ?? 'n.d.'}
                 </Typography>
@@ -1047,7 +1063,7 @@ const handleOnDownload = async () => {
                     <Typography
                       variant="body1"
                       textAlign="left"
-                      fontFamily="Arial"
+                      fontFamily="Poppins"
                       sx={{
                         display: 'inline-block',
                         backgroundColor: '#FFBD0D', // highlighted yellow
