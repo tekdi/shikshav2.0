@@ -389,7 +389,7 @@ const handleOnDownload = async () => {
       {contentData ? (
         <Layout
           // showBack
-          isFooter={isMobile} // add this when on mobile
+          // isFooter={isMobile} // add this when on mobile
           // footerComponent={!isMobile ? <FooterText page="" /> : <Footer />}
           isLoadingChildren={isLoading}
           // backIconClick={() => router.back()}
