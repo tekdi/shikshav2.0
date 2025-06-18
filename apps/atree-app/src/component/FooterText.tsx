@@ -21,8 +21,8 @@ export default function FooterText({ page }: FooterTextProps) {
         Curated by Ashoka Trust for Research in Ecology and the Environment
         <a
           style={{
-            marginLeft: 8,
-            color: 'blue',
+            // marginLeft: 8,
+            // color: 'blue',
             textDecoration: 'underline',
           }}
           href="https://www.atree.org"
