@@ -48,7 +48,7 @@ export default function Banner({ singleImage }: BannerProps) {
           <ImageBanner
             name=""
             image={singleImage}
-            _eventClick={true}
+            // _eventClick={false}
             _image={imageBannerImageProp}
           />
         </Box>
@@ -96,7 +96,7 @@ export default function Banner({ singleImage }: BannerProps) {
               <ImageBanner
                 name=""
                 image={image.image}
-                _eventClick={true}
+                 _eventClick={true}
                 _image={imageBannerImageProp}
               />
             </Box>

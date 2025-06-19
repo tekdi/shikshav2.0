@@ -67,10 +67,18 @@ export const ImageBanner = ({
 
   return (
     <Card
-      sx={{ width: '100%', position: 'relative' }}
+      sx={{
+        width: '100%',
+        position: 'relative',
+        cursor: _eventClick ? 'default' : 'pointer',
+      }}
       onClick={_eventClick ? undefined : handleClick}
     >
-      <CardActionArea>
+      <CardActionArea
+        sx={{
+          cursor: _eventClick ? 'default' : 'pointer', // 👈 this line is important
+        }}
+      >
         <CardMedia
           component="img"
           alt={name}
@@ -152,7 +160,7 @@ export const ImageBanner = ({
               bottom: 0,
               left: 0,
               right: 0,
-               justifyContent: 'center',
+              justifyContent: 'center',
               // backgroundColor: 'rgba(0,0,0,0.6)', // Optional for readability
               py: 0.5,
             }}
