@@ -1,0 +1,46 @@
+name: Deployment ATREE (DEV/PROD)
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Select the target environment (DEV or PROD)"
+        required: true
+        type: choice
+        options:
+          - DEV
+          - PROD
+      tag:
+        description: "Enter the tag to deploy"
+        required: true
+
+jobs:
+  deploy:
+    name: Deploy to Target Environment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Validate Inputs
+        run: |
+          echo "Selected Environment: ${{ github.event.inputs.environment }}"
+          echo "Selected Tag: ${{ github.event.inputs.tag }}"
+
+      - name: Deploy Stack to Target Environment
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets['HOST_NAME_' + github.event.inputs.environment] }}
+          username: ${{ secrets['USERNAME_' + github.event.inputs.environment] }}
+          key: ${{ secrets['EC2_KEY_' + github.event.inputs.environment] }}
+          port: ${{ secrets['PORT_' + github.event.inputs.environment] }}
+          script: |
+            cd ${{ secrets['TARGET_DIR_' + github.event.inputs.environment] }}
+            if [ -f .env ]; then
+              echo ".env file exists. Deleting it."
+              rm .env
+            fi
+            echo '${{ secrets[github.event.inputs.environment + "_ENV"] }}' > .env
+            echo "Deploying with tag: ${{ github.event.inputs.tag }}"
+            ./deploy.sh ${{ github.event.inputs.tag }}
