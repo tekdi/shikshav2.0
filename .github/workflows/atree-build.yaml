@@ -1,0 +1,45 @@
+name: Build Image with TAG - ATREE
+
+on:
+  push:
+    tags:
+      - "v*" # Automatically triggers workflow when a tag starting with "v" is pushed
+  workflow_dispatch: # Allows manual trigger with inputs
+    inputs:
+      environment:
+        description: "Target environment (DEV or PROD)"
+        required: true
+        default: "DEV"
+      tag:
+        description: "Image tag to deploy"
+        required: true
+
+jobs:
+  build:
+    name: Build and Push Docker Image to AWS ECR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Extract TAG from GITHUB_REF
+        id: extract_tag
+        run: echo "TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+      - name: Log in to Amazon ECR
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION_NAME }}
+        run: |
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.ECR_ACCOUNT }}
+
+      - name: Build, Tag, and Push Docker Image
+        env:
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_ATREE }}
+          AWS_REGION: ${{ secrets.AWS_REGION_NAME }}
+        run: |
+          echo "Building and pushing image with tag: $TAG"
+          docker build -f Dockerfile.atree -t $ECR_REPOSITORY:$TAG .
+          docker push $ECR_REPOSITORY:$TAG
