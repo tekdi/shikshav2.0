@@ -26,12 +26,12 @@ export default function FooterText({ page }: FooterTextProps) {
           rel="noopener noreferrer"
           sx={{
             fontSize: { xs: '8px', md: '14px', fontWeight: 400 },
-            textDecoration: 'underline',
+            // textDecoration: 'underline',
             color: 'inherit',
             transition: 'color 0.3s ease',
             '&:hover': {
               color: 'white',
-              textDecoration: 'underline',
+               textDecoration: 'underline',
             },
           }}
         >
