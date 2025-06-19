@@ -37,7 +37,7 @@ jobs:
 
       - name: Build, Tag, and Push Docker Image
         env:
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_ATREE }}
           AWS_REGION: ${{ secrets.AWS_REGION_NAME }}
         run: |
           echo "Building and pushing image with tag: $TAG"

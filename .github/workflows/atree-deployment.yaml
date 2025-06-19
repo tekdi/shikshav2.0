@@ -31,16 +31,16 @@ jobs:
       - name: Deploy Stack to Target Environment
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets['HOST_NAME_' + github.event.inputs.environment] }}
+          host: ${{ secrets['ATREE_HOST_NAME_' + github.event.inputs.environment] }}
           username: ${{ secrets['USERNAME_' + github.event.inputs.environment] }}
           key: ${{ secrets['EC2_KEY_' + github.event.inputs.environment] }}
           port: ${{ secrets['PORT_' + github.event.inputs.environment] }}
           script: |
-            cd ${{ secrets['TARGET_DIR_' + github.event.inputs.environment] }}
+            cd ${{ secrets['ATREE_TARGET_DIR_' + github.event.inputs.environment] }}
             if [ -f .env ]; then
               echo ".env file exists. Deleting it."
               rm .env
             fi
-            echo '${{ secrets[github.event.inputs.environment + "_ENV"] }}' > .env
+            echo '${{ secrets[github.event.inputs.environment + "_ENV_ATREE"] }}' > .env
             echo "Deploying with tag: ${{ github.event.inputs.tag }}"
             ./deploy.sh ${{ github.event.inputs.tag }}
