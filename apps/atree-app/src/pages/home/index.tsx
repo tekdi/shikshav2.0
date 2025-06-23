@@ -926,11 +926,11 @@ const FrameworkFilter = React.memo<{
                   textTransform: 'none',
                   color:
                     framework !== frameworkItem.identifier ? '#4D4C4C' : '#000',
-                  borderBottom:
+                  border:
                     framework === frameworkItem.identifier
-                      ? '2px solid #000'
-                      : '2px solid transparent',
-                  borderRadius: 0,
+                      ? '2px solid #e8f0fa'
+                      : '2px solid #e8f0fa',
+                  borderRadius: 2,
                   paddingY: 1,
                   minWidth: 'auto',
                   '&:hover': {
