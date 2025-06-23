@@ -693,7 +693,7 @@ const ForgotPasswordPage = () => {
 
     try {
       const checkResponse = await fetch(
-        `${process.env.BASE_URL}/user/check`,
+        `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/user/check`,
         {
           method: 'POST',
           headers: {
@@ -703,7 +703,7 @@ const ForgotPasswordPage = () => {
           body: JSON.stringify({ username: email }),
         }
       );
-
+      console.log(checkResponse);
       const checkResult = await checkResponse.json();
       const userData = checkResult?.result?.[0];
 
@@ -720,22 +720,25 @@ const ForgotPasswordPage = () => {
 
       const firstName = userData.firstName || '';
 
-      const response = await fetch(`${process.env.BASE_URL}/user/send-otp`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          reason: 'forgot',
-          key: 'SendOtpOn',
-          firstName,
-          replacements: {
-            '{eventName}': 'ATREE OTP',
-            '{programName}': 'ATREE',
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/user/send-otp`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-        }),
-      });
+          body: JSON.stringify({
+            email,
+            reason: 'forgot',
+            key: 'SendOtpOn',
+            firstName,
+            replacements: {
+              '{eventName}': 'ATREE OTP',
+              '{programName}': 'ATREE',
+            },
+          }),
+        }
+      );
 
       const result = await response.json();
       if (response.ok) {
@@ -767,20 +770,23 @@ const ForgotPasswordPage = () => {
 
   const verifyOtp = useCallback(async () => {
     try {
-      const response = await fetch(`${process.env.BASE_URL}/user/verify-otp`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify({
-          username: state.forgotData.email,
-          email: state.forgotData.email,
-          reason: 'forgot',
-          otp: state.otp,
-          hash: state.otpHash,
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/user/verify-otp`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify({
+            username: state.forgotData.email,
+            email: state.forgotData.email,
+            reason: 'forgot',
+            otp: state.otp,
+            hash: state.otpHash,
+          }),
+        }
+      );
 
       const data = await response.json();
       if (response.ok && data.result?.token) {
@@ -841,7 +847,7 @@ const ForgotPasswordPage = () => {
 
     try {
       const response = await fetch(
-        `${process.env.BASE_URL}/user/forgot-password`,
+        `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/user/forgot-password`,
         {
           method: 'POST',
           headers: {
