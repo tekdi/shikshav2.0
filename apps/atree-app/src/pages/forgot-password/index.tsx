@@ -693,7 +693,7 @@ const ForgotPasswordPage = () => {
 
     try {
       const checkResponse = await fetch(
-        'https://shiksha-dev-interface.tekdinext.com/interface/v1/user/check',
+        `${process.env.BASE_URL}/user/check`,
         {
           method: 'POST',
           headers: {
@@ -720,25 +720,22 @@ const ForgotPasswordPage = () => {
 
       const firstName = userData.firstName || '';
 
-      const response = await fetch(
-        'https://shiksha-dev-interface.tekdinext.com/interface/v1/user/send-otp',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+      const response = await fetch(`${process.env.BASE_URL}/user/send-otp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          reason: 'forgot',
+          key: 'SendOtpOn',
+          firstName,
+          replacements: {
+            '{eventName}': 'ATREE OTP',
+            '{programName}': 'ATREE',
           },
-          body: JSON.stringify({
-            email,
-            reason: 'forgot',
-            key: 'SendOtpOn',
-            firstName,
-            replacements: {
-              '{eventName}': 'ATREE OTP',
-              '{programName}': 'ATREE',
-            },
-          }),
-        }
-      );
+        }),
+      });
 
       const result = await response.json();
       if (response.ok) {
@@ -770,23 +767,20 @@ const ForgotPasswordPage = () => {
 
   const verifyOtp = useCallback(async () => {
     try {
-      const response = await fetch(
-        'https://shiksha-dev-interface.tekdinext.com/interface/v1/user/verify-otp',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-          body: JSON.stringify({
-            username: state.forgotData.email,
-            email: state.forgotData.email,
-            reason: 'forgot',
-            otp: state.otp,
-            hash: state.otpHash,
-          }),
-        }
-      );
+      const response = await fetch(`${process.env.BASE_URL}/user/verify-otp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          username: state.forgotData.email,
+          email: state.forgotData.email,
+          reason: 'forgot',
+          otp: state.otp,
+          hash: state.otpHash,
+        }),
+      });
 
       const data = await response.json();
       if (response.ok && data.result?.token) {
@@ -847,7 +841,7 @@ const ForgotPasswordPage = () => {
 
     try {
       const response = await fetch(
-        'https://shiksha-dev-interface.tekdinext.com/interface/v1/user/forgot-password',
+        `${process.env.BASE_URL}/user/forgot-password`,
         {
           method: 'POST',
           headers: {
