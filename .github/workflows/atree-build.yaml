@@ -3,7 +3,17 @@ name: Build Image with TAG - ATREE
 on:
   push:
     tags:
-      - "v*" # Automatically triggers workflow when a tag starting with "v" is pushed
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'DEV'
+        type: choice
+        options:
+          - DEV
+          - PROD
 
 jobs:
   build:
@@ -15,8 +25,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Extract TAG from GITHUB_REF
-        id: extract_tag
+        if: github.ref_type == 'tag'
         run: echo "TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+      - name: Set TAG if not from push tag
+        if: github.ref_type != 'tag'
+        run: echo "TAG=${{ github.run_number }}" >> $GITHUB_ENV
 
       - name: Log in to Amazon ECR
         env:
@@ -26,14 +40,24 @@ jobs:
         run: |
           aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.ECR_ACCOUNT_ATREE }}
 
-      - name: Build, Tag, and Push Docker Image
+      - name: Build and Push Docker Image
         env:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_ATREE }}
           AWS_REGION: ${{ secrets.AWS_REGION_NAME }}
         run: |
-          echo "Building and pushing image with tag: $TAG" && ls -ltra
-          echo "Creating .env file from secrets"
-          echo '${{ secrets[github.event.inputs.environment + "_ENV_ATREE"] }}' > .env && ls -ltra
+          echo "Building and pushing image with tag: $TAG"
+          
+          echo "Creating .env file based on selected environment"
+
+          if [[ "${{ github.event.inputs.environment }}" == "DEV" ]]; then
+            echo '${{ secrets.DEV_ENV_ATREE }}' > .env
+          elif [[ "${{ github.event.inputs.environment }}" == "PROD" ]]; then
+            echo '${{ secrets.PROD_ENV_ATREE }}' > .env
+          else
+            echo "Unknown environment"; exit 1
+          fi
+
+          ls -l .env
+
           docker build -f Dockerfile.atree -t $ECR_REPOSITORY:$TAG .
-          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.ECR_ACCOUNT_ATREE }}
           docker push $ECR_REPOSITORY:$TAG
