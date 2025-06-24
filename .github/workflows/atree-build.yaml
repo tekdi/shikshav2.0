@@ -4,15 +4,6 @@ on:
   push:
     tags:
       - "v*" # Automatically triggers workflow when a tag starting with "v" is pushed
-  workflow_dispatch: # Allows manual trigger with inputs
-    inputs:
-      environment:
-        description: "Target environment (DEV or PROD)"
-        required: true
-        default: "DEV"
-      tag:
-        description: "Image tag to deploy"
-        required: true
 
 jobs:
   build:
