@@ -29,8 +29,8 @@ jobs:
 
       - name: Log in to Amazon ECR
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_ATREE }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_ATREE }}
           AWS_REGION: ${{ secrets.AWS_REGION_NAME }}
         run: |
           aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.ECR_ACCOUNT }}
@@ -40,6 +40,9 @@ jobs:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_ATREE }}
           AWS_REGION: ${{ secrets.AWS_REGION_NAME }}
         run: |
-          echo "Building and pushing image with tag: $TAG"
+          echo "Building and pushing image with tag: $TAG" && ls -ltra
+          echo "Creating .env file from secrets"
+          echo '${{ secrets[github.event.inputs.environment + "_ENV_ATREE"] }}' > .env && ls -ltra
           docker build -f Dockerfile.atree -t $ECR_REPOSITORY:$TAG .
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.ECR_ACCOUNT }}
           docker push $ECR_REPOSITORY:$TAG
