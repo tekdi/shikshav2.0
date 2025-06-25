@@ -40,6 +40,8 @@ import ShareDialog from '../../component/ShareDialog';
 import FooterText from '../../component/FooterText';
 import Loader from '../../component/layout/LoaderComponent';
 import Footer from '../../component/layout/Footer';
+import { TelemetryEventType } from '../../utils/app.constant';
+import { telemetryFactory } from '../../utils/telemetry';
 const buttonColors = {
   water: '#0E28AE',
   land: '#8F4A50',
@@ -112,9 +114,29 @@ export default function Content() {
   const handleOpen = () => setOpen(true);
   useEffect(() => {
     const storedCategory = localStorage.getItem('category') || '';
+
+    console.log('Stored category:', contentData);
     setHomeCategory(storedCategory);
   }, []);
   const handleOnCLick = () => {
+    const windowUrl = window.location.pathname;
+    const cleanedUrl = windowUrl.replace(/^\//, '');
+    const env = cleanedUrl.split('/')[0];
+
+    const telemetryInteract = {
+      context: {
+        env: env,
+        cdata: [],
+      },
+      edata: {
+        id: `Resource Link`,
+        name: contentData?.name,
+        type: TelemetryEventType.CLICK,
+        subtype: '',
+        pageid: cleanedUrl,
+      },
+    };
+    telemetryFactory.interact(telemetryInteract);
     trackEvent({
       action: 'resource_open',
       category: 'user',
@@ -123,45 +145,81 @@ export default function Content() {
     window.open(contentData?.url, '_blank');
   };
   const handlePreview = () => {
+    const windowUrl = window.location.pathname;
+    const cleanedUrl = windowUrl.replace(/^\//, '');
+    const env = cleanedUrl.split('/')[0];
+
+    const telemetryInteract = {
+      context: {
+        env: env,
+        cdata: [],
+      },
+      edata: {
+        id: `Preview content`,
+        name: contentData?.name,
+        type: TelemetryEventType.CLICK,
+        subtype: '',
+        pageid: cleanedUrl,
+      },
+    };
+    telemetryFactory.interact(telemetryInteract);
+
     trackEvent({
       action: 'preview_content',
       category: 'user',
       label: 'Content Details Page',
     });
     router.push(`/player/${identifier}`);
-
   };
-const handleOnDownload = async () => {
-  const downloadLink = contentData?.downloadurl || contentData?.previewUrl;
 
-  if (!downloadLink) {
-    console.error('No valid download or preview URL available');
-    return;
-  }
+  const handleOnDownload = async () => {
+    const downloadLink = contentData?.downloadurl || contentData?.previewUrl;
 
-  try {
-    const response = await fetch(downloadLink);
-    const blob = await response.blob();
-    const blobUrl = window.URL.createObjectURL(blob);
+    if (!downloadLink) {
+      console.error('No valid download or preview URL available');
+      return;
+    }
+    const windowUrl = window.location.pathname;
+    const cleanedUrl = windowUrl.replace(/^\//, '');
+    const env = cleanedUrl.split('/')[0];
 
-    const link = document.createElement('a');
-    link.href = blobUrl;
-    link.download = contentData?.name ?? 'download'; // Default filename
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const telemetryInteract = {
+      context: {
+        env: env,
+        cdata: [],
+      },
+      edata: {
+        id: `Download content`,
+        name: contentData?.name,
+        type: TelemetryEventType.CLICK,
+        subtype: '',
+        pageid: cleanedUrl,
+      },
+    };
+    telemetryFactory.interact(telemetryInteract);
+    try {
+      const response = await fetch(downloadLink);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
 
-    trackEvent({
-      action: 'download_content',
-      category: 'user',
-      label: 'Content Details Page',
-    });
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = contentData?.name ?? 'download'; // Default filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
-  } catch (error) {
-    console.error('Download failed:', error);
-  }
-};
+      trackEvent({
+        action: 'download_content',
+        category: 'user',
+        label: 'Content Details Page',
+      });
+
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+    } catch (error) {
+      console.error('Download failed:', error);
+    }
+  };
 
   const fetchContent = useCallback(
     async (updatedFilters: any) => {
@@ -172,8 +230,25 @@ const handleOnDownload = async () => {
         } = await getContentDetails(identifier as string);
         if (result && typeof result === 'object') {
           setContentData(result);
-              localStorage.setItem('contentData', result?.name);
+          localStorage.setItem('contentData', result?.name);
+          const windowUrl = window.location.pathname;
+          const cleanedUrl = windowUrl.replace(/^\//, '');
+          const env = cleanedUrl.split('/')[0];
 
+          const telemetryInteract = {
+            context: {
+              env: env,
+              cdata: [],
+            },
+            edata: {
+              id: `Content page`,
+              name: result?.name,
+              type: TelemetryEventType.CLICK,
+              subtype: '',
+              pageid: cleanedUrl,
+            },
+          };
+          telemetryFactory.interact(telemetryInteract);
         }
         const cleanKeywords = (
           result?.keywords?.filter((item: any) => item) ?? []
