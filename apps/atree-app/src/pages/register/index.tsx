@@ -131,14 +131,18 @@ export default function Registration() {
     setLoading(true);
     try {
       const [firstName, ...lastNameArr] = formData.name.trim().split(' ');
-    const lastName = lastNameArr.join(' ');
+      const lastName = lastNameArr.join(' ');
       const username = formData.email;
+      let gender = formData.gender;
+      if (gender === 'other') {
+        gender = 'transgender';
+      }
       const payload = {
         firstName,
         lastName,
         username,
         password: formData.password,
-        gender: formData.gender,
+        gender: gender,
         ...(formData.mobile && { mobile: formData.mobile }),
         tenantCohortRoleMapping: tenantCohortRoleMapping,
       };
@@ -433,7 +437,7 @@ export default function Registration() {
                           color: '#0047D4',
                           textDecoration: 'underline',
                         }}
-                        target="_blank" 
+                        target="_blank"
                         rel="noopener noreferrer"
                       >
                         Terms and Conditions
