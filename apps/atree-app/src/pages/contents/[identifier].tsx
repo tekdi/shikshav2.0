@@ -496,7 +496,7 @@ export default function Content() {
                       sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '12px',
+                        gap: '10px',
                       }}
                     >
                       <IconButton
@@ -529,6 +529,7 @@ export default function Content() {
                       color="primary"
                       style={{
                         marginLeft: 'auto',
+                        marginRight: '15px',
                         backgroundColor: 'white',
                         color: '#2B3133',
                         boxShadow:
