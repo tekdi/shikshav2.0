@@ -139,6 +139,7 @@ const Login: React.FC<ListProps> = () => {
           );
           dispatchLoginEvent(user, 'credentials');
           setAlert({ message: 'Login successful!', severity: 'success' });
+          localStorage.removeItem('consumedContent');
           trackEvent({
             action: 'signin',
             category: 'engagement',
@@ -183,7 +184,6 @@ const Login: React.FC<ListProps> = () => {
       setLoading(false);
     }
   };
-
 
   useEffect(() => {
     if (alert.message) {
@@ -424,7 +424,6 @@ const Login: React.FC<ListProps> = () => {
           </Alert>
         </Box>
       )}
- 
     </Layout>
   );
 };

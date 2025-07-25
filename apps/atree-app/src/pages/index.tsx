@@ -20,6 +20,7 @@ import FooterText from '../component/FooterText';
 import Banner from '../component/Banner';
 import DigitalHubBanner from '../component/DigitalHubBanner';
 import atreeLogo from '../../public/images/atreeLogo.svg';
+import { telemetryFactory } from '../utils/telemetry'; // adjust path as needed
 
 interface LandingPageProps {
   frameworkData: any;
@@ -168,6 +169,27 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
 
     init();
   }, [frameworkData]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const userId = localStorage.getItem('id');
+      const isLoggedIn = !!userId && userId !== 'Anonymous';
+
+      telemetryFactory.impression({
+        edata: {
+          type: 'view',
+          pageid: 'landing-page',
+          uri: window.location.pathname,
+          subtype: isLoggedIn ? 'login-user' : 'non-login-user',
+          // add more fields as needed
+        },
+        context: {
+          env: 'landing',
+          cdata: [{ id: isLoggedIn ? userId : 'Anonymous', type: 'User' }],
+        },
+      });
+    }
+  }, []);
 
   return (
     <Layout

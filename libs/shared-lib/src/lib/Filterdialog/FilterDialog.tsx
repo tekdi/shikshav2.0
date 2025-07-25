@@ -126,6 +126,19 @@ const CustomRadio = ({ option }: any) => (
     label={option.label}
   />
 );
+
+// Helper to get user telemetry info
+function getUserTelemetryInfo() {
+  const userId =
+    typeof window !== 'undefined' ? localStorage.getItem('userId') : null;
+  const isLoggedIn = !!userId && userId !== 'Anonymous';
+  return {
+    userId: isLoggedIn ? userId : 'Anonymous',
+    isLoggedIn,
+    subtype: isLoggedIn ? 'login-user' : 'non-login-user',
+  };
+}
+
 export const FilterDialog = ({
   open,
   onClose,
@@ -154,8 +167,8 @@ export const FilterDialog = ({
   selectedContentTypes?: string[];
   sort?: any;
   onLanguageChange?: (language: string) => void;
-  onSubjectsChange?: (subjects: string) => void;
-  onContentTypeChange?: (contentType: string) => void;
+  onSubjectsChange?: (subjects: string[]) => void;
+  onContentTypeChange?: (contentType: string[]) => void;
   onSortChange?: (sort: any) => void;
   onApply?: (data: any) => void;
   frameworkFilter: any;
@@ -248,23 +261,25 @@ export const FilterDialog = ({
         ? [...currentValues, value]
         : currentValues.filter((v: string) => v !== value);
       localStorage.setItem('subcategory', subCategory);
-      const windowUrl = window.location.pathname;
-      const cleanedUrl = windowUrl.replace(/^\//, '');
-      const env = cleanedUrl.split('/')[0];
 
-      const telemetryInteract = {
-        context: {
-          env: env,
-          cdata: [],
-        },
+      const { userId, subtype } = getUserTelemetryInfo();
+      telemetryFactory.interact({
         edata: {
-          id: 'center-created-successfully',
+          id: `filter_checkbox_${filterCode}_${value}`,
           type: TelemetryEventType.CLICK,
-          subtype: '',
-          pageid: cleanedUrl,
+          subtype,
+          pageid: 'filter-dialog',
         },
-      };
-      telemetryFactory.interact(telemetryInteract);
+        context: {
+          env: 'filter',
+          cdata: [
+            { id: userId, type: 'User' },
+            { id: filterCode, type: 'FilterType' },
+            { id: value, type: 'FilterValue' },
+            { id: checked ? 'checked' : 'unchecked', type: 'Action' },
+          ],
+        },
+      });
       return {
         ...prev,
         [filterCode]: checked
@@ -297,23 +312,26 @@ export const FilterDialog = ({
     }));
 
     localStorage.setItem('selectedFilters', JSON.stringify(updatedFilters));
-    const windowUrl = window.location.pathname;
-    const cleanedUrl = windowUrl.replace(/^\//, '');
-    const env = cleanedUrl.split('/')[0];
 
-    const telemetryInteract = {
-      context: {
-        env: env,
-        cdata: [],
-      },
+    const { userId, subtype } = getUserTelemetryInfo();
+    telemetryFactory.interact({
       edata: {
-        id: `${updatedFilters?.resource}`,
+        id: `resource_filter_${filterType}_${value}`,
         type: TelemetryEventType.CLICK,
-        subtype: '',
-        pageid: cleanedUrl,
+        subtype,
+        pageid: 'filter-dialog',
       },
-    };
-    telemetryFactory.interact(telemetryInteract);
+      context: {
+        env: 'filter',
+        cdata: [
+          { id: userId, type: 'User' },
+          { id: filterType, type: 'FilterType' },
+          { id: value, type: 'FilterValue' },
+          { id: checked ? 'checked' : 'unchecked', type: 'Action' },
+          { id: JSON.stringify(updatedFilters), type: 'CurrentFilters' },
+        ],
+      },
+    });
     onApply?.(updatedFilters);
   };
 
@@ -381,6 +399,23 @@ export const FilterDialog = ({
                   <Button
                     size="small"
                     onClick={() => {
+                      const { userId, subtype } = getUserTelemetryInfo();
+                      telemetryFactory.interact({
+                        edata: {
+                          id: 'filter_reset_all',
+                          type: TelemetryEventType.CLICK,
+                          subtype,
+                          pageid: 'filter-dialog',
+                        },
+                        context: {
+                          env: 'filter',
+                          cdata: [
+                            { id: userId, type: 'User' },
+                            { id: 'reset', type: 'Action' },
+                            { id: 'all_filters', type: 'Scope' },
+                          ],
+                        },
+                      });
                       setSelectedValues({});
                       selectedFilters.mimeType = [];
                       selectedFilters.resource = [];
@@ -422,6 +457,23 @@ export const FilterDialog = ({
               value={selectedSubjects || []}
               onChange={(e) => {
                 const value = e.target.value as string[];
+                const { userId, subtype } = getUserTelemetryInfo();
+                telemetryFactory.interact({
+                  edata: {
+                    id: `filter_subject_change`,
+                    type: TelemetryEventType.CLICK,
+                    subtype,
+                    pageid: 'filter-dialog',
+                  },
+                  context: {
+                    env: 'filter',
+                    cdata: [
+                      { id: userId, type: 'User' },
+                      { id: 'subject', type: 'FilterType' },
+                      { id: JSON.stringify(value), type: 'SelectedSubjects' },
+                    ],
+                  },
+                });
                 onSubjectsChange?.(value);
               }}
               renderValue={(selected) => (selected as string[]).join(', ')}
@@ -448,6 +500,26 @@ export const FilterDialog = ({
               value={selectedContentTypes || []}
               onChange={(e) => {
                 const value = e.target.value as string[];
+                const { userId, subtype } = getUserTelemetryInfo();
+                telemetryFactory.interact({
+                  edata: {
+                    id: `filter_content_type_change`,
+                    type: TelemetryEventType.CLICK,
+                    subtype,
+                    pageid: 'filter-dialog',
+                  },
+                  context: {
+                    env: 'filter',
+                    cdata: [
+                      { id: userId, type: 'User' },
+                      { id: 'contentType', type: 'FilterType' },
+                      {
+                        id: JSON.stringify(value),
+                        type: 'SelectedContentTypes',
+                      },
+                    ],
+                  },
+                });
                 onContentTypeChange?.(value);
               }}
               renderValue={(selected) => (selected as string[]).join(', ')}
@@ -528,6 +600,26 @@ export const FilterDialog = ({
               <Button
                 variant="contained"
                 onClick={() => {
+                  const { userId, subtype } = getUserTelemetryInfo();
+                  telemetryFactory.interact({
+                    edata: {
+                      id: 'filter_apply_selected',
+                      type: TelemetryEventType.CLICK,
+                      subtype,
+                      pageid: 'filter-dialog',
+                    },
+                    context: {
+                      env: 'filter',
+                      cdata: [
+                        { id: userId, type: 'User' },
+                        { id: 'apply', type: 'Action' },
+                        {
+                          id: JSON.stringify(selectedValues),
+                          type: 'SelectedFilters',
+                        },
+                      ],
+                    },
+                  });
                   onApply?.(selectedValues);
                   onClose?.();
                 }}
@@ -583,6 +675,23 @@ export const FilterDialog = ({
                     <Button
                       size="small"
                       onClick={() => {
+                        const { userId, subtype } = getUserTelemetryInfo();
+                        telemetryFactory.interact({
+                          edata: {
+                            id: 'filter_reset_all_desktop',
+                            type: TelemetryEventType.CLICK,
+                            subtype,
+                            pageid: 'filter-dialog',
+                          },
+                          context: {
+                            env: 'filter',
+                            cdata: [
+                              { id: userId, type: 'User' },
+                              { id: 'reset', type: 'Action' },
+                              { id: 'all_filters', type: 'Scope' },
+                            ],
+                          },
+                        });
                         setSelectedValues({});
                         selectedFilters.mimeType = [];
                         selectedFilters.resource = [];
