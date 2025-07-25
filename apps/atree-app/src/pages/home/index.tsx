@@ -65,6 +65,18 @@ interface ContentSectionProps {
   handleCardClick: (content: ContentType) => void;
 }
 
+// Helper to get user telemetry info
+function getUserTelemetryInfo() {
+  const userId =
+    typeof window !== 'undefined' ? localStorage.getItem('userId') : null;
+  const isLoggedIn = !!userId && userId !== 'Anonymous';
+  return {
+    userId: isLoggedIn ? userId : 'Anonymous',
+    isLoggedIn,
+    subtype: isLoggedIn ? 'login-user' : 'non-login-user',
+  };
+}
+
 export default function Index() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -91,8 +103,10 @@ export default function Index() {
   const [filterData, setFilterData] = useState();
   const { t } = useTranslation();
   const searchParams = useSearchParams();
+  console.log('searchParams', searchParams);
   const frameworkName = searchParams.get('category')?.toLocaleUpperCase();
-
+  const bookmark = searchParams.get('bookmark');
+  console.log('bookmark', bookmark);
   // **Handle API Calls with Updated Filters**
   useEffect(() => {
     // Scroll to top when framework or filterCategory changes
@@ -165,6 +179,24 @@ export default function Index() {
       action: 'view_home_page',
       category: 'Home Page',
     });
+  }, []);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const userId = localStorage.getItem('userId');
+      const isLoggedIn = !!userId && userId !== 'Anonymous';
+      telemetryFactory.impression({
+        edata: {
+          type: TelemetryEventType.VIEW,
+          pageid: 'home-page',
+          uri: window.location.pathname,
+          subtype: isLoggedIn ? 'login-user' : 'non-login-user',
+        },
+        context: {
+          env: 'home',
+          cdata: [{ id: isLoggedIn ? userId : 'Anonymous', type: 'User' }],
+        },
+      });
+    }
   }, []);
   // **Initial Data Fetch Based on frameworkName**
   useEffect(() => {
@@ -280,36 +312,52 @@ export default function Index() {
       category: 'user',
       label: 'Home Page',
     });
-    localStorage.removeItem('selectedFilters');
-    const windowUrl = window.location.pathname;
-    const cleanedUrl = windowUrl.replace(/^\//, '');
-    const env = cleanedUrl.split('/')[0];
-
-    const telemetryInteract = {
-      context: {
-        env: env,
-        cdata: [],
-      },
+    const { userId, subtype } = getUserTelemetryInfo();
+    telemetryFactory.interact({
       edata: {
         id: `${filterCategory} - ${content?.name}`,
         type: TelemetryEventType.CLICK,
-        subtype: '',
-        pageid: cleanedUrl,
+        subtype,
+        pageid: 'home-page',
       },
-    };
-    telemetryFactory.interact(telemetryInteract);
-    if (consumedContent.length < 3) {
-      router.push(`/contents/${content?.identifier}`);
-      setConsumedContent((prev) => {
-        const updatedContent = [...prev, content?.identifier];
+      context: {
+        env: 'home',
+        cdata: [{ id: userId, type: 'User' }],
+      },
+    });
+    console.log('deviceId', localStorage.getItem('deviceId'));
+
+    const deviceId = localStorage.getItem('deviceId');
+    const currentContentId = content?.identifier;
+
+    let existingMap = JSON.parse(
+      localStorage.getItem('deviceContentMap') || '{}'
+    );
+
+    // Initialize if missing
+    if (!existingMap[deviceId]) {
+      existingMap[deviceId] = [];
+    }
+
+    // Only push currentContentId if not already present
+    if (!existingMap[deviceId].includes(currentContentId)) {
+      existingMap[deviceId].push(currentContentId);
+      localStorage.setItem('deviceContentMap', JSON.stringify(existingMap));
+    }
+
+    // Now check if the device has already accessed 3 DO IDs
+    if (existingMap[deviceId].length < 4) {
+      router.push(`/contents/${currentContentId}`);
+
+      setConsumedContent(async (prev) => {
+        const updatedContent = [...prev, currentContentId];
         localStorage.setItem('consumedContent', JSON.stringify(updatedContent));
         return updatedContent;
       });
     } else if (!localStorage.getItem('token')) {
       setOpenMessageDialog(true);
-      localStorage.removeItem('consumedContent');
     } else {
-      router.push(`/contents/${content?.identifier}`);
+      router.push(`/contents/${currentContentId}`);
     }
   };
   const handleToggleFullAccess = (
@@ -1041,23 +1089,19 @@ const SubFrameworkFilter = React.memo<{
       category: 'engagement',
       label: `Subcategory -${item.name}`,
     });
-    const windowUrl = window.location.pathname;
-    const cleanedUrl = windowUrl.replace(/^\//, '');
-    const env = cleanedUrl.split('/')[0];
-
-    const telemetryInteract = {
-      context: {
-        env: env,
-        cdata: [],
-      },
+    const { userId, subtype } = getUserTelemetryInfo();
+    telemetryFactory.interact({
       edata: {
         id: `Subcategory -${item.name}`,
         type: TelemetryEventType.CLICK,
-        subtype: '',
-        pageid: cleanedUrl,
+        subtype,
+        pageid: 'home-page',
       },
-    };
-    telemetryFactory.interact(telemetryInteract);
+      context: {
+        env: 'home',
+        cdata: [{ id: userId, type: 'User' }],
+      },
+    });
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
