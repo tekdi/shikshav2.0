@@ -18,6 +18,7 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import ParkOutlinedIcon from '@mui/icons-material/ParkOutlined';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
 import { useRouter } from 'next/router';
 import TermsAndCondition from '../TermsAndCondition';
 import { useKeycloak } from '@react-keycloak/web';
@@ -215,6 +216,11 @@ export default function Layout({
     },
     ...(token
       ? [
+          {
+            text: 'Bookmark',
+            icon: <BookmarkIcon fontSize="small" />,
+            to: '/home?bookmark=true',
+          },
           {
             text: 'Logout',
             icon: <AccountCircleOutlinedIcon fontSize="small" />,

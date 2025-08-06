@@ -42,6 +42,8 @@ import Loader from '../../component/layout/LoaderComponent';
 import Footer from '../../component/layout/Footer';
 import { TelemetryEventType } from '../../utils/app.constant';
 import { telemetryFactory } from '../../utils/telemetry';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
 const buttonColors = {
   water: '#0E28AE',
   land: '#8F4A50',
@@ -91,6 +93,7 @@ export default function Content() {
   const [frameworkFilter, setFrameworkFilter] = useState();
   const [subFramework, setSubFramework] = useState('');
   const [framework, setFramework] = useState('');
+  const [hasToken, setHasToken] = useState(false);
 
   const [filters, setFilters] = useState<any>({
     request: {
@@ -100,7 +103,7 @@ export default function Content() {
     },
   });
   const [homeCategory, setHomeCategory] = useState('');
-
+  const [isBookmarked, setIsBookmarked] = useState(false);
   const languageDisplayMap: Record<string, string> = {
     english: 'English',
     hindi: 'हिन्दी',
@@ -117,6 +120,10 @@ export default function Content() {
 
     console.log('Stored category:', contentData);
     setHomeCategory(storedCategory);
+  }, []);
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setHasToken(!!token);
   }, []);
   const handleOnCLick = () => {
     const windowUrl = window.location.pathname;
@@ -524,23 +531,48 @@ export default function Content() {
                         <Title>Browse by Sub Categories</Title>
                       )}
                     </Box>
-                    <IconButton
-                      onClick={handleOpen}
-                      color="primary"
-                      style={{
+
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        backgroundColor: '#fff',
+                        padding: '4px',
+                        borderRadius: '8px',
+                        // boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
                         marginLeft: 'auto',
                         marginRight: '15px',
-                        backgroundColor: 'white',
-                        color: '#2B3133',
-                        boxShadow:
-                          '-0.73px 0.73px 0.73px -1.46px rgba(255, 255, 255, 0.35) inset, 0px 8px 10px rgba(0, 0, 0, 0.05)',
                       }}
                     >
-                      <ShareIcon />
-                    </IconButton>
+                      {hasToken && (
+                        <IconButton
+                          color="primary"
+                          sx={{
+                            backgroundColor: 'white',
+                            color: isBookmarked ? '#FCD905' : '#2B3133',
+                          }}
+                          onClick={() => setIsBookmarked((prev) => !prev)}
+                        >
+                          {isBookmarked ? (
+                            <BookmarkIcon />
+                          ) : (
+                            <BookmarkBorderIcon />
+                          )}
+                        </IconButton>
+                      )}
 
+                      <IconButton
+                        onClick={handleOpen}
+                        color="primary"
+                        sx={{
+                          backgroundColor: 'white',
+                          color: '#2B3133',
+                        }}
+                      >
+                        <ShareIcon />
+                      </IconButton>
+                    </Box>
                     {/* Share Dialog */}
-
                     <ShareDialog
                       open={open}
                       handleClose={() => setOpen(false)}
