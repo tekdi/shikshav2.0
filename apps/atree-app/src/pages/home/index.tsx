@@ -544,14 +544,10 @@ export default function Index() {
   }
 
   return (
-    <Layout isLoadingChildren={isLoadingChildren}>
-      {/* Add TranslationTest at the top of the page */}
-
     <Layout
       isLoadingChildren={isLoadingChildren}
       footerComponent={renderFooterComponent()}
     >
-
       <Box display="flex" flexDirection="column" gap="1rem" py="1rem">
         {!isMobile ? (
           <Grid container spacing={2} sx={{ padding: '25px' }}>
@@ -599,7 +595,6 @@ export default function Index() {
                     padding: '9px 0px',
                   }}
                 >
-
                   <Box
                     sx={{
                       display: 'flex',
@@ -661,7 +656,6 @@ export default function Index() {
                       </Box>
                     </>
                   )}
-
 
                   <ContentSection
                     contents={contentData.length > 0 ? contentData : []}
