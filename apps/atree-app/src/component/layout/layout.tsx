@@ -131,37 +131,112 @@ export default function Layout({
   const [frameworkData, setFrameworkData] = useState<any>(null);
   const [frameworkFilter, setFrameworkFilter] = useState<any[]>([]);
   const [framework, setFramework] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
   const isAuthPage =
     router.pathname === '/signin' || router.pathname === '/register';
   const bottomFooter =
     router.pathname === '/searchpage' || router.pathname === '/contents';
 
   useEffect(() => {
-    let isMounted = true;
     const fetchFrameworkData = async () => {
       try {
         const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
-        const frameworkData = await fetch(url).then((res) => res.json());
-        if (isMounted) {
-          const frameworks = frameworkData?.result?.framework?.categories;
-          const fdata =
-            frameworks.find((item: any) => item.code === 'topic')?.terms ?? [];
-          setFramework(fdata[0]?.identifier ?? '');
-          setFrameworkFilter(fdata);
-          setFrameworkData(frameworkData);
+        console.log('Fetching framework data from:', url);
+
+        const response = await fetch(url);
+        if (!response.ok) {
+          console.warn(`Framework API error: ${response.status}`);
+          // Set default framework data
+          setFrameworkData({
+            result: {
+              framework: {
+                categories: [
+                  {
+                    code: 'topic',
+                    terms: [
+                      {
+                        identifier: 'default',
+                        name: 'Default Category',
+                        code: 'topic',
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          });
+          return;
         }
+
+        const data = await response.json();
+        console.log('Framework data received:', data);
+        setFrameworkData(data);
       } catch (error) {
-        if (isMounted) {
-          console.error('Error fetching board data:', error);
-        }
+        console.error('Error fetching framework data:', error);
+        // Set default framework data on error
+        setFrameworkData({
+          result: {
+            framework: {
+              categories: [
+                {
+                  code: 'topic',
+                  terms: [
+                    {
+                      identifier: 'default',
+                      name: 'Default Category',
+                      code: 'topic',
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        });
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchFrameworkData();
-    return () => {
-      isMounted = false;
-    };
   }, []);
+
+  useEffect(() => {
+    if (frameworkData?.result?.framework?.categories) {
+      const frameworks = frameworkData.result.framework.categories;
+      const fdata =
+        frameworks.find((item: any) => item.code === 'topic')?.terms || [];
+
+      if (fdata && fdata.length > 0) {
+        setFramework(fdata[0]?.identifier || 'default');
+        setFrameworkFilter(fdata);
+      } else {
+        // Set default framework data if no valid data found
+        setFrameworkFilter([
+          {
+            identifier: 'default',
+            name: 'Default Category',
+            code: 'topic',
+          },
+        ]);
+        setFramework('default');
+      }
+    }
+  }, [frameworkData]);
+
+  useEffect(() => {
+    if (framework && frameworkFilter?.length > 0) {
+      const subFrameworkData = frameworkFilter.find(
+        (item: any) => item.identifier === framework
+      );
+      if (subFrameworkData?.name) {
+        localStorage.setItem(
+          'category',
+          subFrameworkData.name.charAt(0).toUpperCase() +
+            subFrameworkData.name.slice(1).toLowerCase()
+        );
+      }
+    }
+  }, [framework, frameworkFilter]);
 
   useEffect(() => {
     const handleResize = debounce(() => {
@@ -308,6 +383,10 @@ export default function Layout({
     }
   };
 
+  if (isLoading) {
+    return <Loader />;
+  }
+
   return (
     <Box
       sx={{
@@ -315,10 +394,23 @@ export default function Layout({
         flexDirection: 'column',
         justifyContent: 'space-between',
         minHeight: '100vh',
+        width: '100%',
+        overflow: 'hidden',
+        position: 'relative',
         ...sx,
       }}
     >
-      <Box sx={{ zIndex: 100, position: 'fixed', top: 0, left: 0, right: 0 }}>
+      <Box
+        sx={{
+          zIndex: 100,
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          width: '100%',
+          overflow: 'hidden',
+        }}
+      >
         {Boolean(showTopAppBar) && (
           <Box
             sx={{
@@ -332,6 +424,7 @@ export default function Layout({
               sx={{
                 width: '100%',
                 bgcolor: '#FFFFFF',
+                overflow: 'hidden',
               }}
               minHeight={'64px'}
             >

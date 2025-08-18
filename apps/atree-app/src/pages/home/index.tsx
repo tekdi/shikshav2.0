@@ -37,8 +37,9 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState, useRef } from 'react';
 import atreeLogo from '../../../assets/images/placeholder.jpg';
 import Layout from '../../component/layout/layout';
-import { useTranslation } from 'react-i18next';
+import { useAppTranslation } from '../../utils/i18n.helper';
 import { useSearchParams } from 'next/navigation';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Loader from '../../component/layout/LoaderComponent';
 import dynamic from 'next/dynamic';
 import FooterText from '../../component/FooterText';
@@ -48,6 +49,7 @@ import { TelemetryEventType } from '../../utils/app.constant';
 import { telemetryFactory } from '../../utils/telemetry';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { LANGUAGE_KEYS } from '../../utils/language.constants';
 const buttonColors = {
   water: '#0E28AE',
   land: '#8F4A50',
@@ -78,6 +80,7 @@ function getUserTelemetryInfo() {
 }
 
 export default function Index() {
+  const { t, i18n, ready } = useAppTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
@@ -101,7 +104,6 @@ export default function Index() {
     },
   });
   const [filterData, setFilterData] = useState();
-  const { t } = useTranslation();
   const searchParams = useSearchParams();
   console.log('searchParams', searchParams);
   const frameworkName = searchParams.get('category')?.toLocaleUpperCase();
@@ -469,8 +471,15 @@ export default function Index() {
     return name;
   };
 
+  // Don't render until translations are ready
+  if (!ready) {
+    return <Loader />;
+  }
+
   return (
     <Layout isLoadingChildren={isLoadingChildren}>
+      {/* Add TranslationTest at the top of the page */}
+
       <Box display="flex" flexDirection="column" gap="1rem" py="1rem">
         {!isMobile ? (
           <Grid container spacing={2} sx={{ padding: '25px' }}>
@@ -512,7 +521,6 @@ export default function Index() {
                 <Box
                   sx={{
                     width: '100%',
-                    // gap: '16px',
                     display: 'flex',
                     flexDirection: 'column',
                     padding: '9px 0px',
@@ -526,7 +534,7 @@ export default function Index() {
                     }}
                   >
                     {subFrameworkFilter && subFrameworkFilter.length > 0 && (
-                      <Title>{t('Browse by Sub Categories')}</Title>
+                      <Title>{LANGUAGE_KEYS.BROWSE_SUBCATEGORIES}</Title>
                     )}
                   </Box>
 
@@ -549,7 +557,7 @@ export default function Index() {
 
                   <ContentSection
                     contents={contentData.length > 0 ? contentData : []}
-                    title={t('')}
+                    title=""
                     onTitleClick={() => {
                       localStorage.removeItem('subcategory');
                       router.push('/contents');
@@ -700,7 +708,7 @@ export default function Index() {
           <Typography
             sx={{ fontFamily: 'Poppins', fontSize: '16px', fontWeight: '500' }}
           >
-            Great going! You've explored 3 resources. Please login to continue
+            {t(LANGUAGE_KEYS.LOGIN_REQUIRED)}
           </Typography>
         </DialogContent>
         <DialogActions sx={{ justifyContent: 'center', py: 2, px: 3 }}>
@@ -712,8 +720,6 @@ export default function Index() {
               borderRadius: '50px',
               height: '40px',
               width: '30%',
-              borderRadius: '50px',
-              height: '40px',
               backgroundColor: '#fcd804',
               color: '#000000',
               fontFamily: 'Poppins',
@@ -722,7 +728,7 @@ export default function Index() {
               textTransform: 'none',
             }}
           >
-            {t('Proceed')}
+            {t(LANGUAGE_KEYS.PROCEED)}
           </Button>
         </DialogActions>
       </Dialog>
@@ -730,137 +736,174 @@ export default function Index() {
     </Layout>
   );
 }
-const SwitchAccess = ({ fullAccess, handleToggleFullAccess }: any) => (
-  <Box
-    display="flex"
-    alignItems="center"
-    gap={1}
-    marginLeft="auto"
-    width={'28%'}
-  >
-    <Typography
-      sx={{
-        fontSize: '14px',
-        fontWeight: fullAccess ? '400' : '600',
-        color: fullAccess ? '#9E9E9E' : '#000000',
-      }}
+
+// Update getServerSideProps to handle locale properly
+export async function getServerSideProps({ req }) {
+  try {
+    // Get the language from localStorage on the server side
+    const language = req.cookies?.selectedLanguage || 'en';
+    console.log('Loading translations for language:', language);
+
+    // Load translations
+    const translations = await serverSideTranslations(language, ['common']);
+    console.log('Translations loaded:', translations);
+
+    return {
+      props: {
+        ...translations,
+      },
+    };
+  } catch (error) {
+    console.error('Error loading translations:', error);
+    // Fallback to English if there's an error
+    const translations = await serverSideTranslations('en', ['common']);
+    return {
+      props: {
+        ...translations,
+      },
+    };
+  }
+}
+const SwitchAccess = ({ fullAccess, handleToggleFullAccess }: any) => {
+  const { t } = useAppTranslation();
+  return (
+    <Box
+      display="flex"
+      alignItems="center"
+      gap={1}
+      marginLeft="auto"
+      width={'28%'}
     >
-      All
-    </Typography>
-
-    <Switch
-      checked={fullAccess} // Controlled state for switch
-      onChange={handleToggleFullAccess}
-      sx={{
-        height: 26,
-        padding: 0,
-        width: 42,
-        '& .MuiSwitch-switchBase': {
-          transitionDuration: '300ms',
-          padding: 0,
-          '&.Mui-checked': {
-            color: '#fff',
-            transform: 'translateX(16px)',
-            '& + .MuiSwitch-track': {
-              background: '#fcd804',
-              opacity: 1,
-              border: 0,
-            },
-            '&.Mui-disabled + .MuiSwitch-track': {
-              opacity: 0.5,
-            },
-          },
-          '&.Mui-focusVisible .MuiSwitch-thumb': {
-            border: '6px solid #fff',
-            color: '#33cf4d',
-          },
-
-          '&.Mui-disabled + .MuiSwitch-track': {
-            background: '#BDBDBD', // Grey track when disabled
-            opacity: 0.5,
-          },
-          '&.Mui-disabled .MuiSwitch-thumb': {
-            color: '#BDBDBD', // Grey thumb when disabled
-          },
-        },
-        '& .MuiSwitch-thumb': {
-          height: 25,
-          boxSizing: 'border-box',
-
-          width: 25,
-        },
-        '& .MuiSwitch-track': {
-          background: fullAccess ? '#fcd804' : '#BDBDBD', // Grey when unchecked
-          opacity: 1,
-          borderRadius: 26 / 2,
-        },
-      }}
-    />
-
-    <Typography
-      sx={{
-        color: fullAccess ? '#000000' : '#9E9E9E',
-        fontSize: '14px',
-        fontWeight: fullAccess ? '600' : '400',
-      }}
-    >
-      Only Full Access
-    </Typography>
-  </Box>
-);
-const ContentSection = ({ title, contents, onTitleClick, handleCardClick }) => (
-  <Box
-    sx={{
-      width: '100%',
-      gap: '16px',
-      display: 'flex',
-      flexDirection: 'column',
-      padding: '0px',
-    }}
-  >
-    {title && <Title onClick={onTitleClick}>{title}</Title>}
-
-    {contents && contents.length > 0 ? (
-      <AtreeCard
-        contents={contents}
-        handleCardClick={handleCardClick}
-        _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
-        _card={{ image: atreeLogo.src }}
-      />
-    ) : (
       <Typography
-        variant="h6"
         sx={{
-          textAlign: 'center',
-          width: '100%',
-          fontWeight: 500,
-          color: 'text.secondary',
-          mt: 2,
+          fontSize: '14px',
+          fontWeight: fullAccess ? '400' : '600',
+          color: fullAccess ? '#9E9E9E' : '#000000',
         }}
       >
-        Oops! We don't have this resource yet on our shelves. Help us stock it
-        by recommending it{' '}
-        <Link
-          href="https://docs.google.com/forms/d/1r4wxm2a2kKH2Veq9_AYIfmWNYJJh5u-nw_SweHC5ydQ/viewform?edit_requested=true"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: '#0037B9', textDecoration: 'underline' }}
-        >
-          here
-        </Link>
+        {t(LANGUAGE_KEYS.ALL_ACCESS)}
       </Typography>
-    )}
-  </Box>
-);
 
-const FilterSection = ({ frameworkFilter, framework, setFramework }) => (
-  <FrameworkFilter
-    frameworkFilter={frameworkFilter || []}
-    framework={framework}
-    setFramework={setFramework}
-    fromSubcategory={false}
-  />
-);
+      <Switch
+        checked={fullAccess}
+        onChange={handleToggleFullAccess}
+        sx={{
+          height: 26,
+          padding: 0,
+          width: 42,
+          '& .MuiSwitch-switchBase': {
+            transitionDuration: '300ms',
+            padding: 0,
+            '&.Mui-checked': {
+              color: '#fff',
+              transform: 'translateX(16px)',
+              '& + .MuiSwitch-track': {
+                background: '#fcd804',
+                opacity: 1,
+                border: 0,
+              },
+              '&.Mui-disabled + .MuiSwitch-track': {
+                opacity: 0.5,
+              },
+            },
+            '&.Mui-focusVisible .MuiSwitch-thumb': {
+              border: '6px solid #fff',
+              color: '#33cf4d',
+            },
+
+            '&.Mui-disabled + .MuiSwitch-track': {
+              background: '#BDBDBD',
+              opacity: 0.5,
+            },
+            '&.Mui-disabled .MuiSwitch-thumb': {
+              color: '#BDBDBD',
+            },
+          },
+          '& .MuiSwitch-thumb': {
+            height: 25,
+            boxSizing: 'border-box',
+            width: 25,
+          },
+          '& .MuiSwitch-track': {
+            background: fullAccess ? '#fcd804' : '#BDBDBD',
+            opacity: 1,
+            borderRadius: 26 / 2,
+          },
+        }}
+      />
+
+      <Typography
+        sx={{
+          color: fullAccess ? '#000000' : '#9E9E9E',
+          fontSize: '14px',
+          fontWeight: fullAccess ? '600' : '400',
+        }}
+      >
+        {t(LANGUAGE_KEYS.FULL_ACCESS)}
+      </Typography>
+    </Box>
+  );
+};
+const ContentSection = ({ title, contents, onTitleClick, handleCardClick }) => {
+  const { t } = useAppTranslation();
+
+  return (
+    <Box
+      sx={{
+        width: '100%',
+        gap: '16px',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '0px',
+      }}
+    >
+      {title && <Title onClick={onTitleClick}>{title}</Title>}
+
+      {contents && contents.length > 0 ? (
+        <AtreeCard
+          contents={contents}
+          handleCardClick={handleCardClick}
+          _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
+          _card={{ image: atreeLogo.src }}
+        />
+      ) : (
+        <Typography
+          variant="h6"
+          sx={{
+            textAlign: 'center',
+            width: '100%',
+            fontWeight: 500,
+            color: 'text.secondary',
+            mt: 2,
+          }}
+        >
+          {t(LANGUAGE_KEYS.NO_RESOURCES)}{' '}
+          <Link
+            href="https://docs.google.com/forms/d/1r4wxm2a2kKH2Veq9_AYIfmWNYJJh5u-nw_SweHC5ydQ/viewform?edit_requested=true"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#0037B9', textDecoration: 'underline' }}
+          >
+            {t(LANGUAGE_KEYS.RECOMMEND_HERE)}
+          </Link>
+        </Typography>
+      )}
+    </Box>
+  );
+};
+
+const FilterSection = ({ frameworkFilter, framework, setFramework }) => {
+  const { t } = useAppTranslation();
+
+  return (
+    <FrameworkFilter
+      frameworkFilter={frameworkFilter || []}
+      framework={framework}
+      setFramework={setFramework}
+      fromSubcategory={false}
+    />
+  );
+};
 
 const FrameworkFilter = React.memo<{
   frameworkFilter: Array<{ identifier: string; name: string }>;
@@ -1067,21 +1110,23 @@ const SubFrameworkFilter = React.memo<{
   subFramework,
   setSubFramework,
 }) {
-  const { t } = useTranslation();
+  const { t } = useAppTranslation();
   const router = useRouter();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [openPopup, setOpenPopup] = useState<boolean>(false);
   const [filterItems, setFilterItems] = useState<
     Array<{ identifier: string; name: string }>
   >([]);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   const maxItems = isMobile ? 3 : 5;
+
   useEffect(() => {
     if (subFrameworkFilter) {
       setFilterItems(subFrameworkFilter.slice(0, maxItems));
     }
-  }, [subFrameworkFilter]);
+  }, [subFrameworkFilter, maxItems]);
   const handleItemClick = (item: any) => {
     localStorage.setItem('subcategory', item.name);
     trackEvent({
@@ -1231,6 +1276,8 @@ const Title: React.FC<{
   children: React.ReactNode | string;
   onClick?: () => void;
 }> = ({ children, onClick }) => {
+  const { t } = useAppTranslation();
+
   return (
     <Box
       display="flex"
@@ -1248,7 +1295,9 @@ const Title: React.FC<{
           color: '#000000',
         }}
       >
-        {children}
+        {typeof children === 'string'
+          ? t(children as keyof typeof LANGUAGE_KEYS)
+          : children}
       </Typography>
       {onClick && (
         <IconButton onClick={onClick}>

@@ -190,10 +190,25 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
         sx: {
           borderRadius: '28px',
           backgroundColor: '#E9E7EF',
-          // paddingTop: '-20%',
-
-          // Add marginTop for mobile
           mt: { xs: -15, sm: 4 },
+          maxHeight: '80vh',
+          overflowY: 'auto',
+          '&::-webkit-scrollbar': {
+            width: '8px',
+            backgroundColor: 'transparent',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            backgroundColor: 'rgba(0, 0, 0, 0.2)',
+            borderRadius: '4px',
+            '&:hover': {
+              backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            },
+          },
+        },
+      }}
+      sx={{
+        '& .MuiBackdrop-root': {
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
         },
       }}
     >

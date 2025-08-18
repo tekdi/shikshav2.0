@@ -36,10 +36,13 @@ import {
 } from '../../utils/authUtils';
 import { TelemetryEventType } from '../../utils/app.constant';
 import { telemetryFactory } from '../../utils/telemetry';
+import { LANGUAGE_KEYS } from '../../utils/language.constants';
+import { useAppTranslation } from '../../utils/i18n.helper';
 
 interface ListProps {}
 
 const Login: React.FC<ListProps> = () => {
+  const { t } = useAppTranslation();
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({ email: '', password: '' });
   const [alert, setAlert] = useState({
@@ -91,15 +94,15 @@ const Login: React.FC<ListProps> = () => {
 
       if (field === 'email') {
         if (!value) {
-          errorMessage = 'Email id is required.';
+          errorMessage = t(LANGUAGE_KEYS.REQUIRED_FIELD);
         } else if (!validateEmail(value)) {
-          errorMessage = 'Enter a valid registered email ID.';
+          errorMessage = t(LANGUAGE_KEYS.INVALID_EMAIL);
         }
       } else if (field === 'password') {
         if (!value) {
-          errorMessage = 'Password is required.';
+          errorMessage = t(LANGUAGE_KEYS.REQUIRED_FIELD);
         } else if (!validatePassword(value)) {
-          errorMessage = 'Please enter password';
+          errorMessage = t(LANGUAGE_KEYS.INVALID_PASSWORD);
         }
       }
       setCredentials((prev) => ({ ...prev, [field]: value }));
@@ -138,7 +141,10 @@ const Login: React.FC<ListProps> = () => {
             authInfo?.result?.tenantData?.[0]?.roleName
           );
           dispatchLoginEvent(user, 'credentials');
-          setAlert({ message: 'Login successful!', severity: 'success' });
+          setAlert({
+            message: t(LANGUAGE_KEYS.LOGIN_SUCCESS),
+            severity: 'success',
+          });
           localStorage.removeItem('consumedContent');
           trackEvent({
             action: 'signin',
@@ -168,18 +174,20 @@ const Login: React.FC<ListProps> = () => {
           router.push('/home');
         } else {
           setAlert({
-            message: 'Your account has been deleted.',
+            message: t(LANGUAGE_KEYS.ACCOUNT_DELETED),
             severity: 'error',
           });
         }
       } else {
         setAlert({
-          message: response?.response?.data?.params?.errmsg || 'Login failed',
+          message:
+            response?.response?.data?.params?.errmsg ||
+            t(LANGUAGE_KEYS.LOGIN_FAILED),
           severity: 'error',
         });
       }
     } catch {
-      setAlert({ message: 'An error occurred.', severity: 'error' });
+      setAlert({ message: t(LANGUAGE_KEYS.ERROR_OCCURRED), severity: 'error' });
     } finally {
       setLoading(false);
     }
@@ -245,7 +253,7 @@ const Login: React.FC<ListProps> = () => {
                 textAlign: 'center',
               }}
             >
-              Sign Up/Login
+              {t(LANGUAGE_KEYS.SIGN_UP_LOGIN)}
             </Typography>
             <Grid container direction="column" spacing={3}>
               {['email', 'password'].map((field) => (
@@ -267,7 +275,9 @@ const Login: React.FC<ListProps> = () => {
                         marginBottom: 1,
                       }}
                     >
-                      {field === 'email' ? 'Username' : 'Password'}
+                      {field === 'email'
+                        ? t(LANGUAGE_KEYS.USERNAME)
+                        : t(LANGUAGE_KEYS.PASSWORD)}
                       &nbsp; <span style={{ color: 'red' }}> *</span>
                     </FormLabel>
                   </Grid>
@@ -320,7 +330,7 @@ const Login: React.FC<ListProps> = () => {
                         },
                       }}
                     >
-                      Proceed
+                      {t(LANGUAGE_KEYS.PROCEED)}
                     </Button>
                   </Grid>
 
@@ -367,7 +377,7 @@ const Login: React.FC<ListProps> = () => {
                     }
                   }}
                 >
-                  Forgot Password?
+                  {t(LANGUAGE_KEYS.FORGOT_PASSWORD)}
                 </Typography>
               </Grid>
               <Grid item textAlign="center">
@@ -376,17 +386,22 @@ const Login: React.FC<ListProps> = () => {
                   color="#000000"
                   sx={{ fontWeight: 500, fontFamily: 'Poppins' }}
                 >
-                  Don't have an account?{' '}
+                  {t(LANGUAGE_KEYS.DONT_HAVE_ACCOUNT)}{' '}
                   <Link
                     href="/register"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      router.push('/register');
+                    }}
                     style={{
                       color: '#0037B9',
                       fontWeight: 500,
                       fontFamily: 'poppins',
                       textDecoration: 'underline',
+                      cursor: 'pointer',
                     }}
                   >
-                    Sign up
+                    {t(LANGUAGE_KEYS.REGISTER)}
                   </Link>
                 </Typography>
               </Grid>
@@ -432,6 +447,7 @@ export default Login;
 
 const MyCustomGoogleLogin = () => {
   const { keycloak } = useKeycloak();
+  const { t } = useAppTranslation();
 
   const handleLogin = async () => {
     try {
@@ -478,7 +494,7 @@ const MyCustomGoogleLogin = () => {
             alt="Google logo"
             style={{ width: 24, height: 24 }}
           />
-          <Typography>Google Login</Typography>
+          <Typography>{t(LANGUAGE_KEYS.GOOGLE_LOGIN)}</Typography>
         </Box>
       </Button>
     </Box>

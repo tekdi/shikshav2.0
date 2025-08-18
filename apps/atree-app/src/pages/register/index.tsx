@@ -37,8 +37,48 @@ import {
 } from '../../utils/authUtils';
 import { TelemetryEventType } from '../../utils/app.constant';
 import { telemetryFactory } from '../../utils/telemetry';
+import { LANGUAGE_KEYS } from '../../utils/language.constants';
+import { useAppTranslation } from '../../utils/i18n.helper';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+
+type TranslationKey = keyof typeof LANGUAGE_KEYS;
+
+// Define form fields outside the component
+const getFormFields = (
+  mounted: boolean,
+  showPassword: boolean,
+  t: (key: TranslationKey) => string
+) => [
+  {
+    key: 'name',
+    label: mounted ? t(LANGUAGE_KEYS.FULL_NAME) : LANGUAGE_KEYS.FULL_NAME,
+    type: 'text',
+    required: true,
+  },
+  {
+    key: 'email',
+    label: mounted ? t(LANGUAGE_KEYS.EMAIL_ID) : LANGUAGE_KEYS.EMAIL_ID,
+    type: 'text',
+    required: true,
+  },
+  {
+    key: 'mobile',
+    label: mounted
+      ? t(LANGUAGE_KEYS.MOBILE_NUMBER)
+      : LANGUAGE_KEYS.MOBILE_NUMBER,
+    type: 'text',
+    required: false,
+  },
+  {
+    key: 'password',
+    label: mounted ? t(LANGUAGE_KEYS.PASSWORD) : LANGUAGE_KEYS.PASSWORD,
+    type: showPassword ? 'text' : 'password',
+    required: true,
+  },
+];
 
 export default function Registration() {
+  // State hooks - always declare these first and unconditionally
   const [formData, setFormData] = useState<{ [key: string]: string }>({
     name: '',
     email: '',
@@ -70,19 +110,44 @@ export default function Registration() {
     },
   ]);
   const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
+  // Hooks for router and translation - always call these
   const router = useRouter();
+  const { t, ready } = useAppTranslation();
 
-  // **Validation Functions**
+  // Effect hooks - always call these unconditionally
+  useEffect(() => {
+    setMounted(true);
+    if (ready) {
+      setIsReady(true);
+    }
+  }, [ready]);
 
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (showAlertMsg) {
+      timer = setTimeout(() => {
+        setShowAlertMsg('');
+      }, 3000);
+    }
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [showAlertMsg]);
+
+  // Validation and change handlers
   const validateGender = (gender: string) => gender !== '';
-  // **Handle Change**
+
   const handleChange =
     (field: keyof typeof formData) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value;
       const validateField = (field: string, value: string | number) => {
-        if (typeof value !== 'string') return false; // Ensure value is a string
+        if (typeof value !== 'string') return false;
         switch (field) {
           case 'name':
             return !validateName(value);
@@ -153,7 +218,7 @@ export default function Registration() {
           category: 'user',
           label: 'Registration Form',
         });
-        setShowAlertMsg('User registered successfully!');
+        setShowAlertMsg(t(LANGUAGE_KEYS.REGISTRATION_SUCCESS));
         setAlertSeverity('success');
         setTimeout(() => {
           router.push('/signin');
@@ -183,6 +248,8 @@ export default function Registration() {
       }
     } catch (error: any) {
       console.log(error);
+      setShowAlertMsg(t(LANGUAGE_KEYS.ERROR_OCCURRED));
+      setAlertSeverity('error');
     } finally {
       setLoading(false);
     }
@@ -199,15 +266,16 @@ export default function Registration() {
       },
     ]);
   };
-  useEffect(() => {
-    if (showAlertMsg) {
-      const timer = setTimeout(() => {
-        setShowAlertMsg(''); // Hide the alert message after 3 seconds
-      }, 3000);
 
-      return () => clearTimeout(timer); // Cleanup timer on component unmount or state change
-    }
-  }, [showAlertMsg]);
+  // Early return for loading state
+  if (!isReady || loading) {
+    return <Loader />;
+  }
+
+  // Get form fields with current state
+  const formFields = getFormFields(mounted, showPassword, t);
+
+  // Render component
   return (
     <Layout showTopAppBar>
       <Box>
@@ -256,35 +324,10 @@ export default function Registration() {
                 textAlign: 'center',
               }}
             >
-              Sign up to Engage, Educate, and Inspire.
+              {mounted ? t(LANGUAGE_KEYS.REGISTER) : LANGUAGE_KEYS.REGISTER}
             </Typography>
             <Grid container direction="column" spacing={1.5}>
-              {[
-                {
-                  key: 'name',
-                  label: 'Full Name',
-                  type: 'text',
-                  required: true,
-                },
-                {
-                  key: 'email',
-                  label: 'Email ID',
-                  type: 'text',
-                  required: true,
-                },
-                {
-                  key: 'mobile',
-                  label: 'Mobile Number',
-                  type: 'text',
-                  required: false,
-                },
-                {
-                  key: 'password',
-                  label: 'Password',
-                  type: showPassword ? 'text' : 'password',
-                  required: true,
-                },
-              ].map(({ key, label, type, required }) => (
+              {formFields.map(({ key, label, type, required }) => (
                 <Grid item key={key} container alignItems="center" spacing={1}>
                   <Grid item xs={12} sm={3}>
                     <FormLabel
@@ -310,9 +353,21 @@ export default function Registration() {
                       error={error[key as keyof typeof error]}
                       helperText={
                         key === 'password' && error.password
-                          ? 'Password must contain at least 8 characters, including uppercase, lowercase, number, and special character.'
+                          ? mounted
+                            ? t(LANGUAGE_KEYS.PASSWORD_REQUIREMENTS)
+                            : LANGUAGE_KEYS.PASSWORD_REQUIREMENTS
                           : error[key as keyof typeof error]
-                          ? `Please enter valid ${label.toLowerCase()}`
+                          ? mounted
+                            ? t(
+                                key === 'name'
+                                  ? LANGUAGE_KEYS.INVALID_NAME
+                                  : key === 'email'
+                                  ? LANGUAGE_KEYS.INVALID_EMAIL
+                                  : key === 'mobile'
+                                  ? LANGUAGE_KEYS.INVALID_MOBILE
+                                  : LANGUAGE_KEYS.REQUIRED_FIELD
+                              )
+                            : LANGUAGE_KEYS.REQUIRED_FIELD
                           : ''
                       }
                       endIcon={
@@ -340,7 +395,9 @@ export default function Registration() {
                       fontFamily: 'poppins',
                     }}
                   >
-                    Gender &nbsp;<span style={{ color: 'red' }}>*</span>
+                    {mounted ? t(LANGUAGE_KEYS.GENDER) : LANGUAGE_KEYS.GENDER}{' '}
+                    &nbsp;
+                    <span style={{ color: 'red' }}>*</span>
                   </FormLabel>
                 </Grid>
                 <Grid item xs={12} sm={8}>
@@ -349,10 +406,14 @@ export default function Registration() {
                     value={formData.gender}
                     onChange={handleChange('gender')}
                   >
-                    {['male', 'female', 'other'].map((gender) => (
+                    {[
+                      { value: 'male', label: LANGUAGE_KEYS.MALE },
+                      { value: 'female', label: LANGUAGE_KEYS.FEMALE },
+                      { value: 'other', label: LANGUAGE_KEYS.OTHER },
+                    ].map(({ value, label }) => (
                       <FormControlLabel
-                        key={gender}
-                        value={gender}
+                        key={value}
+                        value={value}
                         control={
                           <Radio
                             sx={{
@@ -367,7 +428,7 @@ export default function Registration() {
                         }
                         label={
                           <Typography fontSize="13px">
-                            {gender.charAt(0).toUpperCase() + gender.slice(1)}
+                            {mounted ? t(label) : label}
                           </Typography>
                         }
                       />
@@ -375,7 +436,9 @@ export default function Registration() {
                   </RadioGroup>
                   {error.gender && (
                     <Typography color="error" fontSize="12px">
-                      Please select a gender.
+                      {mounted
+                        ? t(LANGUAGE_KEYS.SELECT_GENDER)
+                        : LANGUAGE_KEYS.SELECT_GENDER}
                     </Typography>
                   )}
                 </Grid>
@@ -392,7 +455,11 @@ export default function Registration() {
                       fontSize: '16px',
                     }}
                   >
-                    Select Role &nbsp;<span style={{ color: 'red' }}>*</span>
+                    {mounted
+                      ? t(LANGUAGE_KEYS.SELECT_ROLE)
+                      : LANGUAGE_KEYS.SELECT_ROLE}{' '}
+                    &nbsp;
+                    <span style={{ color: 'red' }}>*</span>
                   </FormLabel>
                 </Grid>
                 <Grid item xs={12} sm={9}>
@@ -430,7 +497,9 @@ export default function Registration() {
                         fontWeight: 500,
                       }}
                     >
-                      I have read and accepted the{' '}
+                      {mounted
+                        ? t(LANGUAGE_KEYS.ACCEPT_TERMS)
+                        : LANGUAGE_KEYS.ACCEPT_TERMS}{' '}
                       <Link
                         href="/termsandcondition"
                         style={{
@@ -440,7 +509,9 @@ export default function Registration() {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        Terms and Conditions
+                        {mounted
+                          ? t(LANGUAGE_KEYS.TERMS_AND_CONDITIONS)
+                          : LANGUAGE_KEYS.TERMS_AND_CONDITIONS}
                       </Link>
                     </Typography>
                   }
@@ -471,7 +542,9 @@ export default function Registration() {
                     !termsAccepted
                   }
                 >
-                  Verify & Proceed
+                  {mounted
+                    ? t(LANGUAGE_KEYS.VERIFY_PROCEED)
+                    : LANGUAGE_KEYS.VERIFY_PROCEED}
                 </Button>
                 <Typography
                   textAlign="center"
@@ -479,12 +552,14 @@ export default function Registration() {
                   color="#000000"
                   fontWeight={500}
                 >
-                  Already have an Account?{' '}
+                  {mounted
+                    ? t(LANGUAGE_KEYS.ALREADY_HAVE_ACCOUNT)
+                    : LANGUAGE_KEYS.ALREADY_HAVE_ACCOUNT}{' '}
                   <Link
                     href="/signin"
                     style={{ color: '#0037B9', textDecoration: 'underline' }}
                   >
-                    Sign In
+                    {mounted ? t(LANGUAGE_KEYS.SIGN_IN) : LANGUAGE_KEYS.SIGN_IN}
                   </Link>
                 </Typography>
               </Grid>
@@ -540,4 +615,29 @@ export default function Registration() {
       </Box>
     </Layout>
   );
+}
+
+export async function getServerSideProps(context: { locale?: string }) {
+  const { locale = 'en' } = context;
+
+  const translations = await serverSideTranslations(locale, ['common'], null, [
+    'REGISTRATION',
+  ]);
+
+  // Ensure translations object has the required properties
+  if (
+    !translations._nextI18Next?.initialI18nStore ||
+    !translations._nextI18Next?.initialLocale
+  ) {
+    throw new Error('Failed to load translations');
+  }
+
+  return {
+    props: {
+      _nextI18Next: {
+        initialI18nStore: translations._nextI18Next.initialI18nStore,
+        initialLocale: translations._nextI18Next.initialLocale,
+      },
+    },
+  };
 }

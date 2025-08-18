@@ -16,6 +16,7 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 import SearchTypeModal from '../SearchTypeModal';
 import { FrameworkFilter } from '../Tags';
+import LanguageSwitcher from '../LanguageSwitcher';
 import { useRouter } from 'next/router';
 interface ActionIcon {
   icon: React.ReactNode;
@@ -77,7 +78,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
 }) => {
   const router = useRouter();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [frameworkFilter, setFrameworkFilter] = useState();
+  const [frameworkFilter, setFrameworkFilter] = useState<any[]>([]);
   const [framework, setFramework] = useState('');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -85,40 +86,83 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
     router.pathname === '/signin' || router.pathname === '/register';
 
   useEffect(() => {
-    if (framework) {
-      if (frameworkFilter) {
-        const subFrameworkData = (frameworkFilter as any).find(
-          (item: any) => item.identifier === framework
-        );
-        localStorage.setItem(
-          'category',
-          subFrameworkData?.name
-            ? subFrameworkData.name.charAt(0).toUpperCase() +
-                subFrameworkData.name.slice(1).toLowerCase()
-            : ''
-        );
-      }
-    }
-  }, []);
-  useEffect(() => {
     const init = async () => {
       try {
         const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
-        const frameworkData = await fetch(url).then((res) => res.json());
-        const frameworks = frameworkData?.result?.framework?.categories;
+        console.log('Fetching framework data from:', url);
+
+        const response = await fetch(url);
+        if (!response.ok) {
+          console.warn(`Framework API error: ${response.status}`);
+          // Set default framework data
+          setFrameworkFilter([
+            {
+              identifier: 'default',
+              name: 'Default Category',
+              code: 'topic',
+            },
+          ]);
+          setFramework('default');
+          return;
+        }
+
+        const frameworkData = await response.json();
+        console.log('Framework data received:', frameworkData);
+
+        const frameworks = frameworkData?.result?.framework?.categories || [];
         const fdata =
           frameworks.find((item: any) => item.code === 'topic')?.terms || [];
-        setFramework(fdata[0]?.identifier || '');
-        setFrameworkFilter(fdata);
+
+        if (fdata && fdata.length > 0) {
+          setFramework(fdata[0]?.identifier || 'default');
+          setFrameworkFilter(fdata);
+        } else {
+          // Set default framework data if no valid data found
+          setFrameworkFilter([
+            {
+              identifier: 'default',
+              name: 'Default Category',
+              code: 'topic',
+            },
+          ]);
+          setFramework('default');
+        }
       } catch (error) {
-        console.error('Error fetching board data:', error);
+        console.error('Error fetching framework data:', error);
+        // Set default framework data on error
+        setFrameworkFilter([
+          {
+            identifier: 'default',
+            name: 'Default Category',
+            code: 'topic',
+          },
+        ]);
+        setFramework('default');
       }
     };
+
     init();
   }, []);
+
+  useEffect(() => {
+    if (framework && frameworkFilter?.length > 0) {
+      const subFrameworkData = frameworkFilter.find(
+        (item: any) => item.identifier === framework
+      );
+      if (subFrameworkData?.name) {
+        localStorage.setItem(
+          'category',
+          subFrameworkData.name.charAt(0).toUpperCase() +
+            subFrameworkData.name.slice(1).toLowerCase()
+        );
+      }
+    }
+  }, [framework, frameworkFilter]);
+
   const handleSearchOpen = () => {
     setIsSearchOpen(true);
   };
+
   const handleSearchClose = () => {
     setIsSearchOpen(false);
   };
@@ -135,7 +179,15 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
           objectFit: 'contain',
         }}
       >
-        <Container maxWidth="xl" sx={{ height: '100%' }}>
+        <Container
+          maxWidth="xl"
+          sx={{
+            height: '100%',
+            width: '100%',
+            margin: '0 auto',
+            px: { xs: 2, sm: 3 },
+          }}
+        >
           <Toolbar
             disableGutters
             sx={{
@@ -143,7 +195,15 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
               minHeight: { xs: '0px', md: '64px' },
             }}
           >
-            <Box display={'flex'} alignItems="center" sx={{ height: '100%' }}>
+            <Box
+              display={'flex'}
+              alignItems="center"
+              sx={{
+                height: '100%',
+                width: '100%',
+                justifyContent: 'space-between',
+              }}
+            >
               {showBackIcon && (
                 <IconButton
                   size="large"
@@ -215,16 +275,26 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
             </Box>
 
             {/* Middle section with FrameworkFilter and Search */}
-            <Box display="flex" alignItems="center" gap={2}>
+            <Box
+              display="flex"
+              alignItems="center"
+              gap={2}
+              sx={{
+                flex: '0 0 auto',
+                minWidth: { xs: '200px', sm: '300px' },
+                justifyContent: 'flex-end',
+              }}
+            >
               {!isMobile && (
                 <Box
                   sx={{
-                    // minWidth: '200px',
-                    position: 'relative', // Adjust width as needed
+                    minWidth: '200px',
+                    position: 'relative',
+                    flex: '1 1 auto',
                   }}
                 >
                   <FrameworkFilter
-                    frameworkFilter={frameworkFilter ?? []}
+                    frameworkFilter={frameworkFilter}
                     framework={framework}
                     setFramework={setFramework}
                     fromSubcategory={false}
@@ -241,6 +311,8 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                         gap: 2,
                         alignItems: 'center',
                         zIndex: 1100,
+                        justifyContent: 'flex-end',
+                        minWidth: { xs: '200px', sm: '300px' },
                       }}
                     >
                       {/* 🔍 Search Box */}
@@ -257,6 +329,17 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                         onClick={handleSearchOpen}
                       >
                         <SearchIcon sx={{ color: 'text.secondary' }} />
+                      </Box>
+
+                      {/* 🌐 Language Switcher */}
+                      <Box
+                        sx={{
+                          width: { xs: 100, sm: 120 },
+                          display: 'flex',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <LanguageSwitcher />
                       </Box>
 
                       {/* ☰ Menu Icon */}
@@ -276,6 +359,9 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                         display: 'flex',
                         alignItems: 'center',
                         zIndex: 1100,
+                        justifyContent: 'flex-end',
+                        minWidth: { xs: '200px', sm: '300px' },
+                        gap: 2,
                       }}
                     >
                       <Box
@@ -288,19 +374,16 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                           borderRadius: '10px',
                           border: '1px solid',
                           borderColor: 'divider',
-                        
+
                           '&:hover': {
-                           
                             cursor: 'text',
                           },
                           width: '100%',
-                            maxWidth: '500px',
+                          maxWidth: '500px',
                           marginRight: '10px',
                         }}
                         onClick={handleSearchOpen}
                       >
-                       
-
                         {/* Search icon */}
                         <SearchIcon
                           fontSize="small"
@@ -318,6 +401,16 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                         >
                           Search...
                         </Typography>
+                      </Box>
+                      {/* 🌐 Language Switcher */}
+                      <Box
+                        sx={{
+                          width: { xs: 100, sm: 120 },
+                          display: 'flex',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <LanguageSwitcher />
                       </Box>
                       <IconButton
                         size="large"
