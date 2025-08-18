@@ -117,7 +117,7 @@ CustomTextField.displayName = 'CustomTextField';
 // Step Components
 const EmailStep = React.memo(
   ({ onNext, data, errors, onChange }: EmailStepProps) => {
-    const { t, ready, mounted } = useAppTranslation();
+    const { t, ready } = useAppTranslation();
     const [localTouched, setLocalTouched] = useState(false);
     const [clicked, setClicked] = useState(false);
     useEffect(() => {
@@ -131,7 +131,7 @@ const EmailStep = React.memo(
       onNext();
     };
 
-    if (!ready || !mounted) {
+    if (!ready) {
       return <Loader />;
     }
 
@@ -256,7 +256,7 @@ const OtpStep = React.memo(
     otpAttempts,
     onBack,
   }: OtpStepProps & { otpAttempts: number }) => {
-    const { t, ready, mounted } = useAppTranslation();
+    const { t, ready } = useAppTranslation();
     const inputRefs = React.useRef<(HTMLInputElement | null)[]>([]);
     const [resendDisabled, setResendDisabled] = useState(true);
     const [resendTimer, setResendTimer] = useState(600);
@@ -373,7 +373,7 @@ const OtpStep = React.memo(
       );
     };
 
-    if (!ready || !mounted) {
+    if (!ready) {
       return <Loader />;
     }
 
@@ -437,15 +437,15 @@ const OtpStep = React.memo(
             }}
           >
             {resendDisabled
-              ? `${t('Resend code in')}: ${formatTime(resendTimer)}`
+              ? `${t(LANGUAGE_KEYS.RESEND_CODE_IN)}: ${formatTime(resendTimer)}`
               : otpAttempts < 3
-              ? t('Resend Code')
+              ? t(LANGUAGE_KEYS.RESEND_CODE)
               : t(LANGUAGE_KEYS.FORGOT_PASSWORD_TOO_MANY_REQUESTS)}
           </Button>
         </Box>
 
         <Typography variant="body2" align="center" sx={{ mb: 1 }}>
-          {t('Attempts remaining')}: {3 - otpAttempts}
+          {t(LANGUAGE_KEYS.ATTEMPTS_REMAINING)}: {3 - otpAttempts}
         </Typography>
 
         <Button
@@ -464,7 +464,7 @@ const OtpStep = React.memo(
             '&:disabled': { backgroundColor: '#e0e0e0' },
           }}
         >
-          {t('Verify & Proceed')}
+          {t(LANGUAGE_KEYS.VERIFY_PROCEED)}
         </Button>
       </>
     );
@@ -481,7 +481,7 @@ const NewPasswordStep = React.memo(
     onSubmit,
     onBack,
   }: NewPasswordStepProps) => {
-    const { t, ready, mounted } = useAppTranslation();
+    const { t, ready } = useAppTranslation();
     const isPasswordValid = (password: string) => {
       if (!password) return false;
       if (password.length < 8) return false;
@@ -500,7 +500,7 @@ const NewPasswordStep = React.memo(
     const passwordsMismatch =
       data.confirmPassword && data.newPassword !== data.confirmPassword;
 
-    if (!ready || !mounted) {
+    if (!ready) {
       return <Loader />;
     }
 
@@ -667,7 +667,7 @@ type ForgotPasswordState = {
 };
 
 const ForgotPasswordPage = () => {
-  const { t, ready, mounted } = useAppTranslation();
+  const { t, ready } = useAppTranslation();
   const router = useRouter();
   const [touched, setTouched] = useState(false);
   const [state, setState] = useState<ForgotPasswordState>({
@@ -1056,7 +1056,7 @@ const ForgotPasswordPage = () => {
     }
   };
 
-  if (!ready || !mounted) {
+  if (!ready) {
     return <Loader />;
   }
 
