@@ -1,9 +1,13 @@
 import { Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
+import { useTranslation } from 'next-i18next';
+import { LANGUAGE_KEYS } from '../utils/language.constants';
 type FooterTextProps = {
   readonly page?: string; // made optional in case it's not always passed
 };
 export default function FooterText({ page }: FooterTextProps) {
+  const { t, i18n, ready } = useTranslation('common');
+
   return (
     <Grid
       sx={{
@@ -18,7 +22,7 @@ export default function FooterText({ page }: FooterTextProps) {
         fontFamily="poppins"
         sx={{ fontSize: { xs: '8px', md: '14px', fontWeight: 400 } }}
       >
-        Curated by Ashoka Trust for Research in Ecology and the Environment
+        {t(LANGUAGE_KEYS.FOOTER_TEXT_PART1)}
         <Typography
           component="a"
           href="https://www.atree.org"
@@ -31,13 +35,13 @@ export default function FooterText({ page }: FooterTextProps) {
             transition: 'color 0.3s ease',
             '&:hover': {
               color: 'white',
-               textDecoration: 'underline',
+              textDecoration: 'underline',
             },
           }}
         >
           (ATREE)
         </Typography>
-        : For, Of, and By Environment Educators of India
+        {t(LANGUAGE_KEYS.FOOTER_TEXT_PART2)}
       </Typography>
     </Grid>
   );

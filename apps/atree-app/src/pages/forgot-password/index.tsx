@@ -19,6 +19,10 @@ import { useRouter } from 'next/navigation';
 import { getUserAuthInfo, signin } from '../../service/content';
 import Layout from '../../component/layout/layout';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
+import { useAppTranslation } from '../../utils/i18n.helper';
+import { LANGUAGE_KEYS } from '../../utils/language.constants';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import Loader from '../../component/layout/LoaderComponent';
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -113,6 +117,7 @@ CustomTextField.displayName = 'CustomTextField';
 // Step Components
 const EmailStep = React.memo(
   ({ onNext, data, errors, onChange }: EmailStepProps) => {
+    const { t, ready, mounted } = useAppTranslation();
     const [localTouched, setLocalTouched] = useState(false);
     const [clicked, setClicked] = useState(false);
     useEffect(() => {
@@ -125,6 +130,10 @@ const EmailStep = React.memo(
       setClicked(true);
       onNext();
     };
+
+    if (!ready || !mounted) {
+      return <Loader />;
+    }
 
     return (
       <>
@@ -142,7 +151,7 @@ const EmailStep = React.memo(
             fontSize: { xs: '16px', md: '18px' },
           }}
         >
-          Forgot Password?
+          {t(LANGUAGE_KEYS.FORGOT_PASSWORD_TITLE)}
         </Typography>
         <Typography
           variant="body1"
@@ -154,14 +163,14 @@ const EmailStep = React.memo(
             fontSize: { xs: '14px', md: '16px' },
           }}
         >
-          Enter the email address associated with your account.
+          {t(LANGUAGE_KEYS.FORGOT_PASSWORD_DESCRIPTION)}
         </Typography>
 
         <Box sx={{ mb: 2 }}>
           <CustomTextField
             fullWidth
             type="email"
-            label="Enter email"
+            label={t(LANGUAGE_KEYS.FORGOT_PASSWORD_EMAIL_LABEL)}
             value={data.email}
             onChange={(e) => {
               onChange('email', e.target.value);
@@ -169,6 +178,7 @@ const EmailStep = React.memo(
             onBlur={() => setLocalTouched(true)}
             error={!!errors.email || !!showEmailValidation}
             helperText={errors.email}
+            placeholder={t(LANGUAGE_KEYS.FORGOT_PASSWORD_EMAIL_PLACEHOLDER)}
             sx={{
               '& .MuiInputLabel-root': {
                 color: 'gray',
@@ -201,7 +211,7 @@ const EmailStep = React.memo(
                 ml: 1,
               }}
             >
-              Please enter a valid email address.
+              {t(LANGUAGE_KEYS.FORGOT_PASSWORD_INVALID_EMAIL)}
             </FormHelperText>
           )}
         </Box>
@@ -228,7 +238,7 @@ const EmailStep = React.memo(
             '&:disabled': { backgroundColor: '#e0e0e0' },
           }}
         >
-          Next
+          {t(LANGUAGE_KEYS.FORGOT_PASSWORD_SUBMIT)}
         </Button>
       </>
     );
@@ -246,6 +256,7 @@ const OtpStep = React.memo(
     otpAttempts,
     onBack,
   }: OtpStepProps & { otpAttempts: number }) => {
+    const { t, ready, mounted } = useAppTranslation();
     const inputRefs = React.useRef<(HTMLInputElement | null)[]>([]);
     const [resendDisabled, setResendDisabled] = useState(true);
     const [resendTimer, setResendTimer] = useState(600);
@@ -362,6 +373,10 @@ const OtpStep = React.memo(
       );
     };
 
+    if (!ready || !mounted) {
+      return <Loader />;
+    }
+
     return (
       <>
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -378,7 +393,7 @@ const OtpStep = React.memo(
             fontSize: { xs: '16px', md: '18px' },
           }}
         >
-          Forgot Password?
+          {t(LANGUAGE_KEYS.FORGOT_PASSWORD_TITLE)}
         </Typography>
         <Typography
           variant="body1"
@@ -390,13 +405,13 @@ const OtpStep = React.memo(
             fontSize: { xs: '14px', md: '16px' },
           }}
         >
-          Enter the 6-digit code sent to your email
+          {t(LANGUAGE_KEYS.FORGOT_PASSWORD_DESCRIPTION)}
         </Typography>
 
         <MuiTextField
           fullWidth
           value={email}
-          label="Enter email"
+          label={t(LANGUAGE_KEYS.FORGOT_PASSWORD_EMAIL_LABEL)}
           disabled
           sx={{ mb: 3 }}
         />
@@ -422,15 +437,15 @@ const OtpStep = React.memo(
             }}
           >
             {resendDisabled
-              ? `Resend code in: ${formatTime(resendTimer)}`
+              ? `${t('Resend code in')}: ${formatTime(resendTimer)}`
               : otpAttempts < 3
-              ? 'Resend Code'
-              : 'Maximum attempts reached'}
+              ? t('Resend Code')
+              : t(LANGUAGE_KEYS.FORGOT_PASSWORD_TOO_MANY_REQUESTS)}
           </Button>
         </Box>
 
         <Typography variant="body2" align="center" sx={{ mb: 1 }}>
-          Attempts remaining: {3 - otpAttempts}
+          {t('Attempts remaining')}: {3 - otpAttempts}
         </Typography>
 
         <Button
@@ -449,7 +464,7 @@ const OtpStep = React.memo(
             '&:disabled': { backgroundColor: '#e0e0e0' },
           }}
         >
-          Verify & Proceed
+          {t('Verify & Proceed')}
         </Button>
       </>
     );
@@ -466,6 +481,7 @@ const NewPasswordStep = React.memo(
     onSubmit,
     onBack,
   }: NewPasswordStepProps) => {
+    const { t, ready, mounted } = useAppTranslation();
     const isPasswordValid = (password: string) => {
       if (!password) return false;
       if (password.length < 8) return false;
@@ -484,6 +500,10 @@ const NewPasswordStep = React.memo(
     const passwordsMismatch =
       data.confirmPassword && data.newPassword !== data.confirmPassword;
 
+    if (!ready || !mounted) {
+      return <Loader />;
+    }
+
     return (
       <>
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -500,7 +520,7 @@ const NewPasswordStep = React.memo(
             fontSize: { xs: '16px', md: '18px' },
           }}
         >
-          Create a strong password
+          {t(LANGUAGE_KEYS.RESET_PASSWORD_TITLE)}
         </Typography>
         <Typography
           variant="body1"
@@ -512,14 +532,14 @@ const NewPasswordStep = React.memo(
             fontSize: { xs: '14px', md: '16px' },
           }}
         >
-          Create a new, strong password that you don't use for other websites
+          {t(LANGUAGE_KEYS.RESET_PASSWORD_SUBTITLE)}
         </Typography>
 
         <Box sx={{ mb: 2 }}>
           <CustomTextField
             fullWidth
             type={showPasswords.newPassword ? 'text' : 'password'}
-            label="Enter Password"
+            label={t(LANGUAGE_KEYS.RESET_PASSWORD_NEW_PASSWORD)}
             value={data.newPassword}
             onChange={(e) => onChange('newPassword', e.target.value)}
             error={!!errors.newPassword || Boolean(showNewPasswordValidation)}
@@ -548,8 +568,7 @@ const NewPasswordStep = React.memo(
                 ml: 1,
               }}
             >
-              Must contain at least 8 characters, including uppercase,
-              lowercase, number, and special character
+              {t(LANGUAGE_KEYS.RESET_PASSWORD_REQUIREMENTS)}
             </FormHelperText>
           )}
         </Box>
@@ -558,7 +577,7 @@ const NewPasswordStep = React.memo(
           <CustomTextField
             fullWidth
             type={showPasswords.confirmPassword ? 'text' : 'password'}
-            label="Confirm Password"
+            label={t(LANGUAGE_KEYS.RESET_PASSWORD_CONFIRM_PASSWORD)}
             value={data.confirmPassword}
             onChange={(e) => onChange('confirmPassword', e.target.value)}
             error={!!errors.confirmPassword || Boolean(passwordsMismatch)}
@@ -587,7 +606,7 @@ const NewPasswordStep = React.memo(
                 ml: 1,
               }}
             >
-              Passwords don't match
+              {t(LANGUAGE_KEYS.RESET_PASSWORD_MISMATCH)}
             </FormHelperText>
           )}
         </Box>
@@ -613,7 +632,7 @@ const NewPasswordStep = React.memo(
             '&:disabled': { backgroundColor: '#e0e0e0' },
           }}
         >
-          Reset Password
+          {t(LANGUAGE_KEYS.RESET_PASSWORD_SUBMIT)}
         </Button>
       </>
     );
@@ -648,6 +667,7 @@ type ForgotPasswordState = {
 };
 
 const ForgotPasswordPage = () => {
+  const { t, ready, mounted } = useAppTranslation();
   const router = useRouter();
   const [touched, setTouched] = useState(false);
   const [state, setState] = useState<ForgotPasswordState>({
@@ -1036,6 +1056,10 @@ const ForgotPasswordPage = () => {
     }
   };
 
+  if (!ready || !mounted) {
+    return <Loader />;
+  }
+
   return (
     <Layout showTopAppBar>
       <Box
@@ -1082,7 +1106,7 @@ const ForgotPasswordPage = () => {
                 }}
                 onClick={() => router.push('/signin')}
               >
-                Back to Login
+                {t(LANGUAGE_KEYS.FORGOT_PASSWORD_BACK)}
               </Typography>
             </>
           )}
@@ -1120,3 +1144,32 @@ const ForgotPasswordPage = () => {
 };
 
 export default ForgotPasswordPage;
+
+export async function getServerSideProps(context: { locale?: string }) {
+  const { locale = 'en' } = context;
+  try {
+    const translations = await serverSideTranslations(
+      locale,
+      ['common'],
+      null,
+      ['FORGOT_PASSWORD']
+    );
+    if (
+      !translations._nextI18Next?.initialI18nStore ||
+      !translations._nextI18Next?.initialLocale
+    ) {
+      throw new Error('Failed to load translations');
+    }
+    return {
+      props: {
+        _nextI18Next: {
+          initialI18nStore: translations._nextI18Next.initialI18nStore,
+          initialLocale: translations._nextI18Next.initialLocale,
+        },
+      },
+    };
+  } catch (error) {
+    console.error('Error loading translations:', error);
+    return { props: { error: 'Failed to load translations' } };
+  }
+}
