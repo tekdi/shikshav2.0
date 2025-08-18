@@ -25,6 +25,47 @@ interface DeleteParams {
   token: string;
   userId: string;
 }
+
+// Bookmark related interfaces
+interface BookmarkParams {
+  userId: string;
+  entityType: string;
+  doId: string;
+  action: 'add' | 'remove';
+}
+
+interface BookmarkReadParams {
+  userId: string;
+  entityType: string;
+  doId: string;
+}
+
+interface BookmarkResponse {
+  id: string;
+  ver: string;
+  ts: string;
+  params: {
+    resmsgid: string;
+    status: string;
+    error: any;
+    errmsg: any;
+  };
+  responseCode: string;
+  result: {
+    bookmarks: Array<{
+      id: string;
+      userId: string;
+      entityType: string;
+      doId: string;
+      createdAt: string;
+      updatedAt: string;
+      createdBy: string;
+      updatedBy: any;
+    }>;
+    totalCount: number;
+  };
+}
+
 export const getContentDetails = async (
   identifier?: string | string[]
 ): Promise<any> => {
@@ -126,5 +167,59 @@ export const deleteUserAccount = async ({
   } catch (error) {
     console.error('Error fetching user auth info:', error);
     return error;
+  }
+};
+
+// Bookmark API functions
+export const createBookmark = async (
+  bookmarkData: BookmarkParams,
+  token: string
+): Promise<any> => {
+   const apiUrl = `${process.env.NEXT_PUBLIC_ATREE_LOGIN_URL}/interface/v1/todo/bookmark/create`;
+  try {
+    const response = await axios.post(apiUrl, bookmarkData, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response?.data;
+  } catch (error) {
+    console.error('Error creating bookmark:', error);
+    return error;
+  }
+};
+
+export const readBookmark = async (
+  bookmarkData: BookmarkReadParams,
+  token: string
+): Promise<BookmarkResponse> => {
+  const apiUrl = `${process.env.NEXT_PUBLIC_ATREE_LOGIN_URL}/todo/bookmark/read?userId=${bookmarkData.userId}&entityType=${bookmarkData.entityType}`;
+
+  try {
+    const response = await axios.get(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response?.data;
+  } catch (error) {
+    console.error('Error reading bookmark status:', error);
+    return {
+      id: '',
+      ver: '',
+      ts: '',
+      params: {
+        resmsgid: '',
+        status: 'failed',
+        error: error,
+        errmsg: 'Error reading bookmark status',
+      },
+      responseCode: 'ERROR',
+      result: {
+        bookmarks: [],
+        totalCount: 0,
+      },
+    };
   }
 };

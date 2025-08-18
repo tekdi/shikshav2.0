@@ -25,9 +25,9 @@ interface SearchTypeModalProps {
 }
 
 const searchTypes: any[] = [
-  // { type: 'author', label: 'Author', icon: 'A' },
-  // { type: 'publisher', label: 'Publisher', icon: 'P' },
-  // { type: 'language', label: 'Language', icon: 'L' },
+  { type: 'author', label: 'Author' },
+  { type: 'publisher', label: 'Publisher' },
+  { type: 'language', label: 'Language' },
 ];
 
 const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
@@ -75,23 +75,18 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
     telemetryFactory.interact(telemetryInteract);
     if (query.trim()) {
       try {
-        const filters: {
-          type?: string;
-          channel: string;
-          query?: string;
-          filters?: object;
-          limit?: number;
-          offset?: number;
-        } = {
+        let filters: any = {
           channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
-          query: query,
+          contentType: { ne: 'Asset' },
         };
-
         if (searchType) {
-          filters.filters = { [searchType]: query }; // Add searchType as a filter
+          filters[searchType] = query;
         }
-
-        const data = await ContentSearch(filters);
+        const data = await ContentSearch({
+          channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+          filters,
+          offset: 0,
+        });
         setSearchResults(data?.result?.content || []); // Store search results
       } catch (error) {
         console.error('Error fetching search results:', error);
@@ -103,6 +98,26 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
     }
   };
 
+  const handleCategoryClick = async (category: string) => {
+    setSelectedType(category);
+    setSearchType(category);
+    try {
+      let filters: any = {
+        channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+        contentType: { ne: 'Asset' },
+      };
+      filters[category] = searchQuery;
+      const data = await ContentSearch({
+        channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+        filters,
+        offset: 0,
+      });
+      setSearchResults(data?.result?.content || []);
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+    }
+  };
+
   // Filter search types
   const filteredSearchTypes = searchTypes.filter((item) =>
     item.label.toLowerCase().includes(searchQuery.toLowerCase())
@@ -110,8 +125,10 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
   // Handle Enter Key Press
   const navigateToSearchPage = (queryValue: string) => {
     if (searchQuery.trim()) {
-      const url = `/searchpage?query=${queryValue}`;
-
+      let url = `/searchpage?query=${queryValue}`;
+      if (selectedType) {
+        url += `&type=${selectedType}`;
+      }
       router.push(url);
       onClose();
     }
@@ -260,20 +277,21 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
                 selectedType === item.type ? '#FFBD0D' : 'transparent',
               opacity: selectedType === item.type ? 1 : 0.6,
               borderRadius: '8px',
-
               pointerEvents: selectedType === item.type ? 'none' : 'auto',
             }}
           >
-            <ListItemAvatar>
+            {/* <ListItemAvatar>
               <Avatar sx={{ backgroundColor: '#CEE5FF', color: '#06164B' }}>
                 {item.icon}
               </Avatar>
-            </ListItemAvatar>
+            </ListItemAvatar> */}
             <ListItemText
               primary={`Search By ${item.label}`}
               secondary="Find content by this category"
               primaryTypographyProps={{ fontWeight: 'bold' }}
               secondaryTypographyProps={{ color: 'text.secondary' }}
+              sx={{ cursor: 'pointer' }}
+              onClick={() => handleCategoryClick(item.type)}
             />
           </ListItem>
         ))}
@@ -287,13 +305,13 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
                   sx={{ cursor: 'pointer' }}
                   onClick={() => handleSearch(item.name)}
                 >
-                  <ListItemAvatar>
+                  {/* <ListItemAvatar>
                     <Avatar
                       sx={{ backgroundColor: '#CEE5FF', color: '#06164B' }}
                     >
                       {item.name ? item.name.charAt(0).toUpperCase() : 'S'}
                     </Avatar>
-                  </ListItemAvatar>
+                  </ListItemAvatar> */}
                   <ListItemText
                     primary={
                       <span>{highlightMatch(item.name, searchQuery)}</span>

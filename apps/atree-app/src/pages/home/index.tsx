@@ -49,7 +49,9 @@ import { TelemetryEventType } from '../../utils/app.constant';
 import { telemetryFactory } from '../../utils/telemetry';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+
 import { LANGUAGE_KEYS } from '../../utils/language.constants';
+import { readBookmark } from '../../service/content';
 const buttonColors = {
   water: '#0E28AE',
   land: '#8F4A50',
@@ -121,9 +123,57 @@ export default function Index() {
     try {
       setIsLoadingChildren(true);
 
+      let finalFilters = { ...updatedFilters };
+
+      // If bookmark is true, fetch bookmarked content IDs and filter by them
+      if (bookmark === 'true') {
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId');
+
+        if (token && userId) {
+          try {
+            const bookmarkResponse = await readBookmark(
+              {
+                userId: userId,
+                entityType: 'content',
+                doId: '',
+              },
+              token
+            );
+
+            if (bookmarkResponse?.result?.bookmarks?.length > 0) {
+              const bookmarkedIds = bookmarkResponse.result.bookmarks.map(
+                (bookmark: any) => bookmark.doId
+              );
+
+              // Add bookmarked IDs to the filters
+              finalFilters = {
+                ...finalFilters,
+                identifier: bookmarkedIds,
+              };
+            } else {
+              // If no bookmarks found, set empty content
+              setContentData([]);
+              setIsLoadingChildren(false);
+              return;
+            }
+          } catch (bookmarkError) {
+            console.error('Error fetching bookmarks:', bookmarkError);
+            setContentData([]);
+            setIsLoadingChildren(false);
+            return;
+          }
+        } else {
+          // If no token or userId, set empty content for bookmark view
+          setContentData([]);
+          setIsLoadingChildren(false);
+          return;
+        }
+      }
+
       const data = await ContentSearch({
         channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
-        filters: updatedFilters,
+        filters: finalFilters,
       });
 
       setContentData(data?.result?.content ?? []);
@@ -153,8 +203,10 @@ export default function Index() {
         ),
       };
 
-      // Ensure topic is set correctly
-      cleanedFilters.topic = filterCategory ? [filterCategory] : ['Water'];
+      // Ensure topic is set correctly (only if not in bookmark mode)
+      if (bookmark !== 'true') {
+        cleanedFilters.topic = filterCategory ? [filterCategory] : ['Water'];
+      }
 
       // Explicitly remove mimeType if it's empty OR if it's inherited from prevFilters
       if (!filters.mimeType || filters.mimeType.length === 0) {
@@ -224,6 +276,21 @@ export default function Index() {
             (category: any) => category.status === 'Live'
           ),
         });
+
+        // If bookmark is true, show all bookmarked content without category restrictions
+        if (bookmark === 'true') {
+          const newFilters = {};
+          setFilters({
+            request: {
+              filters: newFilters,
+              offset: 0,
+              limit: 5,
+            },
+          });
+          fetchContentData(newFilters);
+          return;
+        }
+
         //condition if category from URL
         let selectedFramework = fdata[0];
         if (frameworkName) {
@@ -263,7 +330,7 @@ export default function Index() {
     };
 
     init();
-  }, [frameworkName]);
+  }, [frameworkName, bookmark]);
 
   // **Update FilterCategory When Framework Changes**
   useEffect(() => {
@@ -480,6 +547,11 @@ export default function Index() {
     <Layout isLoadingChildren={isLoadingChildren}>
       {/* Add TranslationTest at the top of the page */}
 
+    <Layout
+      isLoadingChildren={isLoadingChildren}
+      footerComponent={renderFooterComponent()}
+    >
+
       <Box display="flex" flexDirection="column" gap="1rem" py="1rem">
         {!isMobile ? (
           <Grid container spacing={2} sx={{ padding: '25px' }}>
@@ -494,6 +566,7 @@ export default function Index() {
                 />
               </Box>
             </Grid>
+
             {hasFilter ? (
               <Grid size={{ xs: 9 }}>
                 <Box
@@ -526,6 +599,7 @@ export default function Index() {
                     padding: '9px 0px',
                   }}
                 >
+
                   <Box
                     sx={{
                       display: 'flex',
@@ -554,6 +628,40 @@ export default function Index() {
                       subFrameworkFilter={subFrameworkFilter || []}
                     />
                   </Box>
+                  {bookmark !== 'true' && (
+                    <>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        {subFrameworkFilter &&
+                          subFrameworkFilter.length > 0 && (
+                            <Title>{t('Browse by Sub Categories')}</Title>
+                          )}
+                      </Box>
+
+                      <Box
+                        sx={{
+                          width: '100%',
+                          padding: '12px 0px',
+                          gap: '16px',
+                          flexDirection: 'column',
+                          display: 'flex',
+                        }}
+                      >
+                        <SubFrameworkFilter
+                          subFramework={subFramework}
+                          setSubFramework={setSubFramework}
+                          lastButton={true}
+                          subFrameworkFilter={subFrameworkFilter || []}
+                        />
+                      </Box>
+                    </>
+                  )}
+
 
                   <ContentSection
                     contents={contentData.length > 0 ? contentData : []}
@@ -581,74 +689,79 @@ export default function Index() {
               }}
             />
 
-            {subFrameworkFilter && subFrameworkFilter.length > 0 && (
-              <Box
-                sx={{
-                  paddingTop: '5%',
-                  width: '80%',
-                  margin: '0 auto',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                }}
-              >
-                <FormControl fullWidth sx={{ maxWidth: 400 }}>
-                  <Select
-                    value={subFramework || ''}
-                    displayEmpty
-                    onChange={(e) => {
-                      const selectedValue = e.target.value;
-                      setSubFramework(selectedValue);
-                    }}
-                    renderValue={(selected) => {
-                      if (!selected || selected === '') {
-                        return (
-                          <span style={{ color: '#999' }}>
-                            Browse by Sub Categories
-                          </span>
+            {bookmark !== 'true' &&
+              subFrameworkFilter &&
+              subFrameworkFilter.length > 0 && (
+                <Box
+                  sx={{
+                    paddingTop: '5%',
+                    width: '80%',
+                    margin: '0 auto',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                  }}
+                >
+                  <FormControl fullWidth sx={{ maxWidth: 400 }}>
+                    <Select
+                      value={subFramework || ''}
+                      displayEmpty
+                      onChange={(e) => {
+                        const selectedValue = e.target.value;
+                        setSubFramework(selectedValue);
+                      }}
+                      renderValue={(selected) => {
+                        if (!selected || selected === '') {
+                          return (
+                            <span style={{ color: '#999' }}>
+                              Browse by Sub Categories
+                            </span>
+                          );
+                        }
+                        const selectedItem = subFrameworkFilter.find(
+                          (item) => item.identifier === selected
                         );
-                      }
-                      const selectedItem = subFrameworkFilter.find(
-                        (item) => item.identifier === selected
-                      );
-                      return selectedItem
-                        ? transformDisplayName(selectedItem.name)
-                        : selected;
-                    }}
-                    sx={{
-                      borderRadius: '50px',
-                      fontSize: '14px',
-                      height: 40,
-                      fontWeight: 'bold',
-                      textAlign: 'center',
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      border: '1px solid #000',
-                    }}
-                    MenuProps={{
-                      PaperProps: {
-                        sx: {
-                          borderRadius: '16px',
-                          fontSize: '14px',
+                        return selectedItem
+                          ? transformDisplayName(selectedItem.name)
+                          : selected;
+                      }}
+                      sx={{
+                        borderRadius: '50px',
+                        fontSize: '14px',
+                        height: 40,
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        border: '1px solid #000',
+                      }}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            borderRadius: '16px',
+                            fontSize: '14px',
+                          },
                         },
-                      },
-                    }}
-                  >
-                    {subFrameworkFilter
-                      ?.filter(
-                        (item) =>
-                          item.name !== 'Magazines, Newspapers and Websities'
-                      )
-                      .map((item) => (
-                        <MenuItem key={item.identifier} value={item.identifier}>
-                          {transformDisplayName(item.name)}
-                        </MenuItem>
-                      ))}
-                  </Select>
-                </FormControl>
-              </Box>
-            )}
+                      }}
+                    >
+                      {subFrameworkFilter
+                        ?.filter(
+                          (item) =>
+                            item.name !== 'Magazines, Newspapers and Websities'
+                        )
+                        .map((item) => (
+                          <MenuItem
+                            key={item.identifier}
+                            value={item.identifier}
+                          >
+                            {transformDisplayName(item.name)}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                  </FormControl>
+                </Box>
+              )}
 
             <Box
               sx={{
@@ -732,7 +845,6 @@ export default function Index() {
           </Button>
         </DialogActions>
       </Dialog>
-      <FooterText page="" />
     </Layout>
   );
 }
