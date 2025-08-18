@@ -450,7 +450,9 @@ export default function Layout({
         {children}
       </Loader>
 
-      {!isAuthPage && bottomFooter && <FooterText page="" />}
+      {footerComponent
+        ? footerComponent
+        : !isAuthPage && bottomFooter && <FooterText page="" />}
 
       {/* Delete Account Confirmation Dialog */}
       <CommonDialog
