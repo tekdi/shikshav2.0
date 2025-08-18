@@ -390,7 +390,7 @@ export default function Layout({
   };
 
   if (isLoading) {
-    return <Loader />;
+    return <Loader isLoading={false} children={undefined} />;
   }
 
   return (
