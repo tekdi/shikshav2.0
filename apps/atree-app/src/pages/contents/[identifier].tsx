@@ -21,7 +21,11 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { getContentDetails } from '../../service/content';
+import {
+  getContentDetails,
+  createBookmark,
+  readBookmark,
+} from '../../service/content';
 import Layout from '../../component/layout/layout';
 import landingBanner from '../../../assets/images/landingBanner.png';
 import Grid from '@mui/material/Grid2';
@@ -104,6 +108,7 @@ export default function Content() {
   });
   const [homeCategory, setHomeCategory] = useState('');
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
   const languageDisplayMap: Record<string, string> = {
     english: 'English',
     hindi: 'हिन्दी',
@@ -114,6 +119,100 @@ export default function Content() {
     tamil: 'தமிழ்',
     malayalam: 'മലയാളം',
   };
+
+  // Check if content is bookmarked
+  const checkBookmarkStatus = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
+
+      if (!token || !userId) {
+        setIsBookmarked(false);
+        return;
+      }
+
+      const bookmarkData = {
+        userId: userId,
+        entityType: 'content',
+        doId: identifier as string,
+      };
+
+      const response = await readBookmark(bookmarkData, token);
+      // Check if the current content's doId exists in the bookmarks array
+      const isContentBookmarked =
+        response?.result?.bookmarks?.some(
+          (bookmark: { doId: string }) => bookmark.doId === identifier
+        ) || false;
+      setIsBookmarked(isContentBookmarked);
+    } catch (error) {
+      console.error('Error checking bookmark status:', error);
+      setIsBookmarked(false);
+    }
+  };
+
+  // Add bookmark API call function
+  const handleBookmarkToggle = async () => {
+    if (isBookmarkLoading) return; // Prevent multiple clicks
+
+    setIsBookmarkLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
+
+      if (!token || !userId) {
+        console.error('Token or userId not found');
+        // You might want to redirect to login or show a message
+        return;
+      }
+
+      const bookmarkData = {
+        userId: userId,
+        entityType: 'content',
+        doId: identifier as string,
+        action: (isBookmarked ? 'remove' : 'add') as 'add' | 'remove',
+      };
+
+      const response = await createBookmark(bookmarkData, token);
+
+      if (response && !response.error) {
+        setIsBookmarked((prev) => !prev);
+        trackEvent({
+          action: isBookmarked ? 'remove_bookmark' : 'add_bookmark',
+          category: 'user',
+          label: 'Content Details Page',
+        });
+
+        // Add telemetry for bookmark action
+        const windowUrl = window.location.pathname;
+        const cleanedUrl = windowUrl.replace(/^\//, '');
+        const env = cleanedUrl.split('/')[0];
+
+        const telemetryInteract = {
+          context: {
+            env: env,
+            cdata: [],
+          },
+          edata: {
+            id: isBookmarked ? 'Remove Bookmark' : 'Add Bookmark',
+            name: contentData?.name,
+            type: TelemetryEventType.CLICK,
+            subtype: '',
+            pageid: cleanedUrl,
+          },
+        };
+        telemetryFactory.interact(telemetryInteract);
+      } else {
+        console.error('Bookmark operation failed:', response);
+        // You might want to show an error message to the user
+      }
+    } catch (error) {
+      console.error('Error toggling bookmark:', error);
+      // You might want to show an error message to the user
+    } finally {
+      setIsBookmarkLoading(false);
+    }
+  };
+
   const handleOpen = () => setOpen(true);
   useEffect(() => {
     const storedCategory = localStorage.getItem('category') || '';
@@ -256,6 +355,9 @@ export default function Content() {
             },
           };
           telemetryFactory.interact(telemetryInteract);
+
+          // Check bookmark status after content is loaded
+          await checkBookmarkStatus();
         }
         const cleanKeywords = (
           result?.keywords?.filter((item: any) => item) ?? []
@@ -547,11 +649,13 @@ export default function Content() {
                       {hasToken && (
                         <IconButton
                           color="primary"
+                          disabled={isBookmarkLoading}
                           sx={{
                             backgroundColor: 'white',
                             color: isBookmarked ? '#FCD905' : '#2B3133',
+                            opacity: isBookmarkLoading ? 0.6 : 1,
                           }}
-                          onClick={() => setIsBookmarked((prev) => !prev)}
+                          onClick={handleBookmarkToggle}
                         >
                           {isBookmarked ? (
                             <BookmarkIcon />
