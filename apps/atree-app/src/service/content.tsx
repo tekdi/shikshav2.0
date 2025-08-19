@@ -175,7 +175,7 @@ export const createBookmark = async (
   bookmarkData: BookmarkParams,
   token: string
 ): Promise<any> => {
-   const apiUrl = `${process.env.NEXT_PUBLIC_ATREE_LOGIN_URL}/interface/v1/todo/bookmark/create`;
+  const apiUrl = `${process.env.NEXT_PUBLIC_ATREE_LOGIN_URL}/interface/v1/todo/bookmark/create`;
   try {
     const response = await axios.post(apiUrl, bookmarkData, {
       headers: {
@@ -194,7 +194,7 @@ export const readBookmark = async (
   bookmarkData: BookmarkReadParams,
   token: string
 ): Promise<BookmarkResponse> => {
-  const apiUrl = `${process.env.NEXT_PUBLIC_ATREE_LOGIN_URL}/todo/bookmark/read?userId=${bookmarkData.userId}&entityType=${bookmarkData.entityType}`;
+  const apiUrl = `${process.env.NEXT_PUBLIC_MIDDLEWARE_URL}/todo/bookmark/read?userId=${bookmarkData.userId}&entityType=${bookmarkData.entityType}`;
 
   try {
     const response = await axios.get(apiUrl, {
