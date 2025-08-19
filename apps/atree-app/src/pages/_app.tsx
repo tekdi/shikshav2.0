@@ -123,14 +123,40 @@ function CustomApp({ Component, pageProps }: AppProps) {
           // Listen for language changes in localStorage
           const handleStorageChange = (e: StorageEvent) => {
             if (e.key === 'selectedLanguage' && e.newValue) {
+              console.log(
+                'Language change detected in _app via storage:',
+                e.newValue
+              );
               i18n.changeLanguage(e.newValue);
               document.documentElement.lang = e.newValue;
             }
           };
 
+          // Listen for custom language change events
+          const handleLanguageChange = (e: CustomEvent) => {
+            console.log(
+              'Language change detected in _app via custom event:',
+              e.detail
+            );
+            if (e.detail && e.detail !== i18n.language) {
+              i18n.changeLanguage(e.detail);
+              document.documentElement.lang = e.detail;
+            }
+          };
+
           window.addEventListener('storage', handleStorageChange);
-          return () =>
+          window.addEventListener(
+            'languageChanged' as any,
+            handleLanguageChange as any
+          );
+
+          return () => {
             window.removeEventListener('storage', handleStorageChange);
+            window.removeEventListener(
+              'languageChanged' as any,
+              handleLanguageChange as any
+            );
+          };
         } catch (error) {
           console.error('Error initializing language:', error);
         }
@@ -197,7 +223,10 @@ function CustomApp({ Component, pageProps }: AppProps) {
       authClient={keycloak}
       initOptions={{
         onLoad: 'check-sso',
-        checkLoginIframe: false,
+        silentCheckSsoRedirectUri:
+          typeof window !== 'undefined'
+            ? `${window.location.origin}/silent-check-sso.html`
+            : '',
       }}
     >
       <ThemeProvider theme={theme}>

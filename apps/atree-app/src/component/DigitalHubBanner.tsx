@@ -9,18 +9,61 @@ const DigitalHubBanner = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { t, i18n, ready } = useAppTranslation();
   const [mounted, setMounted] = useState(false);
+  const [forceUpdate, setForceUpdate] = useState(0);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Listen for language changes
+  useEffect(() => {
+    const handleLanguageChange = (event: CustomEvent) => {
+      console.log(
+        'Language change detected in DigitalHubBanner:',
+        event.detail
+      );
+      setForceUpdate((prev) => prev + 1);
+    };
+
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'selectedLanguage' && event.newValue) {
+        console.log(
+          'Language change detected via storage in DigitalHubBanner:',
+          event.newValue
+        );
+        setForceUpdate((prev) => prev + 1);
+      }
+    };
+
+    window.addEventListener(
+      'languageChanged' as any,
+      handleLanguageChange as any
+    );
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener(
+        'languageChanged' as any,
+        handleLanguageChange as any
+      );
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  // Force re-render when language changes
+  useEffect(() => {
+    console.log('DigitalHubBanner force update triggered:', forceUpdate);
+  }, [forceUpdate]);
 
   // Default text in case translations aren't ready
   const defaultText = "India's digital hub for environment education resources";
   const displayText =
     mounted && ready ? t(LANGUAGE_KEYS.DIGITAL_HUB_BANNER) : defaultText;
 
+  // Add forceUpdate to the key to force re-render
   return (
     <Box
+      key={`banner-${forceUpdate}`}
       sx={{
         width: '100%',
         backgroundColor: '#fcd804',
