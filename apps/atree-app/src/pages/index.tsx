@@ -133,6 +133,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
   const [categories, setCategories] = useState<Array<any>>([]);
   const [loading, setLoading] = useState(true);
   const [translationsLoaded, setTranslationsLoaded] = useState(false);
+  const [forceUpdate, setForceUpdate] = useState(0);
 
   const customOrder = [
     'Water',
@@ -145,10 +146,43 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  // Load translations on mount
+  // Listen for language changes
+  useEffect(() => {
+    const handleLanguageChange = (event: CustomEvent) => {
+      console.log('Language change detected in home page:', event.detail);
+      setForceUpdate((prev) => prev + 1);
+    };
+
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'selectedLanguage' && event.newValue) {
+        console.log('Language change detected via storage:', event.newValue);
+        setForceUpdate((prev) => prev + 1);
+      }
+    };
+
+    window.addEventListener(
+      'languageChanged' as any,
+      handleLanguageChange as any
+    );
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener(
+        'languageChanged' as any,
+        handleLanguageChange as any
+      );
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  // Load translations on mount and when language changes
   useEffect(() => {
     const loadTranslations = async () => {
       try {
+        console.log(
+          'Loading translations for home page, forceUpdate:',
+          forceUpdate
+        );
         // Load resources for both languages
         await Promise.all([
           i18n.loadNamespaces('common'),
@@ -160,7 +194,12 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
       }
     };
     loadTranslations();
-  }, [i18n]);
+  }, [i18n, forceUpdate]); // Add forceUpdate as dependency
+
+  // Force re-render when language changes
+  useEffect(() => {
+    console.log('Home page force update triggered:', forceUpdate);
+  }, [forceUpdate]);
 
   useEffect(() => {
     const init = async () => {
@@ -354,6 +393,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                   fontSize={{ xs: '24px', md: '64px' }}
                 />
                 <Typography
+                  key={`resources-${forceUpdate}`}
                   sx={{
                     fontSize: {
                       xs: '10px',
@@ -373,6 +413,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                   fontSize={{ xs: '24px', md: '64px' }}
                 />
                 <Typography
+                  key={`categories-${forceUpdate}`}
                   sx={{
                     fontFamily: 'Poppins',
                     fontSize: { xs: '10px', md: '24px' },
@@ -389,6 +430,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                   fontSize={{ xs: '24px', md: '64px' }}
                 />
                 <Typography
+                  key={`languages-${forceUpdate}`}
                   sx={{
                     fontFamily: 'Poppins',
                     fontSize: { xs: '10px', md: '24px', fontWeight: 400 },
@@ -452,6 +494,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
           }}
         >
           <Typography
+            key={`instagram-${forceUpdate}`}
             align="center"
             sx={{
               fontWeight: 600,

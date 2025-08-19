@@ -74,9 +74,42 @@ const LanguageSwitcher: React.FC = () => {
       // Update HTML lang attribute
       document.documentElement.lang = newLanguage;
 
-      // Navigate to the same page with new locale
-      const { pathname, asPath, query } = router;
-      router.push({ pathname, query }, asPath, { locale: newLanguage });
+      // Dispatch custom event to notify other components about language change
+      window.dispatchEvent(
+        new CustomEvent('languageChanged', { detail: newLanguage })
+      );
+
+      // Force a re-render by updating the URL without navigation
+      const currentPath = router.asPath;
+      const currentQuery = router.query;
+
+      // Update the URL to trigger a re-render without full page navigation
+      await router.replace(
+        {
+          pathname: router.pathname,
+          query: { ...currentQuery, lang: newLanguage },
+        },
+        currentPath,
+        {
+          shallow: true,
+          locale: newLanguage,
+        }
+      );
+
+      // Remove the lang parameter from URL after a short delay to keep it clean
+      setTimeout(() => {
+        if (router.query.lang) {
+          const { lang, ...cleanQuery } = router.query;
+          router.replace(
+            {
+              pathname: router.pathname,
+              query: cleanQuery,
+            },
+            router.asPath,
+            { shallow: true }
+          );
+        }
+      }, 100);
     } catch (error) {
       console.error('Error changing language:', error);
       // Revert to default language on error

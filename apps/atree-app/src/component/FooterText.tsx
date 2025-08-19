@@ -1,15 +1,52 @@
 import { Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { useTranslation } from 'next-i18next';
+import { useAppTranslation } from '../utils/i18n.helper';
 import { LANGUAGE_KEYS } from '../utils/language.constants';
+import { useEffect, useState } from 'react';
+
 type FooterTextProps = {
   readonly page?: string; // made optional in case it's not always passed
 };
+
 export default function FooterText({ page }: FooterTextProps) {
-  const { t, i18n, ready } = useTranslation('common');
+  const { t, i18n, ready } = useAppTranslation();
+  const [forceUpdate, setForceUpdate] = useState(0);
+
+  // Listen for language changes
+  useEffect(() => {
+    const handleLanguageChange = (event: CustomEvent) => {
+      console.log('Language change detected in FooterText:', event.detail);
+      setForceUpdate((prev) => prev + 1);
+    };
+
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'selectedLanguage' && event.newValue) {
+        console.log(
+          'Language change detected via storage in FooterText:',
+          event.newValue
+        );
+        setForceUpdate((prev) => prev + 1);
+      }
+    };
+
+    window.addEventListener(
+      'languageChanged' as any,
+      handleLanguageChange as any
+    );
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener(
+        'languageChanged' as any,
+        handleLanguageChange as any
+      );
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   return (
     <Grid
+      key={`footer-${forceUpdate}`}
       sx={{
         px: 4,
         py: 1,

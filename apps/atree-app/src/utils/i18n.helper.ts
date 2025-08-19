@@ -72,7 +72,9 @@ export const useAppTranslation = () => {
         // Force reload resources even if they exist
         const response = await fetch(`/locales/${language}/common.json`);
         if (!response.ok) {
-          throw new Error(`Failed to load ${language} translations`);
+          throw new Error(
+            `Failed to load ${language} translations: ${response.status} ${response.statusText}`
+          );
         }
         const resources = await response.json();
 
@@ -89,6 +91,7 @@ export const useAppTranslation = () => {
           resources,
           hasBundle: i18n.hasResourceBundle(language, 'common'),
           bundle: i18n.getResourceBundle(language, 'common'),
+          bundleKeys: Object.keys(resources || {}),
         });
         return resources;
       } catch (error) {
@@ -97,6 +100,19 @@ export const useAppTranslation = () => {
       }
     },
     [i18n]
+  );
+
+  const reloadResources = useCallback(
+    async (language: SupportedLanguage) => {
+      console.log(`Manually reloading resources for ${language}...`);
+      const resources = await loadResources(language);
+      if (resources && language === i18n.language) {
+        setCurrentBundle(resources);
+        console.log(`Resources reloaded for ${language}`);
+      }
+      return resources;
+    },
+    [loadResources, i18n.language]
   );
 
   const updateLanguageState = useCallback(
@@ -137,7 +153,18 @@ export const useAppTranslation = () => {
         // Load resources for the new language first
         const resources = await loadResources(newLanguage as SupportedLanguage);
         if (!resources) {
-          throw new Error(`Failed to load resources for ${newLanguage}`);
+          console.warn(
+            `Failed to load resources for ${newLanguage}, trying to reload...`
+          );
+          // Try to reload resources
+          const reloadedResources = await reloadResources(
+            newLanguage as SupportedLanguage
+          );
+          if (!reloadedResources) {
+            throw new Error(
+              `Failed to load resources for ${newLanguage} after reload attempt`
+            );
+          }
         }
 
         // Update state before changing language
@@ -145,58 +172,55 @@ export const useAppTranslation = () => {
 
         // Change the language
         await i18n.changeLanguage(newLanguage);
+
+        // Update current bundle with the new resources
         setCurrentBundle(resources);
 
         // Force a reload of the resources to ensure they're fresh
         await loadResources(newLanguage as SupportedLanguage);
 
-        // Debug: Verify the change
-        console.log('Language change complete:', {
-          currentLanguage: i18n.language,
-          htmlLang: document.documentElement.lang,
-          savedLanguage: localStorage.getItem('selectedLanguage'),
-          hasBundle: i18n.hasResourceBundle(newLanguage, 'common'),
-          bundle: resources,
-        });
-
-        // Reset retry count on successful change
-        setRetryCount(0);
-
-        // Dispatch a custom event to notify other components
+        // Dispatch custom event to notify all components
         window.dispatchEvent(
           new CustomEvent('languageChanged', { detail: newLanguage })
         );
+
+        // Debug: Verify the change
+        console.log('Language change completed:', {
+          newLanguage,
+          currentLanguage: i18n.language,
+          hasResources: i18n.hasResourceBundle(newLanguage, 'common'),
+          resources: i18n.getResourceBundle(newLanguage, 'common'),
+          htmlLang: document.documentElement.lang,
+          currentBundle: resources,
+        });
+
+        return true;
       } catch (error) {
         console.error('Error changing language:', error);
-        // Increment retry count
-        setRetryCount((prev) => prev + 1);
-        // Only fallback to default language if we haven't tried too many times
-        if (retryCount < 3) {
-          await i18n.changeLanguage(DEFAULT_LANGUAGE);
-          updateLanguageState(DEFAULT_LANGUAGE);
-        }
-        throw error;
+        // Revert to default language on error
+        await i18n.changeLanguage(DEFAULT_LANGUAGE);
+        setCurrentBundle(null);
+        updateLanguageState(DEFAULT_LANGUAGE);
+        return false;
       }
     },
-    [i18n, loadResources, updateLanguageState, retryCount]
+    [i18n, loadResources, updateLanguageState, reloadResources]
   );
 
-  // Initial load of translations
+  // Initialize translations
   useEffect(() => {
     const initializeTranslations = async () => {
       try {
-        const savedLanguage = localStorage.getItem('selectedLanguage');
-        const currentLang = savedLanguage || i18n.language || DEFAULT_LANGUAGE;
+        console.log('Initializing translations...');
 
-        console.log('Initializing translations:', {
-          savedLanguage,
-          currentLang,
-          i18nLanguage: i18n.language,
-          htmlLang: document.documentElement.lang,
-          retryCount,
-        });
+        // Get the current language
+        const currentLang =
+          localStorage.getItem('selectedLanguage') ||
+          i18n.language ||
+          DEFAULT_LANGUAGE;
+        console.log('Current language for initialization:', currentLang);
 
-        // Load both current language and English fallback
+        // Load resources for both current language and English (as fallback)
         const [currentResources, englishResources] = await Promise.all([
           loadResources(currentLang as SupportedLanguage),
           currentLang !== LANGUAGES.ENGLISH
@@ -208,13 +232,18 @@ export const useAppTranslation = () => {
           await changeLanguage(currentLang);
           setCurrentBundle(currentResources);
           setIsLoaded(true);
+          console.log(
+            'Initialization completed with current language resources'
+          );
         } else if (englishResources) {
           // Fallback to English if current language resources failed to load
           await changeLanguage(LANGUAGES.ENGLISH);
           setCurrentBundle(englishResources);
           setIsLoaded(true);
+          console.log('Initialization completed with English fallback');
         } else if (retryCount < 3) {
           // Retry initialization if both attempts failed
+          console.log(`Retry attempt ${retryCount + 1} for initialization`);
           setRetryCount((prev) => prev + 1);
           setIsLoaded(false);
         } else {
@@ -272,70 +301,128 @@ export const useAppTranslation = () => {
     };
   }, [i18n, changeLanguage]);
 
-  // Monitor i18n language changes
+  // Monitor i18n language changes and update currentBundle accordingly
   useEffect(() => {
-    const currentSavedLanguage = localStorage.getItem('selectedLanguage');
-    if (i18n.language && i18n.language !== currentSavedLanguage) {
-      console.log('Language mismatch detected:', {
-        i18nLanguage: i18n.language,
-        savedLanguage: currentSavedLanguage,
-        htmlLang: document.documentElement.lang,
-        retryCount,
-      });
-      if (retryCount < 3) {
-        changeLanguage(i18n.language).catch(console.error);
+    const updateCurrentBundle = async () => {
+      if (i18n.language && ready) {
+        console.log('Updating currentBundle for language:', i18n.language);
+
+        // Get the current bundle from i18n
+        const currentBundle = i18n.getResourceBundle(i18n.language, 'common');
+        if (currentBundle) {
+          setCurrentBundle(currentBundle);
+          console.log('CurrentBundle updated:', {
+            language: i18n.language,
+            keys: Object.keys(currentBundle),
+            hasDigitalHubBanner: 'DIGITAL_HUB_BANNER' in currentBundle,
+          });
+        } else {
+          // If no bundle exists, try to load it
+          console.log('No bundle found, loading resources for:', i18n.language);
+          const resources = await loadResources(
+            i18n.language as SupportedLanguage
+          );
+          if (resources) {
+            setCurrentBundle(resources);
+          }
+        }
       }
-    }
-  }, [i18n.language, changeLanguage, retryCount]);
+    };
 
-  const t = (key: TranslationKey) => {
-    if (!mounted || !isLoaded || !ready || !currentBundle) {
-      return key;
-    }
+    updateCurrentBundle();
+  }, [i18n.language, ready, loadResources]);
 
-    try {
-      // Try current bundle first
-      if (currentBundle[key]) {
-        return currentBundle[key];
+  const t = useCallback(
+    (key: TranslationKey) => {
+      if (!mounted || !isLoaded || !ready) {
+        console.log('Translation not ready:', { mounted, isLoaded, ready });
+        return key;
       }
 
-      // Try translation function
-      const translation = translate(key);
-      if (translation && translation !== key) {
-        return translation;
-      }
-
-      // Try English fallback
-      if (i18n.language !== LANGUAGES.ENGLISH) {
-        const englishBundle = i18n.getResourceBundle(
-          LANGUAGES.ENGLISH,
+      try {
+        // Get the current bundle from i18n directly
+        const currentBundleFromI18n = i18n.getResourceBundle(
+          i18n.language,
           'common'
         );
-        if (englishBundle && englishBundle[key]) {
-          return englishBundle[key];
+
+        // Try current bundle from i18n first
+        if (currentBundleFromI18n && currentBundleFromI18n[key]) {
+          console.log(
+            `Translation found in i18n bundle for ${key}:`,
+            currentBundleFromI18n[key]
+          );
+          return currentBundleFromI18n[key];
         }
 
-        const englishTranslation = translate(key, { lng: LANGUAGES.ENGLISH });
-        if (englishTranslation && englishTranslation !== key) {
-          return englishTranslation;
+        // Try our cached currentBundle
+        if (currentBundle && currentBundle[key]) {
+          console.log(
+            `Translation found in cached bundle for ${key}:`,
+            currentBundle[key]
+          );
+          return currentBundle[key];
         }
+
+        // Try translation function
+        const translation = translate(key);
+        if (translation && translation !== key) {
+          console.log(
+            `Translation found via translate function for ${key}:`,
+            translation
+          );
+          return translation;
+        }
+
+        // Try English fallback
+        if (i18n.language !== LANGUAGES.ENGLISH) {
+          const englishBundle = i18n.getResourceBundle(
+            LANGUAGES.ENGLISH,
+            'common'
+          );
+          if (englishBundle && englishBundle[key]) {
+            console.log(
+              `English fallback found for ${key}:`,
+              englishBundle[key]
+            );
+            return englishBundle[key];
+          }
+
+          const englishTranslation = translate(key, { lng: LANGUAGES.ENGLISH });
+          if (englishTranslation && englishTranslation !== key) {
+            console.log(
+              `English fallback via translate for ${key}:`,
+              englishTranslation
+            );
+            return englishTranslation;
+          }
+        }
+
+        // Log warning if no translation found
+        console.warn(
+          `No translation found for key: ${key} in language: ${i18n.language}`,
+          {
+            currentBundleFromI18n: !!currentBundleFromI18n,
+            currentBundle: !!currentBundle,
+            i18nLanguage: i18n.language,
+          }
+        );
+
+        return key;
+      } catch (error) {
+        console.error('Translation error:', error);
+        return key;
       }
+    },
+    [mounted, isLoaded, ready, currentBundle, i18n.language, translate]
+  );
 
-      // Log warning if no translation found
-      console.warn(
-        `No translation found for key: ${key} in language: ${i18n.language}`,
-        {
-          currentBundle,
-          englishBundle: i18n.getResourceBundle(LANGUAGES.ENGLISH, 'common'),
-        }
-      );
-
-      return key;
-    } catch (error) {
-      console.error('Translation error:', error);
-      return key;
-    }
-  };
+  // Force re-render when language or bundle changes
+  useEffect(() => {
+    console.log(
+      'useAppTranslation: Language or bundle changed, forcing re-render'
+    );
+  }, [i18n.language, currentBundle]);
 
   return {
     t,
@@ -343,5 +430,6 @@ export const useAppTranslation = () => {
     ready: ready && isLoaded && mounted && !!currentBundle,
     currentLanguage: i18n.language,
     changeLanguage,
+    reloadResources,
   };
 };
