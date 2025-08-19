@@ -431,6 +431,8 @@ export default function Layout({
                 width: '100%',
                 bgcolor: '#FFFFFF',
                 overflow: 'hidden',
+                borderBottom: '3px solid #E0E0E0',
+                boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
               }}
               minHeight={'64px'}
             >

@@ -146,11 +146,13 @@ export default function Index() {
                 (bookmark: any) => bookmark.doId
               );
 
-              // Add bookmarked IDs to the filters
+              // For bookmarks, only include identifier filter and remove topic
               finalFilters = {
-                ...finalFilters,
                 identifier: bookmarkedIds,
               };
+
+              // Remove topic filter for bookmarks
+              delete finalFilters.topic;
             } else {
               // If no bookmarks found, set empty content
               setContentData([]);
@@ -418,8 +420,8 @@ export default function Index() {
     if (existingMap[deviceId].length < 4) {
       router.push(`/contents/${currentContentId}`);
 
-      setConsumedContent(async (prev) => {
-        const updatedContent = [...prev, currentContentId];
+      setConsumedContent((prev) => {
+        const updatedContent = [...(prev || []), currentContentId];
         localStorage.setItem('consumedContent', JSON.stringify(updatedContent));
         return updatedContent;
       });
@@ -595,34 +597,6 @@ export default function Index() {
                     padding: '9px 0px',
                   }}
                 >
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                    }}
-                  >
-                    {subFrameworkFilter && subFrameworkFilter.length > 0 && (
-                      <Title>{LANGUAGE_KEYS.BROWSE_SUBCATEGORIES}</Title>
-                    )}
-                  </Box>
-
-                  <Box
-                    sx={{
-                      width: '100%',
-                      padding: '12px 0px',
-                      gap: '16px',
-                      flexDirection: 'column',
-                      display: 'flex',
-                    }}
-                  >
-                    <SubFrameworkFilter
-                      subFramework={subFramework}
-                      setSubFramework={setSubFramework}
-                      lastButton={true}
-                      subFrameworkFilter={subFrameworkFilter || []}
-                    />
-                  </Box>
                   {bookmark !== 'true' && (
                     <>
                       <Box
@@ -634,7 +608,7 @@ export default function Index() {
                       >
                         {subFrameworkFilter &&
                           subFrameworkFilter.length > 0 && (
-                            <Title>{t('Browse by Sub Categories')}</Title>
+                            <Title>{LANGUAGE_KEYS.BROWSE_SUBCATEGORIES}</Title>
                           )}
                       </Box>
 
@@ -756,6 +730,50 @@ export default function Index() {
                   </FormControl>
                 </Box>
               )}
+
+            {bookmark === 'true' && !localStorage.getItem('token') && (
+              <Box
+                sx={{
+                  paddingTop: '5%',
+                  width: '80%',
+                  margin: '0 auto',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: 'Poppins',
+                    fontSize: '16px',
+                    fontWeight: '500',
+                    textAlign: 'center',
+                    color: '#666',
+                    mb: 2,
+                  }}
+                >
+                  {t(LANGUAGE_KEYS.LOGIN_REQUIRED)}
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => router.push('/signin')}
+                  sx={{
+                    borderRadius: '50px',
+                    height: '40px',
+                    backgroundColor: '#fcd804',
+                    color: '#000000',
+                    fontFamily: 'Poppins',
+                    fontSize: '16px',
+                    fontWeight: '500',
+                    textTransform: 'none',
+                    px: 3,
+                  }}
+                >
+                  {t(LANGUAGE_KEYS.PROCEED)}
+                </Button>
+              </Box>
+            )}
 
             <Box
               sx={{

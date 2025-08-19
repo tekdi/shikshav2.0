@@ -195,6 +195,7 @@ export const ContentSearch = async ({
         offset,
       },
     };
+
     const config: AxiosRequestConfig = {
       method: 'post',
       maxBodyLength: Infinity,
