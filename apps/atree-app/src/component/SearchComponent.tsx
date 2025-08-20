@@ -2,8 +2,11 @@ import { useState } from 'react';
 import { TextField, IconButton, Button, Menu, MenuItem } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import { useAppTranslation } from '../utils/i18n.helper';
+import { LANGUAGE_KEYS } from '../utils/language.constants';
 
 const SearchComponent = () => {
+  const { t, ready } = useAppTranslation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showSearch, setShowSearch] = useState(false);
   const [query, setQuery] = useState('');
@@ -37,7 +40,7 @@ const SearchComponent = () => {
       {/* Search Input */}
       {showSearch && (
         <TextField
-          placeholder="Search..."
+          placeholder={ready ? t(LANGUAGE_KEYS.SEARCH_BY) : 'Search...'}
           size="small"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -68,7 +71,7 @@ const SearchComponent = () => {
 
       {/* Search Button */}
       <Button variant="contained" color="primary" onClick={handleSearch}>
-        Search
+        {ready ? t(LANGUAGE_KEYS.SEARCH_BUTTON) : "Search"}
       </Button>
     </div>
   );

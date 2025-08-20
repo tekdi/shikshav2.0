@@ -15,6 +15,24 @@ import FooterText from '../../component/FooterText';
 import Footer from '../../component/layout/Footer';
 import Grid from '@mui/material/Grid2';
 import FilterDialog from 'libs/shared-lib/src/lib/Filterdialog/FilterDialog';
+import { useAppTranslation } from '../../utils/i18n.helper';
+
+// Function to get translated resource types
+const getTranslatedResourceTypes = (t: any) => [
+  { label: t('FICTION'), value: 'Fiction' },
+  { label: t('NON_FICTION'), value: 'Non-Fiction' },
+  { label: t('PICTURE_BOOK'), value: 'Picture Book' },
+  { label: t('TEXTBOOK_CHAPTER'), value: 'Textbook Chapter' },
+  { label: t('FIELD_GUIDE'), value: 'Field Guide' },
+  { label: t('ACTIVITY_BOOK'), value: 'Activity Book' },
+  { label: t('COMIC_BOOK'), value: 'Comic Book' },
+  { label: t('REFERENCE_BOOK'), value: 'Reference Book' },
+  { label: t('WEBSITE'), value: 'Website' },
+  { label: t('MAGAZINE'), value: 'Magazine' },
+  { label: t('POSTER'), value: 'Poster' },
+  { label: t('BOARD_GAME'), value: 'Board Game' },
+  { label: t('VIDEO'), value: 'video/x-youtube' },
+];
 
 interface ListProps {}
 
@@ -27,6 +45,7 @@ const getLocalStorageItem = (key: string) => {
 };
 
 const List: React.FC<ListProps> = () => {
+  const { t } = useAppTranslation();
   const [frameworkFilter, setFrameworkFilter] = useState(false);
   const mfe_content = process.env.NEXT_PUBLIC_CONTENT;
   const [isLoadingChildren, setIsLoadingChildren] = React.useState(true);
@@ -138,7 +157,14 @@ const List: React.FC<ListProps> = () => {
                 filterValues={filters}
                 onApply={handleApplyFilters}
                 isMobile={isMobile}
-                resources={RESOURCE_TYPES}
+                resources={getTranslatedResourceTypes(t)}
+                translations={{
+                  resourceType: t('RESOURCE_TYPE'),
+                  apply: t('APPLY'),
+                  reset: t('RESET'),
+                  subject: t('SUBJECT'),
+                  contentType: t('CONTENT_TYPE'),
+                }}
                 // mimeType={MIME_TYPES}
               />
             </Box>

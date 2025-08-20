@@ -4,6 +4,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import {
+  Alert,
   Box,
   Button,
   Card,
@@ -39,7 +40,12 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined';
-import { AtreeCard, ContentSearch, trackEvent } from '@shared-lib';
+import {
+  AtreeCard,
+  ContentSearch,
+  trackEvent,
+  CommonDialog,
+} from '@shared-lib';
 import ShareDialog from '../../component/ShareDialog';
 import FooterText from '../../component/FooterText';
 import Loader from '../../component/layout/LoaderComponent';
@@ -48,6 +54,80 @@ import { TelemetryEventType } from '../../utils/app.constant';
 import { telemetryFactory } from '../../utils/telemetry';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
+import { useAppTranslation } from '../../utils/i18n.helper';
+import GlobalAlert from '../../component/GlobalAlert';
+
+// Function to get translated subcategory names (English values for API, translated labels for display)
+const getTranslatedSubcategoryNames = (t: any) => [
+  // Water subcategories
+  {
+    label: t('WATER_BASIC_CONCEPTS'),
+    value: 'Water Basic Concepts',
+  },
+  {
+    label: t('WATER_BIODIVERSITY'),
+    value: 'Water Biodiversity',
+  },
+  {
+    label: t('WATER_CONSERVATION'),
+    value: 'Water Conservation',
+  },
+  {
+    label: t('WATER_AND_SANITATION'),
+    value: 'Water and Sanitation',
+  },
+  {
+    label: t('WATER_CRISIS'),
+    value: 'Water Crisis',
+  },
+  {
+    label: t('FRESH_WATER_ECOSYSTEM'),
+    value: 'Fresh water ecosystem',
+  },
+  {
+    label: t('COASTAL_ECOSYSTEM'),
+    value: 'Coastal ecosystem',
+  },
+  {
+    label: t('WATER_BASED_STEM_ACTIVITIES'),
+    value: 'Water based STEM and STEM Activities',
+  },
+  // Land subcategories
+  { label: t('SEED'), value: 'Seed' },
+  { label: t('PLANTS_AND_VEGETABLES'), value: 'Plants and Vegetables' },
+  { label: t('AGRICULTURE'), value: 'Agriculture' },
+  { label: t('FOOD_AND_WASTE'), value: 'Food and Waste' },
+  { label: t('SOIL'), value: 'Soil' },
+  { label: t('LAND_BIODIVERSITY'), value: 'Land Biodiversity' },
+  {
+    label: t('ACTIVITY_BOOK_ON_KITCHEN_GARDENS'),
+    value: 'Activity Book on Kitchen Gardens',
+  },
+  { label: t('TREES'), value: 'Trees' },
+  { label: t('GRASSLANDS'), value: 'Grassland' },
+  // Forest subcategories
+  { label: t('PEOPLE'), value: 'People' },
+  { label: t('WILDLIFE'), value: 'Wildlife' },
+  { label: t('FOREST_BIODIVERSITY'), value: 'Forest Biodiversity' },
+  { label: t('FOREST_MANAGEMENT'), value: 'Forest Management' },
+  { label: t('FOREST_ECOSYSTEMS'), value: 'Forest Ecosystems' },
+  // Potpourri subcategories
+  { label: t('FICTION_AND_NON_FICTION'), value: 'Fiction and Non Fiction' },
+  {
+    label: t('MAGAZINES_NEWSPAPERS_WEBSITES'),
+    value: 'Magazines, Newspapers and Websities',
+  },
+  { label: t('REFERENCE_MATERIALS'), value: 'Reference Materials' },
+  // Climate Change subcategories
+  { label: t('CLIMATE_IMPACTS'), value: 'Climate Impacts' },
+  // Activity Book subcategories
+  { label: t('LESSON_PLAN'), value: 'Lesson Plan' },
+  { label: t('CURRICULUM'), value: 'Curriculum' },
+  { label: t('ACTIVITY_WORKBOOKS'), value: 'Activity Workbooks' },
+  // General subcategories
+  { label: t('GENERAL_TOPICS'), value: 'General Topics' },
+  { label: t('MIXED_CONTENT'), value: 'Mixed Content' },
+];
 const buttonColors = {
   water: '#0E28AE',
   land: '#8F4A50',
@@ -82,6 +162,7 @@ interface ContentItem {
 }
 
 export default function Content() {
+  const { t } = useAppTranslation();
   const router = useRouter();
   const { identifier } = router.query; // Access dynamic parameter 'identifier'
   const [contentData, setContentData] = useState<ContentItem | null>(null);
@@ -109,6 +190,15 @@ export default function Content() {
   const [homeCategory, setHomeCategory] = useState('');
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
+  const [showAlertMsg, setShowAlertMsg] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState<'success' | 'error'>(
+    'success'
+  );
+  const [alert, setAlert] = useState({
+    message: '',
+    severity: 'info' as 'success' | 'error' | 'warning' | 'info',
+  });
+  const [openBookmarkDialog, setOpenBookmarkDialog] = useState(false);
   const languageDisplayMap: Record<string, string> = {
     english: 'English',
     hindi: 'हिन्दी',
@@ -154,17 +244,17 @@ export default function Content() {
   const handleBookmarkToggle = async () => {
     if (isBookmarkLoading) return; // Prevent multiple clicks
 
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+
+    if (!token || !userId) {
+      // User is not logged in, show dialog
+      setOpenBookmarkDialog(true);
+      return;
+    }
+
     setIsBookmarkLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const userId = localStorage.getItem('userId');
-
-      if (!token || !userId) {
-        console.error('Token or userId not found');
-        // You might want to redirect to login or show a message
-        return;
-      }
-
       const bookmarkData = {
         userId: userId,
         entityType: 'content',
@@ -176,6 +266,19 @@ export default function Content() {
 
       if (response && !response.error) {
         setIsBookmarked((prev) => !prev);
+
+        // Show success message
+        const message = isBookmarked
+          ? t('BOOKMARK_REMOVED_SUCCESS')
+          : t('BOOKMARK_ADDED_SUCCESS');
+        setShowAlertMsg(message);
+        setAlertSeverity('success');
+
+        // Auto-hide success message after 3 seconds
+        setTimeout(() => {
+          setShowAlertMsg('');
+        }, 3000);
+
         trackEvent({
           action: isBookmarked ? 'remove_bookmark' : 'add_bookmark',
           category: 'user',
@@ -203,11 +306,25 @@ export default function Content() {
         telemetryFactory.interact(telemetryInteract);
       } else {
         console.error('Bookmark operation failed:', response);
-        // You might want to show an error message to the user
+        // Show error message
+        setShowAlertMsg(t('BOOKMARK_ERROR'));
+        setAlertSeverity('error');
+
+        // Auto-hide error message after 3 seconds
+        setTimeout(() => {
+          setShowAlertMsg('');
+        }, 3000);
       }
     } catch (error) {
       console.error('Error toggling bookmark:', error);
-      // You might want to show an error message to the user
+      // Show error message
+      setShowAlertMsg(t('BOOKMARK_ERROR'));
+      setAlertSeverity('error');
+
+      // Auto-hide error message after 3 seconds
+      setTimeout(() => {
+        setShowAlertMsg('');
+      }, 3000);
     } finally {
       setIsBookmarkLoading(false);
     }
@@ -224,6 +341,7 @@ export default function Content() {
     const token = localStorage.getItem('token');
     setHasToken(!!token);
   }, []);
+
   const handleOnCLick = () => {
     const windowUrl = window.location.pathname;
     const cleanedUrl = windowUrl.replace(/^\//, '');
@@ -646,24 +764,23 @@ export default function Content() {
                         marginRight: '15px',
                       }}
                     >
-                      {hasToken && (
-                        <IconButton
-                          color="primary"
-                          disabled={isBookmarkLoading}
-                          sx={{
-                            backgroundColor: 'white',
-                            color: isBookmarked ? '#FCD905' : '#2B3133',
-                            opacity: isBookmarkLoading ? 0.6 : 1,
-                          }}
-                          onClick={handleBookmarkToggle}
-                        >
-                          {isBookmarked ? (
-                            <BookmarkIcon />
-                          ) : (
-                            <BookmarkBorderIcon />
-                          )}
-                        </IconButton>
-                      )}
+                      <IconButton
+                        color="primary"
+                        disabled={isBookmarkLoading}
+                        sx={{
+                          backgroundColor: 'white',
+                          color:
+                            hasToken && isBookmarked ? '#FCD905' : '#2B3133',
+                          opacity: isBookmarkLoading ? 0.6 : 1,
+                        }}
+                        onClick={handleBookmarkToggle}
+                      >
+                        {hasToken && isBookmarked ? (
+                          <BookmarkIcon />
+                        ) : (
+                          <BookmarkBorderIcon />
+                        )}
+                      </IconButton>
 
                       <IconButton
                         onClick={handleOpen}
@@ -1330,6 +1447,109 @@ export default function Content() {
               </Button>
             </DialogActions>
           </Dialog>
+
+          {/* Alert Message */}
+          {showAlertMsg && (
+            <Alert
+              variant="filled"
+              severity={alertSeverity}
+              sx={{
+                position: 'fixed',
+                top: '20px',
+                right: '20px',
+                zIndex: 9999,
+                pointerEvents: 'auto',
+                width: 'auto',
+                minWidth: '300px',
+                '&:hover': {
+                  cursor: 'default',
+                },
+              }}
+              onClose={() => {
+                setShowAlertMsg('');
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {showAlertMsg}
+            </Alert>
+          )}
+
+          {/* Bookmark Login Required Dialog */}
+          <Dialog
+            open={openBookmarkDialog}
+            onClose={(event, reason) => {
+              if (reason === 'backdropClick') return;
+              setOpenBookmarkDialog(false);
+            }}
+            disableEscapeKeyDown
+            PaperProps={{
+              style: {
+                maxWidth: '600px',
+                maxHeight: 'calc(100vh - 64px)',
+                overflow: 'auto',
+              },
+            }}
+          >
+            <DialogTitle sx={{ m: 0, p: 2 }}>
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <Typography sx={{ fontSize: '22px' }}>Message</Typography>
+                <IconButton
+                  aria-label="close"
+                  onClick={() => setOpenBookmarkDialog(false)}
+                  sx={{ ml: 2 }}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+            </DialogTitle>
+            <DialogContent>
+              <Typography
+                sx={{
+                  fontFamily: 'Poppins',
+                  fontSize: '16px',
+                  fontWeight: '500',
+                }}
+              >
+                {t('LOGIN_REQUIRED_FOR_BOOKMARK')}
+              </Typography>
+            </DialogContent>
+            <DialogActions sx={{ justifyContent: 'center', py: 2, px: 3 }}>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => {
+                  setOpenBookmarkDialog(false);
+                  router.push('/signin');
+                }}
+                sx={{
+                  borderRadius: '50px',
+                  height: '40px',
+                  width: '30%',
+                  backgroundColor: '#fcd804',
+                  color: '#000000',
+                  fontFamily: 'Poppins',
+                  fontSize: '16px',
+                  fontWeight: '500',
+                  textTransform: 'none',
+                }}
+              >
+                {t('PROCEED')}
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          <GlobalAlert
+            message={alert.message}
+            severity={alert.severity}
+            onClose={() => setAlert({ message: '', severity: 'info' })}
+            autoHide={true}
+            autoHideDuration={3000}
+          />
+
           <FooterText page="" />
         </Layout>
       ) : (
@@ -1404,6 +1624,7 @@ const SubFrameworkFilter = React.memo<{
   setSubFramework,
 }) {
   const router = useRouter();
+  const { t, ready } = useAppTranslation();
 
   const [openPopup, setOpenPopup] = useState<boolean>(false);
   const [filterItems, setFilterItems] = useState<
@@ -1421,15 +1642,15 @@ const SubFrameworkFilter = React.memo<{
     localStorage.setItem('subcategory', item.name);
     router.push(`/contents`);
   };
-  const capitalizeFirstLetter = (str: string) => {
-    if (str === 'Water based STEM and STEM Activities') {
-      return 'Water based STEM and STEAM Activities';
-    }
-    if (str === 'Grassland') {
-      return 'Grasslands';
-    }
-    // Default case for other strings
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  const getTranslatedSubcategoryName = (name: string) => {
+    // Get translated subcategory names
+    const translatedSubcategories = getTranslatedSubcategoryNames(t);
+    const translatedSubcategory = translatedSubcategories.find(
+      (subcat) => subcat.value.toLowerCase() === name.toLowerCase()
+    );
+
+    // Use translated label for display, but keep original name for API calls
+    return translatedSubcategory ? translatedSubcategory.label : name;
   };
   return (
     <Grid container spacing={1}>
@@ -1439,7 +1660,7 @@ const SubFrameworkFilter = React.memo<{
           <Grid key={subFrameworkItem.identifier}>
             <Chip
               key={subFrameworkItem.name}
-              label={capitalizeFirstLetter(subFrameworkItem.name)}
+              label={getTranslatedSubcategoryName(subFrameworkItem.name)}
               variant="outlined"
               sx={{
                 height: 32,
@@ -1527,12 +1748,25 @@ const SubFrameworkFilter = React.memo<{
             <CloseIcon />
           </IconButton>
           <DialogContent sx={{ padding: '45px 30px' }}>
-            <FrameworkFilter
-              frameworkFilter={subFrameworkFilter}
-              framework={subFramework}
-              setFramework={setSubFramework}
-              fromSubcategory={true}
-            />
+            {!ready ? (
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  minHeight: '100px',
+                }}
+              >
+                <Typography>Loading translations...</Typography>
+              </Box>
+            ) : (
+              <FrameworkFilter
+                frameworkFilter={subFrameworkFilter}
+                framework={subFramework}
+                setFramework={setSubFramework}
+                fromSubcategory={true}
+              />
+            )}
           </DialogContent>
         </Dialog>
       )}
@@ -1552,15 +1786,23 @@ const FrameworkFilter = React.memo<{
 }) {
   const router = useRouter();
   const theme = useTheme();
+  const { t, ready } = useAppTranslation();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const transformName = (name: string) => {
-    if (name === 'Water based STEM and STEM Activities') {
-      return 'Water based STEM and STEAM Activities';
+
+  const getTranslatedSubcategoryName = (name: string) => {
+    // If translations are not ready, return the original name to avoid flash
+    if (!ready) {
+      return name;
     }
-    if (name === 'Grassland') {
-      return 'Grasslands';
-    }
-    return name;
+
+    // Get translated subcategory names
+    const translatedSubcategories = getTranslatedSubcategoryNames(t);
+    const translatedSubcategory = translatedSubcategories.find(
+      (subcat) => subcat.value.toLowerCase() === name.toLowerCase()
+    );
+
+    // Use translated label for display, but keep original name for API calls
+    return translatedSubcategory ? translatedSubcategory.label : name;
   };
   const handleItemClick = (item: any) => {
     if (fromSubcategory) {
@@ -1596,7 +1838,7 @@ const FrameworkFilter = React.memo<{
             }}
             onClick={() => handleItemClick(frameworkItem)}
           >
-            {transformName(frameworkItem.name)}
+            {getTranslatedSubcategoryName(frameworkItem.name)}
           </Button>
         </Grid>
       ))}

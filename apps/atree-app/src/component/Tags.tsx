@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { TelemetryEventType } from '../utils/app.constant';
 import { telemetryFactory } from '../utils/telemetry';
 import { trackEvent } from '@shared-lib';
+import { useAppTranslation } from '../utils/i18n.helper';
 
 const buttonColors: Record<string, string> = {
   water: '#0E28AE',
@@ -17,6 +18,18 @@ const buttonColors: Record<string, string> = {
   general: '#FFBD0D',
   potpourri: '#FFBD0D',
 };
+
+// Function to get translated category names (English values for API, translated labels for display)
+const getTranslatedCategoryNames = (t: any) => [
+  { label: t('WATER'), value: 'Water' },
+  { label: t('LAND'), value: 'Land' },
+  { label: t('FOREST'), value: 'Forest' },
+  { label: t('CLIMATE_CHANGE'), value: 'Climate Change' },
+  { label: t('ACTIVITY_BOOKS'), value: 'Activity Books' },
+  { label: t('REFERENCE_BOOKS'), value: 'Reference Books' },
+  { label: t('GENERAL'), value: 'General' },
+  { label: t('POTPOURRI'), value: 'Potpourri' },
+];
 
 interface FrameworkFilterProps {
   frameworkFilter: Array<{ identifier: string; name: string }>;
@@ -34,6 +47,7 @@ export const FrameworkFilter = ({
   const router = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { t } = useAppTranslation();
   const [selectedFramework, setSelectedFramework] = useState<string | null>(
     null
   );
@@ -142,6 +156,15 @@ export const FrameworkFilter = ({
           const lowerCaseName = name.toLowerCase();
           const isPotpourri = lowerCaseName === 'potpourri';
 
+          // Get translated category names
+          const translatedCategories = getTranslatedCategoryNames(t);
+          const translatedCategory = translatedCategories.find(
+            (cat) => cat.value.toLowerCase() === name.toLowerCase()
+          );
+          
+          // Use translated label for display, but keep original name for API calls
+          const displayName = translatedCategory ? translatedCategory.label : name;
+
           return (
             <Button
               key={identifier}
@@ -163,7 +186,7 @@ export const FrameworkFilter = ({
               }}
               onClick={() => handleItemClick({ identifier, name })}
             >
-              {name}
+              {displayName}
             </Button>
           );
         })}

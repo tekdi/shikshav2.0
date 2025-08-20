@@ -52,6 +52,101 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
 import { LANGUAGE_KEYS } from '../../utils/language.constants';
 import { readBookmark } from '../../service/content';
+
+// Function to get translated resource types
+const getTranslatedResourceTypes = (t: any) => [
+  { label: t('FICTION'), value: 'Fiction' },
+  { label: t('NON_FICTION'), value: 'Non-Fiction' },
+  { label: t('PICTURE_BOOK'), value: 'Picture Book' },
+  { label: t('TEXTBOOK_CHAPTER'), value: 'Textbook Chapter' },
+  { label: t('FIELD_GUIDE'), value: 'Field Guide' },
+  { label: t('ACTIVITY_BOOK'), value: 'Activity Book' },
+  { label: t('COMIC_BOOK'), value: 'Comic Book' },
+  { label: t('REFERENCE_BOOK'), value: 'Reference Book' },
+  { label: t('WEBSITE'), value: 'Website' },
+  { label: t('MAGAZINE'), value: 'Magazine' },
+  { label: t('POSTER'), value: 'Poster' },
+  { label: t('BOARD_GAME'), value: 'Board Game' },
+  { label: t('VIDEO'), value: 'video/x-youtube' },
+];
+
+// Function to get translated MIME types
+const getTranslatedMimeTypes = (t: any) => [
+  { label: t('VIDEOS'), value: 'video/x-youtube' },
+  { label: t('PDF'), value: 'application/pdf' },
+];
+
+// Function to get translated subcategory names (English values for API, translated labels for display)
+const getTranslatedSubcategoryNames = (t: any) => [
+  // Water subcategories
+  {
+    label: t('WATER_BASIC_CONCEPTS'),
+    value: 'Water Basic Concepts',
+  },
+  {
+    label: t('WATER_BIODIVERSITY'),
+    value: 'Water Biodiversity',
+  },
+  {
+    label: t('WATER_CONSERVATION'),
+    value: 'Water Conservation',
+  },
+  {
+    label: t('WATER_AND_SANITATION'),
+    value: 'Water and Sanitation',
+  },
+  {
+    label: t('WATER_CRISIS'),
+    value: 'Water Crisis',
+  },
+  {
+    label: t('FRESH_WATER_ECOSYSTEM'),
+    value: 'Fresh water ecosystem',
+  },
+  {
+    label: t('COASTAL_ECOSYSTEM'),
+    value: 'Coastal ecosystem',
+  },
+  {
+    label: t('WATER_BASED_STEM_ACTIVITIES'),
+    value: 'Water based STEM and STEM Activities',
+  },
+  // Land subcategories
+  { label: t('SEED'), value: 'Seed' },
+  { label: t('PLANTS_AND_VEGETABLES'), value: 'Plants and Vegetables' },
+  { label: t('AGRICULTURE'), value: 'Agriculture' },
+  { label: t('FOOD_AND_WASTE'), value: 'Food and Waste' },
+  { label: t('SOIL'), value: 'Soil' },
+  { label: t('LAND_BIODIVERSITY'), value: 'Land Biodiversity' },
+  {
+    label: t('ACTIVITY_BOOK_ON_KITCHEN_GARDENS'),
+    value: 'Activity Book on Kitchen Gardens',
+  },
+  { label: t('TREES'), value: 'Trees' },
+  { label: t('GRASSLANDS'), value: 'Grassland' },
+  // Forest subcategories
+  { label: t('PEOPLE'), value: 'People' },
+  { label: t('WILDLIFE'), value: 'Wildlife' },
+  { label: t('FOREST_BIODIVERSITY'), value: 'Forest Biodiversity' },
+  { label: t('FOREST_MANAGEMENT'), value: 'Forest Management' },
+  { label: t('FOREST_ECOSYSTEMS'), value: 'Forest Ecosystems' },
+  // Potpourri subcategories
+  { label: t('FICTION_AND_NON_FICTION'), value: 'Fiction and Non Fiction' },
+  {
+    label: t('MAGAZINES_NEWSPAPERS_WEBSITES'),
+    value: 'Magazines, Newspapers and Websities',
+  },
+  { label: t('REFERENCE_MATERIALS'), value: 'Reference Materials' },
+  // Climate Change subcategories
+  { label: t('CLIMATE_IMPACTS'), value: 'Climate Impacts' },
+  // Activity Book subcategories
+  { label: t('LESSON_PLAN'), value: 'Lesson Plan' },
+  { label: t('CURRICULUM'), value: 'Curriculum' },
+  { label: t('ACTIVITY_WORKBOOKS'), value: 'Activity Workbooks' },
+  // General subcategories
+  { label: t('GENERAL_TOPICS'), value: 'General Topics' },
+  { label: t('MIXED_CONTENT'), value: 'Mixed Content' },
+];
 const buttonColors = {
   water: '#0E28AE',
   land: '#8F4A50',
@@ -146,10 +241,16 @@ export default function Index() {
                 (bookmark: any) => bookmark.doId
               );
 
-              // For bookmarks, only include identifier filter and remove topic
+              // For bookmarks, merge identifier filter with other filters (like resource type)
               finalFilters = {
+                ...finalFilters, // Keep existing filters (like resource type)
                 identifier: bookmarkedIds,
               };
+
+              console.log(
+                'Bookmark mode - finalFilters after merging:',
+                finalFilters
+              );
 
               // Remove topic filter for bookmarks
               delete finalFilters.topic;
@@ -173,6 +274,10 @@ export default function Index() {
         }
       }
 
+      console.log(
+        'Home page - ContentSearch API call with filters:',
+        finalFilters
+      );
       const data = await ContentSearch({
         channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
         filters: finalFilters,
@@ -188,6 +293,7 @@ export default function Index() {
 
   // **Update Filters and Trigger API Call in One Step**
   const handleApplyFilters = async (selectedValues: any) => {
+    console.log('Home page - handleApplyFilters received:', selectedValues);
     trackEvent({
       action: 'filter_apply',
       category: 'user',
@@ -268,7 +374,7 @@ export default function Index() {
 
         const fdata =
           frameworks.find((item: any) => item.code === 'topic')?.terms || [];
-        setFramework(fdata[0]?.identifier || '');
+
         setFrameworkFilter(fdata);
 
         // Filter live categories
@@ -293,37 +399,68 @@ export default function Index() {
           return;
         }
 
-        //condition if category from URL
-        let selectedFramework = fdata[0];
-        if (frameworkName) {
-          const foundFramework = fdata.find(
-            (item: any) =>
-              item.name.toLowerCase() === frameworkName.toLowerCase()
-          );
-          if (foundFramework) {
-            selectedFramework = foundFramework;
+        // Check if we're on the landing page
+        const isLandingPage =
+          router.pathname === '/' || router.pathname === '/index';
+
+        if (isLandingPage) {
+          // On landing page, don't set any framework or category (empty selection)
+          setFramework('');
+          SetFilterCategory('');
+          setSubFrameworkFilter([]);
+
+          // Don't fetch content on landing page - let user select first
+          return;
+        } else {
+          // On other pages, apply saved selection or default to first item
+          let selectedFramework = fdata[0];
+
+          // Check if there's already a selected framework in localStorage
+          const savedCategory = localStorage.getItem('category');
+
+          if (savedCategory) {
+            // Try to find the saved category in the framework data
+            const foundFramework = fdata.find(
+              (item: any) =>
+                item.name.toLowerCase() === savedCategory.toLowerCase()
+            );
+            if (foundFramework) {
+              selectedFramework = foundFramework;
+            }
           }
+
+          //condition if category from URL
+          if (frameworkName) {
+            const foundFramework = fdata.find(
+              (item: any) =>
+                item.name.toLowerCase() === frameworkName.toLowerCase()
+            );
+            if (foundFramework) {
+              selectedFramework = foundFramework;
+            }
+          }
+
+          const selectedCategory = selectedFramework?.name;
+          const selectedIdentifier = selectedFramework?.identifier;
+
+          setFramework(selectedIdentifier);
+          SetFilterCategory(selectedCategory);
+          localStorage.setItem('category', selectedCategory);
+
+          const newFilters = {
+            topic: [selectedCategory],
+          };
+
+          setFilters({
+            request: {
+              filters: newFilters,
+              offset: 0,
+              limit: 5,
+            },
+          });
+
+          fetchContentData(newFilters);
         }
-        const selectedCategory = selectedFramework?.name;
-        const selectedIdentifier = selectedFramework?.identifier;
-
-        setFramework(selectedIdentifier);
-        SetFilterCategory(selectedCategory);
-        localStorage.setItem('category', selectedCategory);
-
-        const newFilters = {
-          topic: [selectedCategory],
-        };
-
-        setFilters({
-          request: {
-            filters: newFilters,
-            offset: 0,
-            limit: 5,
-          },
-        });
-
-        fetchContentData(newFilters);
       } catch (error) {
         console.error('Error fetching board data:', error);
       } finally {
@@ -336,6 +473,15 @@ export default function Index() {
 
   // **Update FilterCategory When Framework Changes**
   useEffect(() => {
+    // Check if we're on the landing page
+    const isLandingPage =
+      router.pathname === '/' || router.pathname === '/index';
+
+    if (isLandingPage) {
+      // On landing page, don't update categories or subcategories
+      return;
+    }
+
     if (framework && frameworkFilter) {
       //@ts-check
       const subFrameworkData = frameworkFilter?.find(
@@ -426,7 +572,10 @@ export default function Index() {
         return updatedContent;
       });
     } else if (!localStorage.getItem('token')) {
+      // Instead of triggering authentication redirect, show login dialog directly
       setOpenMessageDialog(true);
+      // Store the content ID to redirect after login
+      localStorage.setItem('pendingContentRedirect', currentContentId);
     } else {
       router.push(`/contents/${currentContentId}`);
     }
@@ -531,13 +680,14 @@ export default function Index() {
     }
   }, [framework, frameworkFilter, frameworkName]);
   const transformDisplayName = (name: string) => {
-    if (name === 'Water based STEM and STEM Activities') {
-      return 'STEM and STEAM Activities';
-    }
-    if (name === 'Grassland') {
-      return 'Grasslands';
-    }
-    return name;
+    // Get translated subcategory names
+    const translatedSubcategories = getTranslatedSubcategoryNames(t);
+    const translatedSubcategory = translatedSubcategories.find(
+      (subcat) => subcat.value.toLowerCase() === name.toLowerCase()
+    );
+
+    // Use translated label for display, but keep original name for API calls
+    return translatedSubcategory ? translatedSubcategory.label : name;
   };
 
   // Don't render until translations are ready
@@ -560,7 +710,14 @@ export default function Index() {
                   filterValues={filters}
                   onApply={handleApplyFilters}
                   isMobile={isMobile}
-                  resources={RESOURCE_TYPES}
+                  resources={getTranslatedResourceTypes(t)}
+                  translations={{
+                    resourceType: t('RESOURCE_TYPE'),
+                    apply: t('APPLY'),
+                    reset: t('RESET'),
+                    subject: t('SUBJECT'),
+                    contentType: t('CONTENT_TYPE'),
+                  }}
                 />
               </Box>
             </Grid>
@@ -597,38 +754,48 @@ export default function Index() {
                     padding: '9px 0px',
                   }}
                 >
-                  {bookmark !== 'true' && (
-                    <>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                        }}
-                      >
-                        {subFrameworkFilter &&
-                          subFrameworkFilter.length > 0 && (
-                            <Title>{LANGUAGE_KEYS.BROWSE_SUBCATEGORIES}</Title>
-                          )}
-                      </Box>
+                  {/* Header section - show for both bookmark and regular views */}
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: bookmark === 'true' ? '16px' : '0px',
+                    }}
+                  >
+                    {bookmark === 'true' ? (
+                      <Title>{LANGUAGE_KEYS.BOOKMARKED_CONTENT}</Title>
+                    ) : (
+                      subFrameworkFilter &&
+                      subFrameworkFilter.length > 0 && (
+                        <Title>{LANGUAGE_KEYS.BROWSE_SUBCATEGORIES}</Title>
+                      )
+                    )}
+                  </Box>
 
-                      <Box
-                        sx={{
-                          width: '100%',
-                          padding: '12px 0px',
-                          gap: '16px',
-                          flexDirection: 'column',
-                          display: 'flex',
-                        }}
-                      >
-                        <SubFrameworkFilter
-                          subFramework={subFramework}
-                          setSubFramework={setSubFramework}
-                          lastButton={true}
-                          subFrameworkFilter={subFrameworkFilter || []}
-                        />
-                      </Box>
-                    </>
+                  {/* SubFrameworkFilter - only show when not in bookmark mode */}
+                  {bookmark !== 'true' && (
+                    <Box
+                      sx={{
+                        width: '100%',
+                        padding: '12px 0px',
+                        gap: '16px',
+                        flexDirection: 'column',
+                        display: 'flex',
+                      }}
+                    >
+                      <SubFrameworkFilter
+                        subFramework={
+                          router.pathname === '/' ||
+                          router.pathname === '/index'
+                            ? ''
+                            : subFramework
+                        }
+                        setSubFramework={setSubFramework}
+                        lastButton={true}
+                        subFrameworkFilter={subFrameworkFilter || []}
+                      />
+                    </Box>
                   )}
 
                   <ContentSection
@@ -682,7 +849,9 @@ export default function Index() {
                         if (!selected || selected === '') {
                           return (
                             <span style={{ color: '#999' }}>
-                              Browse by Sub Categories
+                              {bookmark === 'true'
+                                ? 'Bookmarked Content'
+                                : 'Browse by Sub Categories'}
                             </span>
                           );
                         }
@@ -1037,20 +1206,27 @@ const FrameworkFilter = React.memo<{
 }>(({ frameworkFilter, framework, setFramework, fromSubcategory }) => {
   const router = useRouter();
   const theme = useTheme();
+  const { t, ready } = useAppTranslation();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showForwardArrow, setShowForwardArrow] = useState(true);
   const hasMultipleItems = frameworkFilter?.length > 1;
   const showArrow = hasMultipleItems && frameworkFilter?.length > 0;
 
-  const transformName = (name: string) => {
-    if (name === 'Water based STEM and STEM Activities') {
-      return 'Water based STEM and STEAM Activities';
+  const getTranslatedSubcategoryName = (name: string) => {
+    // If translations are not ready, return the original name to avoid flash
+    if (!ready) {
+      return name;
     }
-    if (name === 'Grassland') {
-      return 'Grasslands';
-    }
-    return name;
+
+    // Get translated subcategory names
+    const translatedSubcategories = getTranslatedSubcategoryNames(t);
+    const translatedSubcategory = translatedSubcategories.find(
+      (subcat) => subcat.value.toLowerCase() === name.toLowerCase()
+    );
+
+    // Use translated label for display, but keep original name for API calls
+    return translatedSubcategory ? translatedSubcategory.label : name;
   };
 
   const handleItemClick = (item: any) => {
@@ -1153,7 +1329,7 @@ const FrameworkFilter = React.memo<{
                   },
                 }}
               >
-                {transformName(frameworkItem.name)}
+                {getTranslatedSubcategoryName(frameworkItem.name)}
               </Button>
             </Grid>
           ))}
@@ -1201,7 +1377,7 @@ const FrameworkFilter = React.memo<{
                   },
                 }}
               >
-                {transformName(frameworkItem.name)}
+                {getTranslatedSubcategoryName(frameworkItem.name)}
               </Box>
             ))}
           </Box>
@@ -1234,7 +1410,7 @@ const SubFrameworkFilter = React.memo<{
   subFramework,
   setSubFramework,
 }) {
-  const { t } = useAppTranslation();
+  const { t, ready } = useAppTranslation();
   const router = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -1277,15 +1453,20 @@ const SubFrameworkFilter = React.memo<{
     });
     router.push(`/contents`);
   };
-  const capitalizeFirstLetter = (str: string) => {
-    if (str === 'Water based STEM and STEM Activities') {
-      return 'Water based STEM and STEAM Activities';
+  const getTranslatedSubcategoryName = (name: string) => {
+    // If translations are not ready, return the original name to avoid flash
+    if (!ready) {
+      return name;
     }
-    if (str === 'Grassland') {
-      return 'Grasslands';
-    }
-    // Default case for other strings
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+
+    // Get translated subcategory names
+    const translatedSubcategories = getTranslatedSubcategoryNames(t);
+    const translatedSubcategory = translatedSubcategories.find(
+      (subcat) => subcat.value.toLowerCase() === name.toLowerCase()
+    );
+
+    // Use translated label for display, but keep original name for API calls
+    return translatedSubcategory ? translatedSubcategory.label : name;
   };
   return (
     <Grid container spacing={1}>
@@ -1295,7 +1476,7 @@ const SubFrameworkFilter = React.memo<{
           <Grid key={subFrameworkItem.identifier}>
             <Chip
               key={subFrameworkItem.name}
-              label={capitalizeFirstLetter(subFrameworkItem.name)}
+              label={getTranslatedSubcategoryName(subFrameworkItem.name)}
               variant="outlined"
               sx={{
                 height: 32,
@@ -1383,12 +1564,25 @@ const SubFrameworkFilter = React.memo<{
             <CloseIcon />
           </IconButton>
           <DialogContent sx={{ padding: '45px 30px' }}>
-            <FrameworkFilter
-              frameworkFilter={subFrameworkFilter}
-              framework={subFramework}
-              setFramework={setSubFramework}
-              fromSubcategory={true}
-            />
+            {!ready ? (
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  minHeight: '100px',
+                }}
+              >
+                <Typography>Loading translations...</Typography>
+              </Box>
+            ) : (
+              <FrameworkFilter
+                frameworkFilter={subFrameworkFilter}
+                framework={subFramework}
+                setFramework={setSubFramework}
+                fromSubcategory={true}
+              />
+            )}
           </DialogContent>
         </Dialog>
       )}

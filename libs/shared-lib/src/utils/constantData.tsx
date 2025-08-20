@@ -1,6 +1,6 @@
 export const RESOURCE_TYPES = [
   { label: 'Fiction', value: 'fiction' },
-  { label: 'Non-Fiction', value: 'nonFiction' },
+  { label: 'Non-Fiction', value: 'non-fiction' },
   { label: 'Picture Book', value: 'pictureBook' },
   { label: 'Textbook Chapter', value: 'textbookChapter' },
   { label: 'Field Guide', value: 'fieldGuide' },
