@@ -92,7 +92,6 @@ const List: React.FC<ListProps> = () => {
         'MAGAZINES_NEWSPAPERS_AND_WEBSITIES',
       'Reference Materials': 'REFERENCE_MATERIALS',
       'Climate Change': 'CLIMATE_CHANGE',
-      'Activity Book': 'ACTIVITY_BOOK',
       'Lesson Plan': 'LESSON_PLAN',
       Curriculum: 'CURRICULUM',
     };
