@@ -26,6 +26,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Close, Visibility, VisibilityOff } from '@mui/icons-material';
 import { useKeycloak } from '@react-keycloak/web';
 import { useRouter } from 'next/router';
+import { useKeycloakManager } from '../../hooks/useKeycloakManager';
 import { getUserAuthInfo, signin } from '../../service/content';
 import Loader from '../../component/layout/LoaderComponent';
 import Layout from '../../component/layout/layout';
@@ -43,6 +44,7 @@ interface ListProps {}
 
 const Login: React.FC<ListProps> = () => {
   const { t } = useAppTranslation();
+  const { enableSSO } = useKeycloakManager();
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({ email: '', password: '' });
   const [alert, setAlert] = useState({
@@ -74,6 +76,11 @@ const Login: React.FC<ListProps> = () => {
   const [otp, setOtp] = useState('');
   const [otpHash, setOtpHash] = useState('');
   const [otpTimer, setOtpTimer] = useState(600); // 600 seconds = 10 minutes
+
+  // Enable SSO check when user visits sign-in page
+  useEffect(() => {
+    enableSSO();
+  }, [enableSSO]);
 
   // Auto-dismiss success alerts after 5 seconds
   useEffect(() => {

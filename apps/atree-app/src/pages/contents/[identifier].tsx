@@ -56,6 +56,7 @@ import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import { useAppTranslation } from '../../utils/i18n.helper';
 import GlobalAlert from '../../component/GlobalAlert';
+import { cleanupAuthErrorFromUrl } from '../../utils/urlCleanup';
 
 // Function to get translated subcategory names (English values for API, translated labels for display)
 const getTranslatedSubcategoryNames = (t: any) => [
@@ -163,6 +164,11 @@ interface ContentItem {
 
 export default function Content() {
   const { t } = useAppTranslation();
+
+  // Clean up authentication error fragments from URL on page load
+  useEffect(() => {
+    cleanupAuthErrorFromUrl();
+  }, []);
   const router = useRouter();
   const { identifier } = router.query; // Access dynamic parameter 'identifier'
   const [contentData, setContentData] = useState<ContentItem | null>(null);

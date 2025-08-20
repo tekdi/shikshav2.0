@@ -6,6 +6,11 @@ import './global.css';
 import type { AppProps } from 'next/app';
 import { ReactKeycloakProvider } from '@react-keycloak/web';
 import keycloak from '../service/keycloack';
+import {
+  cleanupAuthErrorFromUrl,
+  preKeycloakUrlCleanup,
+  shouldSkipKeycloakCheck,
+} from '../utils/urlCleanup';
 import { appWithTranslation, useTranslation } from 'next-i18next';
 import { useEffect } from 'react';
 import { getInitialLanguage } from '../utils/language.constants';
@@ -213,9 +218,33 @@ function CustomApp({ Component, pageProps }: AppProps) {
     };
   }, []);
 
+  // Pre-cleanup authentication error fragments from URL before Keycloak initialization
+  useEffect(() => {
+    preKeycloakUrlCleanup();
+  }, []);
+
   const enhancedPageProps = {
     ...pageProps,
     ...frameworkState,
+  };
+
+  const handleKeycloakEvent = (event: any, error: any) => {
+    if (event === 'onAuthError') {
+      console.log('Auth error:', error);
+      // Clean up any authentication error fragments from URL
+      cleanupAuthErrorFromUrl();
+
+      // If it's a login_required error, don't try to authenticate automatically
+      if (error?.error === 'login_required') {
+        console.log('Login required, but allowing public access');
+      }
+    }
+
+    if (event === 'onInitError') {
+      console.log('Keycloak init error:', error);
+      // Clean up URL on init error too
+      cleanupAuthErrorFromUrl();
+    }
   };
 
   return (
@@ -225,9 +254,21 @@ function CustomApp({ Component, pageProps }: AppProps) {
         onLoad: 'check-sso',
         silentCheckSsoRedirectUri:
           typeof window !== 'undefined'
-            ? `${window.location.origin}/silent-check-sso.html`
+            ? `${window.location.origin}/signin`
             : '',
+        checkLoginIframe: false,
+        enableLogging: false,
+        // Disable automatic SSO check to prevent loops
+        silentCheckSsoFallback: false,
+        // Don't automatically redirect on authentication failure
+        redirectUri:
+          typeof window !== 'undefined'
+            ? `${window.location.origin}/signin`
+            : '',
+        // Disable SSO check completely for public browsing
+        silentCheckSso: false,
       }}
+      onEvent={handleKeycloakEvent}
     >
       <ThemeProvider theme={theme}>
         <CssBaseline />

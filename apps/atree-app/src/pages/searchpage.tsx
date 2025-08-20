@@ -111,7 +111,7 @@ export default function Searchpage() {
 
         // Check if there's already a selected framework in localStorage
         const savedCategory = localStorage.getItem('category');
-        let selectedFramework = fdata[0]; // Default to first item
+        let selectedFramework = null;
 
         if (savedCategory) {
           // Try to find the saved category in the framework data
@@ -124,7 +124,8 @@ export default function Searchpage() {
           }
         }
 
-        setFramework(selectedFramework.identifier || '');
+        // Only set framework if we have a saved selection
+        setFramework(selectedFramework?.identifier || '');
         setFrameworkFilter(fdata);
 
         // Filter live categories
@@ -135,11 +136,14 @@ export default function Searchpage() {
           ),
         });
 
-        const selectedCategory = selectedFramework?.name;
-        const selectedIdentifier = selectedFramework?.identifier;
+        // Only set category if we have a selected framework
+        if (selectedFramework) {
+          const selectedCategory = selectedFramework?.name;
+          const selectedIdentifier = selectedFramework?.identifier;
 
-        setFramework(selectedIdentifier);
-        localStorage.setItem('category', selectedCategory);
+          setFramework(selectedIdentifier);
+          localStorage.setItem('category', selectedCategory);
+        }
       } catch (error) {
         console.error('Error fetching board data:', error);
       } finally {

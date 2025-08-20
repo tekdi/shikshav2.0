@@ -52,6 +52,8 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
 import { LANGUAGE_KEYS } from '../../utils/language.constants';
 import { readBookmark } from '../../service/content';
+import { useAuthPopup } from '../../hooks/useAuthPopup';
+import { useKeycloakManager } from '../../hooks/useKeycloakManager';
 
 // Function to get translated resource types
 const getTranslatedResourceTypes = (t: any) => [
@@ -182,6 +184,8 @@ export default function Index() {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
   const [contentData, setContentData] = useState<any>([]);
+  const { showLoginPopup, checkAndRedirectAfterLogin } = useAuthPopup();
+  const { disableSSO } = useKeycloakManager();
 
   const [consumedContent, setConsumedContent] = useState<string[]>([]);
   const [frameworkFilter, setFrameworkFilter] = useState();
@@ -313,7 +317,9 @@ export default function Index() {
 
       // Ensure topic is set correctly (only if not in bookmark mode)
       if (bookmark !== 'true') {
-        cleanedFilters.topic = filterCategory ? [filterCategory] : ['Water'];
+        if (filterCategory) {
+          cleanedFilters.topic = [filterCategory];
+        }
       }
 
       // Explicitly remove mimeType if it's empty OR if it's inherited from prevFilters
@@ -409,7 +415,22 @@ export default function Index() {
           SetFilterCategory('');
           setSubFrameworkFilter([]);
 
-          // Don't fetch content on landing page - let user select first
+          // On landing page, don't set any framework or category (empty selection)
+          setFramework('');
+          SetFilterCategory('');
+          setSubFrameworkFilter([]);
+
+          // Set empty filters for landing page
+          const newFilters = {
+            request: {
+              filters: {},
+              offset: 0,
+              limit: 5,
+            },
+          };
+          setFilters(newFilters);
+          fetchContentData({});
+
           return;
         } else {
           // On other pages, apply saved selection or default to first item
@@ -572,9 +593,8 @@ export default function Index() {
         return updatedContent;
       });
     } else if (!localStorage.getItem('token')) {
-      // Instead of triggering authentication redirect, show login dialog directly
+      // Show login dialog for 4th content access
       setOpenMessageDialog(true);
-      // Store the content ID to redirect after login
       localStorage.setItem('pendingContentRedirect', currentContentId);
     } else {
       router.push(`/contents/${currentContentId}`);
@@ -593,7 +613,7 @@ export default function Index() {
     setFilters((prevFilters) => {
       const updatedFilters = {
         ...prevFilters.request.filters, // Preserve existing filters
-        topic: filterCategory ? [filterCategory] : ['Water'],
+        ...(filterCategory && { topic: [filterCategory] }),
       };
 
       if (accessValue === 'Full Access') {
@@ -621,6 +641,16 @@ export default function Index() {
       setConsumedContent(JSON.parse(storedContent));
     }
   }, [frameworkName]);
+
+  // Disable SSO check for public browsing
+  useEffect(() => {
+    disableSSO();
+  }, [disableSSO]);
+
+  // Check for redirect after successful login
+  useEffect(() => {
+    checkAndRedirectAfterLogin();
+  }, [checkAndRedirectAfterLogin]);
 
   // **Handle Dialog Close**
   const handleCloseMessage = () => {
@@ -651,7 +681,7 @@ export default function Index() {
       if (selectedSubFramework) {
         const newFilters = {
           ...filters.request.filters,
-          topic: filterCategory ? [filterCategory] : ['Water'],
+          ...(filterCategory && { topic: [filterCategory] }),
           subTopic: [selectedSubFramework.name], // Add subTopic filter
         };
 

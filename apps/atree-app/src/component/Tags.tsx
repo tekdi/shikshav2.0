@@ -52,6 +52,15 @@ export const FrameworkFilter = ({
     null
   );
   const syncCategoryFromStorage = () => {
+    // Don't sync category on landing page
+    if (
+      window.location.pathname === '/' ||
+      window.location.pathname === '/index'
+    ) {
+      setSelectedFramework('');
+      return;
+    }
+
     const storedCategory = localStorage.getItem('category')?.toLowerCase();
     setSelectedFramework(storedCategory ?? '');
   };
@@ -66,8 +75,8 @@ export const FrameworkFilter = ({
     return () => clearInterval(interval); // Cleanup
   }, []);
   useEffect(() => {
-    // Get stored category from localStorage
-    if (window.location.pathname === '/') {
+    // Remove category from localStorage on landing page
+    if (window.location.pathname === '/' || window.location.pathname === '/index') {
       localStorage.removeItem('category');
     }
     syncCategoryFromStorage();
@@ -161,9 +170,11 @@ export const FrameworkFilter = ({
           const translatedCategory = translatedCategories.find(
             (cat) => cat.value.toLowerCase() === name.toLowerCase()
           );
-          
+
           // Use translated label for display, but keep original name for API calls
-          const displayName = translatedCategory ? translatedCategory.label : name;
+          const displayName = translatedCategory
+            ? translatedCategory.label
+            : name;
 
           return (
             <Button

@@ -233,8 +233,8 @@ export default function Layout({
           // On landing page, don't set any framework (empty selection)
           setFramework('');
         } else {
-          // On other pages, apply saved selection or default to first item
-          let selectedFramework = fdata[0]; // Default to first item
+          // On other pages, apply saved selection only if it exists
+          let selectedFramework = null;
 
           // Check if there's already a selected framework in localStorage
           const savedCategory = localStorage.getItem('category');
@@ -250,7 +250,8 @@ export default function Layout({
             }
           }
 
-          setFramework(selectedFramework.identifier || 'default');
+          // Only set framework if we have a saved selection
+          setFramework(selectedFramework?.identifier || '');
         }
       } else {
         // Set default framework data if no valid data found
