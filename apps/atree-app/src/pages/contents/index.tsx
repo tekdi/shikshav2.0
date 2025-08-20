@@ -16,6 +16,7 @@ import Footer from '../../component/layout/Footer';
 import Grid from '@mui/material/Grid2';
 import FilterDialog from 'libs/shared-lib/src/lib/Filterdialog/FilterDialog';
 import { useAppTranslation } from '../../utils/i18n.helper';
+import { LANGUAGE_KEYS } from '../../utils/language.constants';
 
 // Function to get translated resource types
 const getTranslatedResourceTypes = (t: any) => [
@@ -97,7 +98,15 @@ const List: React.FC<ListProps> = () => {
     };
 
     const translationKey = categoryMap[name];
-    return translationKey ? t(translationKey) : name;
+    // Type guard to check if the key exists in LANGUAGE_KEYS
+    const isValidTranslationKey = (
+      key: string
+    ): key is keyof typeof LANGUAGE_KEYS => {
+      return key in LANGUAGE_KEYS;
+    };
+    return translationKey && isValidTranslationKey(translationKey)
+      ? t(translationKey)
+      : name;
   };
 
   const translatedCategory = storedCategory
