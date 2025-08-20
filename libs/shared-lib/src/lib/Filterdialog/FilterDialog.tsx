@@ -19,7 +19,7 @@ import {
   Select,
   Typography,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import { TelemetryEventType } from '../../utils/app.constant';
 import { telemetryFactory } from '../../utils/telemetry';
@@ -92,12 +92,10 @@ const CustomResourceCheckbox = ({
         size="small"
         checked={
           Array.isArray(currentSelectedValues) &&
-          currentSelectedValues.includes(
-            filterCode === 'mimeType' ? option.value : option.label
-          )
+          currentSelectedValues.includes(option.value)
         }
         onChange={(event) => handleCheckboxChange(event, filterCode)}
-        value={filterCode === 'mimeType' ? option.value : option.label}
+        value={option.value}
         sx={{ color: '#1D1B20', '&.Mui-checked': { color: '#FFBD0D' } }}
       />
     }
@@ -153,6 +151,13 @@ export const FilterDialog = ({
   isMobile = false,
   resources = [],
   mimeType = [],
+  translations = {
+    resourceType: 'Resource Type',
+    apply: 'Apply',
+    reset: 'Reset',
+    subject: 'Subject',
+    contentType: 'Content Type',
+  },
 }: {
   open?: boolean;
   onClose?: () => void;
@@ -176,6 +181,13 @@ export const FilterDialog = ({
   isMobile?: boolean;
   resources?: { label: string; value: string }[];
   mimeType?: { label: string; value: string }[];
+  translations?: {
+    resourceType: string;
+    apply: string;
+    reset: string;
+    subject: string;
+    contentType: string;
+  };
 }) => {
   // Manage the selected values for each category
   const [selectedValues, setSelectedValues] = useState(filterValues ?? {});
@@ -185,12 +197,38 @@ export const FilterDialog = ({
     mimeType: [] as string[],
   });
 
-  useEffect(() => {
-    const mimeType = filterValues?.request?.filters?.mimeType;
-    const resource = filterValues?.request?.filters?.resource;
+  // Memoize dependencies to prevent infinite re-renders
+  const memoizedFilterValues = useMemo(
+    () => filterValues,
+    [JSON.stringify(filterValues)]
+  );
+  const memoizedResources = useMemo(
+    () => resources,
+    [JSON.stringify(resources)]
+  );
+  const memoizedMimeType = useMemo(() => mimeType, [JSON.stringify(mimeType)]);
 
-    const isMimeTypeEmpty = !mimeType || mimeType.length === 0;
-    const isResourceEmpty = !resource || resource.length === 0;
+  useEffect(() => {
+    const mimeType = memoizedFilterValues?.request?.filters?.mimeType;
+    const resource = memoizedFilterValues?.request?.filters?.resource;
+
+    // Helper function to map Hindi labels back to English values
+    const mapLabelsToValues = (labels: string[], resourceOptions: any[]) => {
+      if (!labels || !Array.isArray(labels)) return [];
+
+      return labels.map((label) => {
+        // Find the option that matches this label
+        const option = resourceOptions.find((opt) => opt.label === label);
+        // Return the English value, or the original label if not found
+        return option ? option.value : label;
+      });
+    };
+
+    const mappedMimeType = mapLabelsToValues(mimeType, memoizedMimeType || []);
+    const mappedResource = mapLabelsToValues(resource, memoizedResources);
+
+    const isMimeTypeEmpty = !mappedMimeType || mappedMimeType.length === 0;
+    const isResourceEmpty = !mappedResource || mappedResource.length === 0;
 
     if (isMimeTypeEmpty && isResourceEmpty) {
       setSelectedValues({});
@@ -200,40 +238,63 @@ export const FilterDialog = ({
       });
     } else {
       setSelectedValues({
-        mimeType: mimeType || [],
-        resource: resource || [],
+        mimeType: mappedMimeType || [],
+        resource: mappedResource || [],
       });
 
       setSelectedFilters({
-        mimeType: mimeType || [],
-        resource: resource || [],
+        mimeType: mappedMimeType || [],
+        resource: mappedResource || [],
       });
     }
-    if (filterValues?.request?.filters?.topic) {
-      setSelectedTopic(filterValues?.request?.filters?.topic);
+    if (memoizedFilterValues?.request?.filters?.topic) {
+      setSelectedTopic(memoizedFilterValues?.request?.filters?.topic);
       setSelectedValues({
-        topic: filterValues?.request?.filters?.topic,
-        subTopic: filterValues?.request?.filters?.subTopic,
+        topic: memoizedFilterValues?.request?.filters?.topic,
+        subTopic: memoizedFilterValues?.request?.filters?.subTopic,
       });
     }
-    if (filterValues?.filters?.topic) {
-      localStorage.setItem('category', filterValues?.filters?.topic);
+    if (memoizedFilterValues?.filters?.topic) {
+      localStorage.setItem('category', memoizedFilterValues?.filters?.topic);
 
-      setSelectedTopic(filterValues?.filters?.topic);
+      setSelectedTopic(memoizedFilterValues?.filters?.topic);
       setSelectedValues({
-        topic: filterValues?.filters?.topic,
-        subTopic: filterValues?.filters?.subTopic,
+        topic: memoizedFilterValues?.filters?.topic,
+        subTopic: memoizedFilterValues?.filters?.subTopic,
       });
     }
-  }, [filterValues]);
+  }, [memoizedFilterValues, memoizedResources]);
 
   useEffect(() => {
     const savedFilters = localStorage.getItem('selectedFilters');
-    if (savedFilters) {
-      setSelectedFilters(JSON.parse(savedFilters));
-      setSelectedValues(JSON.parse(savedFilters));
+    if (savedFilters && resources.length > 0 && mimeType.length > 0) {
+      const parsedFilters = JSON.parse(savedFilters);
+
+      // Helper function to map Hindi labels back to English values
+      const mapLabelsToValues = (labels: string[], resourceOptions: any[]) => {
+        if (!labels || !Array.isArray(labels)) return [];
+
+        return labels.map((label) => {
+          // Find the option that matches this label
+          const option = resourceOptions.find((opt) => opt.label === label);
+          // Return the English value, or the original label if not found
+          return option ? option.value : label;
+        });
+      };
+
+      const mappedFilters = {
+        ...parsedFilters,
+        resource: mapLabelsToValues(parsedFilters.resource, memoizedResources),
+        mimeType: mapLabelsToValues(
+          parsedFilters.mimeType,
+          memoizedMimeType || []
+        ),
+      };
+
+      setSelectedFilters(mappedFilters);
+      setSelectedValues(mappedFilters);
     }
-  }, []);
+  }, [memoizedResources, memoizedMimeType]);
   const updateSelectedValues = (filterCode: string, newValue: any) => {
     setSelectedValues((prev: any) => ({
       ...prev,
@@ -296,6 +357,14 @@ export const FilterDialog = ({
     const { checked, value } = event.target;
     const currentValues = selectedFilters[filterType] || [];
 
+    console.log('FilterDialog - handleResourceCheckboxChange:', {
+      checked,
+      value,
+      filterType,
+      currentValues,
+      option: resources.find((opt) => opt.value === value),
+    });
+
     const updatedValues = checked
       ? [...currentValues, value]
       : currentValues.filter((v: string) => v !== value);
@@ -305,12 +374,15 @@ export const FilterDialog = ({
       [filterType]: updatedValues,
     };
 
+    console.log('FilterDialog - updatedFilters:', updatedFilters);
+
     setSelectedFilters(updatedFilters);
     setSelectedValues((prev: any) => ({
       ...prev,
       [filterType]: updatedValues,
     }));
 
+    // Always store English values in localStorage
     localStorage.setItem('selectedFilters', JSON.stringify(updatedFilters));
 
     const { userId, subtype } = getUserTelemetryInfo();
@@ -362,6 +434,7 @@ export const FilterDialog = ({
     onSubjectsChange,
     selectedContentTypes,
     onContentTypeChange,
+    translations,
   }: any) => {
     return (
       <Box
@@ -394,7 +467,7 @@ export const FilterDialog = ({
                       fontFamily: 'Poppins',
                     }}
                   >
-                    Resource Type
+                    {translations?.resourceType || 'Resource Type'}
                   </Typography>
                   <Button
                     size="small"
@@ -451,7 +524,7 @@ export const FilterDialog = ({
         {/* Subject Filter */}
         {filter?.subject?.length > 0 && (
           <FormControl fullWidth margin="normal">
-            <InputLabel>Subject</InputLabel>
+            <InputLabel>{translations?.subject || 'Subject'}</InputLabel>
             <Select
               multiple
               value={selectedSubjects || []}
@@ -477,7 +550,7 @@ export const FilterDialog = ({
                 onSubjectsChange?.(value);
               }}
               renderValue={(selected) => (selected as string[]).join(', ')}
-              label="Subject"
+              label={translations?.subject || 'Subject'}
             >
               {filter.subject.map((subject: any) => (
                 <MenuItem key={subject} value={subject}>
@@ -494,7 +567,9 @@ export const FilterDialog = ({
         {/* Content Type Filter */}
         {filter?.contentType?.length > 0 && (
           <FormControl fullWidth margin="normal">
-            <InputLabel>Content Type</InputLabel>
+            <InputLabel>
+              {translations?.contentType || 'Content Type'}
+            </InputLabel>
             <Select
               multiple
               value={selectedContentTypes || []}
@@ -523,7 +598,7 @@ export const FilterDialog = ({
                 onContentTypeChange?.(value);
               }}
               renderValue={(selected) => (selected as string[]).join(', ')}
-              label="Content Type"
+              label={translations?.contentType || 'Content Type'}
             >
               {filter.contentType.map((type: any) => (
                 <MenuItem key={type} value={type}>
@@ -592,6 +667,7 @@ export const FilterDialog = ({
               onSubjectsChange={onSubjectsChange}
               selectedContentTypes={selectedContentTypes}
               onContentTypeChange={onContentTypeChange}
+              translations={translations}
             />
             {/* Buttons */}
           </DialogContent>
@@ -620,6 +696,10 @@ export const FilterDialog = ({
                       ],
                     },
                   });
+                  console.log(
+                    'FilterDialog - Apply button clicked, selectedValues:',
+                    selectedValues
+                  );
                   onApply?.(selectedValues);
                   onClose?.();
                 }}
@@ -632,7 +712,7 @@ export const FilterDialog = ({
                   width: '132px',
                 }}
               >
-                Apply
+                {translations?.apply || 'Apply'}
               </Button>
             </Box>
           </DialogActions>
@@ -670,7 +750,7 @@ export const FilterDialog = ({
                         fontFamily: 'Poppins',
                       }}
                     >
-                      Resource Type
+                      {translations?.resourceType || 'Resource Type'}
                     </Typography>
                     <Button
                       size="small"
@@ -750,7 +830,7 @@ export const FilterDialog = ({
           {/* Subject */}
           {filter?.subject && filter.subject.length > 0 && (
             <FormControl fullWidth margin="normal">
-              <InputLabel>Subject</InputLabel>
+              <InputLabel>{translations?.subject || 'Subject'}</InputLabel>
               <Select
                 multiple
                 value={selectedSubjects || []}
@@ -760,7 +840,7 @@ export const FilterDialog = ({
                   onSubjectsChange?.(value);
                 }}
                 renderValue={(selected) => (selected as string[]).join(', ')} // Join array values for display
-                label="Subject"
+                label={translations?.subject || 'Subject'}
               >
                 {filter.subject.map((subject) => (
                   <MenuItem key={subject} value={subject}>
@@ -777,7 +857,9 @@ export const FilterDialog = ({
           {/* Content Type */}
           {filter?.contentType && filter.contentType.length > 0 && (
             <FormControl fullWidth margin="normal">
-              <InputLabel>Content Type</InputLabel>
+              <InputLabel>
+                {translations?.contentType || 'Content Type'}
+              </InputLabel>
               <Select
                 multiple
                 value={selectedContentTypes || []}
@@ -787,7 +869,7 @@ export const FilterDialog = ({
                   onContentTypeChange?.(value);
                 }}
                 renderValue={(selected) => (selected as string[]).join(', ')}
-                label="Content Type"
+                label={translations?.contentType || 'Content Type'}
               >
                 {filter.contentType.map((type) => (
                   <MenuItem key={type} value={type}>

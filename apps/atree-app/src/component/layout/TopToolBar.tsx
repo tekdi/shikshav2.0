@@ -18,6 +18,8 @@ import SearchTypeModal from '../SearchTypeModal';
 import { FrameworkFilter } from '../Tags';
 import LanguageSwitcher from '../LanguageSwitcher';
 import { useRouter } from 'next/router';
+import { useAppTranslation } from '../../utils/i18n.helper';
+import { LANGUAGE_KEYS } from '../../utils/language.constants';
 interface ActionIcon {
   icon: React.ReactNode;
   ariaLabel: string;
@@ -77,6 +79,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
   _isDrawer,
 }) => {
   const router = useRouter();
+  const { t, ready } = useAppTranslation();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [frameworkFilter, setFrameworkFilter] = useState<any[]>([]);
   const [framework, setFramework] = useState('');
@@ -114,8 +117,36 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
           frameworks.find((item: any) => item.code === 'topic')?.terms || [];
 
         if (fdata && fdata.length > 0) {
-          setFramework(fdata[0]?.identifier || 'default');
+          // Check if we're on the landing page
+          const isLandingPage =
+            router.pathname === '/' || router.pathname === '/index';
+
           setFrameworkFilter(fdata);
+
+          if (isLandingPage) {
+            // On landing page, don't set any framework (empty selection)
+            setFramework('');
+          } else {
+            // On other pages, apply saved selection only if it exists
+            let selectedFramework = null;
+
+            // Check if there's already a selected framework in localStorage
+            const savedCategory = localStorage.getItem('category');
+
+            if (savedCategory) {
+              // Try to find the saved category in the framework data
+              const foundFramework = fdata.find(
+                (item: any) =>
+                  item.name.toLowerCase() === savedCategory.toLowerCase()
+              );
+              if (foundFramework) {
+                selectedFramework = foundFramework;
+              }
+            }
+
+            // Only set framework if we have a saved selection
+            setFramework(selectedFramework?.identifier || '');
+          }
         } else {
           // Set default framework data if no valid data found
           setFrameworkFilter([
@@ -295,7 +326,11 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                 >
                   <FrameworkFilter
                     frameworkFilter={frameworkFilter}
-                    framework={framework}
+                    framework={
+                      router.pathname === '/' || router.pathname === '/index'
+                        ? ''
+                        : framework
+                    }
                     setFramework={setFramework}
                     fromSubcategory={false}
                   />
@@ -316,6 +351,55 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                       }}
                     >
                       {/* 🔍 Search Box */}
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: { xs: '40px', md: '40px' },
+                          height: '40px',
+                          borderRadius: '28px',
+                          cursor: 'pointer',
+                        }}
+                        onClick={handleSearchOpen}
+                      >
+                        <SearchIcon sx={{ color: 'text.secondary' }} />
+                      </Box>
+
+                      {/* 🌐 Language Switcher */}
+                      <Box
+                        sx={{
+                          width: { xs: 100, sm: 120 },
+                          display: 'flex',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <LanguageSwitcher />
+                      </Box>
+
+                      {/* ☰ Menu Icon */}
+                      <IconButton
+                        size="large"
+                        edge="start"
+                        sx={{ color: 'text.secondary' }}
+                        aria-label="menu"
+                        onClick={menuIconClick}
+                      >
+                        <MenuIcon />
+                      </IconButton>
+                    </Box>
+                  ) : isAuthPage ? (
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        gap: 2,
+                        alignItems: 'center',
+                        zIndex: 1100,
+                        justifyContent: 'flex-end',
+                        minWidth: { xs: '200px', sm: '300px' },
+                      }}
+                    >
+                      {/* 🔍 Search Box - Icon Only for Auth Pages */}
                       <Box
                         sx={{
                           display: 'flex',
@@ -399,7 +483,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                             fontSize: 14,
                           }}
                         >
-                          Search...
+                          {ready ? t(LANGUAGE_KEYS.SEARCH_BY) : 'Search...'}
                         </Typography>
                       </Box>
                       {/* 🌐 Language Switcher */}

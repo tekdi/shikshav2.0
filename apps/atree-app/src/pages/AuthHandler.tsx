@@ -1,6 +1,7 @@
 import { useKeycloak } from '@react-keycloak/web';
 import { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
+import { cleanupAuthErrorFromUrl } from '../utils/urlCleanup';
 import { createUser, getUserAuthInfo, signin } from '../service/content';
 import { SelectChangeEvent } from '@mui/material/Select';
 
@@ -136,6 +137,9 @@ const AuthHandler = () => {
     }
   }, [initialized]);
   useEffect(() => {
+    // Clean up any authentication error fragments from URL
+    cleanupAuthErrorFromUrl();
+
     if (!initialized) {
       console.log('Keycloak not initialized yet');
       return;

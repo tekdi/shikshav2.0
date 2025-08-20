@@ -26,6 +26,15 @@ import { deleteUserAccount } from '../../service/content';
 import ShareIcon from '@mui/icons-material/Share';
 import ShareDialog from '../ShareDialog';
 import FooterText from '../FooterText';
+import { useAppTranslation } from '../../utils/i18n.helper';
+import GlobalAlert from '../GlobalAlert';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 interface LayoutProps {
   children?: React.ReactNode;
@@ -125,10 +134,16 @@ export default function Layout({
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [openDeleteMessageDialog, setOpenDeleteMessageDialog] = useState(false);
   const [open, setOpen] = useState(false);
+  const [alert, setAlert] = useState({
+    message: '',
+    severity: 'info' as 'success' | 'error' | 'warning' | 'info',
+  });
+  const [openBookmarkDialog, setOpenBookmarkDialog] = useState(false);
   const router = useRouter();
   const token =
     typeof window !== 'undefined' ? localStorage.getItem('token') : null;
   const { keycloak } = useKeycloak();
+  const { t } = useAppTranslation();
   const [frameworkData, setFrameworkData] = useState<any>(null);
   const [frameworkFilter, setFrameworkFilter] = useState<any[]>([]);
   const [framework, setFramework] = useState<string>('');
@@ -208,8 +223,36 @@ export default function Layout({
         frameworks.find((item: any) => item.code === 'topic')?.terms || [];
 
       if (fdata && fdata.length > 0) {
-        setFramework(fdata[0]?.identifier || 'default');
+        // Check if we're on the landing page
+        const isLandingPage =
+          router.pathname === '/' || router.pathname === '/index';
+
         setFrameworkFilter(fdata);
+
+        if (isLandingPage) {
+          // On landing page, don't set any framework (empty selection)
+          setFramework('');
+        } else {
+          // On other pages, apply saved selection only if it exists
+          let selectedFramework = null;
+
+          // Check if there's already a selected framework in localStorage
+          const savedCategory = localStorage.getItem('category');
+
+          if (savedCategory) {
+            // Try to find the saved category in the framework data
+            const foundFramework = fdata.find(
+              (item: any) =>
+                item.name.toLowerCase() === savedCategory.toLowerCase()
+            );
+            if (foundFramework) {
+              selectedFramework = foundFramework;
+            }
+          }
+
+          // Only set framework if we have a saved selection
+          setFramework(selectedFramework?.identifier || '');
+        }
       } else {
         // Set default framework data if no valid data found
         setFrameworkFilter([
@@ -239,6 +282,21 @@ export default function Layout({
     }
   }, [framework, frameworkFilter]);
 
+  // Check for pending alerts on component mount
+  useEffect(() => {
+    const pendingAlert = localStorage.getItem('pendingAlert');
+    if (pendingAlert) {
+      try {
+        const alertData = JSON.parse(pendingAlert);
+        setAlert(alertData);
+        localStorage.removeItem('pendingAlert');
+      } catch (error) {
+        console.error('Error parsing pending alert:', error);
+        localStorage.removeItem('pendingAlert');
+      }
+    }
+  }, []);
+
   useEffect(() => {
     const handleResize = debounce(() => {
       const totalHeight = Object.keys(refs.current).reduce((acc, key) => {
@@ -264,40 +322,41 @@ export default function Layout({
   }, [Object.keys(refs.current).length]);
 
   const drawerItems = [
-    { text: 'Home', icon: <HomeOutlinedIcon fontSize="small" />, to: '/' },
+    { text: t('HOME'), icon: <HomeOutlinedIcon fontSize="small" />, to: '/' },
+    {
+      text: t('BOOKMARK'),
+      icon: <BookmarkIcon fontSize="small" />,
+      to: 'bookmark',
+    },
     ...(!token
       ? [
           {
-            text: 'Login',
+            text: t('LOGIN'),
             icon: <AccountCircleOutlinedIcon fontSize="small" />,
             to: '/signin',
           },
         ]
       : []),
     {
-      text: 'About Us',
+      text: t('ABOUT_US'),
       icon: <ParkOutlinedIcon fontSize="small" />,
       to: '/aboutus',
     },
     {
-      text: 'Recommend Resources',
+      text: t('RECOMMEND_RESOURCES'),
       icon: <PostAddOutlinedIcon fontSize="small" />,
       to: 'https://forms.gle/j6RardUhmDN2yRfE6',
     },
     {
-      text: 'Terms & Conditions',
+      text: t('TERMS_AND_CONDITIONS'),
       icon: <ContactSupportOutlinedIcon fontSize="small" />,
       to: '/termsandcondition',
     },
+
     ...(token
       ? [
           {
-            text: 'Bookmark',
-            icon: <BookmarkIcon fontSize="small" />,
-            to: '/home?bookmark=true',
-          },
-          {
-            text: 'Logout',
+            text: t('LOGOUT'),
             icon: <AccountCircleOutlinedIcon fontSize="small" />,
             to: '/signin',
           },
@@ -349,6 +408,17 @@ export default function Layout({
   const handleItemClick = async (to: string) => {
     if (to === 'delete-account') {
       setOpenDeleteDialog(true);
+      return;
+    }
+
+    if (to === 'bookmark') {
+      if (token) {
+        // User is logged in, navigate to bookmark page
+        router.push('/home?bookmark=true');
+      } else {
+        // User is not logged in, show dialog
+        setOpenBookmarkDialog(true);
+      }
       return;
     }
 
@@ -678,6 +748,78 @@ export default function Layout({
           }
         />
       )}
+
+      {/* Bookmark Login Required Dialog */}
+      <Dialog
+        open={openBookmarkDialog}
+        onClose={(event, reason) => {
+          if (reason === 'backdropClick') return;
+          setOpenBookmarkDialog(false);
+        }}
+        disableEscapeKeyDown
+        PaperProps={{
+          style: {
+            maxWidth: '600px',
+            maxHeight: 'calc(100vh - 64px)',
+            overflow: 'auto',
+          },
+        }}
+      >
+        <DialogTitle sx={{ m: 0, p: 2 }}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Typography sx={{ fontSize: '22px' }}>Message</Typography>
+            <IconButton
+              aria-label="close"
+              onClick={() => setOpenBookmarkDialog(false)}
+              sx={{ ml: 2 }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <Typography
+            sx={{ fontFamily: 'Poppins', fontSize: '16px', fontWeight: '500' }}
+          >
+            {t('LOGIN_REQUIRED_FOR_BOOKMARK')}
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: 'center', py: 2, px: 3 }}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => {
+              setOpenBookmarkDialog(false);
+              router.push('/signin');
+            }}
+            sx={{
+              borderRadius: '50px',
+              height: '40px',
+              width: '30%',
+              backgroundColor: '#fcd804',
+              color: '#000000',
+              fontFamily: 'Poppins',
+              fontSize: '16px',
+              fontWeight: '500',
+              textTransform: 'none',
+            }}
+          >
+            {t('PROCEED')}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <GlobalAlert
+        message={alert.message}
+        severity={alert.severity}
+        onClose={() => setAlert({ message: '', severity: 'info' })}
+        autoHide={true}
+        autoHideDuration={3000}
+      />
     </Box>
   );
 }

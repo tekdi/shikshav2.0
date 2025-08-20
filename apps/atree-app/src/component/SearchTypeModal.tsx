@@ -17,6 +17,8 @@ import { useRouter } from 'next/router';
 import { ContentSearch, trackEvent } from '@shared-lib';
 import { TelemetryEventType } from '../utils/app.constant';
 import { telemetryFactory } from '../utils/telemetry';
+import { useAppTranslation } from '../utils/i18n.helper';
+import { LANGUAGE_KEYS } from '../utils/language.constants';
 
 interface SearchTypeModalProps {
   open: boolean;
@@ -24,18 +26,25 @@ interface SearchTypeModalProps {
   onSelect: (type: string) => void;
 }
 
-const searchTypes: any[] = [
-  { type: 'author', label: 'Author' },
-  { type: 'publisher', label: 'Publisher' },
-  { type: 'language', label: 'Language' },
-];
-
 const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
   open,
   onClose,
   onSelect,
 }) => {
+  const { t, ready } = useAppTranslation();
   const [searchQuery, setSearchQuery] = useState('');
+
+  const searchTypes: any[] = ready
+    ? [
+        { type: 'author', label: t(LANGUAGE_KEYS.SEARCH_BY_AUTHOR) },
+        { type: 'publisher', label: t(LANGUAGE_KEYS.SEARCH_BY_PUBLISHER) },
+        { type: 'language', label: t(LANGUAGE_KEYS.SEARCH_BY_LANGUAGE) },
+      ]
+    : [
+        { type: 'author', label: 'Search By Author' },
+        { type: 'publisher', label: 'Search By Publisher' },
+        { type: 'language', label: 'Search By Language' },
+      ];
   const [searchType, setSearchType] = useState('');
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [searchResults, setSearchResults] = useState<any[]>([]);
@@ -243,7 +252,7 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
           {/* Search Input */}
           <InputBase
             autoFocus
-            placeholder="Search by..."
+            placeholder={ready ? t(LANGUAGE_KEYS.SEARCH_BY) : 'Search by...'}
             value={searchQuery}
             onChange={handleChange}
             onKeyDown={handleKeyPress} // Detect Enter key press
@@ -286,8 +295,8 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
               </Avatar>
             </ListItemAvatar> */}
             <ListItemText
-              primary={`Search By ${item.label}`}
-              secondary="Find content by this category"
+              primary={item.label}
+              secondary={ready ? t(LANGUAGE_KEYS.FIND_CONTENT_BY_CATEGORY) : "Find content by this category"}
               primaryTypographyProps={{ fontWeight: 'bold' }}
               secondaryTypographyProps={{ color: 'text.secondary' }}
               sx={{ cursor: 'pointer' }}
@@ -323,7 +332,7 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
           : searchQuery &&
             filteredSearchTypes.length === 0 && (
               <ListItem>
-                <ListItemText primary="No results found" />
+                <ListItemText primary={ready ? t(LANGUAGE_KEYS.NO_RESULTS_FOUND) : "No results found"} />
               </ListItem>
             )}
       </List>

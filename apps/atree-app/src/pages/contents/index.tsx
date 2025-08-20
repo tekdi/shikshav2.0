@@ -15,6 +15,24 @@ import FooterText from '../../component/FooterText';
 import Footer from '../../component/layout/Footer';
 import Grid from '@mui/material/Grid2';
 import FilterDialog from 'libs/shared-lib/src/lib/Filterdialog/FilterDialog';
+import { useAppTranslation } from '../../utils/i18n.helper';
+
+// Function to get translated resource types
+const getTranslatedResourceTypes = (t: any) => [
+  { label: t('FICTION'), value: 'Fiction' },
+  { label: t('NON_FICTION'), value: 'Non-Fiction' },
+  { label: t('PICTURE_BOOK'), value: 'Picture Book' },
+  { label: t('TEXTBOOK_CHAPTER'), value: 'Textbook Chapter' },
+  { label: t('FIELD_GUIDE'), value: 'Field Guide' },
+  { label: t('ACTIVITY_BOOK'), value: 'Activity Book' },
+  { label: t('COMIC_BOOK'), value: 'Comic Book' },
+  { label: t('REFERENCE_BOOK'), value: 'Reference Book' },
+  { label: t('WEBSITE'), value: 'Website' },
+  { label: t('MAGAZINE'), value: 'Magazine' },
+  { label: t('POSTER'), value: 'Poster' },
+  { label: t('BOARD_GAME'), value: 'Board Game' },
+  { label: t('VIDEO'), value: 'video/x-youtube' },
+];
 
 interface ListProps {}
 
@@ -27,6 +45,7 @@ const getLocalStorageItem = (key: string) => {
 };
 
 const List: React.FC<ListProps> = () => {
+  const { t } = useAppTranslation();
   const [frameworkFilter, setFrameworkFilter] = useState(false);
   const mfe_content = process.env.NEXT_PUBLIC_CONTENT;
   const [isLoadingChildren, setIsLoadingChildren] = React.useState(true);
@@ -34,6 +53,63 @@ const List: React.FC<ListProps> = () => {
 
   const subCategory = getLocalStorageItem('subcategory');
   const storedCategory = getLocalStorageItem('category');
+
+  // Get translated category and subcategory names
+  const getTranslatedCategoryName = (name: string) => {
+    if (!name) return '';
+
+    // Map API values to translation keys
+    const categoryMap: Record<string, string> = {
+      Water: 'WATER',
+      Land: 'LAND',
+      Forest: 'FOREST',
+      Potpourri: 'POTPOURRI',
+      'Activity Book': 'ACTIVITY_BOOK',
+      'Water Basic Concepts': 'WATER_BASIC_CONCEPTS',
+      'Water Biodiversity': 'WATER_BIODIVERSITY',
+      'Water Conservation': 'WATER_CONSERVATION',
+      'Water and Sanitation': 'WATER_AND_SANITATION',
+      'Water Crisis': 'WATER_CRISIS',
+      'Fresh water ecosystem': 'FRESH_WATER_ECOSYSTEM',
+      'Coastal ecosystem': 'COASTAL_ECOSYSTEM',
+      'Water based STEM and STEM Activities':
+        'WATER_BASED_STEM_AND_STEM_ACTIVITIES',
+      Seed: 'SEED',
+      'Plants and Vegetables': 'PLANTS_AND_VEGETABLES',
+      Agriculture: 'AGRICULTURE',
+      'Food and Waste': 'FOOD_AND_WASTE',
+      Soil: 'SOIL',
+      'Land Biodiversity': 'LAND_BIODIVERSITY',
+      'Activity Book on Kitchen Gardens': 'ACTIVITY_BOOK_ON_KITCHEN_GARDENS',
+      Trees: 'TREES',
+      Grassland: 'GRASSLAND',
+      People: 'PEOPLE',
+      Wildlife: 'WILDLIFE',
+      'Forest Biodiversity': 'FOREST_BIODIVERSITY',
+      'Forest Management': 'FOREST_MANAGEMENT',
+      'Fiction and Non Fiction': 'FICTION_AND_NON_FICTION',
+      'Magazines, Newspapers and Websities':
+        'MAGAZINES_NEWSPAPERS_AND_WEBSITIES',
+      'Reference Materials': 'REFERENCE_MATERIALS',
+      'Climate Change': 'CLIMATE_CHANGE',
+      'Activity Book': 'ACTIVITY_BOOK',
+      'Lesson Plan': 'LESSON_PLAN',
+      Curriculum: 'CURRICULUM',
+    };
+
+    const translationKey = categoryMap[name];
+    return translationKey ? t(translationKey) : name;
+  };
+
+  const translatedCategory = storedCategory
+    ? getTranslatedCategoryName(storedCategory)
+    : '';
+  const translatedSubCategory = subCategory
+    ? getTranslatedCategoryName(subCategory)
+    : '';
+  const translatedCategoryLabel = translatedSubCategory
+    ? `${translatedCategory} : ${translatedSubCategory}`
+    : translatedCategory;
 
   const [filters, setFilters] = useState<any>({
     request: {
@@ -116,6 +192,7 @@ const List: React.FC<ListProps> = () => {
     filterBy: isMobile,
     showArrowback: true,
     showContent: true,
+    categoryLabel: translatedCategoryLabel,
   };
 
   const boxStyles = {
@@ -138,7 +215,14 @@ const List: React.FC<ListProps> = () => {
                 filterValues={filters}
                 onApply={handleApplyFilters}
                 isMobile={isMobile}
-                resources={RESOURCE_TYPES}
+                resources={getTranslatedResourceTypes(t)}
+                translations={{
+                  resourceType: t('RESOURCE_TYPE'),
+                  apply: t('APPLY'),
+                  reset: t('RESET'),
+                  subject: t('SUBJECT'),
+                  contentType: t('CONTENT_TYPE'),
+                }}
                 // mimeType={MIME_TYPES}
               />
             </Box>

@@ -22,11 +22,30 @@ import { telemetryFactory } from '../utils/telemetry';
 import Footer from '../component/layout/Footer';
 import FilterDialog from 'libs/shared-lib/src/lib/Filterdialog/FilterDialog';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { useAppTranslation } from '../utils/i18n.helper';
+
+// Function to get translated resource types
+const getTranslatedResourceTypes = (t: any) => [
+  { label: t('FICTION'), value: 'Fiction' },
+  { label: t('NON_FICTION'), value: 'Non-Fiction' },
+  { label: t('PICTURE_BOOK'), value: 'Picture Book' },
+  { label: t('TEXTBOOK_CHAPTER'), value: 'Textbook Chapter' },
+  { label: t('FIELD_GUIDE'), value: 'Field Guide' },
+  { label: t('ACTIVITY_BOOK'), value: 'Activity Book' },
+  { label: t('COMIC_BOOK'), value: 'Comic Book' },
+  { label: t('REFERENCE_BOOK'), value: 'Reference Book' },
+  { label: t('WEBSITE'), value: 'Website' },
+  { label: t('MAGAZINE'), value: 'Magazine' },
+  { label: t('POSTER'), value: 'Poster' },
+  { label: t('BOARD_GAME'), value: 'Board Game' },
+  { label: t('VIDEO'), value: 'video/x-youtube' },
+];
 const Content = dynamic(() => import('@Content'), {
   ssr: false,
 });
 
 export default function Searchpage() {
+  const { t } = useAppTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedType = searchParams.get('type')?.toLowerCase();
@@ -89,7 +108,24 @@ export default function Searchpage() {
 
         const fdata =
           frameworks.find((item: any) => item.code === 'topic')?.terms || [];
-        setFramework(fdata[0]?.identifier || '');
+
+        // Check if there's already a selected framework in localStorage
+        const savedCategory = localStorage.getItem('category');
+        let selectedFramework = null;
+
+        if (savedCategory) {
+          // Try to find the saved category in the framework data
+          const foundFramework = fdata.find(
+            (item: any) =>
+              item.name.toLowerCase() === savedCategory.toLowerCase()
+          );
+          if (foundFramework) {
+            selectedFramework = foundFramework;
+          }
+        }
+
+        // Only set framework if we have a saved selection
+        setFramework(selectedFramework?.identifier || '');
         setFrameworkFilter(fdata);
 
         // Filter live categories
@@ -99,14 +135,15 @@ export default function Searchpage() {
             (category: any) => category.status === 'Live'
           ),
         });
-        //condition if category from URL
-        let selectedFramework = fdata[0];
 
-        const selectedCategory = selectedFramework?.name;
-        const selectedIdentifier = selectedFramework?.identifier;
+        // Only set category if we have a selected framework
+        if (selectedFramework) {
+          const selectedCategory = selectedFramework?.name;
+          const selectedIdentifier = selectedFramework?.identifier;
 
-        setFramework(selectedIdentifier);
-        localStorage.setItem('category', selectedCategory);
+          setFramework(selectedIdentifier);
+          localStorage.setItem('category', selectedCategory);
+        }
       } catch (error) {
         console.error('Error fetching board data:', error);
       } finally {
@@ -264,7 +301,14 @@ export default function Searchpage() {
                     filterValues={filters}
                     onApply={handleApplyFilters}
                     isMobile={isMobile}
-                    resources={RESOURCE_TYPES}
+                    resources={getTranslatedResourceTypes(t)}
+                    translations={{
+                      resourceType: t('RESOURCE_TYPE'),
+                      apply: t('APPLY'),
+                      reset: t('RESET'),
+                      subject: t('SUBJECT'),
+                      contentType: t('CONTENT_TYPE'),
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12} sm={4} md={9} sx={{ marginTop: '1.8rem' }}>
