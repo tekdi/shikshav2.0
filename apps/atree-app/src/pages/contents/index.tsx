@@ -54,6 +54,63 @@ const List: React.FC<ListProps> = () => {
   const subCategory = getLocalStorageItem('subcategory');
   const storedCategory = getLocalStorageItem('category');
 
+  // Get translated category and subcategory names
+  const getTranslatedCategoryName = (name: string) => {
+    if (!name) return '';
+
+    // Map API values to translation keys
+    const categoryMap: Record<string, string> = {
+      Water: 'WATER',
+      Land: 'LAND',
+      Forest: 'FOREST',
+      Potpourri: 'POTPOURRI',
+      'Activity Book': 'ACTIVITY_BOOK',
+      'Water Basic Concepts': 'WATER_BASIC_CONCEPTS',
+      'Water Biodiversity': 'WATER_BIODIVERSITY',
+      'Water Conservation': 'WATER_CONSERVATION',
+      'Water and Sanitation': 'WATER_AND_SANITATION',
+      'Water Crisis': 'WATER_CRISIS',
+      'Fresh water ecosystem': 'FRESH_WATER_ECOSYSTEM',
+      'Coastal ecosystem': 'COASTAL_ECOSYSTEM',
+      'Water based STEM and STEM Activities':
+        'WATER_BASED_STEM_AND_STEM_ACTIVITIES',
+      Seed: 'SEED',
+      'Plants and Vegetables': 'PLANTS_AND_VEGETABLES',
+      Agriculture: 'AGRICULTURE',
+      'Food and Waste': 'FOOD_AND_WASTE',
+      Soil: 'SOIL',
+      'Land Biodiversity': 'LAND_BIODIVERSITY',
+      'Activity Book on Kitchen Gardens': 'ACTIVITY_BOOK_ON_KITCHEN_GARDENS',
+      Trees: 'TREES',
+      Grassland: 'GRASSLAND',
+      People: 'PEOPLE',
+      Wildlife: 'WILDLIFE',
+      'Forest Biodiversity': 'FOREST_BIODIVERSITY',
+      'Forest Management': 'FOREST_MANAGEMENT',
+      'Fiction and Non Fiction': 'FICTION_AND_NON_FICTION',
+      'Magazines, Newspapers and Websities':
+        'MAGAZINES_NEWSPAPERS_AND_WEBSITIES',
+      'Reference Materials': 'REFERENCE_MATERIALS',
+      'Climate Change': 'CLIMATE_CHANGE',
+      'Activity Book': 'ACTIVITY_BOOK',
+      'Lesson Plan': 'LESSON_PLAN',
+      Curriculum: 'CURRICULUM',
+    };
+
+    const translationKey = categoryMap[name];
+    return translationKey ? t(translationKey) : name;
+  };
+
+  const translatedCategory = storedCategory
+    ? getTranslatedCategoryName(storedCategory)
+    : '';
+  const translatedSubCategory = subCategory
+    ? getTranslatedCategoryName(subCategory)
+    : '';
+  const translatedCategoryLabel = translatedSubCategory
+    ? `${translatedCategory} : ${translatedSubCategory}`
+    : translatedCategory;
+
   const [filters, setFilters] = useState<any>({
     request: {
       filters: {
@@ -135,6 +192,7 @@ const List: React.FC<ListProps> = () => {
     filterBy: isMobile,
     showArrowback: true,
     showContent: true,
+    categoryLabel: translatedCategoryLabel,
   };
 
   const boxStyles = {

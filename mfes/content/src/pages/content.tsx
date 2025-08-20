@@ -40,6 +40,7 @@ export interface ContentProps {
   filterBy?: boolean;
   showArrowback?: boolean;
   showContent?: boolean;
+  categoryLabel?: string;
 }
 export default function Content(props: ContentProps) {
   const router = useRouter();
@@ -65,11 +66,16 @@ export default function Content(props: ContentProps) {
   const isTinyPhone = useMediaQuery('(max-width: 390px)');
   const [categoryLabel, setCategoryLabel] = useState('');
   useEffect(() => {
-    const subcategory = localStorage.getItem('subcategory');
-    const category = localStorage.getItem('category');
-    const label = subcategory ? `${category} : ${subcategory}` : category;
-    setCategoryLabel(label ?? '');
-  }, []);
+    // Use the passed categoryLabel prop if available, otherwise construct from localStorage
+    if (props.categoryLabel) {
+      setCategoryLabel(props.categoryLabel);
+    } else {
+      const subcategory = localStorage.getItem('subcategory');
+      const category = localStorage.getItem('category');
+      const label = subcategory ? `${category} : ${subcategory}` : category;
+      setCategoryLabel(label ?? '');
+    }
+  }, [props.categoryLabel]);
   useEffect(() => {
     const init = async () => {
       const newData = await getData('mfes_content_pages_content');
