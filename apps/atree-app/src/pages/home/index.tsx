@@ -189,6 +189,7 @@ export default function Index() {
 
   const [consumedContent, setConsumedContent] = useState<string[]>([]);
   const [frameworkFilter, setFrameworkFilter] = useState();
+  const [isFilterApplied, setIsFilterApplied] = useState(false);
 
   const [framework, setFramework] = useState('');
   const [subFrameworkFilter, setSubFrameworkFilter] = useState<any[]>([]);
@@ -220,7 +221,10 @@ export default function Index() {
   }, [framework, filterCategory, subFramework]);
   const fetchContentData = async (updatedFilters: any) => {
     try {
-      setIsLoadingChildren(true);
+      // Only show loading for initial loads, not for filter changes
+      if (!contentData.length) {
+        setIsLoadingChildren(true);
+      }
 
       let finalFilters = { ...updatedFilters };
 
@@ -287,6 +291,7 @@ export default function Index() {
         filters: finalFilters,
       });
 
+      // Update content data smoothly without causing full page reload
       setContentData(data?.result?.content ?? []);
     } catch (error) {
       console.error('Error fetching content data:', error);
@@ -304,43 +309,46 @@ export default function Index() {
       label: 'Home Page',
     });
     const { offset, limit, ...filters } = selectedValues;
-    setFilters((prevFilters) => {
-      // Create a new filters object, preserving previous filters
-      let cleanedFilters = {
-        ...prevFilters.request.filters,
-        ...Object.fromEntries(
-          Object.entries(filters).filter(
-            ([key, value]) => Array.isArray(value) && value.length > 0
-          )
-        ),
-      };
 
-      // Ensure topic is set correctly (only if not in bookmark mode)
-      if (bookmark !== 'true') {
-        if (filterCategory) {
-          cleanedFilters.topic = [filterCategory];
-        }
+    // Create a new filters object, preserving previous filters
+    let cleanedFilters = {
+      ...filters.request?.filters,
+      ...Object.fromEntries(
+        Object.entries(filters).filter(
+          ([key, value]) => Array.isArray(value) && value.length > 0
+        )
+      ),
+    };
+
+    // Ensure topic is set correctly (only if not in bookmark mode)
+    if (bookmark !== 'true') {
+      if (filterCategory) {
+        cleanedFilters.topic = [filterCategory];
       }
+    }
 
-      // Explicitly remove mimeType if it's empty OR if it's inherited from prevFilters
-      if (!filters.mimeType || filters.mimeType.length === 0) {
-        delete cleanedFilters.mimeType;
-      }
-      if (!filters.resource || filters.resource.length === 0) {
-        delete cleanedFilters.resource;
-      }
+    // Explicitly remove mimeType if it's empty OR if it's inherited from prevFilters
+    if (!filters.mimeType || filters.mimeType.length === 0) {
+      delete cleanedFilters.mimeType;
+    }
+    if (!filters.resource || filters.resource.length === 0) {
+      delete cleanedFilters.resource;
+    }
 
-      const newFilters = {
-        request: {
-          filters: cleanedFilters,
-          offset: offset ?? prevFilters.request.offset ?? 0,
-          limit: limit ?? prevFilters.request.limit ?? 5,
-        },
-      };
+    const newFilters = {
+      request: {
+        filters: cleanedFilters,
+        offset: offset ?? 0,
+        limit: limit ?? 5,
+      },
+    };
 
-      fetchContentData(newFilters.request.filters);
-      return newFilters;
-    });
+    // Set flag to prevent duplicate API calls
+    setIsFilterApplied(true);
+
+    // Update filters state and fetch content in parallel for better performance
+    setFilters(newFilters);
+    fetchContentData(cleanedFilters);
   };
   useEffect(() => {
     trackEvent({
@@ -535,13 +543,19 @@ export default function Index() {
 
   // **Listen for Filter Changes and Fetch Content**
   useEffect(() => {
+    // Skip if filters were just applied directly to prevent duplicate API calls
+    if (isFilterApplied) {
+      setIsFilterApplied(false);
+      return;
+    }
+
     if (
       filters.request.filters &&
       Object.keys(filters.request.filters).length
     ) {
       fetchContentData(filters.request.filters);
     }
-  }, [filters]); // ✅ Fetch only when `filters` change
+  }, [filters, isFilterApplied]); // ✅ Fetch only when `filters` change
 
   // **Handle Content Click**
   const handleCardClick = (content: any) => {

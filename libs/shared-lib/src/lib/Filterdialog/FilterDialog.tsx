@@ -397,6 +397,7 @@ export const FilterDialog = ({
         env: 'filter',
         cdata: [
           { id: userId, type: 'User' },
+          { id: userId, type: 'User' },
           { id: filterType, type: 'FilterType' },
           { id: value, type: 'FilterValue' },
           { id: checked ? 'checked' : 'unchecked', type: 'Action' },
@@ -404,6 +405,8 @@ export const FilterDialog = ({
         ],
       },
     });
+
+    // Apply filters immediately on checkbox click
     onApply?.(updatedFilters);
   };
 
@@ -490,8 +493,10 @@ export const FilterDialog = ({
                         },
                       });
                       setSelectedValues({});
-                      selectedFilters.mimeType = [];
-                      selectedFilters.resource = [];
+                      setSelectedFilters({
+                        mimeType: [],
+                        resource: [],
+                      });
                       localStorage.removeItem('selectedFilters');
                       onApply?.({});
                     }}
@@ -773,8 +778,10 @@ export const FilterDialog = ({
                           },
                         });
                         setSelectedValues({});
-                        selectedFilters.mimeType = [];
-                        selectedFilters.resource = [];
+                        setSelectedFilters({
+                          mimeType: [],
+                          resource: [],
+                        });
                         localStorage.removeItem('selectedFilters');
                         onApply?.({});
                       }}
