@@ -7,7 +7,7 @@ import {
   trackEvent,
 } from '@shared-lib';
 import Layout from '../../component/layout/layout';
-import { Box, useMediaQuery, useTheme } from '@mui/material';
+import { Box, useMediaQuery, useTheme, Typography } from '@mui/material';
 import atreeLogo from '../../../assets/images/placeholder.jpg';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
@@ -50,6 +50,8 @@ const List: React.FC<ListProps> = () => {
   const [frameworkFilter, setFrameworkFilter] = useState(false);
   const mfe_content = process.env.NEXT_PUBLIC_CONTENT;
   const [isLoadingChildren, setIsLoadingChildren] = React.useState(true);
+  const [isFilterApplied, setIsFilterApplied] = useState(false);
+  const [isContentLoading, setIsContentLoading] = useState(false);
   const router = useRouter();
 
   const subCategory = getLocalStorageItem('subcategory');
@@ -134,7 +136,8 @@ const List: React.FC<ListProps> = () => {
 
   useEffect(() => {
     const init = async () => {
-      setIsLoadingChildren(false);
+      // Set loading to true when page loads
+      setIsLoadingChildren(true);
     };
     init();
   }, [mfe_content]);
@@ -144,18 +147,53 @@ const List: React.FC<ListProps> = () => {
       category: 'Content Page',
     });
   }, []);
+
+  // Set loading to false when framework data is loaded
+  useEffect(() => {
+    if (frameworkFilter) {
+      setIsLoadingChildren(false);
+    }
+  }, [frameworkFilter]);
+
+  // Handle filter changes and prevent duplicate API calls
+  useEffect(() => {
+    // Skip if filters were just applied directly to prevent duplicate API calls
+    if (isFilterApplied) {
+      setIsFilterApplied(false);
+      return;
+    }
+
+    // Scroll to top when filters change
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  }, [filters, isFilterApplied]);
+
+  // Reset content loading when filters are stable
+  useEffect(() => {
+    if (!isFilterApplied && isContentLoading) {
+      const timer = setTimeout(() => {
+        setIsContentLoading(false);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [filters, isFilterApplied, isContentLoading]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     const fetchFrameworkData = async () => {
       try {
+        setIsLoadingChildren(true);
         const url = `${process.env.NEXT_PUBLIC_SSUNBIRD_BASE_URL}/api/framework/v1/read/${process.env.NEXT_PUBLIC_FRAMEWORK}`;
         const response = await fetch(url);
         const frameworkData = await response.json();
         setFrameworkFilter(frameworkData?.result?.framework);
       } catch (error) {
         console.error('Error fetching framework data:', error);
+      } finally {
+        setIsLoadingChildren(false);
       }
     };
     fetchFrameworkData();
@@ -167,16 +205,32 @@ const List: React.FC<ListProps> = () => {
       category: 'user',
       label: 'Content Page',
     });
-    setFilters((prevFilters: any) => ({
-      ...prevFilters,
+
+    // Set flag to prevent duplicate API calls
+    setIsFilterApplied(true);
+
+    // Show content loading for filter changes
+    setIsContentLoading(true);
+
+    // Create new filters object
+    const newFilters = {
+      ...filters,
       request: {
-        ...prevFilters.request,
+        ...filters.request,
         filters: {
-          ...prevFilters.request.filters,
+          ...filters.request.filters,
           ...(selectedValues.request?.filters ?? selectedValues),
         },
       },
-    }));
+    };
+
+    // Update filters state directly for better performance
+    setFilters(newFilters);
+
+    // Hide content loading after a short delay
+    setTimeout(() => {
+      setIsContentLoading(false);
+    }, 300);
   };
 
   const contentProps = {
@@ -236,13 +290,99 @@ const List: React.FC<ListProps> = () => {
             </Box>
           </Grid>
           <Grid size={{ xs: 9 }}>
-            <Box sx={boxStyles}>
+            <Box sx={boxStyles} position="relative">
+              {isContentLoading && (
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    zIndex: 1000,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: 2,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 40,
+                        height: 40,
+                        border: '4px solid #f3f3f3',
+                        borderTop: '4px solid #fcd804',
+                        borderRadius: '50%',
+                        animation: 'spin 1s linear infinite',
+                        '@keyframes spin': {
+                          '0%': { transform: 'rotate(0deg)' },
+                          '100%': { transform: 'rotate(360deg)' },
+                        },
+                      }}
+                    />
+                    <Typography variant="body2" color="text.secondary">
+                      Updating content...
+                    </Typography>
+                  </Box>
+                </Box>
+              )}
               <Content {...contentProps} />
             </Box>
           </Grid>
         </Grid>
       ) : (
-        <Box sx={boxStyles}>
+        <Box sx={boxStyles} position="relative">
+          {isContentLoading && (
+            <Box
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 1000,
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 2,
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    border: '4px solid #f3f3f3',
+                    borderTop: '4px solid #fcd804',
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite',
+                    '@keyframes spin': {
+                      '0%': { transform: 'rotate(0deg)' },
+                      '100%': { transform: 'rotate(360deg)' },
+                    },
+                  }}
+                />
+                <Typography variant="body2" color="text.secondary">
+                  Updating content...
+                </Typography>
+              </Box>
+            </Box>
+          )}
           <Content {...contentProps} />
         </Box>
       )}

@@ -1,8 +1,8 @@
 import Keycloak from 'keycloak-js';
 
 const keycloakConfig = {
-  //  url: 'https://dev-shiksha-admin.tekdinext.com/auth',
-   url: 'https://admin.sunbirdsaas.com/auth',
+   url: 'https://dev-shiksha-admin.tekdinext.com/auth',
+  //  url: 'https://admin.sunbirdsaas.com/auth',
   realm: 'shiksha',
   clientId: 'google-sso',
   // Redirect to local signin page instead of root
