@@ -1032,7 +1032,7 @@ export default function Index() {
             alignItems="center"
             justifyContent="space-between"
           >
-            <Typography sx={{ fontSize: '22px' }}>Message</Typography>
+            <Typography sx={{ fontSize: '22px' }}>{t('MESSAGE')}</Typography>
             <IconButton
               aria-label="close"
               onClick={handleCloseMessage}

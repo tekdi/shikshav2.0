@@ -2,6 +2,7 @@
 import { List, ListItem, Box, Typography, Grid } from '@mui/material';
 
 import FolderBorderIcon from '@mui/icons-material/FolderOutlined';
+import { useAppTranslation } from '../utils/i18n.helper';
 const getResourceLabel = (
   category: any,
   length?: Array<any>,
@@ -43,6 +44,22 @@ const FolderComponent = ({
   _title?: any;
   length?: Array<any>;
 }) => {
+  const { t } = useAppTranslation();
+
+  // Function to get translated category name
+  const getTranslatedCategoryName = (categoryName: string) => {
+    const categoryNameMap: Record<string, string> = {
+      Water: t('WATER'),
+      Forest: t('FOREST'),
+      Land: t('LAND'),
+      'Climate Change': t('CLIMATE_CHANGE'),
+      'Activity Books': t('ACTIVITY_BOOKS'),
+      Potpourri: t('POTPOURRI'),
+    };
+
+    return categoryNameMap[categoryName] || categoryName;
+  };
+
   categories = categories.filter((item) => item.status !== 'Retired');
   return (
     <List sx={{ p: 1 }}>
@@ -87,7 +104,7 @@ const FolderComponent = ({
                   }}
                 >
                   <Typography sx={{ m: 0, ..._title }}>
-                    {category.name}
+                    {getTranslatedCategoryName(category.name)}
                   </Typography>
                   <Typography
                     sx={{

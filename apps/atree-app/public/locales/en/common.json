@@ -234,5 +234,23 @@
   "BOOKMARK_REMOVED_SUCCESS": "Content removed from bookmarks successfully!",
   "BOOKMARK_ERROR": "Something went wrong. Please try again.",
   "PLEASE_LOGIN_TO_ACCESS_BOOKMARK": "Please login to access bookmark",
-  "LOGIN_REQUIRED_FOR_BOOKMARK": "Please proceed with login for bookmark"
+  "LOGIN_REQUIRED_FOR_BOOKMARK": "Please proceed with login for bookmark",
+
+  "BROWSE_BY_SUB_CATEGORIES": "Browse by Sub Categories",
+  "PREVIEW": "Preview",
+  "DOWNLOAD": "Download",
+  "RESOURCE_LINK": "Resource Link",
+  "AUTHOR": "Author",
+  "PUBLISHER": "Publisher",
+  "RELATED_CONTENT": "Related Content",
+  "MORE_KEYWORDS": "More Keywords",
+  "CLOSE": "Close",
+  "MESSAGE": "Message",
+  "LOADING_TRANSLATIONS": "Loading translations...",
+  
+  "SHARE_THIS_PAGE": "Share this page",
+  "COPY_LINK": "Copy Link",
+  "COPIED": "Copied!",
+  
+  "PLEASE_LOGIN_TO_CONTINUE": "Please login to continue"
 }

@@ -24,15 +24,25 @@ interface SearchTypeModalProps {
   open: boolean;
   onClose: () => void;
   onSelect: (type: string) => void;
+  filterData?: {
+    authors: string[];
+    publishers: string[];
+    languages: string[];
+  };
 }
 
 const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
   open,
   onClose,
   onSelect,
+  filterData = { authors: [], publishers: [], languages: [] },
 }) => {
   const { t, ready } = useAppTranslation();
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeFilter, setActiveFilter] = useState<
+    'author' | 'publisher' | 'language' | null
+  >(null);
+  const [filteredResults, setFilteredResults] = useState<string[]>([]);
 
   const searchTypes: any[] = ready
     ? [
@@ -53,8 +63,11 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
   const handleClearSearch = () => {
     setSearchQuery('');
     setSearchResults([]);
-    setSearchQuery('');
-    setSearchType(''); // Clear results when clearing input
+    setFilteredResults([]);
+    // Don't reset selectedType and activeFilter - keep the button selected
+    // setSearchType('');
+    // setActiveFilter(null);
+    // setSelectedType(null);
   };
 
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,6 +95,35 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
       },
     };
     telemetryFactory.interact(telemetryInteract);
+
+    // If a filter is active, filter the local data
+    if (activeFilter) {
+      let dataArray: string[] = [];
+      switch (activeFilter) {
+        case 'author':
+          dataArray = filterData.authors;
+          break;
+        case 'publisher':
+          dataArray = filterData.publishers;
+          break;
+        case 'language':
+          dataArray = filterData.languages;
+          break;
+      }
+
+      if (query.trim()) {
+        const filtered = dataArray.filter((item) =>
+          item.toLowerCase().includes(query.toLowerCase())
+        );
+        setFilteredResults(filtered);
+      } else {
+        // Don't show all items when query is empty - just clear results
+        setFilteredResults([]);
+      }
+      return;
+    }
+
+    // Original search functionality for content
     if (query.trim()) {
       try {
         let filters: any = {
@@ -94,9 +136,21 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
         const data = await ContentSearch({
           channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
           filters,
+          query: !activeFilter ? query : undefined, // Add query parameter for default search
           offset: 0,
         });
-        setSearchResults(data?.result?.content || []); // Store search results
+
+        // For default search, filter results to only show content that starts with the query
+        let filteredContent = data?.result?.content || [];
+        if (!activeFilter && query.trim()) {
+          filteredContent = filteredContent.filter(
+            (item: any) =>
+              item.name &&
+              item.name.toLowerCase().startsWith(query.toLowerCase())
+          );
+        }
+
+        setSearchResults(filteredContent);
       } catch (error) {
         console.error('Error fetching search results:', error);
       }
@@ -108,29 +162,29 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
   };
 
   const handleCategoryClick = async (category: string) => {
+    // If clicking the same category that's already selected, deselect it
+    if (selectedType === category) {
+      setSelectedType(null);
+      setSearchType('');
+      setActiveFilter(null);
+      setFilteredResults([]);
+      return;
+    }
+
+    // Otherwise, select the new category
     setSelectedType(category);
     setSearchType(category);
-    try {
-      let filters: any = {
-        channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
-        contentType: { ne: 'Asset' },
-      };
-      filters[category] = searchQuery;
-      const data = await ContentSearch({
-        channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
-        filters,
-        offset: 0,
-      });
-      setSearchResults(data?.result?.content || []);
-    } catch (error) {
-      console.error('Error fetching search results:', error);
-    }
+    setActiveFilter(category as 'author' | 'publisher' | 'language');
+
+    // Don't show any results immediately - only when user types
+    setFilteredResults([]);
   };
 
   // Filter search types
   const filteredSearchTypes = searchTypes.filter((item) =>
     item.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
   // Handle Enter Key Press
   const navigateToSearchPage = (queryValue: string) => {
     if (searchQuery.trim()) {
@@ -180,9 +234,42 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
     setSearchQuery('');
     setSearchType('');
   };
+
+  // Handle filter item click
+  const handleFilterItemClick = async (item: string) => {
+    try {
+      let filters: any = {
+        channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+        contentType: { ne: 'Asset' },
+      };
+
+      // Set the filter based on active filter type
+      if (activeFilter) {
+        filters[activeFilter] = item;
+      }
+
+      const data = await ContentSearch({
+        channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+        filters,
+        offset: 0,
+      });
+
+      // Navigate to search page with the results
+      let url = `/searchpage?query=${encodeURIComponent(item)}`;
+      if (activeFilter) {
+        url += `&type=${activeFilter}`;
+      }
+      router.push(url);
+      onClose();
+    } catch (error) {
+      console.error('Error fetching content for filter item:', error);
+    }
+  };
+
   useEffect(() => {
     console.log('Updated Search Query:', searchQuery);
   }, [searchQuery, selectedType]);
+
   const highlightMatch = (text: string, query: string) => {
     if (!query) return text;
 
@@ -201,6 +288,7 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
       );
     });
   };
+
   return (
     <Dialog
       open={open}
@@ -209,6 +297,9 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
         setSearchQuery('');
         setSearchResults([]);
         setSearchType('');
+        setActiveFilter(null);
+        setFilteredResults([]);
+        setSelectedType(null);
       }}
       fullWidth
       maxWidth="sm"
@@ -268,6 +359,9 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
               setSearchQuery('');
               setSearchResults([]);
               setSearchType('');
+              setActiveFilter(null);
+              setFilteredResults([]);
+              setSelectedType(null);
             }}
             sx={{ ml: 1 }}
           >
@@ -277,36 +371,51 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
       </DialogTitle>
 
       <List>
-        {/* Static Search Type List */}
-        {filteredSearchTypes.map((item) => (
-          <ListItem
-            key={item.type}
-            sx={{
-              backgroundColor:
-                selectedType === item.type ? '#FFBD0D' : 'transparent',
-              opacity: selectedType === item.type ? 1 : 0.6,
-              borderRadius: '8px',
-              pointerEvents: selectedType === item.type ? 'none' : 'auto',
-            }}
-          >
-            {/* <ListItemAvatar>
-              <Avatar sx={{ backgroundColor: '#CEE5FF', color: '#06164B' }}>
-                {item.icon}
-              </Avatar>
-            </ListItemAvatar> */}
-            <ListItemText
-              primary={item.label}
-              secondary={ready ? t(LANGUAGE_KEYS.FIND_CONTENT_BY_CATEGORY) : "Find content by this category"}
-              primaryTypographyProps={{ fontWeight: 'bold' }}
-              secondaryTypographyProps={{ color: 'text.secondary' }}
+        {/* Filter Results */}
+        {activeFilter &&
+          filteredResults.length > 0 &&
+          filteredResults.map((item) => (
+            <ListItem
+              key={item}
               sx={{ cursor: 'pointer' }}
-              onClick={() => handleCategoryClick(item.type)}
-            />
-          </ListItem>
-        ))}
+              onClick={() => handleFilterItemClick(item)}
+            >
+              <ListItemText
+                primary={<span>{highlightMatch(item, searchQuery)}</span>}
+              />
+            </ListItem>
+          ))}
 
-        {/* API Search Results */}
-        {searchResults.length > 0
+        {/* Static Search Type List - only show when no search query or no filter active */}
+        {(!searchQuery.trim() || activeFilter) &&
+          filteredSearchTypes.map((item) => (
+            <ListItem
+              key={item.type}
+              sx={{
+                backgroundColor:
+                  selectedType === item.type ? '#FFBD0D' : 'transparent',
+                opacity: selectedType === item.type ? 1 : 0.6,
+                borderRadius: '8px',
+                // Remove pointerEvents restriction so selected buttons can be clicked
+              }}
+            >
+              <ListItemText
+                primary={item.label}
+                secondary={
+                  ready
+                    ? t(LANGUAGE_KEYS.FIND_CONTENT_BY_CATEGORY)
+                    : 'Find content by this category'
+                }
+                primaryTypographyProps={{ fontWeight: 'bold' }}
+                secondaryTypographyProps={{ color: 'text.secondary' }}
+                sx={{ cursor: 'pointer' }}
+                onClick={() => handleCategoryClick(item.type)}
+              />
+            </ListItem>
+          ))}
+
+        {/* API Search Results - show when no filter is active and there's a search query */}
+        {!activeFilter && searchQuery.trim() && searchResults.length > 0
           ? searchResults.map((item) => {
               return (
                 <ListItem
@@ -314,13 +423,6 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
                   sx={{ cursor: 'pointer' }}
                   onClick={() => handleSearch(item.name)}
                 >
-                  {/* <ListItemAvatar>
-                    <Avatar
-                      sx={{ backgroundColor: '#CEE5FF', color: '#06164B' }}
-                    >
-                      {item.name ? item.name.charAt(0).toUpperCase() : 'S'}
-                    </Avatar>
-                  </ListItemAvatar> */}
                   <ListItemText
                     primary={
                       <span>{highlightMatch(item.name, searchQuery)}</span>
@@ -329,12 +431,30 @@ const SearchTypeModal: React.FC<SearchTypeModalProps> = ({
                 </ListItem>
               );
             })
-          : searchQuery &&
-            filteredSearchTypes.length === 0 && (
+          : !activeFilter &&
+            searchQuery.trim() &&
+            searchResults.length === 0 && (
               <ListItem>
-                <ListItemText primary={ready ? t(LANGUAGE_KEYS.NO_RESULTS_FOUND) : "No results found"} />
+                <ListItemText
+                  primary={
+                    ready
+                      ? t(LANGUAGE_KEYS.NO_RESULTS_FOUND)
+                      : 'No results found'
+                  }
+                />
               </ListItem>
             )}
+
+        {/* No results for filter */}
+        {activeFilter && filteredResults.length === 0 && searchQuery.trim() && (
+          <ListItem>
+            <ListItemText
+              primary={
+                ready ? t(LANGUAGE_KEYS.NO_RESULTS_FOUND) : 'No results found'
+              }
+            />
+          </ListItem>
+        )}
       </List>
     </Dialog>
   );

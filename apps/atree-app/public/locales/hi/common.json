@@ -228,5 +228,23 @@
   "BOOKMARK_REMOVED_SUCCESS": "सामग्री सफलतापूर्वक बुकमार्क से हटा दी गई!",
   "BOOKMARK_ERROR": "कुछ गलत हो गया। कृपया पुनः प्रयास करें।",
   "PLEASE_LOGIN_TO_ACCESS_BOOKMARK": "बुकमार्क तक पहुंचने के लिए कृपया लॉगिन करें",
-  "LOGIN_REQUIRED_FOR_BOOKMARK": "बुकमार्क के लिए कृपया लॉगिन के साथ आगे बढ़ें"
+  "LOGIN_REQUIRED_FOR_BOOKMARK": "बुकमार्क के लिए कृपया लॉगिन के साथ आगे बढ़ें",
+
+  "BROWSE_BY_SUB_CATEGORIES": "उप श्रेणियों के अनुसार ब्राउज़ करें",
+  "PREVIEW": "पूर्वावलोकन",
+  "DOWNLOAD": "डाउनलोड",
+  "RESOURCE_LINK": "संसाधन लिंक",
+  "AUTHOR": "लेखक",
+  "PUBLISHER": "प्रकाशक",
+  "RELATED_CONTENT": "संबंधित सामग्री",
+  "MORE_KEYWORDS": "अधिक कीवर्ड",
+  "CLOSE": "बंद करें",
+  "MESSAGE": "संदेश",
+  "LOADING_TRANSLATIONS": "अनुवाद लोड हो रहे हैं...",
+  
+  "SHARE_THIS_PAGE": "इस पेज को साझा करें",
+  "COPY_LINK": "लिंक कॉपी करें",
+  "COPIED": "कॉपी किया गया!",
+  
+  "PLEASE_LOGIN_TO_CONTINUE": "जारी रखने के लिए कृपया लॉगिन करें"
 }
