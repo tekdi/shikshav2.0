@@ -7,6 +7,7 @@ import {
   Button,
   Typography,
 } from '@mui/material';
+import { useAppTranslation } from '../utils/i18n.helper';
 
 interface CommonDialogProps {
   open: boolean;
@@ -20,11 +21,16 @@ interface CommonDialogProps {
 const LoginDialog: React.FC<CommonDialogProps> = ({
   open,
   onClose,
-  title = 'Message',
-  message = 'Please login to continue',
-  buttonText = 'Proceed',
+  title,
+  message,
+  buttonText,
   onButtonClick,
 }) => {
+  const { t } = useAppTranslation();
+
+  const defaultTitle = title || t('MESSAGE');
+  const defaultMessage = message || t('PLEASE_LOGIN_TO_CONTINUE');
+  const defaultButtonText = buttonText || t('PROCEED');
   return (
     <Dialog
       open={open}
@@ -41,9 +47,9 @@ const LoginDialog: React.FC<CommonDialogProps> = ({
         },
       }}
     >
-      <DialogTitle>{title}</DialogTitle>
+      <DialogTitle>{defaultTitle}</DialogTitle>
       <DialogContent>
-        <Typography>{message}</Typography>
+        <Typography>{defaultMessage}</Typography>
       </DialogContent>
       <DialogActions sx={{ justifyContent: 'center', py: 2, px: 3 }}>
         <Button
@@ -60,7 +66,7 @@ const LoginDialog: React.FC<CommonDialogProps> = ({
             fontWeight: '500',
           }}
         >
-          {buttonText}
+          {defaultButtonText}
         </Button>
       </DialogActions>
     </Dialog>

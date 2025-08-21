@@ -771,7 +771,7 @@ export default function Layout({
             alignItems="center"
             justifyContent="space-between"
           >
-            <Typography sx={{ fontSize: '22px' }}>Message</Typography>
+            <Typography sx={{ fontSize: '22px' }}>{t('MESSAGE')}</Typography>
             <IconButton
               aria-label="close"
               onClick={() => setOpenBookmarkDialog(false)}

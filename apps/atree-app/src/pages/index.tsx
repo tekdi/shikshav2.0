@@ -143,6 +143,20 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
     'Activity Books',
     'Potpourri',
   ];
+
+  // Function to get translated category name
+  const getTranslatedCategoryName = (categoryName: string) => {
+    const categoryNameMap: Record<string, string> = {
+      Water: t('WATER'),
+      Forest: t('FOREST'),
+      Land: t('LAND'),
+      'Climate Change': t('CLIMATE_CHANGE'),
+      'Activity Books': t('ACTIVITY_BOOKS'),
+      Potpourri: t('POTPOURRI'),
+    };
+
+    return categoryNameMap[categoryName] || categoryName;
+  };
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -459,7 +473,7 @@ const LandingPage = ({ frameworkData }: LandingPageProps) => {
                 <Grid key={index} size={{ xs: 6, sm: 6, md: 4, lg: 4 }}>
                   <ImageBanner
                     key={index}
-                    name={category?.name}
+                    name={getTranslatedCategoryName(category?.name)}
                     _showAvatar={false}
                     _text={{ textAlign: 'center' }}
                     verticalText={

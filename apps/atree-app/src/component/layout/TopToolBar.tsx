@@ -20,6 +20,7 @@ import LanguageSwitcher from '../LanguageSwitcher';
 import { useRouter } from 'next/router';
 import { useAppTranslation } from '../../utils/i18n.helper';
 import { LANGUAGE_KEYS } from '../../utils/language.constants';
+import { ContentSearch } from '@shared-lib';
 interface ActionIcon {
   icon: React.ReactNode;
   ariaLabel: string;
@@ -83,6 +84,15 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [frameworkFilter, setFrameworkFilter] = useState<any[]>([]);
   const [framework, setFramework] = useState('');
+  const [filterData, setFilterData] = useState<{
+    authors: string[];
+    publishers: string[];
+    languages: string[];
+  }>({
+    authors: [],
+    publishers: [],
+    languages: [],
+  });
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isAuthPage =
@@ -190,8 +200,74 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
     }
   }, [framework, frameworkFilter]);
 
-  const handleSearchOpen = () => {
-    setIsSearchOpen(true);
+  const handleSearchOpen = async () => {
+    try {
+      // Make API call to get all content for filtering
+      const data = await ContentSearch({
+        channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+        filters: {
+          contentType: { ne: 'Asset' },
+        },
+        offset: 0,
+      });
+
+      const contentList = data?.result?.content || [];
+
+      // Extract unique values for each filter type
+      const authors = [
+        ...new Set(
+          contentList
+            .map((item: any) => item.author)
+            .filter(Boolean)
+            .flatMap((creator: string) =>
+              creator
+                .split(',')
+                .map((name: string) => name.trim())
+                .filter(Boolean)
+            )
+        ),
+      ];
+      const publishers = [
+        ...new Set(
+          contentList
+            .map((item: any) => item.publisher)
+            .filter(Boolean)
+            .flatMap((publisher: string) =>
+              publisher
+                .split(',')
+                .map((name: string) => name.trim())
+                .filter(Boolean)
+            )
+        ),
+      ];
+      // Handle language field which might be an array
+      const languages = [
+        ...new Set(
+          contentList
+            .flatMap((item: any) =>
+              Array.isArray(item.language) ? item.language : [item.language]
+            )
+            .filter(Boolean)
+            .flatMap((language: string) =>
+              language
+                .split(',')
+                .map((lang: string) => lang.trim())
+                .filter(Boolean)
+            )
+        ),
+      ];
+
+      setFilterData({
+        authors,
+        publishers,
+        languages,
+      });
+
+      setIsSearchOpen(true);
+    } catch (error) {
+      console.error('Error fetching filter data:', error);
+      setIsSearchOpen(true);
+    }
   };
 
   const handleSearchClose = () => {
@@ -511,6 +587,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                     open={isSearchOpen}
                     onClose={handleSearchClose}
                     onSelect={(type) => console.log(type)}
+                    filterData={filterData}
                   />
                   {profileIcon && profileIcon.length > 0 && (
                     <IconButton

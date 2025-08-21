@@ -12,6 +12,7 @@ import {
   Typography,
   SvgIcon,
 } from '@mui/material';
+import { useAppTranslation } from '../utils/i18n.helper';
 import {
   FacebookShareButton,
   TwitterShareButton,
@@ -41,6 +42,7 @@ const LinkedInCustomIcon = (props: any) => (
   </SvgIcon>
 );
 const ShareDialog: React.FC<ShareDialogProps> = ({ open, handleClose }) => {
+  const { t } = useAppTranslation();
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
   const [copySuccess, setCopySuccess] = useState(false);
 
@@ -63,7 +65,7 @@ const ShareDialog: React.FC<ShareDialogProps> = ({ open, handleClose }) => {
         sx: { borderRadius: '16px', padding: 2 },
       }}
     >
-      <DialogTitle>Share this page</DialogTitle>
+      <DialogTitle>{t('SHARE_THIS_PAGE')}</DialogTitle>
       <DialogContent>
         <Stack direction="column" spacing={2} alignItems="center">
           {/* Read-only Text Field with Copy Button */}
@@ -102,7 +104,7 @@ const ShareDialog: React.FC<ShareDialogProps> = ({ open, handleClose }) => {
           </Stack>
           <Stack direction="column" spacing={1} width="100%">
             <Typography variant="body1" fontWeight="bold">
-              Copy Link:
+              {t('COPY_LINK')}:
             </Typography>
             <Stack direction="row" spacing={1} alignItems="center" width="100%">
               <TextField
@@ -124,7 +126,7 @@ const ShareDialog: React.FC<ShareDialogProps> = ({ open, handleClose }) => {
                 }}
                 InputProps={{ readOnly: true }}
               />
-              <Tooltip title={copySuccess ? 'Copied!' : 'Copy link'}>
+              <Tooltip title={copySuccess ? t('COPIED') : t('COPY_LINK')}>
                 <IconButton
                   onClick={handleCopy}
                   color="primary"
@@ -154,7 +156,7 @@ const ShareDialog: React.FC<ShareDialogProps> = ({ open, handleClose }) => {
             mx: 'auto',
           }}
         >
-          Close
+          {t('CLOSE')}
         </Button>
       </DialogActions>
     </Dialog>

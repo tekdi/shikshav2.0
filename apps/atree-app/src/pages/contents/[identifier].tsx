@@ -754,7 +754,7 @@ export default function Content() {
                         <ArrowBackIcon />
                       </IconButton>
                       {subFrameworkFilter && subFrameworkFilter.length > 0 && (
-                        <Title>Browse by Sub Categories</Title>
+                        <Title>{t('BROWSE_BY_SUB_CATEGORIES')}</Title>
                       )}
                     </Box>
 
@@ -937,7 +937,7 @@ export default function Content() {
                             }
                             startIcon={<VisibilityOutlinedIcon />}
                           >
-                            Preview
+                            {t('PREVIEW')}
                           </Button>
 
                           <Button
@@ -959,7 +959,7 @@ export default function Content() {
                             }
                             onClick={handleOnDownload}
                           >
-                            Download
+                            {t('DOWNLOAD')}
                           </Button>
 
                           <Button
@@ -982,7 +982,7 @@ export default function Content() {
                             }
                             onClick={handleOnCLick}
                           >
-                            Resource Link
+                            {t('RESOURCE_LINK')}
                           </Button>
                         </Box>
 
@@ -1005,7 +1005,7 @@ export default function Content() {
                                 fontFamily: 'Poppins',
                               }}
                             >
-                              Author :
+                              {t('AUTHOR')} :
                             </span>{' '}
                             {contentData?.author ?? ''}
                           </Typography>
@@ -1026,7 +1026,7 @@ export default function Content() {
                                 fontFamily: 'Poppins',
                               }}
                             >
-                              Publisher :
+                              {t('PUBLISHER')} :
                             </span>{' '}
                             {contentData?.publisher ?? ''}
                           </Typography>
@@ -1105,7 +1105,7 @@ export default function Content() {
                     }}
                     onClick={() => router.push('/contents')}
                   >
-                    Related Content
+                    {t('RELATED_CONTENT')}
                   </Typography>
                 </Box>
                 <AtreeCard
@@ -1248,7 +1248,7 @@ export default function Content() {
                   }
                   onClick={handlePreview}
                 >
-                  Preview
+                  {t('PREVIEW')}
                 </Button>
 
                 <Button
@@ -1274,7 +1274,7 @@ export default function Content() {
                     contentData?.access?.trim() === 'Link'
                   }
                 >
-                  Download
+                  {t('DOWNLOAD')}
                 </Button>
 
                 <Button
@@ -1299,7 +1299,7 @@ export default function Content() {
                   }
                   onClick={handleOnCLick}
                 >
-                  Resource Link
+                  {t('RESOURCE_LINK')}
                 </Button>
               </Box>
 
@@ -1360,7 +1360,7 @@ export default function Content() {
                     color: '#000000',
                   }}
                 >
-                  <b>Author:</b> {contentData?.author || ''}
+                  <b>{t('AUTHOR')}:</b> {contentData?.author || ''}
                 </Typography>
 
                 <Typography
@@ -1374,7 +1374,7 @@ export default function Content() {
                     color: '#000000',
                   }}
                 >
-                  <b>Publisher:</b> {contentData?.publisher ?? ''}
+                  <b>{t('PUBLISHER')}:</b> {contentData?.publisher ?? ''}
                 </Typography>
                 <Typography
                   sx={{
@@ -1419,7 +1419,7 @@ export default function Content() {
             </Box>
           )}
           <Dialog open={openPopup} onClose={() => setOpenPopup(false)}>
-            <DialogTitle>More Keywords</DialogTitle>
+            <DialogTitle>{t('MORE_KEYWORDS')}</DialogTitle>
             <DialogContent>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 {remainingKeywords.map((label: any) => (
@@ -1449,7 +1449,7 @@ export default function Content() {
                   width: '100%',
                 }}
               >
-                Close
+                {t('CLOSE')}
               </Button>
             </DialogActions>
           </Dialog>
@@ -1502,7 +1502,9 @@ export default function Content() {
                 alignItems="center"
                 justifyContent="space-between"
               >
-                <Typography sx={{ fontSize: '22px' }}>Message</Typography>
+                <Typography sx={{ fontSize: '22px' }}>
+                  {t('MESSAGE')}
+                </Typography>
                 <IconButton
                   aria-label="close"
                   onClick={() => setOpenBookmarkDialog(false)}
@@ -1763,7 +1765,7 @@ const SubFrameworkFilter = React.memo<{
                   minHeight: '100px',
                 }}
               >
-                <Typography>Loading translations...</Typography>
+                <Typography>{t('LOADING_TRANSLATIONS')}</Typography>
               </Box>
             ) : (
               <FrameworkFilter
