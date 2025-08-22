@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import {
   ContentSearchResponse,
   RESOURCE_TYPES,
@@ -175,7 +175,7 @@ const List: React.FC<ListProps> = () => {
     if (!isFilterApplied && isContentLoading) {
       const timer = setTimeout(() => {
         setIsContentLoading(false);
-      }, 100);
+      }, 150);
       return () => clearTimeout(timer);
     }
   }, [filters, isFilterApplied, isContentLoading]);
@@ -230,34 +230,51 @@ const List: React.FC<ListProps> = () => {
     // Hide content loading after a short delay
     setTimeout(() => {
       setIsContentLoading(false);
-    }, 300);
+    }, 200);
   };
 
-  const contentProps = {
-    _grid: {
-      size: { xs: 6, sm: 6, md: 4, lg: 3 },
+  // Memoize handleCardClick to prevent unnecessary re-renders
+  const handleCardClick = useCallback(
+    (content: ContentSearchResponse) => {
+      router.push(`/contents/${content?.identifier}`);
     },
-    handleCardClick: (content: ContentSearchResponse) =>
-      router.push(`/contents/${content?.identifier}`),
-    contentTabs: ['content'],
-    filters: {
-      filters: {
-        channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
-        ...filters.request.filters,
+    [router]
+  );
+
+  // Memoize contentProps to prevent unnecessary re-renders
+  const contentProps = useMemo(
+    () => ({
+      _grid: {
+        size: { xs: 6, sm: 6, md: 4, lg: 3 },
       },
-    },
-    _card: {
-      cardName: 'AtreeCard',
-      image: atreeLogo.src,
-    },
-    showSearch: false,
-    filterBy: isMobile,
-    showArrowback: true,
-    showContent: true,
-    categoryLabel: translatedCategoryLabel,
-    noResourcesText: t(LANGUAGE_KEYS.NO_RESOURCES),
-    recommendHereText: t(LANGUAGE_KEYS.RECOMMEND_HERE),
-  };
+      handleCardClick,
+      contentTabs: ['content'],
+      filters: {
+        filters: {
+          channel: process.env.NEXT_PUBLIC_CHANNEL_ID,
+          ...filters.request.filters,
+        },
+      },
+      _card: {
+        cardName: 'AtreeCard',
+        image: atreeLogo.src,
+      },
+      showSearch: false,
+      filterBy: isMobile,
+      showArrowback: true,
+      showContent: true,
+      categoryLabel: translatedCategoryLabel,
+      noResourcesText: t(LANGUAGE_KEYS.NO_RESOURCES),
+      recommendHereText: t(LANGUAGE_KEYS.RECOMMEND_HERE),
+    }),
+    [
+      handleCardClick,
+      filters.request.filters,
+      isMobile,
+      translatedCategoryLabel,
+      t,
+    ]
+  );
 
   const boxStyles = {
     padding: 0,

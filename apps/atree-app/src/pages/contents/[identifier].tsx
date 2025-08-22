@@ -22,11 +22,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import {
-  getContentDetails,
-  createBookmark,
-  readBookmark,
-} from '../../service/content';
+import { getContentDetails } from '../../service/content';
 import Layout from '../../component/layout/layout';
 import landingBanner from '../../../assets/images/landingBanner.png';
 import Grid from '@mui/material/Grid2';
@@ -58,6 +54,11 @@ import { useAppTranslation } from '../../utils/i18n.helper';
 import { LANGUAGE_KEYS } from '../../utils/language.constants';
 import GlobalAlert from '../../component/GlobalAlert';
 import { cleanupAuthErrorFromUrl } from '../../utils/urlCleanup';
+import { ContentHeader } from '../../component/ContentHeader';
+import { ContentActions } from '../../component/ContentActions';
+import { ContentMetadata } from '../../component/ContentMetadata';
+import { useBookmark } from '../../hooks/useBookmark';
+import { useContentActions } from '../../hooks/useContentActions';
 
 // Function to get translated subcategory names (English values for API, translated labels for display)
 const getTranslatedSubcategoryNames = (t: any) => [
@@ -170,11 +171,13 @@ export default function Content() {
   useEffect(() => {
     cleanupAuthErrorFromUrl();
   }, []);
+
   const router = useRouter();
   const { identifier } = router.query; // Access dynamic parameter 'identifier'
   const [contentData, setContentData] = useState<ContentItem | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isRelatedContentLoading, setIsRelatedContentLoading] = useState(false);
   const [openPopup, setOpenPopup] = useState<boolean>(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -195,147 +198,20 @@ export default function Content() {
     },
   });
   const [homeCategory, setHomeCategory] = useState('');
-  const [isBookmarked, setIsBookmarked] = useState(false);
-  const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
-  const [showAlertMsg, setShowAlertMsg] = useState('');
-  const [alertSeverity, setAlertSeverity] = useState<'success' | 'error'>(
-    'success'
-  );
   const [alert, setAlert] = useState({
     message: '',
     severity: 'info' as 'success' | 'error' | 'warning' | 'info',
   });
-  const [openBookmarkDialog, setOpenBookmarkDialog] = useState(false);
-  const languageDisplayMap: Record<string, string> = {
-    english: 'English',
-    hindi: 'हिन्दी',
-    marathi: 'मराठी',
-    bengali: 'বাংলা',
-    assamese: 'অসমীয়া',
-    kannada: 'ಕನ್ನಡ',
-    tamil: 'தமிழ்',
-    malayalam: 'മലയാളം',
-  };
 
-  // Check if content is bookmarked
-  const checkBookmarkStatus = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const userId = localStorage.getItem('userId');
-
-      if (!token || !userId) {
-        setIsBookmarked(false);
-        return;
-      }
-
-      const bookmarkData = {
-        userId: userId,
-        entityType: 'content',
-        doId: identifier as string,
-      };
-
-      const response = await readBookmark(bookmarkData, token);
-      // Check if the current content's doId exists in the bookmarks array
-      const isContentBookmarked =
-        response?.result?.bookmarks?.some(
-          (bookmark: { doId: string }) => bookmark.doId === identifier
-        ) || false;
-      setIsBookmarked(isContentBookmarked);
-    } catch (error) {
-      console.error('Error checking bookmark status:', error);
-      setIsBookmarked(false);
-    }
-  };
-
-  // Add bookmark API call function
-  const handleBookmarkToggle = async () => {
-    if (isBookmarkLoading) return; // Prevent multiple clicks
-
-    const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('userId');
-
-    if (!token || !userId) {
-      // User is not logged in, show dialog
-      setOpenBookmarkDialog(true);
-      return;
-    }
-
-    setIsBookmarkLoading(true);
-    try {
-      const bookmarkData = {
-        userId: userId,
-        entityType: 'content',
-        doId: identifier as string,
-        action: (isBookmarked ? 'remove' : 'add') as 'add' | 'remove',
-      };
-
-      const response = await createBookmark(bookmarkData, token);
-
-      if (response && !response.error) {
-        setIsBookmarked((prev) => !prev);
-
-        // Show success message
-        const message = isBookmarked
-          ? t('BOOKMARK_REMOVED_SUCCESS')
-          : t('BOOKMARK_ADDED_SUCCESS');
-        setShowAlertMsg(message);
-        setAlertSeverity('success');
-
-        // Auto-hide success message after 3 seconds
-        setTimeout(() => {
-          setShowAlertMsg('');
-        }, 3000);
-
-        trackEvent({
-          action: isBookmarked ? 'remove_bookmark' : 'add_bookmark',
-          category: 'user',
-          label: 'Content Details Page',
-        });
-
-        // Add telemetry for bookmark action
-        const windowUrl = window.location.pathname;
-        const cleanedUrl = windowUrl.replace(/^\//, '');
-        const env = cleanedUrl.split('/')[0];
-
-        const telemetryInteract = {
-          context: {
-            env: env,
-            cdata: [],
-          },
-          edata: {
-            id: isBookmarked ? 'Remove Bookmark' : 'Add Bookmark',
-            name: contentData?.name,
-            type: TelemetryEventType.CLICK,
-            subtype: '',
-            pageid: cleanedUrl,
-          },
-        };
-        telemetryFactory.interact(telemetryInteract);
-      } else {
-        console.error('Bookmark operation failed:', response);
-        // Show error message
-        setShowAlertMsg(t('BOOKMARK_ERROR'));
-        setAlertSeverity('error');
-
-        // Auto-hide error message after 3 seconds
-        setTimeout(() => {
-          setShowAlertMsg('');
-        }, 3000);
-      }
-    } catch (error) {
-      console.error('Error toggling bookmark:', error);
-      // Show error message
-      setShowAlertMsg(t('BOOKMARK_ERROR'));
-      setAlertSeverity('error');
-
-      // Auto-hide error message after 3 seconds
-      setTimeout(() => {
-        setShowAlertMsg('');
-      }, 3000);
-    } finally {
-      setIsBookmarkLoading(false);
-    }
-  };
+  // Use custom hooks
+  const bookmarkHook = useBookmark({
+    identifier: identifier as string,
+    contentData,
+  });
+  const contentActions = useContentActions({
+    identifier: identifier as string,
+    contentData,
+  });
 
   const handleOpen = () => setOpen(true);
   useEffect(() => {
@@ -348,109 +224,6 @@ export default function Content() {
     const token = localStorage.getItem('token');
     setHasToken(!!token);
   }, []);
-
-  const handleOnCLick = () => {
-    const windowUrl = window.location.pathname;
-    const cleanedUrl = windowUrl.replace(/^\//, '');
-    const env = cleanedUrl.split('/')[0];
-
-    const telemetryInteract = {
-      context: {
-        env: env,
-        cdata: [],
-      },
-      edata: {
-        id: `Resource Link`,
-        name: contentData?.name,
-        type: TelemetryEventType.CLICK,
-        subtype: '',
-        pageid: cleanedUrl,
-      },
-    };
-    telemetryFactory.interact(telemetryInteract);
-    trackEvent({
-      action: 'resource_open',
-      category: 'user',
-      label: 'Content Details Page',
-    });
-    window.open(contentData?.url, '_blank');
-  };
-  const handlePreview = () => {
-    const windowUrl = window.location.pathname;
-    const cleanedUrl = windowUrl.replace(/^\//, '');
-    const env = cleanedUrl.split('/')[0];
-
-    const telemetryInteract = {
-      context: {
-        env: env,
-        cdata: [],
-      },
-      edata: {
-        id: `Preview content`,
-        name: contentData?.name,
-        type: TelemetryEventType.CLICK,
-        subtype: '',
-        pageid: cleanedUrl,
-      },
-    };
-    telemetryFactory.interact(telemetryInteract);
-
-    trackEvent({
-      action: 'preview_content',
-      category: 'user',
-      label: 'Content Details Page',
-    });
-    router.push(`/player/${identifier}`);
-  };
-
-  const handleOnDownload = async () => {
-    const downloadLink = contentData?.downloadurl || contentData?.previewUrl;
-
-    if (!downloadLink) {
-      console.error('No valid download or preview URL available');
-      return;
-    }
-    const windowUrl = window.location.pathname;
-    const cleanedUrl = windowUrl.replace(/^\//, '');
-    const env = cleanedUrl.split('/')[0];
-
-    const telemetryInteract = {
-      context: {
-        env: env,
-        cdata: [],
-      },
-      edata: {
-        id: `Download content`,
-        name: contentData?.name,
-        type: TelemetryEventType.CLICK,
-        subtype: '',
-        pageid: cleanedUrl,
-      },
-    };
-    telemetryFactory.interact(telemetryInteract);
-    try {
-      const response = await fetch(downloadLink);
-      const blob = await response.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
-
-      const link = document.createElement('a');
-      link.href = blobUrl;
-      link.download = contentData?.name ?? 'download'; // Default filename
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      trackEvent({
-        action: 'download_content',
-        category: 'user',
-        label: 'Content Details Page',
-      });
-
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
-    } catch (error) {
-      console.error('Download failed:', error);
-    }
-  };
 
   const fetchContent = useCallback(
     async (updatedFilters: any) => {
@@ -482,7 +255,7 @@ export default function Content() {
           telemetryFactory.interact(telemetryInteract);
 
           // Check bookmark status after content is loaded
-          await checkBookmarkStatus();
+          await bookmarkHook.checkBookmarkStatus();
         }
         const cleanKeywords = (
           result?.keywords?.filter((item: any) => item) ?? []
@@ -633,7 +406,7 @@ export default function Content() {
   };
   const selectTagOnClick = async (keyword: any) => {
     try {
-      setIsLoading(true);
+      setIsRelatedContentLoading(true);
       const keywordFilteredResults = await ContentSearch({
         channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
         query: keyword,
@@ -652,7 +425,7 @@ export default function Content() {
     } catch (error) {
       console.error(`Search failed for keyword ${keyword}:`, error);
     } finally {
-      setIsLoading(false);
+      setIsRelatedContentLoading(false);
     }
   };
 
@@ -718,94 +491,17 @@ export default function Content() {
                 {/* Right Side (Content) */}
 
                 <Grid size={{ xs: 12 }}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      overflowX: 'hidden',
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px',
-                      }}
-                    >
-                      <IconButton
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          router.push(`/home?category=${homeCategory}`);
-                        }}
-                        sx={{
-                          padding: '4px',
-                          // marginTop: '5%',
-                          backgroundColor: 'transparent',
-                          color: '#000000',
-                          borderRadius: '50%',
-                          '&:hover': {
-                            backgroundColor: 'rgba(0,0,0,0.04)',
-                          },
-                          '&:focus': {
-                            outline: 'none',
-                          },
-                        }}
-                      >
-                        <ArrowBackIcon />
-                      </IconButton>
-                      {subFrameworkFilter && subFrameworkFilter.length > 0 && (
-                        <Title>{t('BROWSE_BY_SUB_CATEGORIES')}</Title>
-                      )}
-                    </Box>
-
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        backgroundColor: '#fff',
-                        padding: '4px',
-                        borderRadius: '8px',
-                        // boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
-                        marginLeft: 'auto',
-                        marginRight: '15px',
-                      }}
-                    >
-                      <IconButton
-                        color="primary"
-                        disabled={isBookmarkLoading}
-                        sx={{
-                          backgroundColor: 'white',
-                          color:
-                            hasToken && isBookmarked ? '#FCD905' : '#2B3133',
-                          opacity: isBookmarkLoading ? 0.6 : 1,
-                        }}
-                        onClick={handleBookmarkToggle}
-                      >
-                        {hasToken && isBookmarked ? (
-                          <BookmarkIcon />
-                        ) : (
-                          <BookmarkBorderIcon />
-                        )}
-                      </IconButton>
-
-                      <IconButton
-                        onClick={handleOpen}
-                        color="primary"
-                        sx={{
-                          backgroundColor: 'white',
-                          color: '#2B3133',
-                        }}
-                      >
-                        <ShareIcon />
-                      </IconButton>
-                    </Box>
-                    {/* Share Dialog */}
-                    <ShareDialog
-                      open={open}
-                      handleClose={() => setOpen(false)}
-                    />
-                  </Box>
+                  <ContentHeader
+                    homeCategory={homeCategory}
+                    subFrameworkFilter={subFrameworkFilter}
+                    hasToken={hasToken}
+                    isBookmarked={bookmarkHook.isBookmarked}
+                    isBookmarkLoading={bookmarkHook.isBookmarkLoading}
+                    onBookmarkToggle={bookmarkHook.handleBookmarkToggle}
+                    onShareClick={handleOpen}
+                  />
+                  {/* Share Dialog */}
+                  <ShareDialog open={open} handleClose={() => setOpen(false)} />
                   <Box
                     sx={{
                       width: '100%',
@@ -903,176 +599,15 @@ export default function Content() {
                         </Typography>
 
                         {/* Action Buttons */}
-                        <Box
-                          sx={{
-                            display: 'flex',
-                            gap: 1,
-                            width: '100%',
-                            '& > button': {
-                              flex: 1,
-                              minWidth: 0,
-                              maxWidth: 152,
-                              textTransform: 'none',
-                              '& .MuiButton-startIcon': {
-                                marginRight: '4px',
-                              },
-                            },
-                          }}
-                        >
-                          <Button
-                            variant="contained"
-                            sx={{
-                              borderRadius: '50px',
-                              height: '40px',
-                              padding: '3px',
-                              fontSize: '16px',
-                              fontWeight: 500,
-                              fontFamily: 'Poppins',
-                              color: '#000000',
-                              backgroundColor: '#fcd804',
-                            }}
-                            onClick={handlePreview}
-                            disabled={
-                              contentData?.access?.trim() === 'Full' ||
-                              contentData?.access?.trim() === 'Link'
-                            }
-                            startIcon={<VisibilityOutlinedIcon />}
-                          >
-                            {t('PREVIEW')}
-                          </Button>
-
-                          <Button
-                            variant="outlined"
-                            color="secondary"
-                            sx={{
-                              borderRadius: '50px',
-                              height: '40px',
-                              color: '#000000',
-                              padding: '3px',
-                              fontSize: '16px',
-                              fontWeight: 500,
-                              fontFamily: 'Poppins',
-                            }}
-                            startIcon={<FileDownloadOutlinedIcon />}
-                            disabled={
-                              contentData?.access?.trim() === 'Sample' ||
-                              contentData?.access?.trim() === 'Link'
-                            }
-                            onClick={handleOnDownload}
-                          >
-                            {t('DOWNLOAD')}
-                          </Button>
-
-                          <Button
-                            variant="outlined"
-                            sx={{
-                              borderRadius: '50px',
-                              height: '40px',
-                              color: '#000000',
-                              padding: '3px',
-                              fontSize: '16px',
-                              fontWeight: 500,
-                              fontFamily: 'Poppins',
-                              borderColor: '#fcd804',
-                            }}
-                            startIcon={<LinkOutlinedIcon />}
-                            disabled={
-                              (contentData?.access?.trim() === 'Sample' ||
-                                contentData?.access?.trim() === 'Full') &&
-                              !contentData?.url
-                            }
-                            onClick={handleOnCLick}
-                          >
-                            {t('RESOURCE_LINK')}
-                          </Button>
-                        </Box>
+                        <ContentActions
+                          contentData={contentData}
+                          onPreview={contentActions.handlePreview}
+                          onDownload={contentActions.handleOnDownload}
+                          onResourceLink={contentActions.handleOnCLick}
+                        />
 
                         {/* Metadata */}
-                        <Stack spacing={0.5}>
-                          <Typography
-                            textAlign="left"
-                            sx={{
-                              color: '#000000',
-                              fontSize: '16px',
-                              fontWeight: 400,
-                              fontFamily: 'Poppins',
-                            }}
-                          >
-                            <span
-                              style={{
-                                color: '#000000',
-                                fontSize: '16px',
-                                fontWeight: 700,
-                                fontFamily: 'Poppins',
-                              }}
-                            >
-                              {t('AUTHOR')} :
-                            </span>{' '}
-                            {contentData?.author ?? ''}
-                          </Typography>
-                          <Typography
-                            textAlign="left"
-                            sx={{
-                              color: '#000000',
-                              fontSize: '16px',
-                              fontWeight: 400,
-                              fontFamily: 'Poppins',
-                            }}
-                          >
-                            <span
-                              style={{
-                                color: '#000000',
-                                fontSize: '16px',
-                                fontWeight: 700,
-                                fontFamily: 'Poppins',
-                              }}
-                            >
-                              {t('PUBLISHER')} :
-                            </span>{' '}
-                            {contentData?.publisher ?? ''}
-                          </Typography>
-                          <Typography
-                            textAlign="left"
-                            sx={{
-                              color: '#000000',
-                              fontSize: '16px',
-                              fontWeight: 400,
-                              fontFamily: 'Poppins',
-                            }}
-                          >
-                            {contentData?.year ?? 'n.d.'}
-                          </Typography>
-                          <Typography
-                            textAlign="left"
-                            sx={{
-                              color: '#000000',
-                              fontSize: '16px',
-                              fontWeight: 400,
-                              fontFamily: 'Poppins',
-                            }}
-                          >
-                            {(contentData as any)?.language?.[0] && (
-                              <Typography
-                                textAlign="left"
-                                sx={{
-                                  display: 'inline-block',
-                                  backgroundColor: '#FCD905',
-                                  padding: '2px 8px',
-                                  color: '#000000',
-                                  fontSize: '16px',
-                                  fontWeight: 500,
-                                  fontFamily: 'Poppins',
-                                }}
-                              >
-                                {languageDisplayMap[
-                                  (
-                                    contentData as any
-                                  ).language[0].toLowerCase?.() ?? ''
-                                ] ?? (contentData as any).language[0]}
-                              </Typography>
-                            )}
-                          </Typography>
-                        </Stack>
+                        <ContentMetadata contentData={contentData} />
                       </Stack>
                     </Grid>
                   </Box>
@@ -1087,9 +622,54 @@ export default function Content() {
                   display: 'flex',
                   flexDirection: 'column',
                   padding: '20px',
+                  position: 'relative',
                   // ml: 4,
                 }}
               >
+                {isRelatedContentLoading && (
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      zIndex: 1000,
+                      borderRadius: '8px',
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: 2,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          border: '4px solid #f3f3f3',
+                          borderTop: '4px solid #fcd804',
+                          borderRadius: '50%',
+                          animation: 'spin 1s linear infinite',
+                          '@keyframes spin': {
+                            '0%': { transform: 'rotate(0deg)' },
+                            '100%': { transform: 'rotate(360deg)' },
+                          },
+                        }}
+                      />
+                      <Typography variant="body2" color="text.secondary">
+                        Loading related content...
+                      </Typography>
+                    </Box>
+                  </Box>
+                )}
                 <Box
                   display="flex"
                   flexDirection="row"
@@ -1175,17 +755,20 @@ export default function Content() {
                   >
                     <IconButton
                       color="primary"
-                      disabled={isBookmarkLoading}
+                      disabled={bookmarkHook.isBookmarkLoading}
                       sx={{
                         backgroundColor: 'white',
-                        color: hasToken && isBookmarked ? '#FCD905' : '#2B3133',
-                        opacity: isBookmarkLoading ? 0.6 : 1,
+                        color:
+                          hasToken && bookmarkHook.isBookmarked
+                            ? '#FCD905'
+                            : '#2B3133',
+                        opacity: bookmarkHook.isBookmarkLoading ? 0.6 : 1,
                         boxShadow:
                           '-0.73px 0.73px 0.73px -1.46px rgba(255, 255, 255, 0.35) inset, 0px 8px 10px rgba(0, 0, 0, 0.05)',
                       }}
-                      onClick={handleBookmarkToggle}
+                      onClick={bookmarkHook.handleBookmarkToggle}
                     >
-                      {hasToken && isBookmarked ? (
+                      {hasToken && bookmarkHook.isBookmarked ? (
                         <BookmarkIcon />
                       ) : (
                         <BookmarkBorderIcon />
@@ -1246,92 +829,13 @@ export default function Content() {
                   }
                 />
               </Box>
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  flexWrap: 'wrap', // Wrap if space is tight
-                  justifyContent: 'center', // ✅ Center buttons horizontally
-                  gap: 1,
-                  width: '100%',
-                }}
-              >
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  disabled={
-                    contentData?.access?.trim() === 'Full' ||
-                    contentData?.access?.trim() === 'Link'
-                  }
-                  sx={{
-                    borderRadius: '50px',
-                    height: '36px',
-                    fontSize: '10px',
-                    fontWeight: 500,
-                    textTransform: 'none',
-                    px: 1,
-                    minWidth: '95px',
-                    gap: '5px',
-                  }}
-                  startIcon={
-                    <VisibilityOutlinedIcon sx={{ fontSize: '14px' }} />
-                  }
-                  onClick={handlePreview}
-                >
-                  {t('PREVIEW')}
-                </Button>
-
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  sx={{
-                    borderRadius: '50px',
-                    height: '36px',
-                    fontSize: '10px',
-                    fontWeight: 500,
-                    textTransform: 'none',
-                    px: 1,
-                    minWidth: '95px',
-                    gap: '5px',
-                    color: 'black',
-                  }}
-                  startIcon={
-                    <FileDownloadOutlinedIcon sx={{ fontSize: '14px' }} />
-                  }
-                  onClick={handleOnDownload}
-                  disabled={
-                    contentData?.access?.trim() === 'Sample' ||
-                    contentData?.access?.trim() === 'Link'
-                  }
-                >
-                  {t('DOWNLOAD')}
-                </Button>
-
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  sx={{
-                    borderRadius: '50px',
-                    height: '36px',
-                    fontSize: '10px',
-                    fontWeight: 500,
-                    textTransform: 'none',
-                    px: 1,
-                    minWidth: '95px',
-                    gap: '5px',
-                    color: 'black',
-                  }}
-                  startIcon={<LinkOutlinedIcon sx={{ fontSize: '14px' }} />}
-                  disabled={
-                    (contentData?.access?.trim() === 'Sample' ||
-                      contentData?.access?.trim() === 'Full') &&
-                    !contentData?.url
-                  }
-                  onClick={handleOnCLick}
-                >
-                  {t('RESOURCE_LINK')}
-                </Button>
-              </Box>
+              <ContentActions
+                contentData={contentData}
+                onPreview={contentActions.handlePreview}
+                onDownload={contentActions.handleOnDownload}
+                onResourceLink={contentActions.handleOnCLick}
+                isMobile={true}
+              />
 
               <Typography
                 variant="body1"
@@ -1378,74 +882,7 @@ export default function Content() {
                 {contentData?.description ?? ''}
               </Typography>
 
-              <Stack spacing={0.5}>
-                <Typography
-                  sx={{
-                    mt: 0,
-                    textAlign: 'left',
-                    fontWeight: 400,
-                    fontFamily: 'Poppins',
-                    fontSize: '14px',
-                    lineHeight: '20px',
-                    color: '#000000',
-                  }}
-                >
-                  <b>{t('AUTHOR')}:</b> {contentData?.author || ''}
-                </Typography>
-
-                <Typography
-                  sx={{
-                    mt: 0,
-                    textAlign: 'left',
-                    fontWeight: 400,
-                    fontFamily: 'Poppins',
-                    fontSize: '14px',
-                    lineHeight: '20px',
-                    color: '#000000',
-                  }}
-                >
-                  <b>{t('PUBLISHER')}:</b> {contentData?.publisher ?? ''}
-                </Typography>
-                <Typography
-                  sx={{
-                    mt: 0,
-                    textAlign: 'left',
-                    fontWeight: 400,
-                    fontFamily: 'Poppins',
-                    fontSize: '14px',
-                    lineHeight: '20px',
-                    color: '#000000',
-                  }}
-                >
-                  {contentData?.year ?? 'n.d.'}
-                </Typography>
-                <Typography
-                  variant="body1"
-                  textAlign="left"
-                  fontFamily={'Arial'}
-                >
-                  {(contentData as any)?.language?.[0] && (
-                    <Typography
-                      variant="body1"
-                      textAlign="left"
-                      fontFamily="Poppins"
-                      sx={{
-                        display: 'inline-block',
-                        backgroundColor: '#FFBD0D', // highlighted yellow
-                        padding: '2px 8px',
-                        // borderRadius: '8px',
-                        fontWeight: 600,
-                        fontSize: '1rem',
-                        color: '#000',
-                      }}
-                    >
-                      {languageDisplayMap[
-                        (contentData as any).language[0]?.toLowerCase?.() ?? ''
-                      ] ?? (contentData as any).language[0]}
-                    </Typography>
-                  )}
-                </Typography>
-              </Stack>
+              <ContentMetadata contentData={contentData} isMobile={true} />
             </Box>
           )}
           <Dialog open={openPopup} onClose={() => setOpenPopup(false)}>
@@ -1485,10 +922,10 @@ export default function Content() {
           </Dialog>
 
           {/* Alert Message */}
-          {showAlertMsg && (
+          {bookmarkHook.showAlertMsg && (
             <Alert
               variant="filled"
-              severity={alertSeverity}
+              severity={bookmarkHook.alertSeverity}
               sx={{
                 position: 'fixed',
                 top: '20px',
@@ -1501,21 +938,19 @@ export default function Content() {
                   cursor: 'default',
                 },
               }}
-              onClose={() => {
-                setShowAlertMsg('');
-              }}
+              onClose={bookmarkHook.closeAlert}
               onClick={(e) => e.stopPropagation()}
             >
-              {showAlertMsg}
+              {bookmarkHook.showAlertMsg}
             </Alert>
           )}
 
           {/* Bookmark Login Required Dialog */}
           <Dialog
-            open={openBookmarkDialog}
+            open={bookmarkHook.openBookmarkDialog}
             onClose={(event, reason) => {
               if (reason === 'backdropClick') return;
-              setOpenBookmarkDialog(false);
+              bookmarkHook.closeBookmarkDialog();
             }}
             disableEscapeKeyDown
             PaperProps={{
@@ -1537,7 +972,7 @@ export default function Content() {
                 </Typography>
                 <IconButton
                   aria-label="close"
-                  onClick={() => setOpenBookmarkDialog(false)}
+                  onClick={bookmarkHook.closeBookmarkDialog}
                   sx={{ ml: 2 }}
                 >
                   <CloseIcon />
@@ -1560,7 +995,7 @@ export default function Content() {
                 variant="contained"
                 color="secondary"
                 onClick={() => {
-                  setOpenBookmarkDialog(false);
+                  bookmarkHook.closeBookmarkDialog();
                   router.push('/signin');
                 }}
                 sx={{
