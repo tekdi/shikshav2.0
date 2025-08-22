@@ -98,6 +98,171 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
   const isAuthPage =
     router.pathname === '/signin' || router.pathname === '/register';
 
+  // Helper function to get framework value based on route
+  const getFrameworkValue = () => {
+    return router.pathname === '/' || router.pathname === '/index'
+      ? ''
+      : framework;
+  };
+
+  // Helper function to render drawer content based on conditions
+  const renderDrawerContent = () => {
+    if (!isMobile && !isAuthPage) {
+      return (
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 2,
+            alignItems: 'center',
+            zIndex: 1100,
+            justifyContent: 'flex-end',
+            minWidth: { xs: '200px', sm: '300px' },
+          }}
+        >
+          {/* 🔍 Search Box */}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: { xs: '40px', md: '40px' },
+              height: '40px',
+              borderRadius: '28px',
+              cursor: 'pointer',
+            }}
+            onClick={handleSearchOpen}
+          >
+            <SearchIcon sx={{ color: 'text.secondary' }} />
+          </Box>
+
+          {/* 🌐 Language Switcher */}
+          <Box
+            sx={{
+              width: { xs: 100, sm: 120 },
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+          >
+            <LanguageSwitcher />
+          </Box>
+
+          {/* ☰ Menu Icon */}
+          <IconButton
+            size="large"
+            edge="start"
+            sx={{ color: 'text.secondary' }}
+            aria-label="menu"
+            onClick={menuIconClick}
+          >
+            <MenuIcon />
+          </IconButton>
+        </Box>
+      );
+    }
+
+    if (isAuthPage) {
+      return (
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 2,
+            alignItems: 'center',
+            zIndex: 1100,
+            justifyContent: 'flex-end',
+            minWidth: { xs: '200px', sm: '300px' },
+          }}
+        >
+          {/* 🔍 Search Box - Icon Only for Auth Pages */}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: { xs: '40px', md: '40px' },
+              height: '40px',
+              borderRadius: '28px',
+              cursor: 'pointer',
+            }}
+            onClick={handleSearchOpen}
+          >
+            <SearchIcon sx={{ color: 'text.secondary' }} />
+          </Box>
+
+          {/* 🌐 Language Switcher */}
+          <Box
+            sx={{
+              width: { xs: 100, sm: 120 },
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+          >
+            <LanguageSwitcher />
+          </Box>
+
+          {/* ☰ Menu Icon */}
+          <IconButton
+            size="large"
+            edge="start"
+            sx={{ color: 'text.secondary' }}
+            aria-label="menu"
+            onClick={menuIconClick}
+          >
+            <MenuIcon />
+          </IconButton>
+        </Box>
+      );
+    }
+
+    // Default case (mobile, non-auth page)
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          zIndex: 1100,
+          justifyContent: 'flex-end',
+          minWidth: { xs: '200px', sm: '300px' },
+          gap: 2,
+        }}
+      >
+        {/* 🔍 Search Box - Icon Only for Mobile */}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: { xs: '40px', md: '40px' },
+            height: '40px',
+            borderRadius: '28px',
+            cursor: 'pointer',
+          }}
+          onClick={handleSearchOpen}
+        >
+          <SearchIcon sx={{ color: 'text.secondary' }} />
+        </Box>
+        {/* 🌐 Language Switcher */}
+        <Box
+          sx={{
+            width: { xs: 100, sm: 120 },
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          <LanguageSwitcher />
+        </Box>
+        <IconButton
+          size="large"
+          edge="start"
+          sx={{ color: 'text.secondary' }}
+          aria-label="menu"
+          onClick={menuIconClick}
+        >
+          <MenuIcon />
+        </IconButton>
+      </Box>
+    );
+  };
+
   useEffect(() => {
     const init = async () => {
       try {
@@ -402,11 +567,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                 >
                   <FrameworkFilter
                     frameworkFilter={frameworkFilter}
-                    framework={
-                      router.pathname === '/' || router.pathname === '/index'
-                        ? ''
-                        : framework
-                    }
+                    framework={getFrameworkValue()}
                     setFramework={setFramework}
                     fromSubcategory={false}
                   />
@@ -415,190 +576,23 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
 
               {_isDrawer && (
                 <Box display="flex" alignItems="center">
-                  {!isMobile && !isAuthPage ? (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        gap: 2,
-                        alignItems: 'center',
-                        zIndex: 1100,
-                        justifyContent: 'flex-end',
-                        minWidth: { xs: '200px', sm: '300px' },
-                      }}
-                    >
-                      {/* 🔍 Search Box */}
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          width: { xs: '40px', md: '40px' },
-                          height: '40px',
-                          borderRadius: '28px',
-                          cursor: 'pointer',
-                        }}
-                        onClick={handleSearchOpen}
-                      >
-                        <SearchIcon sx={{ color: 'text.secondary' }} />
-                      </Box>
-
-                      {/* 🌐 Language Switcher */}
-                      <Box
-                        sx={{
-                          width: { xs: 100, sm: 120 },
-                          display: 'flex',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        <LanguageSwitcher />
-                      </Box>
-
-                      {/* ☰ Menu Icon */}
-                      <IconButton
-                        size="large"
-                        edge="start"
-                        sx={{ color: 'text.secondary' }}
-                        aria-label="menu"
-                        onClick={menuIconClick}
-                      >
-                        <MenuIcon />
-                      </IconButton>
-                    </Box>
-                  ) : isAuthPage ? (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        gap: 2,
-                        alignItems: 'center',
-                        zIndex: 1100,
-                        justifyContent: 'flex-end',
-                        minWidth: { xs: '200px', sm: '300px' },
-                      }}
-                    >
-                      {/* 🔍 Search Box - Icon Only for Auth Pages */}
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          width: { xs: '40px', md: '40px' },
-                          height: '40px',
-                          borderRadius: '28px',
-                          cursor: 'pointer',
-                        }}
-                        onClick={handleSearchOpen}
-                      >
-                        <SearchIcon sx={{ color: 'text.secondary' }} />
-                      </Box>
-
-                      {/* 🌐 Language Switcher */}
-                      <Box
-                        sx={{
-                          width: { xs: 100, sm: 120 },
-                          display: 'flex',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        <LanguageSwitcher />
-                      </Box>
-
-                      {/* ☰ Menu Icon */}
-                      <IconButton
-                        size="large"
-                        edge="start"
-                        sx={{ color: 'text.secondary' }}
-                        aria-label="menu"
-                        onClick={menuIconClick}
-                      >
-                        <MenuIcon />
-                      </IconButton>
-                    </Box>
-                  ) : (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        zIndex: 1100,
-                        justifyContent: 'flex-end',
-                        minWidth: { xs: '200px', sm: '300px' },
-                        gap: 2,
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1.5,
-                          px: 2,
-                          py: '4px',
-                          borderRadius: '10px',
-                          border: '1px solid',
-                          borderColor: 'divider',
-
-                          '&:hover': {
-                            cursor: 'text',
-                          },
-                          width: '100%',
-                          maxWidth: '500px',
-                          marginRight: '10px',
-                        }}
-                        onClick={handleSearchOpen}
-                      >
-                        {/* Search icon */}
-                        <SearchIcon
-                          fontSize="small"
-                          sx={{ color: 'text.secondary' }}
-                        />
-
-                        {/* Search text */}
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            color: 'text.secondary',
-                            flexGrow: 1,
-                            fontSize: 14,
-                          }}
-                        >
-                          {ready ? t(LANGUAGE_KEYS.SEARCH_BY) : 'Search...'}
-                        </Typography>
-                      </Box>
-                      {/* 🌐 Language Switcher */}
-                      <Box
-                        sx={{
-                          width: { xs: 100, sm: 120 },
-                          display: 'flex',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        <LanguageSwitcher />
-                      </Box>
-                      <IconButton
-                        size="large"
-                        edge="start"
-                        sx={{ color: 'text.secondary' }}
-                        aria-label="menu"
-                        onClick={menuIconClick}
-                      >
-                        <MenuIcon />
-                      </IconButton>
-                    </Box>
-                  )}
-                  <SearchTypeModal
-                    open={isSearchOpen}
-                    onClose={handleSearchClose}
-                    onSelect={(type) => console.log(type)}
-                    filterData={filterData}
-                  />
-                  {profileIcon && profileIcon.length > 0 && (
-                    <IconButton
-                      color={actionButtonColor}
-                      aria-label={profileIcon[0]?.ariaLabel}
-                      onClick={profileIcon[0]?.onLogoutClick}
-                    >
-                      {profileIcon[0].icon}
-                    </IconButton>
-                  )}
+                  {renderDrawerContent()}
                 </Box>
+              )}
+              <SearchTypeModal
+                open={isSearchOpen}
+                onClose={handleSearchClose}
+                onSelect={(type) => console.log(type)}
+                filterData={filterData}
+              />
+              {profileIcon && profileIcon.length > 0 && (
+                <IconButton
+                  color={actionButtonColor}
+                  aria-label={profileIcon[0]?.ariaLabel}
+                  onClick={profileIcon[0]?.onLogoutClick}
+                >
+                  {profileIcon[0].icon}
+                </IconButton>
               )}
             </Box>
           </Toolbar>

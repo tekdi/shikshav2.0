@@ -229,6 +229,7 @@
   "SEARCH_BY_LANGUAGE": "Search By Language",
   "FIND_CONTENT_BY_CATEGORY": "Find content by this category",
   "NO_RESULTS_FOUND": "No results found",
+  "SHOWING_RESULTS_FOR": "Showing Results for",
 
   "BOOKMARK_ADDED_SUCCESS": "Content added to bookmarks successfully!",
   "BOOKMARK_REMOVED_SUCCESS": "Content removed from bookmarks successfully!",

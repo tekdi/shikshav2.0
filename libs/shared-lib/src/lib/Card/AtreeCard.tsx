@@ -12,11 +12,15 @@ export const AtreeCard: React.FC<{
   _grid: object;
   handleCardClick: (content: ContentSearchResponse) => void;
   _card?: any;
+  noResourcesText?: string;
+  recommendHereText?: string;
 }> = React.memo(function AtreeCard({
   contents,
   handleCardClick,
   _grid,
   _card,
+  noResourcesText = "Oops! We don't have this resource yet on our shelves. Help us stock it by recommending it",
+  recommendHereText = 'here',
 }) {
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const pathname = usePathname();
@@ -85,15 +89,14 @@ export const AtreeCard: React.FC<{
             mt: 2,
           }}
         >
-          Oops! We don't have this resource yet on our shelves. Help us stock it
-          by recommending it{' '}
+          {noResourcesText}{' '}
           <Link
             href="https://docs.google.com/forms/d/1r4wxm2a2kKH2Veq9_AYIfmWNYJJh5u-nw_SweHC5ydQ/viewform?edit_requested=true"
             target="_blank"
             rel="noopener noreferrer"
             style={{ color: '#0037B9', textDecoration: 'underline' }}
           >
-            here
+            {recommendHereText}
           </Link>
         </Typography>
       ) : (

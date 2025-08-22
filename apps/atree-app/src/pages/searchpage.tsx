@@ -23,6 +23,7 @@ import Footer from '../component/layout/Footer';
 import FilterDialog from 'libs/shared-lib/src/lib/Filterdialog/FilterDialog';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useAppTranslation } from '../utils/i18n.helper';
+import { LANGUAGE_KEYS } from '../utils/language.constants';
 
 // Function to get translated resource types
 const getTranslatedResourceTypes = (t: any) => [
@@ -268,7 +269,7 @@ export default function Searchpage() {
                   fontFamily: 'Poppins',
                 }}
               >
-                Showing Results for{' '}
+                {t(LANGUAGE_KEYS.SHOWING_RESULTS_FOR)}{' '}
                 <span
                   style={{
                     color: '#000000',
@@ -336,6 +337,8 @@ export default function Searchpage() {
                       },
                       showSearch: false,
                       showFilter: false,
+                      noResourcesText: t(LANGUAGE_KEYS.NO_RESOURCES),
+                      recommendHereText: t(LANGUAGE_KEYS.RECOMMEND_HERE),
                     }}
                   />
                 </Grid>
@@ -385,6 +388,8 @@ export default function Searchpage() {
                       },
                       showSearch: false,
                       showFilter: false,
+                      noResourcesText: t(LANGUAGE_KEYS.NO_RESOURCES),
+                      recommendHereText: t(LANGUAGE_KEYS.RECOMMEND_HERE),
                     }}
                   />
                 </Box>

@@ -41,6 +41,8 @@ export interface ContentProps {
   showArrowback?: boolean;
   showContent?: boolean;
   categoryLabel?: string;
+  noResourcesText?: string;
+  recommendHereText?: string;
 }
 export default function Content(props: ContentProps) {
   const router = useRouter();
@@ -544,6 +546,8 @@ export default function Content(props: ContentProps) {
         handleLoadMore={handleLoadMore}
         isLodingMoreData={isLoading}
         tabs={tabs}
+        noResourcesText={props.noResourcesText}
+        recommendHereText={props.recommendHereText}
       />
       {propData?.showHelpDesk && <HelpDesk />}
       {propData?.showBackToTop && showBackToTop && <BackToTop />}

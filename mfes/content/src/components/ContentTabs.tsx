@@ -26,6 +26,8 @@ const RenderTabContent = memo(
     ariaLabel,
     isLodingMoreData,
     _card,
+    noResourcesText,
+    recommendHereText,
   }: {
     contentData: ContentSearchResponse[];
     _grid: any;
@@ -40,6 +42,8 @@ const RenderTabContent = memo(
     ariaLabel?: string;
     isLodingMoreData: boolean;
     _card?: any;
+    noResourcesText?: string;
+    recommendHereText?: string;
   }) => {
     return (
       <Box sx={{ width: '100%' }}>
@@ -90,6 +94,8 @@ const RenderTabContent = memo(
               contents={contentData}
               _grid={{ ..._grid }}
               handleCardClick={handleCardClick}
+              noResourcesText={noResourcesText}
+              recommendHereText={recommendHereText}
             />
           ) : (
             <Box>
