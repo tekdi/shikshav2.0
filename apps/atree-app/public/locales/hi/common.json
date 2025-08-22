@@ -223,6 +223,7 @@
   "SEARCH_BY_LANGUAGE": "भाषा द्वारा खोजें",
   "FIND_CONTENT_BY_CATEGORY": "इस श्रेणी द्वारा सामग्री खोजें",
   "NO_RESULTS_FOUND": "कोई परिणाम नहीं मिला",
+  "SHOWING_RESULTS_FOR": "के लिए परिणाम दिखा रहा है",
 
   "BOOKMARK_ADDED_SUCCESS": "सामग्री सफलतापूर्वक बुकमार्क में जोड़ी गई!",
   "BOOKMARK_REMOVED_SUCCESS": "सामग्री सफलतापूर्वक बुकमार्क से हटा दी गई!",

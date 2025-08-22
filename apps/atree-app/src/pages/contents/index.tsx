@@ -255,6 +255,8 @@ const List: React.FC<ListProps> = () => {
     showArrowback: true,
     showContent: true,
     categoryLabel: translatedCategoryLabel,
+    noResourcesText: t(LANGUAGE_KEYS.NO_RESOURCES),
+    recommendHereText: t(LANGUAGE_KEYS.RECOMMEND_HERE),
   };
 
   const boxStyles = {

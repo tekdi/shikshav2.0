@@ -78,6 +78,87 @@ const getTranslatedMimeTypes = (t: any) => [
   { label: t('PDF'), value: 'application/pdf' },
 ];
 
+// Function to get translated category names (English values for API, translated labels for display)
+const getTranslatedCategoryNames = (t: any) => [
+  // Main categories
+  { label: t('WATER'), value: 'Water' },
+  { label: t('LAND'), value: 'Land' },
+  { label: t('FOREST'), value: 'Forest' },
+  { label: t('CLIMATE_CHANGE'), value: 'Climate Change' },
+  { label: t('ACTIVITY_BOOKS'), value: 'Activity Books' },
+  { label: t('REFERENCE_BOOKS'), value: 'Reference Books' },
+  { label: t('GENERAL'), value: 'General' },
+  { label: t('POTPOURRI'), value: 'Potpourri' },
+  // Water subcategories
+  {
+    label: t('WATER_BASIC_CONCEPTS'),
+    value: 'Water Basic Concepts',
+  },
+  {
+    label: t('WATER_BIODIVERSITY'),
+    value: 'Water Biodiversity',
+  },
+  {
+    label: t('WATER_CONSERVATION'),
+    value: 'Water Conservation',
+  },
+  {
+    label: t('WATER_AND_SANITATION'),
+    value: 'Water and Sanitation',
+  },
+  {
+    label: t('WATER_CRISIS'),
+    value: 'Water Crisis',
+  },
+  {
+    label: t('FRESH_WATER_ECOSYSTEM'),
+    value: 'Fresh water ecosystem',
+  },
+  {
+    label: t('COASTAL_ECOSYSTEM'),
+    value: 'Coastal ecosystem',
+  },
+  {
+    label: t('WATER_BASED_STEM_ACTIVITIES'),
+    value: 'Water based STEM and STEM Activities',
+  },
+  // Land subcategories
+  { label: t('SEED'), value: 'Seed' },
+  { label: t('PLANTS_AND_VEGETABLES'), value: 'Plants and Vegetables' },
+  { label: t('AGRICULTURE'), value: 'Agriculture' },
+  { label: t('FOOD_AND_WASTE'), value: 'Food and Waste' },
+  { label: t('SOIL'), value: 'Soil' },
+  { label: t('LAND_BIODIVERSITY'), value: 'Land Biodiversity' },
+  {
+    label: t('ACTIVITY_BOOK_ON_KITCHEN_GARDENS'),
+    value: 'Activity Book on Kitchen Gardens',
+  },
+  { label: t('TREES'), value: 'Trees' },
+  { label: t('GRASSLANDS'), value: 'Grassland' },
+  // Forest subcategories
+  { label: t('PEOPLE'), value: 'People' },
+  { label: t('WILDLIFE'), value: 'Wildlife' },
+  { label: t('FOREST_BIODIVERSITY'), value: 'Forest Biodiversity' },
+  { label: t('FOREST_MANAGEMENT'), value: 'Forest Management' },
+  { label: t('FOREST_ECOSYSTEMS'), value: 'Forest Ecosystems' },
+  // Potpourri subcategories
+  { label: t('FICTION_AND_NON_FICTION'), value: 'Fiction and Non Fiction' },
+  {
+    label: t('MAGAZINES_NEWSPAPERS_WEBSITES'),
+    value: 'Magazines, Newspapers and Websities',
+  },
+  { label: t('REFERENCE_MATERIALS'), value: 'Reference Materials' },
+  // Climate Change subcategories
+  { label: t('CLIMATE_IMPACTS'), value: 'Climate Impacts' },
+  // Activity Book subcategories
+  { label: t('LESSON_PLAN'), value: 'Lesson Plan' },
+  { label: t('CURRICULUM'), value: 'Curriculum' },
+  { label: t('ACTIVITY_WORKBOOKS'), value: 'Activity Workbooks' },
+  // General subcategories
+  { label: t('GENERAL_TOPICS'), value: 'General Topics' },
+  { label: t('MIXED_CONTENT'), value: 'Mixed Content' },
+];
+
 // Function to get translated subcategory names (English values for API, translated labels for display)
 const getTranslatedSubcategoryNames = (t: any) => [
   // Water subcategories
@@ -894,8 +975,8 @@ export default function Index() {
                           return (
                             <span style={{ color: '#999' }}>
                               {bookmark === 'true'
-                                ? 'Bookmarked Content'
-                                : 'Browse by Sub Categories'}
+                                ? t(LANGUAGE_KEYS.BOOKMARKED_CONTENT)
+                                : t(LANGUAGE_KEYS.BROWSE_BY_SUB_CATEGORIES)}
                             </span>
                           );
                         }
@@ -1202,6 +1283,8 @@ const ContentSection = ({ title, contents, onTitleClick, handleCardClick }) => {
           handleCardClick={handleCardClick}
           _grid={{ size: { xs: 6, sm: 6, md: 4, lg: 3 } }}
           _card={{ image: atreeLogo.src }}
+          noResourcesText={t(LANGUAGE_KEYS.NO_RESOURCES)}
+          recommendHereText={t(LANGUAGE_KEYS.RECOMMEND_HERE)}
         />
       ) : (
         <Typography
@@ -1263,14 +1346,14 @@ const FrameworkFilter = React.memo<{
       return name;
     }
 
-    // Get translated subcategory names
-    const translatedSubcategories = getTranslatedSubcategoryNames(t);
-    const translatedSubcategory = translatedSubcategories.find(
-      (subcat) => subcat.value.toLowerCase() === name.toLowerCase()
+    // Get translated category names (includes both main categories and subcategories)
+    const translatedCategories = getTranslatedCategoryNames(t);
+    const translatedCategory = translatedCategories.find(
+      (cat) => cat.value.toLowerCase() === name.toLowerCase()
     );
 
     // Use translated label for display, but keep original name for API calls
-    return translatedSubcategory ? translatedSubcategory.label : name;
+    return translatedCategory ? translatedCategory.label : name;
   };
 
   const handleItemClick = (item: any) => {
@@ -1503,14 +1586,14 @@ const SubFrameworkFilter = React.memo<{
       return name;
     }
 
-    // Get translated subcategory names
-    const translatedSubcategories = getTranslatedSubcategoryNames(t);
-    const translatedSubcategory = translatedSubcategories.find(
-      (subcat) => subcat.value.toLowerCase() === name.toLowerCase()
+    // Get translated category names (includes both main categories and subcategories)
+    const translatedCategories = getTranslatedCategoryNames(t);
+    const translatedCategory = translatedCategories.find(
+      (cat) => cat.value.toLowerCase() === name.toLowerCase()
     );
 
     // Use translated label for display, but keep original name for API calls
-    return translatedSubcategory ? translatedSubcategory.label : name;
+    return translatedCategory ? translatedCategory.label : name;
   };
   return (
     <Grid container spacing={1}>
@@ -1617,7 +1700,7 @@ const SubFrameworkFilter = React.memo<{
                   minHeight: '100px',
                 }}
               >
-                <Typography>Loading translations...</Typography>
+                <Typography>{t(LANGUAGE_KEYS.LOADING_TRANSLATIONS)}</Typography>
               </Box>
             ) : (
               <FrameworkFilter

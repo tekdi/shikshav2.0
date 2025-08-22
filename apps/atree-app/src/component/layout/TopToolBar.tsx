@@ -524,43 +524,20 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                         gap: 2,
                       }}
                     >
+                      {/* 🔍 Search Box - Icon Only for Mobile */}
                       <Box
                         sx={{
                           display: 'flex',
                           alignItems: 'center',
-                          gap: 1.5,
-                          px: 2,
-                          py: '4px',
-                          borderRadius: '10px',
-                          border: '1px solid',
-                          borderColor: 'divider',
-
-                          '&:hover': {
-                            cursor: 'text',
-                          },
-                          width: '100%',
-                          maxWidth: '500px',
-                          marginRight: '10px',
+                          justifyContent: 'center',
+                          width: { xs: '40px', md: '40px' },
+                          height: '40px',
+                          borderRadius: '28px',
+                          cursor: 'pointer',
                         }}
                         onClick={handleSearchOpen}
                       >
-                        {/* Search icon */}
-                        <SearchIcon
-                          fontSize="small"
-                          sx={{ color: 'text.secondary' }}
-                        />
-
-                        {/* Search text */}
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            color: 'text.secondary',
-                            flexGrow: 1,
-                            fontSize: 14,
-                          }}
-                        >
-                          {ready ? t(LANGUAGE_KEYS.SEARCH_BY) : 'Search...'}
-                        </Typography>
+                        <SearchIcon sx={{ color: 'text.secondary' }} />
                       </Box>
                       {/* 🌐 Language Switcher */}
                       <Box

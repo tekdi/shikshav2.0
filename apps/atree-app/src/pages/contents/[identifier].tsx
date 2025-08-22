@@ -55,6 +55,7 @@ import { telemetryFactory } from '../../utils/telemetry';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import { useAppTranslation } from '../../utils/i18n.helper';
+import { LANGUAGE_KEYS } from '../../utils/language.constants';
 import GlobalAlert from '../../component/GlobalAlert';
 import { cleanupAuthErrorFromUrl } from '../../utils/urlCleanup';
 
@@ -1117,6 +1118,8 @@ export default function Content() {
                   handleCardClick={handleCardClick}
                   _grid={{ size: { xs: 6, sm: 6, md: 3, lg: 2 } }}
                   _card={{ image: atreeLogo.src, paddingBottom: '40px' }}
+                  noResourcesText={t(LANGUAGE_KEYS.NO_RESOURCES)}
+                  recommendHereText={t(LANGUAGE_KEYS.RECOMMEND_HERE)}
                 />
               </Box>
             </>
@@ -1162,19 +1165,46 @@ export default function Content() {
                   >
                     <ArrowBackIcon />
                   </IconButton>
-                  <IconButton
-                    onClick={handleOpen}
-                    color="primary"
-                    style={{
-                      marginLeft: 'auto',
-                      backgroundColor: 'white',
-                      color: '#2B3133',
-                      boxShadow:
-                        '-0.73px 0.73px 0.73px -1.46px rgba(255, 255, 255, 0.35) inset, 0px 8px 10px rgba(0, 0, 0, 0.05)',
+
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
                     }}
                   >
-                    <ShareIcon />
-                  </IconButton>
+                    <IconButton
+                      color="primary"
+                      disabled={isBookmarkLoading}
+                      sx={{
+                        backgroundColor: 'white',
+                        color: hasToken && isBookmarked ? '#FCD905' : '#2B3133',
+                        opacity: isBookmarkLoading ? 0.6 : 1,
+                        boxShadow:
+                          '-0.73px 0.73px 0.73px -1.46px rgba(255, 255, 255, 0.35) inset, 0px 8px 10px rgba(0, 0, 0, 0.05)',
+                      }}
+                      onClick={handleBookmarkToggle}
+                    >
+                      {hasToken && isBookmarked ? (
+                        <BookmarkIcon />
+                      ) : (
+                        <BookmarkBorderIcon />
+                      )}
+                    </IconButton>
+
+                    <IconButton
+                      onClick={handleOpen}
+                      color="primary"
+                      style={{
+                        backgroundColor: 'white',
+                        color: '#2B3133',
+                        boxShadow:
+                          '-0.73px 0.73px 0.73px -1.46px rgba(255, 255, 255, 0.35) inset, 0px 8px 10px rgba(0, 0, 0, 0.05)',
+                      }}
+                    >
+                      <ShareIcon />
+                    </IconButton>
+                  </Box>
 
                   {/* Share Dialog */}
 
