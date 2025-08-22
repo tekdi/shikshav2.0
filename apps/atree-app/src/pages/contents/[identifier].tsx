@@ -22,7 +22,6 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { getContentDetails } from '../../service/content';
 import Layout from '../../component/layout/layout';
 import landingBanner from '../../../assets/images/landingBanner.png';
 import Grid from '@mui/material/Grid2';
@@ -62,6 +61,7 @@ import { useContentActions } from '../../hooks/useContentActions';
 import { useContentData } from '../../hooks/useContentData';
 import { useFrameworkData } from '../../hooks/useFrameworkData';
 import { useKeywords } from '../../hooks/useKeywords';
+import { useFilters } from '../../hooks/useFilters';
 
 // Function to get translated subcategory names (English values for API, translated labels for display)
 const getTranslatedSubcategoryNames = (t: any) => [
@@ -184,14 +184,6 @@ export default function Content() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [open, setOpen] = useState(false);
   const [hasToken, setHasToken] = useState(false);
-
-  const [filters, setFilters] = useState<any>({
-    request: {
-      filters: {},
-      offset: 0,
-      limit: 5,
-    },
-  });
   const [homeCategory, setHomeCategory] = useState('');
   const [alert, setAlert] = useState({
     message: '',
@@ -212,6 +204,7 @@ export default function Content() {
 
   const frameworkData = useFrameworkData();
   const keywordsData = useKeywords({ contentData });
+  const { filters, handleApplyFilters } = useFilters(fetchContent);
 
   const contentActions = useContentActions({
     identifier: identifier as string,
@@ -224,12 +217,12 @@ export default function Content() {
   }
 
   const handleOpen = () => setOpen(true);
+
   useEffect(() => {
     const storedCategory = localStorage.getItem('category') || '';
-
-    console.log('Stored category:', contentData);
     setHomeCategory(storedCategory);
   }, []);
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     setHasToken(!!token);
@@ -239,11 +232,12 @@ export default function Content() {
     if (identifier) {
       fetchContent(filters.request.filters);
     }
-  }, [identifier, fetchContent]);
+  }, [identifier, fetchContent, filters.request.filters]);
 
   const handleCardClick = (content: any) => {
     router.push(`/contents/${content?.identifier}`);
   };
+
   const selectTagOnClick = async (keyword: any) => {
     try {
       setIsRelatedContentLoading(true);
@@ -252,17 +246,12 @@ export default function Content() {
         query: keyword,
       });
 
-      const filteredContent =
-        keywordFilteredResults?.result?.content?.filter(
-          (item: any) => item.identifier !== identifier
-        ) ?? [];
       trackEvent({
         action: 'tags_content',
         category: 'user',
         label: 'Content Details Page',
       });
       // Note: This would need to be handled differently since relatedContent is now managed by the hook
-      // For now, we'll keep the existing functionality but this should be refactored
     } catch (error) {
       console.error(`Search failed for keyword ${keyword}:`, error);
     } finally {
@@ -270,43 +259,320 @@ export default function Content() {
     }
   };
 
-  const handleApplyFilters = async (selectedValues: any) => {
-    trackEvent({
-      action: 'filter_apply',
-      category: 'user',
-      label: 'Home Page',
-    });
-    const { offset, limit, ...filters } = selectedValues;
-    setFilters((prevFilters: any) => {
-      // Create a new filters object, preserving previous filters
-      let cleanedFilters = {
-        ...prevFilters.request.filters,
-        ...Object.fromEntries(
-          Object.entries(filters).filter(
-            ([key, value]) => Array.isArray(value) && value.length > 0
-          )
-        ),
-      };
+  // Helper functions to reduce cognitive complexity
+  const renderDesktopView = () => (
+    <>
+      <Grid
+        container
+        spacing={2}
+        sx={{
+          padding: '25px',
+        }}
+      >
+        <Grid size={{ xs: 12 }}>
+          <ContentHeader
+            homeCategory={homeCategory}
+            subFrameworkFilter={frameworkData.subFrameworkFilter}
+            hasToken={hasToken}
+            isBookmarked={bookmarkHook.isBookmarked}
+            isBookmarkLoading={bookmarkHook.isBookmarkLoading}
+            onBookmarkToggle={bookmarkHook.handleBookmarkToggle}
+            onShareClick={handleOpen}
+          />
 
-      if (!filters.mimeType || filters.mimeType.length === 0) {
-        delete cleanedFilters.mimeType;
-      }
-      if (!filters.resource || filters.resource.length === 0) {
-        delete cleanedFilters.resource;
-      }
+          <Box
+            sx={{
+              display: 'flex',
+              border: '1px solid #C2C7CF',
+              padding: '10px',
+              gap: 2,
+              borderRadius: '10px',
+            }}
+          >
+            {/* Content Image */}
+            <Grid size={{ xs: 12, md: 3 }}>
+              <ImageCard
+                image={contentData?.appicon ?? landingBanner?.src}
+                name={''}
+              />
+            </Grid>
 
-      const newFilters = {
-        request: {
-          filters: cleanedFilters,
-          offset: offset ?? prevFilters.request.offset ?? 0,
-          limit: limit ?? prevFilters.request.limit ?? 5,
-        },
-      };
-      setFilters(newFilters);
-      fetchContent(newFilters.request.filters);
-      return newFilters;
-    });
-  };
+            {/* Content Details */}
+            <Grid size={{ xs: 12, md: 9 }}>
+              <Stack spacing={2}>
+                <Typography
+                  textAlign="left"
+                  sx={{
+                    fontFamily: 'Poppins',
+                    fontSize: '24px',
+                    fontWeight: 400,
+                    color: '#000000',
+                  }}
+                >
+                  {contentData?.name ?? ''}
+                </Typography>
+
+                {/* Keywords */}
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '19px',
+                    width: '100%',
+                  }}
+                >
+                  {keywordsData.displayedKeywords.map((label: string) => (
+                    <Chip
+                      key={label}
+                      label={label}
+                      variant="outlined"
+                      sx={{
+                        height: 32,
+                        padding: '4px 6px',
+                        borderRadius: '8px',
+                        '& .MuiChip-label': {
+                          fontSize: '14px',
+                          fontFamily: 'Poppins',
+                          fontWeight: 500,
+                          color: '#000000',
+                        },
+                      }}
+                      onClick={() => selectTagOnClick(label.replace('#', ''))}
+                    />
+                  ))}
+                </Box>
+
+                {/* Description */}
+                <Typography
+                  textAlign="left"
+                  sx={{
+                    fontFamily: 'Poppins',
+                    fontSize: '16px',
+                    fontWeight: 400,
+                    color: '#000000',
+                    width: '84%',
+                    textAlign: 'left',
+                  }}
+                >
+                  {contentData?.description ?? ''}
+                </Typography>
+
+                {/* Action Buttons */}
+                <ContentActions
+                  contentData={contentData}
+                  onPreview={contentActions.handlePreview}
+                  onDownload={contentActions.handleOnDownload}
+                  onResourceLink={contentActions.handleOnCLick}
+                />
+
+                {/* Metadata */}
+                <ContentMetadata contentData={contentData} />
+              </Stack>
+            </Grid>
+          </Box>
+        </Grid>
+      </Grid>
+
+      {/* Related Content Section */}
+      <Box
+        sx={{
+          width: '100%',
+          gap: '16px',
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '20px',
+        }}
+      >
+        <Box
+          display="flex"
+          flexDirection="row"
+          justifyContent="space-between"
+          alignItems="center"
+          width="100%"
+        >
+          <Typography
+            sx={{
+              fontSize: '18px',
+              fontWeight: 700,
+              fontFamily: 'Poppins',
+              color: '#000000',
+            }}
+          >
+            {t('RELATED_CONTENT')}
+          </Typography>
+        </Box>
+        <AtreeCard
+          contents={
+            relatedContent?.length > 0 ? relatedContent?.slice(0, 12) : []
+          }
+          handleCardClick={handleCardClick}
+          _grid={{ size: { xs: 6, sm: 6, md: 3, lg: 2 } }}
+          _card={{ image: atreeLogo.src, paddingBottom: '40px' }}
+          noResourcesText={t(LANGUAGE_KEYS.NO_RESOURCES)}
+          recommendHereText={t(LANGUAGE_KEYS.RECOMMEND_HERE)}
+        />
+      </Box>
+    </>
+  );
+
+  const renderMobileView = () => (
+    <Box
+      sx={{
+        padding: 2,
+        margin: '0 auto',
+        textAlign: 'center',
+        borderRadius: 2,
+        gap: 2.5,
+        display: 'flex',
+        flexDirection: 'column',
+        pt: '18px',
+      }}
+    >
+      <Box sx={{ px: 2 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push('/home');
+            }}
+            sx={{
+              padding: '4px',
+              backgroundColor: 'transparent',
+              color: '#000000',
+              borderRadius: '50%',
+              '&:hover': {
+                backgroundColor: 'rgba(0,0,0,0.04)',
+              },
+              '&:focus': {
+                outline: 'none',
+              },
+            }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+            }}
+          >
+            <IconButton
+              color="primary"
+              disabled={bookmarkHook.isBookmarkLoading}
+              sx={{
+                backgroundColor: 'white',
+                color:
+                  hasToken && bookmarkHook.isBookmarked ? '#FCD905' : '#2B3133',
+                opacity: bookmarkHook.isBookmarkLoading ? 0.6 : 1,
+                boxShadow:
+                  '-0.73px 0.73px 0.73px -1.46px rgba(255, 255, 255, 0.35) inset, 0px 8px 10px rgba(0, 0, 0, 0.05)',
+              }}
+              onClick={bookmarkHook.handleBookmarkToggle}
+            >
+              {hasToken && bookmarkHook.isBookmarked ? (
+                <BookmarkIcon />
+              ) : (
+                <BookmarkBorderIcon />
+              )}
+            </IconButton>
+
+            <IconButton
+              onClick={handleOpen}
+              color="primary"
+              style={{
+                backgroundColor: 'white',
+                color: '#2B3133',
+                boxShadow:
+                  '-0.73px 0.73px 0.73px -1.46px rgba(255, 255, 255, 0.35) inset, 0px 8px 10px rgba(0, 0, 0, 0.05)',
+              }}
+            >
+              <ShareIcon />
+            </IconButton>
+          </Box>
+        </Box>
+      </Box>
+
+      <ImageCard
+        image={contentData?.appicon ?? landingBanner?.src}
+        name={
+          <Box display="flex" alignItems="center" gap={1}>
+            <Box>
+              <Typography variant="body2" gutterBottom>
+                {contentData?.name ?? ''}
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                {contentData?.publisher ?? ''}
+              </Typography>
+            </Box>
+          </Box>
+        }
+      />
+
+      <ContentActions
+        contentData={contentData}
+        onPreview={contentActions.handlePreview}
+        onDownload={contentActions.handleOnDownload}
+        onResourceLink={contentActions.handleOnCLick}
+        isMobile={true}
+      />
+
+      <Typography
+        variant="body1"
+        sx={{
+          mt: 0,
+          textAlign: 'left',
+          fontFamily: 'Arial',
+          lineHeight: '18px',
+          fontWeight: '800',
+          fontSize: '18px',
+        }}
+      >
+        {contentData?.name ?? ''}
+      </Typography>
+
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+        {keywordsData.displayedKeywords?.map((label: string, index: number) => (
+          <Chip
+            key={index}
+            label={label}
+            variant="outlined"
+            sx={{
+              height: '32px',
+              gap: '2px',
+              padding: '4px 6px',
+              borderRadius: '8px',
+            }}
+            onClick={() => selectTagOnClick(label.replace('#', ''))}
+          />
+        ))}
+      </Box>
+
+      <Typography
+        variant="body1"
+        sx={{
+          mt: 0,
+          textAlign: 'left',
+          fontWeight: 400,
+          fontFamily: 'Poppins',
+          fontSize: '14px',
+          lineHeight: '20px',
+          color: '#000000',
+        }}
+      >
+        {contentData?.description ?? ''}
+      </Typography>
+
+      <ContentMetadata contentData={contentData} isMobile={true} />
+    </Box>
+  );
   return (
     <>
       {contentData ? (
