@@ -61,11 +61,12 @@ export const useBookmark = ({ identifier, contentData }: UseBookmarkProps) => {
 
     setIsBookmarkLoading(true);
     try {
+      const action: 'add' | 'remove' = isBookmarked ? 'remove' : 'add';
       const bookmarkData = {
         userId: userId,
         entityType: 'content',
         doId: identifier,
-        action: (isBookmarked ? 'remove' : 'add') as 'add' | 'remove',
+        action,
       };
 
       const response = await createBookmark(bookmarkData, token);

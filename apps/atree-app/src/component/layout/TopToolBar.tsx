@@ -98,6 +98,13 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
   const isAuthPage =
     router.pathname === '/signin' || router.pathname === '/register';
 
+  // Helper function to get framework value based on route
+  const getFrameworkValue = () => {
+    return router.pathname === '/' || router.pathname === '/index'
+      ? ''
+      : framework;
+  };
+
   // Helper function to render drawer content based on conditions
   const renderDrawerContent = () => {
     if (!isMobile && !isAuthPage) {
@@ -560,11 +567,7 @@ const TopAppBar: React.FC<CommonAppBarProps> = ({
                 >
                   <FrameworkFilter
                     frameworkFilter={frameworkFilter}
-                    framework={
-                      router.pathname === '/' || router.pathname === '/index'
-                        ? ''
-                        : framework
-                    }
+                    framework={getFrameworkValue()}
                     setFramework={setFramework}
                     fromSubcategory={false}
                   />

@@ -25,7 +25,7 @@ export const ContentMetadata: React.FC<ContentMetadataProps> = ({
   };
 
   const getLanguageDisplay = () => {
-    const language = (contentData as any)?.language?.[0];
+    const language = contentData?.language?.[0];
     if (!language) return null;
 
     const displayName =
