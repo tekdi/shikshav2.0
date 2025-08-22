@@ -196,11 +196,16 @@ export default function Content() {
     contentData: null, // Will be updated below
   });
 
-  const { contentData, isLoading, relatedContent, fetchContent } =
-    useContentData({
-      identifier: identifier as string,
-      onBookmarkStatusCheck: bookmarkHook.checkBookmarkStatus,
-    });
+  const {
+    contentData,
+    isLoading,
+    relatedContent,
+    fetchContent,
+    updateRelatedContent,
+  } = useContentData({
+    identifier: identifier as string,
+    onBookmarkStatusCheck: bookmarkHook.checkBookmarkStatus,
+  });
 
   const frameworkData = useFrameworkData();
   const keywordsData = useKeywords({ contentData });
@@ -241,17 +246,14 @@ export default function Content() {
   const selectTagOnClick = async (keyword: any) => {
     try {
       setIsRelatedContentLoading(true);
-      const keywordFilteredResults = await ContentSearch({
-        channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
-        query: keyword,
-      });
 
       trackEvent({
         action: 'tags_content',
         category: 'user',
         label: 'Content Details Page',
       });
-      // Note: This would need to be handled differently since relatedContent is now managed by the hook
+
+      await updateRelatedContent(keyword);
     } catch (error) {
       console.error(`Search failed for keyword ${keyword}:`, error);
     } finally {
@@ -381,8 +383,53 @@ export default function Content() {
           display: 'flex',
           flexDirection: 'column',
           padding: '20px',
+          position: 'relative',
         }}
       >
+        {isRelatedContentLoading && (
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 1000,
+              borderRadius: '8px',
+            }}
+          >
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 2,
+              }}
+            >
+              <Box
+                sx={{
+                  width: 40,
+                  height: 40,
+                  border: '4px solid #f3f3f3',
+                  borderTop: '4px solid #fcd804',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite',
+                  '@keyframes spin': {
+                    '0%': { transform: 'rotate(0deg)' },
+                    '100%': { transform: 'rotate(360deg)' },
+                  },
+                }}
+              />
+              <Typography variant="body2" color="text.secondary">
+                Loading related content...
+              </Typography>
+            </Box>
+          </Box>
+        )}
         <Box
           display="flex"
           flexDirection="row"

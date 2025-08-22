@@ -140,10 +140,32 @@ export const useContentData = ({
     [identifier, onBookmarkStatusCheck]
   );
 
+  const updateRelatedContent = useCallback(
+    async (keyword: string) => {
+      try {
+        const keywordFilteredResults = await ContentSearch({
+          channel: process.env.NEXT_PUBLIC_CHANNEL_ID as string,
+          query: keyword,
+        });
+
+        const filteredContent =
+          keywordFilteredResults?.result?.content?.filter(
+            (item: any) => item.identifier !== identifier
+          ) ?? [];
+
+        setRelatedContent(filteredContent.map(mapContentItem));
+      } catch (error) {
+        console.error(`Search failed for keyword ${keyword}:`, error);
+      }
+    },
+    [identifier]
+  );
+
   return {
     contentData,
     isLoading,
     relatedContent,
     fetchContent,
+    updateRelatedContent,
   };
 };
