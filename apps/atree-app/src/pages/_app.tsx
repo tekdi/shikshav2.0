@@ -77,8 +77,12 @@ export default function RootLayout({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
   useEffect(() => {
-    telemetryFactory.init();
+    // Initialize telemetry without async/await to avoid tslib dependency
+    if (typeof window !== 'undefined') {
+      telemetryFactory.init();
+    }
   }, []);
+
 
   useEffect(() => {
     runWhenIdle(clearLoginErrorHash);
