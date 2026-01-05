@@ -102,7 +102,10 @@ function CustomApp({ Component, pageProps }: AppProps) {
   });
 
   useEffect(() => {
-    telemetryFactory.init();
+    // Initialize telemetry without async/await to avoid tslib dependency
+    if (typeof window !== 'undefined') {
+      telemetryFactory.init();
+    }
   }, []);
 
   // Initialize language
