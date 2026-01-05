@@ -28,7 +28,7 @@ const telemetryConfig = {
   },
   env: 'atree',
   channel: '',
-  did: 'did',
+  did: (typeof window !== 'undefined' && localStorage.getItem('deviceId')) || 'pending-device-id',
   authtoken: '',
   userId:
     (typeof window !== 'undefined' && localStorage.getItem('userId')) ||
@@ -44,36 +44,47 @@ const telemetryConfig = {
   tags: [],
 };
 
-// Wait for device ID before initializing telemetry
-if (typeof window !== 'undefined') {
-  getDeviceId().then((deviceId) => {
-    telemetryConfig.did = deviceId;
-    localStorage.setItem('deviceId', deviceId);
-    console.log('Telemetry Device ID (did):', deviceId);
-
-    // Ensure telemetry is initialized only once
-    if (!CsTelemetryModule.instance.isInitialised) {
-      CsTelemetryModule.instance.init({});
-      CsTelemetryModule.instance.telemetryService.initTelemetry({
-        config: telemetryConfig,
-        userOrgDetails: {},
-      });
-    }
-  });
-}
-
 // Exportable telemetry factory
 export const telemetryFactory = {
   init: () => {
-    if (
-      typeof window !== 'undefined' &&
-      !CsTelemetryModule.instance.isInitialised
-    ) {
-      CsTelemetryModule.instance.init({});
-      CsTelemetryModule.instance.telemetryService.initTelemetry({
-        config: telemetryConfig,
-        userOrgDetails: {},
-      });
+    if (typeof window !== 'undefined' && !CsTelemetryModule.instance.isInitialised) {
+      // Check if device ID already exists in localStorage
+      const deviceId = localStorage.getItem('deviceId');
+      
+      if (deviceId && deviceId !== 'pending-device-id') {
+        // Use existing device ID
+        telemetryConfig.did = deviceId;
+        console.log('Telemetry Device ID (did):', deviceId);
+        
+        // Initialize telemetry with existing device ID
+        CsTelemetryModule.instance.init({});
+        CsTelemetryModule.instance.telemetryService.initTelemetry({
+          config: telemetryConfig,
+          userOrgDetails: {},
+        });
+      } else {
+        // Get device ID asynchronously and initialize
+        getDeviceId().then((deviceId) => {
+          telemetryConfig.did = deviceId;
+          localStorage.setItem('deviceId', deviceId);
+          console.log('Telemetry Device ID (did):', deviceId);
+
+          // Initialize telemetry with proper device ID
+          CsTelemetryModule.instance.init({});
+          CsTelemetryModule.instance.telemetryService.initTelemetry({
+            config: telemetryConfig,
+            userOrgDetails: {},
+          });
+        }).catch((error) => {
+          console.error('Failed to get device ID:', error);
+          // Fallback initialization without device ID
+          CsTelemetryModule.instance.init({});
+          CsTelemetryModule.instance.telemetryService.initTelemetry({
+            config: telemetryConfig,
+            userOrgDetails: {},
+          });
+        });
+      }
     }
   },
 
@@ -86,12 +97,32 @@ export const telemetryFactory = {
     }
   },
 
+  updateDeviceId: async () => {
+    if (typeof window !== 'undefined') {
+      try {
+        const deviceId = await getDeviceId();
+        telemetryConfig.did = deviceId;
+        localStorage.setItem('deviceId', deviceId);
+        console.log('Telemetry Device ID updated:', deviceId);
+        return deviceId;
+      } catch (error) {
+        console.error('Failed to update device ID:', error);
+        return null;
+      }
+    }
+  },
+
+  getCurrentDeviceId: () => {
+    return telemetryConfig.did;
+  },
+
   interact: (interactEventInput) => {
     if (
       typeof window !== 'undefined' &&
       CsTelemetryModule.instance.isInitialised
     ) {
       const eventData = getEventData(interactEventInput);
+      console.log('Sending interact telemetry with device ID:', telemetryConfig.did);
       CsTelemetryModule.instance.telemetryService.raiseInteractTelemetry({
         options: eventData.options,
         edata: eventData.edata,
@@ -105,6 +136,7 @@ export const telemetryFactory = {
       CsTelemetryModule.instance.isInitialised
     ) {
       const eventData = getEventData(impressionEventInput);
+      console.log('Sending impression telemetry with device ID:', telemetryConfig.did);
       CsTelemetryModule.instance.telemetryService.raiseImpressionTelemetry({
         options: eventData.options,
         edata: eventData.edata,

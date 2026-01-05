@@ -142,6 +142,7 @@ export default function Registration() {
         lastName,
         username,
         password: formData.password,
+        email: formData.username,
         gender: gender,
         ...(formData.mobile && { mobile: formData.mobile }),
         tenantCohortRoleMapping: tenantCohortRoleMapping,
